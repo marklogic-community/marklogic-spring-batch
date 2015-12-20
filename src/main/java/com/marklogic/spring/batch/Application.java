@@ -15,9 +15,9 @@ public class Application {
 	private static Log log = LogFactory.getLog(Application.class);
 	
 	public static void main(String[] args) {
-    	//log.debug("Starting...");
+    	log.debug("Starting...");
         SpringApplication.run(Application.class, args);
-        //log.debug("Ending...");
+        log.debug("Ending...");
     }
     
 
