@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.data;
+package com.marklogic.spring.batch.geonames;
 
 
 public class Geoname {

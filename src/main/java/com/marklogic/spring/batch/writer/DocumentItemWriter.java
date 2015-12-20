@@ -22,7 +22,8 @@ public class DocumentItemWriter implements ItemWriter<Document> {
 	@Override
 	public void write(List<? extends Document> items) throws Exception {
 		DatabaseClient client = DatabaseClientFactory.newClient(
-				   env.getProperty("marklogic.host"), Integer.parseInt(env.getProperty("marklogic.port")), env.getProperty("marklogic.user"), env.getProperty("marklogic.password"), Authentication.DIGEST);
+				   env.getProperty("marklogic.host"), Integer.parseInt(env.getProperty("marklogic.port")), 
+				   env.getProperty("marklogic.user"), env.getProperty("marklogic.password"), Authentication.DIGEST);
 		XMLDocumentManager docMgr = client.newXMLDocumentManager();
 		for (int i = 0; i < items.size(); i++) {
 			Document doc = items.get(i);

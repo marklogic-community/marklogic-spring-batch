@@ -1,7 +1,6 @@
-package com.marklogic.spring.batch.processor;
+package com.marklogic.spring.batch.geonames;
 
 import com.marklogic.client.io.DOMHandle;
-import com.marklogic.spring.batch.data.Geoname;
 
 import javax.xml.parsers.DocumentBuilder;
 

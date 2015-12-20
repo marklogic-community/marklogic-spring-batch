@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.geonames;
 
 import java.io.File;
 
@@ -26,9 +26,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.w3c.dom.Document;
 
-import com.marklogic.spring.batch.data.Geoname;
-import com.marklogic.spring.batch.data.GeonameFieldSetMapper;
-import com.marklogic.spring.batch.processor.GeonamesItemProcessor;
 import com.marklogic.spring.batch.writer.DocumentItemWriter;
 
 @Configuration
@@ -45,8 +42,8 @@ public class Config {
    
    @Bean
    public Job job1(@Qualifier("step1") Step step1) {
-	   log.debug("JOB1");
-	   return jobs.get("myJob").start(step1).build();
+	   log.debug("Geonames Job");
+	   return jobs.get("geonames").start(step1).build();
    }
    
    @Bean
