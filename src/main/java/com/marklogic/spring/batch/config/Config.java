@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.config;
 
 import java.io.File;
-import java.util.List;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -20,9 +19,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.w3c.dom.Document;
 
 import com.marklogic.spring.batch.data.Geoname;
 import com.marklogic.spring.batch.data.GeonameFieldSetMapper;
+import com.marklogic.spring.batch.processor.GeonamesItemProcessor;
+import com.marklogic.spring.batch.writer.DocumentItemWriter;
 
 @Configuration
 @EnableBatchProcessing
@@ -41,10 +43,10 @@ public class Config {
    }
    
    @Bean
-   protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Geoname> processor, ItemWriter<Geoname> writer) {
+   protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor, ItemWriter<Document> writer) {
 	   System.out.println("STEP1");
      return steps.get("step1")
-    		 .<Geoname, Geoname> chunk(10)
+    		 .<Geoname, Document> chunk(10)
     		 .reader(reader)
     		 .processor(processor)
     		 .writer(writer)
@@ -52,15 +54,15 @@ public class Config {
    }
    
    @Bean
-   protected ItemProcessor<Geoname, Geoname> processor() {
+   protected ItemProcessor<Geoname, Document> processor() {
 	   System.out.println("ITEM PROCESSOR");
-	   return new GeonameItemProcessor();
+	   return new GeonamesItemProcessor();
    }
    
    @Bean
-   protected ItemWriter<Geoname> writer() {
+   protected ItemWriter<Document> writer() {
 	   System.out.println("ITEM WRITER");
-	   return new GeonameItemWriter();
+	   return new DocumentItemWriter();
    }
    
    @Bean
@@ -78,29 +80,5 @@ public class Config {
      mapper.setFieldSetMapper(new GeonameFieldSetMapper());
      reader.setLineMapper(mapper);
      return reader;
-   }
-  
-   public class GeonameItemProcessor implements ItemProcessor<Geoname, Geoname> {
-
-	   @Override
-	   public Geoname process(Geoname item) throws Exception {
-		   // TODO Auto-generated method stub
-		   //System.out.println("PROCESS: " + item.getId());
-		   return item;
-	   }
-   }
-
-   public class GeonameItemWriter implements ItemWriter<Geoname> {
-
-	@Override
-	public void write(List<? extends Geoname> items) throws Exception {
-		System.out.println("WRITE");
-		for (Geoname item : items) {
-			System.out.println(item.getId() + item.getName());
-		}
-		
-	}
-
-	   
    }
 }
