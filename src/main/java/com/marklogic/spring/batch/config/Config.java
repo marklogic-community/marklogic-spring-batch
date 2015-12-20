@@ -2,6 +2,8 @@ package com.marklogic.spring.batch.config;
 
 import java.io.File;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -19,6 +21,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.w3c.dom.Document;
 
 import com.marklogic.spring.batch.data.Geoname;
@@ -30,6 +35,8 @@ import com.marklogic.spring.batch.writer.DocumentItemWriter;
 @EnableBatchProcessing
 public class Config {
 	
+   private Log log = LogFactory.getLog(Config.class);
+
    @Autowired
    private JobBuilderFactory jobs;
 
@@ -38,36 +45,45 @@ public class Config {
    
    @Bean
    public Job job1(@Qualifier("step1") Step step1) {
-	   System.out.println("JOB1");
+	   log.debug("JOB1");
 	   return jobs.get("myJob").start(step1).build();
    }
    
    @Bean
    protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor, ItemWriter<Document> writer) {
-	   System.out.println("STEP1");
+	   log.debug("STEP1");
      return steps.get("step1")
     		 .<Geoname, Document> chunk(10)
     		 .reader(reader)
     		 .processor(processor)
     		 .writer(writer)
+    		 .taskExecutor(taskExecutor())
     		 .build();
    }
    
    @Bean
+   protected TaskExecutor taskExecutor() {
+	   CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
+	   SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
+	   sate.setConcurrencyLimit(10);
+	   return sate;
+   }
+   
+   @Bean
    protected ItemProcessor<Geoname, Document> processor() {
-	   System.out.println("ITEM PROCESSOR");
+	   log.debug("ITEM PROCESSOR");
 	   return new GeonamesItemProcessor();
    }
    
    @Bean
    protected ItemWriter<Document> writer() {
-	   System.out.println("ITEM WRITER");
+	   log.debug("ITEM WRITER");
 	   return new DocumentItemWriter();
    }
    
    @Bean
    protected ItemReader<Geoname> reader() {
-	   System.out.println("ITEM READER");
+	   log.debug("ITEM READER");
 	   try {
 	   Resource res = new ClassPathResource("cities15000.txt");
 	     File f = res.getFile();
