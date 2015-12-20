@@ -11,13 +11,18 @@ import com.marklogic.client.io.DOMHandle;
 import org.w3c.dom.Document;
 
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 public class DocumentItemWriter implements ItemWriter<Document> {
 
+	@Autowired
+	private Environment env;
+	
 	@Override
 	public void write(List<? extends Document> items) throws Exception {
 		DatabaseClient client = DatabaseClientFactory.newClient(
-				   "isearch", 8100, "admin", "admin", Authentication.DIGEST);
+				   env.getProperty("marklogic.host"), Integer.parseInt(env.getProperty("marklogic.port")), env.getProperty("marklogic.user"), env.getProperty("marklogic.password"), Authentication.DIGEST);
 		XMLDocumentManager docMgr = client.newXMLDocumentManager();
 		for (int i = 0; i < items.size(); i++) {
 			Document doc = items.get(i);
