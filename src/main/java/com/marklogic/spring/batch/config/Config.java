@@ -65,7 +65,7 @@ public class Config {
    protected TaskExecutor taskExecutor() {
 	   CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
 	   SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
-	   sate.setConcurrencyLimit(10);
+	   sate.setConcurrencyLimit(8);
 	   return sate;
    }
    
