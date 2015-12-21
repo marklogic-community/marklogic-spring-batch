@@ -28,12 +28,24 @@ public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
 		Element id = doc.createElementNS(GEO, "id");
 		id.appendChild(doc.createTextNode(item.getId()));
 		
+		Element asciiName = doc.createElementNS(GEO, "ascii-name");
+		asciiName.appendChild(doc.createTextNode(item.getAsciiName()));
+		
+		Element altNames = doc.createElementNS(GEO, "alternate-names");
+		for (String altName : item.getAlternateNames()) {
+			Element elName = doc.createElementNS(GEO, "name");
+			elName.appendChild(doc.createTextNode(altName));
+			altNames.appendChild(elName);			
+		}
+		
 		//Create root element and children
 		Element root = doc.createElementNS("http://geonames.org", "geoname");
 		doc.appendChild(root);
 		root.appendChild(id);
 		root.appendChild(name);
-
+		root.appendChild(asciiName);
+		root.appendChild(altNames);
+		
 		return doc;
 	}
 
