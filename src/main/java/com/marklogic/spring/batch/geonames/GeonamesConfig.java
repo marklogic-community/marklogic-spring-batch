@@ -1,7 +1,5 @@
 package com.marklogic.spring.batch.geonames;
 
-import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.Job;
@@ -20,26 +18,26 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.w3c.dom.Document;
 
+import com.marklogic.spring.batch.geonames.data.Geoname;
 import com.marklogic.spring.batch.writer.DocumentItemWriter;
 
 @Configuration
 @EnableBatchProcessing
-public class Config {
+public class GeonamesConfig {
 	
-   private Log log = LogFactory.getLog(Config.class);
+   private Log log = LogFactory.getLog(GeonamesConfig.class);
 
    @Autowired
    private JobBuilderFactory jobs;
 
    @Autowired
    private StepBuilderFactory steps;
-   
+     
    @Bean
    public Job job1(@Qualifier("step1") Step step1) {
 	   log.debug("Geonames Job");
@@ -48,7 +46,7 @@ public class Config {
    
    @Bean
    protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor, ItemWriter<Document> writer) {
-	   log.debug("STEP1");
+	 log.debug("Import Geonames");
      return steps.get("step1")
     		 .<Geoname, Document> chunk(10)
     		 .reader(reader)
@@ -56,7 +54,7 @@ public class Config {
     		 .writer(writer)
     		 .taskExecutor(taskExecutor())
     		 .build();
-   }
+   }   
    
    @Bean
    protected TaskExecutor taskExecutor() {
@@ -79,19 +77,34 @@ public class Config {
    }
    
    @Bean
-   protected ItemReader<Geoname> reader() {
-	   log.debug("ITEM READER");
-	   try {
-	   Resource res = new ClassPathResource("cities15000.txt");
-	     File f = res.getFile();
-	     f.exists();
-	   } catch (Exception ex) { ex.printStackTrace(); }
-     FlatFileItemReader<Geoname> reader = new FlatFileItemReader<Geoname>();
-     reader.setResource(new ClassPathResource("cities15000.txt"));
-     DefaultLineMapper<Geoname> mapper = new DefaultLineMapper<Geoname>();
-     mapper.setLineTokenizer(new DelimitedLineTokenizer(DelimitedLineTokenizer.DELIMITER_TAB));
-     mapper.setFieldSetMapper(new GeonameFieldSetMapper());
-     reader.setLineMapper(mapper);
-     return reader;
+   protected ItemReader<Geoname> geonameReader() {
+	   log.debug("GEONAMES ITEM READER");
+	   FlatFileItemReader<Geoname> reader = new FlatFileItemReader<Geoname>();
+	   reader.setResource(new ClassPathResource("geonames/cities15000.txt"));
+	   DefaultLineMapper<Geoname> mapper = new DefaultLineMapper<Geoname>();
+	   DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer(DelimitedLineTokenizer.DELIMITER_TAB);
+	   tokenizer.setQuoteCharacter('{');
+	   mapper.setLineTokenizer(tokenizer);
+	   mapper.setFieldSetMapper(new GeonameFieldSetMapper());
+	   reader.setLineMapper(mapper);
+	   return reader;
    }
+   
+  /*
+   @Bean
+   protected ItemReader<Country> countryReader() {
+	   log.debug("COUNTRIES ITEM READER");
+	   FlatFileItemReader<Country> reader = new FlatFileItemReader<Country>();
+	   reader.setResource(new ClassPathResource("geonames/cities15000.txt"));
+	   DefaultLineMapper<Geoname> mapper = new DefaultLineMapper<Geoname>();
+	   DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer(DelimitedLineTokenizer.DELIMITER_TAB);
+	   tokenizer.setNames(new String[] {"ISO", "ISO3", "isoNumeric", "fips", "country", "capital", "areaSquareMiles", "population",
+			   "continent", "tld", "currencyCode", "currencyName", "phone", "postalCodeFormat", "postalCodeRegex", "languages", "geonameid", "neighbours",
+			   "equivalentFipsCode"}); 
+	   mapper.setLineTokenizer(new DelimitedLineTokenizer(DelimitedLineTokenizer.DELIMITER_TAB));
+	   mapper.setFieldSetMapper(new GeonameFieldSetMapper());
+	   reader.setLineMapper(mapper);
+	   return reader;
+   }
+   */
 }

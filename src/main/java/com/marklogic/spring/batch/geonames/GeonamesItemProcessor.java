@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.geonames;
 
 import com.marklogic.client.io.DOMHandle;
+import com.marklogic.spring.batch.geonames.data.Geoname;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -19,7 +20,7 @@ public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
 		Document doc = builder.newDocument();
 		
 		//Set document URI
-		doc.setDocumentURI(item.getId() + ".xml");
+		doc.setDocumentURI("http://geonames.org/geoname/" + item.getId());
 		
 		Element name = doc.createElementNS(GEO,  "name");
 		name.appendChild(doc.createTextNode(item.getName()));

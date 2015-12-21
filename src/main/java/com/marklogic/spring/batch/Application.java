@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "com.marklogic.spring.batch.config" })
+@ComponentScan(basePackages = { "com.marklogic.spring.batch" })
 public class Application {
 	
 	private static Log log = LogFactory.getLog(Application.class);
