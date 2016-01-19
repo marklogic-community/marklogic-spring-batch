@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.geonames.data;
+package com.marklogic.client.spring.batch.geonames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 
 import com.marklogic.client.io.DOMHandle;
+
+import org.geonames.Geoname;
 import org.junit.Test;
 
 public class GeonameObjectToXmlTest {

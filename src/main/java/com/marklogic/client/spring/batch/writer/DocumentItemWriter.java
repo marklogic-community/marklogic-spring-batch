@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.writer;
+package com.marklogic.client.spring.batch.writer;
 
 import java.util.List;
 

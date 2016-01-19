@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.geonames;
 
 import com.marklogic.client.io.DOMHandle;
-import com.marklogic.spring.batch.geonames.data.Geoname;
+import org.geonames.Geoname;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -21,15 +21,15 @@ public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
 		
 		//Set document URI
 		doc.setDocumentURI("http://geonames.org/geoname/" + item.getId());
-		
+		/*
 		Element name = doc.createElementNS(GEO,  "name");
-		name.appendChild(doc.createTextNode(item.getName()));
+		//name.appendChild(doc.createTextNode(item.getName()));	
 		
 		Element id = doc.createElementNS(GEO, "id");
 		id.appendChild(doc.createTextNode(item.getId()));
 		
 		Element asciiName = doc.createElementNS(GEO, "ascii-name");
-		asciiName.appendChild(doc.createTextNode(item.getAsciiName()));
+		//asciiName.appendChild(doc.createTextNode(item.getAsciiName()));
 		
 		Element altNames = doc.createElementNS(GEO, "alternate-names");
 		for (String altName : item.getAlternateNames()) {
@@ -37,15 +37,17 @@ public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
 			elName.appendChild(doc.createTextNode(altName));
 			altNames.appendChild(elName);			
 		}
-		
+		*/
 		//Create root element and children
 		Element root = doc.createElementNS("http://geonames.org", "geoname");
+		
 		doc.appendChild(root);
+		/*
 		root.appendChild(id);
 		root.appendChild(name);
 		root.appendChild(asciiName);
 		root.appendChild(altNames);
-		
+		*/
 		return doc;
 	}
 

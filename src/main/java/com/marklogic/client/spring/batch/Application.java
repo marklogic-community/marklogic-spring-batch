@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch;
+package com.marklogic.client.spring.batch;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

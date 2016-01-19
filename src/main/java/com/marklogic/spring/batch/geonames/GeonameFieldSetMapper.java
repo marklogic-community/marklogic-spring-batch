@@ -8,7 +8,7 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
-import com.marklogic.spring.batch.geonames.data.Geoname;
+import org.geonames.Geoname;
 
 public class GeonameFieldSetMapper implements FieldSetMapper<Geoname>{
 

@@ -4,7 +4,7 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
-import com.marklogic.spring.batch.geonames.data.Country;
+import org.geonames.Country;
 
 public class CountryFieldSetMapper implements FieldSetMapper<Country> {
 

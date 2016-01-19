@@ -23,8 +23,8 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.w3c.dom.Document;
 
-import com.marklogic.spring.batch.geonames.data.Geoname;
-import com.marklogic.spring.batch.writer.DocumentItemWriter;
+import org.geonames.Geoname;
+import com.marklogic.client.spring.batch.writer.DocumentItemWriter;
 
 @Configuration
 @EnableBatchProcessing
@@ -50,7 +50,6 @@ public class GeonamesConfig {
      return steps.get("step1")
     		 .<Geoname, Document> chunk(10)
     		 .reader(reader)
-    		 .processor(processor)
     		 .writer(writer)
     		 .taskExecutor(taskExecutor())
     		 .build();

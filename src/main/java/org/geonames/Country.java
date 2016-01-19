@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.geonames.data;
+package org.geonames;
 
 import java.util.List;
 
