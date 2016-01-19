@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.geonames;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -14,9 +16,17 @@ public class GeonameFieldSetMapper implements FieldSetMapper<Geoname>{
 	public Geoname mapFieldSet(FieldSet fieldSet) throws BindException {
 		Geoname geo = new Geoname();
 		geo.setId(fieldSet.readString(0));
-		geo.setName(fieldSet.readString(1));
-		geo.setAsciiName(fieldSet.readString(2));
-		geo.setAlternateNames(Arrays.asList(fieldSet.readString(3).split(",")));		
+		List<String> names = new ArrayList<String>();
+		
+		//name
+		names.add(fieldSet.readString(1));
+		//ascii-name
+		names.add(fieldSet.readString(2));
+		//alternateNames
+		List<String> altNames = Arrays.asList(fieldSet.readString(3).split(","));
+		for (String altName : altNames) {
+			names.add(altName);
+		}		
 		geo.setLatitude(fieldSet.readFloat(4));
 		geo.setLongitude(fieldSet.readFloat(5));
 		geo.setFeatureClass(fieldSet.readString(6));

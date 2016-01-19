@@ -3,33 +3,18 @@ package com.marklogic.spring.batch.geonames.data;
 import java.util.Date;
 import java.util.List;
 
-public class Geoname {
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name="geoname")
+public class Geoname {
+	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getAsciiName() {
-		return asciiName;
-	}
-	public void setAsciiName(String asciiName) {
-		this.asciiName = asciiName;
-	}
-	
-    public List<String> getAlternateNames() {
-		return alternateNames;
-	}
-	public void setAlternateNames(List<String> alternateNames) {
-		this.alternateNames = alternateNames;
-	}
+	}	
 	public float getLatitude() {
 		return latitude;
 	}
@@ -121,12 +106,20 @@ public class Geoname {
 	public void setFeatureCode(String featureCode) {
 		this.featureCode = featureCode;
 	}
+	
+	public List<String> getNames() {
+		return name;
+	}
+	public void setNames(List<String> names) {
+		this.name = names;
+	}
 
 	private String id;
-    private String name;
-    private String asciiName;
-    private List<String> alternateNames;
-    private float latitude;
+	
+	@XmlElementWrapper(name="names")
+    private List<String> name;
+	
+	private float latitude;
     private float longitude;
     private String featureClass;
     private String featureCode;
@@ -143,3 +136,4 @@ public class Geoname {
     private Date modificationDate;
     
 }
+
