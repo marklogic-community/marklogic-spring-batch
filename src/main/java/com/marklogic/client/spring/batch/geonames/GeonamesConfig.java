@@ -50,8 +50,9 @@ public class GeonamesConfig {
      return steps.get("step1")
     		 .<Geoname, Document> chunk(10)
     		 .reader(reader)
+    		 .processor(processor)
     		 .writer(writer)
-    		 .taskExecutor(taskExecutor())
+    		 //.taskExecutor(taskExecutor())
     		 .build();
    }   
    

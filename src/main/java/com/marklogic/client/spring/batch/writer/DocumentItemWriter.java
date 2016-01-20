@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DocumentItemWriter implements ItemWriter<Document> {
 
 	@Autowired
-	DatabaseClientProvider databaseClientProvider;
+	private DatabaseClientProvider databaseClientProvider;
 	
 	@Override
 	public void write(List<? extends Document> items) throws Exception {
