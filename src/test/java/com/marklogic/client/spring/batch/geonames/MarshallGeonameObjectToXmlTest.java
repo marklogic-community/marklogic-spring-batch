@@ -8,22 +8,16 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.geonames.Geoname;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 
+import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.junit.Fragment;
 
 import org.jdom2.input.DOMBuilder;
 
-import org.junit.runner.RunWith;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = { com.marklogic.client.spring.batch.SpringBatchConfig.class })
-public class MarshallGeonameObjectToXmlTest extends Assert {
+public class MarshallGeonameObjectToXmlTest extends AbstractSpringBatchTest {
 	
 	@Autowired
 	Marshaller marshaller;
@@ -46,8 +40,10 @@ public class MarshallGeonameObjectToXmlTest extends Assert {
 		Document w3cDoc = documentBuilder.newDocument();
 		marshaller.marshal(geo, w3cDoc);
 		Fragment frag = new Fragment(domBuilder.build(w3cDoc));
-		
+		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		System.out.println(frag.getPrettyXml());
+		frag.assertElementExists("/geo:geoname/geo:names/geo:name[2][text() = 'Beta']");
+		
 	
 		
 	}
