@@ -39,7 +39,7 @@ public class CorbConfig {
 	@Bean
 	protected Step step1(Tasklet getUrisTasklet) {
 		log.debug("Run Corb");
-	    return steps.get("step1")
+	    return steps.get("corb-uris")
 	    		.tasklet(getUrisTasklet)
 	    		.build();
 	}   
