@@ -3,8 +3,10 @@ package org.geonames;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name="geoname")
 public class Geoname {
@@ -107,6 +109,7 @@ public class Geoname {
 		this.featureCode = featureCode;
 	}
 	
+	@XmlTransient
 	public List<String> getNames() {
 		return name;
 	}
@@ -117,6 +120,7 @@ public class Geoname {
 	private String id;
 	
 	@XmlElementWrapper(name="names")
+	@XmlElement
     private List<String> name;
 	
 	private float latitude;
