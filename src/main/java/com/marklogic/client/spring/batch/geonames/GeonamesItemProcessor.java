@@ -2,6 +2,8 @@ package com.marklogic.client.spring.batch.geonames;
 
 import org.geonames.Geoname;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 
@@ -12,7 +14,7 @@ import org.w3c.dom.Document;
 public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
 	
 	@Autowired
-	private Marshaller marshaller;
+	private JAXBContext jaxbContext;
 	
 	@Autowired
 	private DocumentBuilder documentBuilder;
@@ -20,7 +22,13 @@ public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
 	@Override
 	public Document process(Geoname item) throws Exception {
 		Document doc = documentBuilder.newDocument();
-		marshaller.marshal(item, doc);
+		try {
+			Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.marshal(item, doc);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
 		System.out.println(item.getId());
 		
 		//Set document URI

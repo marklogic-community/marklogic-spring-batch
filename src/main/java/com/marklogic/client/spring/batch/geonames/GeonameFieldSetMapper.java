@@ -26,7 +26,8 @@ public class GeonameFieldSetMapper implements FieldSetMapper<Geoname>{
 		List<String> altNames = Arrays.asList(fieldSet.readString(3).split(","));
 		for (String altName : altNames) {
 			names.add(altName);
-		}		
+		}	
+		geo.setNames(names);
 		geo.setLatitude(fieldSet.readFloat(4));
 		geo.setLongitude(fieldSet.readFloat(5));
 		geo.setFeatureClass(fieldSet.readString(6));

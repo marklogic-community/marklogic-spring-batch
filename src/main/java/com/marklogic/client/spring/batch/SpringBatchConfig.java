@@ -2,7 +2,6 @@ package com.marklogic.client.spring.batch;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,18 +14,10 @@ import org.springframework.context.annotation.Configuration;
 public class SpringBatchConfig {
 	
 	@Bean
-	public Marshaller marshaller() {
-		Marshaller marshaller = null;
-		
-		try {
-			JAXBContext context = JAXBContext.newInstance(org.geonames.Geoname.class);
-			marshaller = context.createMarshaller();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return marshaller;
+	public JAXBContext jaxbContext() throws JAXBException {
+		return JAXBContext.newInstance(org.geonames.Geoname.class);
 	}
-	
+		
 	@Bean
 	public DocumentBuilder documentBuilder() {
 		DocumentBuilder docBuilder = null;

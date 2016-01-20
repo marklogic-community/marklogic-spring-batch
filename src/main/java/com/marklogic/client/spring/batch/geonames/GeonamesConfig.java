@@ -52,7 +52,7 @@ public class GeonamesConfig {
     		 .reader(reader)
     		 .processor(processor)
     		 .writer(writer)
-    		 //.taskExecutor(taskExecutor())
+    		 .taskExecutor(taskExecutor())
     		 .build();
    }   
    
