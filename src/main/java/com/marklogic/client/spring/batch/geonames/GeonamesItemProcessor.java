@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.geonames;
+package com.marklogic.client.spring.batch.geonames;
 
 import com.marklogic.client.io.DOMHandle;
 import org.geonames.Geoname;

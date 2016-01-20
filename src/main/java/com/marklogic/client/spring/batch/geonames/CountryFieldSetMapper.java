@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.geonames;
+package com.marklogic.client.spring.batch.geonames;
 
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;

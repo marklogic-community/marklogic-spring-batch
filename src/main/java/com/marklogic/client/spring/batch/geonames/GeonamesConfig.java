@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.geonames;
+package com.marklogic.client.spring.batch.geonames;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

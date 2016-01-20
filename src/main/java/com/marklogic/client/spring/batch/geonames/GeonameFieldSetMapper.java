@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.geonames;
+package com.marklogic.client.spring.batch.geonames;
 
 import java.util.List;
 import java.util.ArrayList;
