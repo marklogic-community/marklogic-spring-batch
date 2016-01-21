@@ -25,16 +25,15 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 
-public class MarkLogicJobRepository implements JobRepository {
+public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBatchRepository {
 	
 	@Autowired
 	private DocumentBuilder documentBuilder;
 	
 	private JAXBContext jaxbContext;
-	
 	private DocumentMetadataHandle jobExecutionMetadata;
-	
 	private DatabaseClient client;
+	
 	
 	public MarkLogicJobRepository(DatabaseClient client) {
 		this.client = client;
@@ -107,7 +106,7 @@ public class MarkLogicJobRepository implements JobRepository {
 		XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
 		DOMHandle handle = new DOMHandle();
 		handle.set(doc);
-		xmlDocMgr.write("/projects.spring.io/spring-batch/job-execution/" + jobExecution.getId().toString(), jobExecutionMetadata, handle);
+		xmlDocMgr.write(SPRING_BATCH_DIR + "/job-execution/" + jobExecution.getId().toString(), jobExecutionMetadata, handle);
 		
 		return jobExecution;
 	}

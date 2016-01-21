@@ -35,16 +35,23 @@ public class MarkLogicJobExplorer implements JobExplorer {
 		StructuredQueryBuilder sb = qryMgr.newStructuredQueryBuilder("myopt");
 
 		// put code from examples here
-		StructuredQueryDefinition criteria = sb.collection("JobInstance");
+		StructuredQueryDefinition criteria = sb.collection("http://marklogic.com/spring-batch/job-instance");
 
-		//StringHandle searchHandle = qryMgr.search(criteria, new StringHandle()).get();
+		StringHandle searchHandle = qryMgr.search(criteria, new StringHandle());
+		System.out.println(searchHandle.get());
 		return jobInstances;
 	}
 
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
-		// TODO Auto-generated method stub
-		return null;
+		StructuredQueryBuilder sb = qryMgr.newStructuredQueryBuilder();
+
+		// put code from examples here
+		StructuredQueryDefinition criteria = sb.document("http://marklogic.com/spring-batch/job-execution");
+
+		StringHandle searchHandle = qryMgr.search(criteria, new StringHandle());
+		System.out.println(searchHandle.get());
+		return jobExecution;
 	}
 
 	@Override
