@@ -7,8 +7,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jdom2.input.DOMBuilder;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.marklogic.client.spring.batch.core.repository.MarkLogicJobRepository;
 
 @Configuration
 public class SpringBatchConfig {
@@ -35,5 +39,16 @@ public class SpringBatchConfig {
 	public DOMBuilder domBuilder() {
 		return new DOMBuilder();
 	}
+	/*
+	@Bean
+	public JobBuilder jobBuilder(JobRepository jobRepository) {
+		JobBuilder jobBuilder = new JobBuilder("marklogic-jobs");
+		return jobBuilder.repository(jobRepository);
+	}
 	
+	@Bean
+	public JobRepository jobRepository() {
+		return new MarkLogicJobRepository();
+	}
+	*/
 }
