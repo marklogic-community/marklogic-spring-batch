@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-@XmlRootElement(name="geoname")
+@XmlRootElement(name="geoname", namespace="http://geonames.org")
 public class Geoname {
 	
 	public String getId() {

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
@@ -30,12 +29,17 @@ public class MarkLogicJobRepository implements JobRepository {
 	@Autowired
 	private DocumentBuilder documentBuilder;
 	
-	@Autowired
 	JAXBContext jaxbContext;
 	
 	public MarkLogicJobRepository(DatabaseClient client) {
 		this.client = client;
+		try {
+			jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class);
+		} catch (Exception ex) {
+			
+		}
 	}
+	
 	private DatabaseClient client;
 
 	@Override
@@ -63,7 +67,6 @@ public class MarkLogicJobRepository implements JobRepository {
 			Document doc = documentBuilder.newDocument();
 			Marshaller marshaller = null;
 			try {
-			
 				marshaller = jaxbContext.createMarshaller();
 				marshaller.marshal(jobExecution, doc);
 			} catch (JAXBException e) {
@@ -87,8 +90,7 @@ public class MarkLogicJobRepository implements JobRepository {
 		Document doc = documentBuilder.newDocument();
 		Marshaller marshaller = null;
 		try {
-			JAXBIntrospector introspector = jaxbContext.createJAXBIntrospector();
-			JAXBElement jaxbElement = new JAXBElement(new QName("jobExecution"), JobExecution.class, jobExecution);
+			JAXBElement<JobExecution> jaxbElement = new JAXBElement<JobExecution>(new QName("http://marklogic.com/spring-batch", "jobExecution"), org.springframework.batch.core.JobExecution.class, jobExecution);
 			marshaller = jaxbContext.createMarshaller();
 			marshaller.marshal(jaxbElement, doc);
 		} catch (JAXBException e) {

@@ -21,11 +21,6 @@ public class SpringBatchConfig {
 	
 	@Autowired
 	DatabaseClientProvider databaseClientProvider;
-	
-	@Bean
-	public JAXBContext jaxbContext() throws JAXBException {
-		return JAXBContext.newInstance(org.geonames.Geoname.class, org.springframework.batch.core.JobExecution.class);
-	}
 		
 	@Bean
 	public DocumentBuilder documentBuilder() {

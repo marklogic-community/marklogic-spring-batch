@@ -21,9 +21,6 @@ import org.jdom2.input.DOMBuilder;
 public class MarshallGeonameObjectToXmlTest extends AbstractSpringBatchTest {
 	
 	@Autowired
-	JAXBContext jaxbContext;
-	
-	@Autowired
 	DocumentBuilder documentBuilder;
 	
 	@Autowired
@@ -39,7 +36,7 @@ public class MarshallGeonameObjectToXmlTest extends AbstractSpringBatchTest {
 		geo.setNames(names);
 		
 		Document w3cDoc = documentBuilder.newDocument();
-		Marshaller marshaller = jaxbContext.createMarshaller();
+		Marshaller marshaller = JAXBContext.newInstance(org.geonames.Geoname.class).createMarshaller();
 		marshaller.marshal(geo, w3cDoc);
 		Fragment frag = new Fragment(domBuilder.build(w3cDoc));
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
