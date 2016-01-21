@@ -9,17 +9,22 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jdom2.input.DOMBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.batch.core.repository.MarkLogicJobRepository;
 
 @Configuration
 public class SpringBatchConfig {
 	
+	@Autowired
+	DatabaseClientProvider databaseClientProvider;
+	
 	@Bean
 	public JAXBContext jaxbContext() throws JAXBException {
-		return JAXBContext.newInstance(org.geonames.Geoname.class);
+		return JAXBContext.newInstance(org.geonames.Geoname.class, org.springframework.batch.core.JobExecution.class);
 	}
 		
 	@Bean
@@ -39,7 +44,7 @@ public class SpringBatchConfig {
 	public DOMBuilder domBuilder() {
 		return new DOMBuilder();
 	}
-	/*
+	
 	@Bean
 	public JobBuilder jobBuilder(JobRepository jobRepository) {
 		JobBuilder jobBuilder = new JobBuilder("marklogic-jobs");
@@ -48,7 +53,7 @@ public class SpringBatchConfig {
 	
 	@Bean
 	public JobRepository jobRepository() {
-		return new MarkLogicJobRepository();
+		return new MarkLogicJobRepository(databaseClientProvider.getDatabaseClient());
 	}
-	*/
+	
 }

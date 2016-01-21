@@ -3,6 +3,7 @@ package com.marklogic.client.spring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
@@ -34,6 +35,16 @@ public class DatabaseConfig {
 	protected String getDatabaseName() {
 		return env.getProperty("marklogic.database", "Documents");
 	}
+	
+	/**
+     * Has to be static so that Spring instantiates it first.
+     */
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
+        PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
+        c.setIgnoreResourceNotFound(true);
+        return c;
+    }
 
     @Bean
     public DatabaseClientConfig databaseClientConfig() {
