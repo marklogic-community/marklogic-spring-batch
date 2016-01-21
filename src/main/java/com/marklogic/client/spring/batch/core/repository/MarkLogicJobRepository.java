@@ -23,13 +23,18 @@ import org.w3c.dom.Document;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
 
 public class MarkLogicJobRepository implements JobRepository {
 	
 	@Autowired
 	private DocumentBuilder documentBuilder;
 	
-	JAXBContext jaxbContext;
+	private JAXBContext jaxbContext;
+	
+	private DocumentMetadataHandle jobExecutionMetadata;
+	
+	private DatabaseClient client;
 	
 	public MarkLogicJobRepository(DatabaseClient client) {
 		this.client = client;
@@ -38,9 +43,10 @@ public class MarkLogicJobRepository implements JobRepository {
 		} catch (Exception ex) {
 			
 		}
+		jobExecutionMetadata = new DocumentMetadataHandle();
+		jobExecutionMetadata.getCollections().add("http://marklogic.com/spring-batch/job-execution");
+		
 	}
-	
-	private DatabaseClient client;
 
 	@Override
 	public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
@@ -86,7 +92,7 @@ public class MarkLogicJobRepository implements JobRepository {
 			throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 		JobInstance jobInstance = new JobInstance(123L, "name1");
 		JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
-		jobExecution.setId(123L);
+		jobExecution.setId(1234L);
 		Document doc = documentBuilder.newDocument();
 		Marshaller marshaller = null;
 		try {
@@ -97,10 +103,11 @@ public class MarkLogicJobRepository implements JobRepository {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
 		DOMHandle handle = new DOMHandle();
 		handle.set(doc);
-		xmlDocMgr.write("/spring-batch/jobExecution/" + jobExecution.getId().toString(), handle);
+		xmlDocMgr.write("/projects.spring.io/spring-batch/job-execution/" + jobExecution.getId().toString(), jobExecutionMetadata, handle);
 		
 		return jobExecution;
 	}

@@ -1,6 +1,7 @@
 package com.marklogic.client.spring.batch.core.repository;
 
 import org.junit.Test;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,6 +12,9 @@ public class PersistJobToRepositoryTest extends AbstractSpringBatchTest {
 	@Autowired
 	JobRepository jobRepository;
 	
+	@Autowired
+	JobExplorer jobExplorer;
+	
 	@Test
 	public void persistJobToRepositoryTest() throws Exception {
 		jobRepositoryTestUtils.setJobRepository(jobRepository);
@@ -18,6 +22,8 @@ public class PersistJobToRepositoryTest extends AbstractSpringBatchTest {
 		stepNames[0] = "abc";
 		
 		jobRepositoryTestUtils.createJobExecutions("hello", stepNames, 1);
+		
+
 	}
 
 }
