@@ -22,7 +22,7 @@ public class PersistJobToRepositoryTest extends AbstractSpringBatchTest {
 		stepNames[0] = "abc";
 		
 		jobRepositoryTestUtils.createJobExecutions("hello", stepNames, 1);
-
+		jobExplorer.getJobExecution(1234L);
 		
 
 	}

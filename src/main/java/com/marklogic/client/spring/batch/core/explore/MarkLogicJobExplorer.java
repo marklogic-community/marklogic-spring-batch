@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.StepExecution;
@@ -16,15 +18,22 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.spring.batch.core.repository.MarkLogicSpringBatchRepository;
 
-public class MarkLogicJobExplorer implements JobExplorer {
+public class MarkLogicJobExplorer implements JobExplorer, MarkLogicSpringBatchRepository {
 	
 	private DatabaseClient client;
 	private XMLDocumentManager xmlDocMgr;
 	private QueryManager qryMgr;
+	private JAXBContext jaxbContext;
 	
 	public MarkLogicJobExplorer(DatabaseClient databaseClient) {
 		client = databaseClient;
+		try {
+			jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class);
+		} catch (Exception ex) {
+			
+		}
 		xmlDocMgr = client.newXMLDocumentManager();
 		qryMgr = client.newQueryManager();
 	}
@@ -44,14 +53,9 @@ public class MarkLogicJobExplorer implements JobExplorer {
 
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
-		StructuredQueryBuilder sb = qryMgr.newStructuredQueryBuilder();
-
-		// put code from examples here
-		StructuredQueryDefinition criteria = sb.document("http://marklogic.com/spring-batch/job-execution");
-
-		StringHandle searchHandle = qryMgr.search(criteria, new StringHandle());
-		System.out.println(searchHandle.get());
-		return jobExecution;
+		StringHandle handle = xmlDocMgr.read(SPRING_BATCH_DIR + "/job-execution/" + executionId.toString(), new StringHandle());
+		System.out.println(handle.get());
+		return null;
 	}
 
 	@Override
