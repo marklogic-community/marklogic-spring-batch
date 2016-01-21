@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -14,6 +16,7 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
@@ -66,8 +69,15 @@ public class MarkLogicJobExplorer implements JobExplorer, MarkLogicSpringBatchRe
 
 	@Override
 	public JobInstance getJobInstance(Long instanceId) {
-		// TODO Auto-generated method stub
-		return null;
+		DOMHandle handle = xmlDocMgr.read(SPRING_BATCH_DIR + "/job-instance/" + instanceId.toString(), new DOMHandle());
+		JobInstance jobInstance = null;
+		try {
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			jobInstance = (JobInstance)unmarshaller.unmarshal(handle.get());
+		} catch (JAXBException ex) {
+			ex.printStackTrace();
+		}
+		return jobInstance;
 	}
 
 	@Override

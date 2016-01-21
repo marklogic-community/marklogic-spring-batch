@@ -1,6 +1,7 @@
 package com.marklogic.client.spring.batch.core.repository;
 
 import java.util.Collection;
+import java.util.Random;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -32,37 +33,47 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 	
 	private JAXBContext jaxbContext;
 	private DocumentMetadataHandle jobExecutionMetadata;
+	private DocumentMetadataHandle jobInstanceMetadata;
 	private DatabaseClient client;
 	
 	
 	public MarkLogicJobRepository(DatabaseClient client) {
 		this.client = client;
 		try {
-			jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class);
-		} catch (Exception ex) {
-			
+			jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class, org.springframework.batch.core.JobInstance.class);
+		} catch (JAXBException ex) {
+			ex.printStackTrace();
 		}
 		jobExecutionMetadata = new DocumentMetadataHandle();
-		jobExecutionMetadata.getCollections().add("http://marklogic.com/spring-batch/job-execution");
+		jobExecutionMetadata.getCollections().add(COLLECTION_JOB_EXECUTION);
 		
+		jobInstanceMetadata = new DocumentMetadataHandle();
+		jobInstanceMetadata.getCollections().add(COLLETION_JOB_INSTANCE);
 	}
 
 	@Override
 	public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
-		XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
+		long id = getRandomNumber();
+		JobInstance jobInstance = new JobInstance(id, jobName);
+		
 		Document doc = documentBuilder.newDocument();
-		doc.createElement("test");
+		try {
+			Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.marshal(jobInstance, doc);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}			
+		XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
 		DOMHandle handle = new DOMHandle();
 		handle.set(doc);
-		xmlDocMgr.write("/test.xml", handle);
-		JobInstance instance = new JobInstance(12L, jobName);
-		return instance;
+		xmlDocMgr.write(SPRING_BATCH_DIR + "/job-instance/" + id, jobInstanceMetadata, handle);
+		return jobInstance;
 	}
 
 	@Override
@@ -89,9 +100,13 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 	@Override
 	public JobExecution createJobExecution(String jobName, JobParameters jobParameters)
 			throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		JobInstance jobInstance = new JobInstance(123L, "name1");
+		
+		//Create a JobExecution instance
+	
+		JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
 		JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
-		jobExecution.setId(1234L);
+		jobExecution.setId(getRandomNumber());
+		
 		Document doc = documentBuilder.newDocument();
 		Marshaller marshaller = null;
 		try {
@@ -119,7 +134,6 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 
 	@Override
 	public void add(StepExecution stepExecution) {
-		System.out.println(stepExecution.getStepName());
 		
 	}
 
@@ -163,6 +177,13 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 	public JobExecution getLastJobExecution(String jobName, JobParameters jobParameters) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public long getRandomNumber() {
+		long LOWER_RANGE = 0; //assign lower range value
+		long UPPER_RANGE = 9999999; //assign upper range value
+		Random random = new Random();
+		return LOWER_RANGE + (long)(random.nextDouble()*(UPPER_RANGE - LOWER_RANGE));
 	}
 
 }
