@@ -2,12 +2,12 @@ package com.marklogic.client.spring.batch;
 
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.JobRepositoryTestUtils;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
-@SpringApplicationConfiguration(classes = { com.marklogic.client.spring.DatabaseConfig.class, com.marklogic.client.spring.batch.SpringBatchConfig.class })
+@ContextConfiguration(classes = { com.marklogic.client.spring.DatabaseConfig.class, com.marklogic.client.spring.batch.SpringBatchConfig.class })
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 	
 	protected SpringBatchNamespaceProvider nsProvider;
