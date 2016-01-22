@@ -6,14 +6,13 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.context.annotation.Configuration;
 
-import com.marklogic.client.spring.batch.geonames.GeonamesConfig;
+import com.marklogic.client.helper.DatabaseClientProvider;
 
+@Configuration
 public class CorbConfig {
 	
 	private Log log = LogFactory.getLog(CorbConfig.class);
@@ -23,33 +22,33 @@ public class CorbConfig {
 
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
-	   
-	@Autowired
-	private TaskExecutor taskExecutor;
 	
 	@Autowired
-	private JobBuilderFactory jobs;
-
-	@Autowired
-	private StepBuilderFactory steps;
+	private DatabaseClientProvider databaseClientProvider;
 	
 	@Bean
-	public Tasklet getUrisTasklet() {
-		return new GetUrisTasklet();
-	}
-	
-	@Bean
-	public Job corb(@Qualifier("getUrisTasklet") Step step1) {
-		log.debug("corb");
-		return jobs.get("corb").start(step1).build();
+	public Job corb() {
+		log.info("corb");
+		return jobBuilderFactory.get("corb")
+				.start(getUrisStep())
+				.next(processDocumentStep())
+				.build();
 	}
 	   
 	@Bean
-	protected Step getUrisTasklet(Tasklet getUrisTasklet) {
-		log.debug("Run Corb");
-	    return steps.get("corb-uris")
-	    		.tasklet(getUrisTasklet)
+	protected Step getUrisStep() {
+		log.info("Get URIS");
+	    return stepBuilderFactory.get("corb-uris")
+	    		.tasklet(new GetUrisTasklet(databaseClientProvider))
 	    		.build();
-	}   
+	} 
+	
+	@Bean
+	protected Step processDocumentStep() {
+		log.info("Process Document");
+	    return stepBuilderFactory.get("corb-process")
+	    		.tasklet(new ProcessDocumentTasklet(databaseClientProvider))
+	    		.build();
+	}
 
 }
