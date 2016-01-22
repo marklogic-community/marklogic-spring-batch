@@ -3,6 +3,8 @@ package com.marklogic.client.spring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
@@ -10,6 +12,7 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.xcc.template.XccTemplate;
 
 @Configuration
+@PropertySource("config/application.properties")
 public class DatabaseConfig {
 	
 	@Autowired
@@ -34,6 +37,13 @@ public class DatabaseConfig {
 	protected String getDatabaseName() {
 		return env.getProperty("marklogic.database", "Documents");
 	}
+	
+	@Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
+        PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
+        c.setIgnoreResourceNotFound(true);
+        return c;
+    }
 
     @Bean
     public DatabaseClientConfig databaseClientConfig() {

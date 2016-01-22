@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -18,51 +17,43 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.w3c.dom.Document;
 
 import org.geonames.Geoname;
 import com.marklogic.client.spring.batch.writer.DocumentItemWriter;
 
 @Configuration
-@EnableBatchProcessing
 public class GeonamesConfig {
 	
    private Log log = LogFactory.getLog(GeonamesConfig.class);
 
    @Autowired
-   private JobBuilderFactory jobs;
+   private JobBuilderFactory jobBuilderFactory;
 
    @Autowired
-   private StepBuilderFactory steps;
+   private StepBuilderFactory stepBuilderFactory;
+   
+   @Autowired
+   private TaskExecutor taskExecutor;
      
    @Bean
    public Job job1(@Qualifier("step1") Step step1) {
 	   log.debug("Geonames Job");
-	   return jobs.get("geonames").start(step1).build();
+	   return jobBuilderFactory.get("geonames").start(step1).build();
    }
    
    @Bean
    protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor, ItemWriter<Document> writer) {
 	 log.debug("Import Geonames");
-     return steps.get("step1")
+     return stepBuilderFactory.get("step1")
     		 .<Geoname, Document> chunk(10)
     		 .reader(reader)
     		 .processor(processor)
     		 .writer(writer)
-    		 .taskExecutor(taskExecutor())
+    		 .taskExecutor(taskExecutor)
     		 .build();
    }   
-   
-   @Bean
-   protected TaskExecutor taskExecutor() {
-	   CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
-	   SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
-	   sate.setConcurrencyLimit(8);
-	   return sate;
-   }
    
    @Bean
    protected ItemProcessor<Geoname, Document> processor() {

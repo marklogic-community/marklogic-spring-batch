@@ -1,28 +1,36 @@
 package com.marklogic.client.spring.batch;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@EnableAutoConfiguration
-@ComponentScan(
-	basePackageClasses = { com.marklogic.client.spring.batch.SpringBatchConfig.class, com.marklogic.client.spring.DatabaseConfig.class },
-	excludeFilters = @ComponentScan.Filter(value = com.marklogic.client.spring.BasicConfig.class, type = FilterType.ASSIGNABLE_TYPE)
-)
+@Component
 public class Application {
-	
-	private static Log log = LogFactory.getLog(Application.class);
-	
-	public static void main(String[] args) {
-    	log.debug("Starting...");
-        SpringApplication.run(Application.class, args);
-        log.debug("Ending...");
-    }
+ 
+    @Autowired
+    JobLauncher jobLauncher;
     
-
+    @Autowired
+    JobRepository jobRepository;
+ 
+    @Autowired
+    Job job1;
+ 
+    public static void main(String... args) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+ 
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
+        Application main = context.getBean(Application.class);
+        main.jobLauncher.run(main.job1, new JobParameters());
+        context.close();
+ 
+    }
+ 
 }
