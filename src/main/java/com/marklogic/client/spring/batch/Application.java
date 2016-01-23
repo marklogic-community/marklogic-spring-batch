@@ -25,13 +25,13 @@ public class Application {
     Job job1;
     
     @Autowired
-    Job corb;
+    Job corbJob;
  
     public static void main(String... args) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, 
     		JobRestartException, JobInstanceAlreadyCompleteException {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
         Application main = context.getBean(Application.class);
-        main.jobLauncher.run(main.corb, new JobParameters());
+        main.jobLauncher.run(main.corbJob, new JobParameters());
         context.close();
  
     }
