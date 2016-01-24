@@ -38,13 +38,13 @@ public class GeonamesConfig {
    private TaskExecutor taskExecutor;
      
    @Bean
-   public Job job1(@Qualifier("step1") Step step1) {
+   public Job loadGeonamesJob(@Qualifier("loadGeonamesStep") Step step1) {
 	   log.info("Geonames Job");
-	   return jobBuilderFactory.get("geonames").start(step1).build();
+	   return jobBuilderFactory.get("loadGeonamesJob").start(step1).build();
    }
    
    @Bean
-   protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor, ItemWriter<Document> writer) {
+   protected Step loadGeonamesStep(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor, ItemWriter<Document> writer) {
 	 log.info("Import Geonames");
      return stepBuilderFactory.get("step1")
     		 .<Geoname, Document> chunk(10)
