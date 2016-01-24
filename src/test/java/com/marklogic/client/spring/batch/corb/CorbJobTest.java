@@ -1,7 +1,5 @@
 package com.marklogic.client.spring.batch.corb;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -12,12 +10,10 @@ import org.springframework.test.context.ContextConfiguration;
 import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 
 @ContextConfiguration(classes = { com.marklogic.client.spring.batch.corb.CorbConfig.class } )
-public class GetUrisModuleTest extends AbstractSpringBatchTest {
+public class CorbJobTest extends AbstractSpringBatchTest {
 	
 	@Autowired
 	Job corbJob;
-	
-	private Log log = LogFactory.getLog(this.getClass());	
 	
 	@Test
 	public void corbTest() throws Exception {
