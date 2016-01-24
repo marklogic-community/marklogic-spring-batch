@@ -19,12 +19,6 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 	@Autowired
 	protected JobLauncher jobLauncher;
 	
-	protected SpringBatchNamespaceProvider nsProvider;
-	
-	protected JobLauncherTestUtils jobLauncherTestUtils;
-
-	protected JobRepositoryTestUtils jobRepositoryTestUtils;
-	
 	@Autowired
 	protected JobRepository jobRepository;
 	
@@ -33,6 +27,12 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 	
 	@Autowired
 	protected DatabaseClientProvider databaseClientProvider;
+	
+	protected SpringBatchNamespaceProvider nsProvider;
+	
+	protected JobLauncherTestUtils jobLauncherTestUtils;
+
+	protected JobRepositoryTestUtils jobRepositoryTestUtils;
 	
 	public AbstractSpringBatchTest() {
 		super();
@@ -45,6 +45,7 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 	public void beforeTest() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJobLauncher(jobLauncher);
+		jobLauncherTestUtils.setJobRepository(jobRepository);
 	}
 	
 	 @Override

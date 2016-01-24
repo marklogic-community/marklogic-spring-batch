@@ -78,21 +78,21 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 
 	@Override
 	public JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters,
-			String jobConfigurationLocation) {
-			JobExecution jobExecution = new JobExecution(jobInstance, jobParameters, jobConfigurationLocation);
-			Document doc = documentBuilder.newDocument();
-			Marshaller marshaller = null;
-			try {
-				marshaller = jaxbContext.createMarshaller();
-				marshaller.marshal(jobExecution, doc);
-			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
-			DOMHandle handle = new DOMHandle();
-			handle.set(doc);
-			xmlDocMgr.write("/tes123t.xml", handle);
+		String jobConfigurationLocation) {
+		JobExecution jobExecution = new JobExecution(jobInstance, jobParameters, jobConfigurationLocation);
+		Document doc = documentBuilder.newDocument();
+		Marshaller marshaller = null;
+		try {
+			marshaller = jaxbContext.createMarshaller();
+			marshaller.marshal(jobExecution, doc);
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
+		DOMHandle handle = new DOMHandle();
+		handle.set(doc);
+		xmlDocMgr.write("/tes123t.xml", handle);
 			
 		return jobExecution;
 	}

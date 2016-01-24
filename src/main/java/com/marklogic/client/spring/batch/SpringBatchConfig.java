@@ -12,7 +12,6 @@ import org.springframework.batch.core.configuration.support.MapJobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -25,6 +24,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.batch.core.explore.MarkLogicJobExplorer;
+import com.marklogic.client.spring.batch.core.repository.MarkLogicJobRepository;
 
 @Configuration
 public class SpringBatchConfig {
@@ -66,22 +66,14 @@ public class SpringBatchConfig {
 	
 	@Bean
 	public JobRepository jobRepository() {
-		MapJobRepositoryFactoryBean mapJobRepositoryFactoryBean = new MapJobRepositoryFactoryBean();
-	    mapJobRepositoryFactoryBean.setTransactionManager(platformTransactionManager());
-	    JobRepository jobRepo = null;
-	    try {
-			jobRepo = mapJobRepositoryFactoryBean.getObject();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		JobRepository jobRepo = new MarkLogicJobRepository(databaseClientProvider.getDatabaseClient());
 	    return jobRepo;
 	}	
 	
 	@Bean
 	public JobLauncher jobLauncher(JobRepository jobRepository) {
 		SimpleJobLauncher launcher = new SimpleJobLauncher();
-		launcher.setJobRepository(jobRepository);
+		launcher.setJobRepository(jobRepository());
 		launcher.setTaskExecutor(taskExecutor());
 		return launcher;
 	}
@@ -108,6 +100,8 @@ public class SpringBatchConfig {
 	
 	@Bean
 	public JobLauncher jobLauncher() {
+		SimpleJobLauncher launcher = new SimpleJobLauncher();
+		launcher.setJobRepository(jobRepository());
 		return new SimpleJobLauncher();
 	}
 	
