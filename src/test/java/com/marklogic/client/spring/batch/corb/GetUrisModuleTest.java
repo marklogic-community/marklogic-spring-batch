@@ -1,6 +1,12 @@
 package com.marklogic.client.spring.batch.corb;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -10,10 +16,16 @@ import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 public class GetUrisModuleTest extends AbstractSpringBatchTest {
 	
 	@Autowired
-	GetUrisTasklet getUrisTasklet;
+	Job corbJob;
+	
+	private Log log = LogFactory.getLog(this.getClass());	
 	
 	@Test
-	public void getUrisTest() throws Exception {
-		getUrisTasklet.execute(null, null);
+	public void corbTest() throws Exception {
+		JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
+		jobLauncherTestUtils.setJobLauncher(jobLauncher);
+		jobLauncherTestUtils.setJob(corbJob);
+		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 }

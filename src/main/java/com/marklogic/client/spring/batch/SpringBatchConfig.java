@@ -99,5 +99,10 @@ public class SpringBatchConfig {
 		return new StepBuilderFactory(jobRepository, platformTransactionManager);
 	}
 	
+	@Bean
+	public JobLauncher jobLauncher() {
+		return new SimpleJobLauncher();
+	}
+	
 	
 }
