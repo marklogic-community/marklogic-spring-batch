@@ -8,6 +8,7 @@ import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.helper.DatabaseClientProvider;
@@ -46,13 +47,27 @@ public class MarkLogicItemReader<T> implements ItemReader<T> {
 		this.urisModule = urisModule;
 	}
 
-
 	@Override
+	@SuppressWarnings({ "unchecked" })
 	public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-		if (resultIterator.hasNext()) 
-			return (T) resultIterator.next().getAs(String.class);
-		else
-			return null;
+		T result = null;
+		if (resultIterator.hasNext()) {
+			EvalResult item = resultIterator.next();
+			switch (item.getType()) {
+				case INTEGER: {  
+					result = (T) item.getAs(Integer.class);
+					break;
+				}
+				case STRING: {
+					result = (T) item.getAs(String.class);
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+		} 
+		return result;
 	}
 
 }
