@@ -3,6 +3,7 @@ package com.marklogic.client.spring.batch.geonames;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
@@ -20,9 +21,6 @@ import org.jdom2.input.DOMBuilder;
 public class MarshallGeonameObjectToXmlTest extends AbstractSpringBatchTest {
 	
 	@Autowired
-	Marshaller marshaller;
-	
-	@Autowired
 	DocumentBuilder documentBuilder;
 	
 	@Autowired
@@ -38,14 +36,12 @@ public class MarshallGeonameObjectToXmlTest extends AbstractSpringBatchTest {
 		geo.setNames(names);
 		
 		Document w3cDoc = documentBuilder.newDocument();
+		Marshaller marshaller = JAXBContext.newInstance(org.geonames.Geoname.class).createMarshaller();
 		marshaller.marshal(geo, w3cDoc);
 		Fragment frag = new Fragment(domBuilder.build(w3cDoc));
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		System.out.println(frag.getPrettyXml());
-		frag.assertElementExists("/geo:geoname/geo:names/geo:name[2][text() = 'Beta']");
-		
-	
-		
+		frag.assertElementExists("/geo:geoname/geo:names/geo:name[2][text() = 'Beta']");	
 	}
 
 }

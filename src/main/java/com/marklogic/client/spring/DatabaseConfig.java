@@ -38,7 +38,7 @@ public class DatabaseConfig {
 		return env.getProperty("marklogic.database", "Documents");
 	}
 	
-	@Bean
+    @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
         PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
         c.setIgnoreResourceNotFound(true);

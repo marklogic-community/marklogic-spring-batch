@@ -1,7 +1,5 @@
 package com.marklogic.client.spring.batch;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,19 +14,23 @@ import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.spring.batch.core.explore.MarkLogicJobExplorer;
+
 @Configuration
 public class SpringBatchConfig {
 	
-	@Bean
-	public JAXBContext jaxbContext() throws JAXBException {
-		return JAXBContext.newInstance(org.geonames.Geoname.class);
-	}
+	@Autowired
+	DatabaseClientProvider databaseClientProvider;
 		
 	@Bean
 	public DocumentBuilder documentBuilder() {
@@ -55,6 +57,11 @@ public class SpringBatchConfig {
 		//sate.setConcurrencyLimit(8);
 		SyncTaskExecutor ste = new SyncTaskExecutor();
 		return ste;
+	}
+	
+	public JobBuilder jobBuilder(JobRepository jobRepository) {
+		JobBuilder jobBuilder = new JobBuilder("marklogic-jobs");
+		return jobBuilder.repository(jobRepository);
 	}
 	
 	@Bean
@@ -104,5 +111,9 @@ public class SpringBatchConfig {
 		return new SimpleJobLauncher();
 	}
 	
+	@Bean
+	public JobExplorer jobExplorer() {
+		return new MarkLogicJobExplorer(databaseClientProvider.getDatabaseClient());
+	}
 	
 }
