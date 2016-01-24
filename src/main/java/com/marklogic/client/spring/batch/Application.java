@@ -1,7 +1,7 @@
 package com.marklogic.client.spring.batch;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -31,7 +31,10 @@ public class Application {
     		JobRestartException, JobInstanceAlreadyCompleteException {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
         Application main = context.getBean(Application.class);
-        main.jobLauncher.run(main.corbJob, new JobParameters());
+        JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
+        jobParametersBuilder.addString("uris", "/uris.xqy");
+        jobParametersBuilder.addString("process", "/process.xqy");        
+        main.jobLauncher.run(main.corbJob, jobParametersBuilder.toJobParameters());
         context.close();
  
     }

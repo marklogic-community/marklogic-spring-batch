@@ -15,11 +15,14 @@ public class MarkLogicItemWriter<T> implements ItemWriter<T> {
 	private DatabaseClient databaseClient;
 	private String processModule;
 	private Log log = LogFactory.getLog(MarkLogicItemWriter.class);
+
+	public void setProcessModule(String process) {
+		this.processModule = process;
+	}
 	
-	public MarkLogicItemWriter(DatabaseClientProvider databaseClientProvider, String processModule) {
+	public MarkLogicItemWriter(DatabaseClientProvider databaseClientProvider) {
 		log.info("ML Item Writer");
 		databaseClient = databaseClientProvider.getDatabaseClient();
-		this.processModule = processModule;
 	}
 
 	@Override
@@ -30,6 +33,10 @@ public class MarkLogicItemWriter<T> implements ItemWriter<T> {
 			invokeProcessModule.addVariable("URI", uri.toString());
 			System.out.println(invokeProcessModule.evalAs(String.class));
 		}
+	}
+
+	public String getProcessModule() {
+		return processModule;
 	}
 
 }

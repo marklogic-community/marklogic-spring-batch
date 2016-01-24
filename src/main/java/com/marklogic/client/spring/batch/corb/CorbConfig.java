@@ -7,11 +7,12 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.helper.DatabaseClientProvider;
 
 @Configuration
@@ -31,27 +32,38 @@ public class CorbConfig {
 	@Bean
 	public Job corbJob() {
 		log.info("corb");
-		return jobBuilderFactory.get("corb").start(corb()).build();
+		return jobBuilderFactory.get("corbJob").start(corb()).build();
 	}
 	   
 	@Bean
 	protected Step corb() {
+		
 		ItemProcessor<String, String> processor = new ItemProcessor<String, String>() {
-
 			@Override
 			public String process(String item) throws Exception {
 				log.info(item);
 				return item;
 			}
-			
 		};	
 		
-	    return stepBuilderFactory.get("corb-step")
-	    		.<String, String>chunk(1)
-	    		.reader(new MarkLogicItemReader<String>(databaseClientProvider, "test.xqy"))
+	    return stepBuilderFactory.get("corbStep")
+	    		.<String, String>chunk(10)
+	    		.reader(uriReader())
 	    		.processor(processor)
-	    		.writer(new MarkLogicItemWriter<String>(databaseClientProvider, "/process.xqy"))
+	    		.writer(processWriter())
 	    		.build();
 	} 
+
+	public ItemReader<String> uriReader() {
+		MarkLogicItemReader<String> reader = new MarkLogicItemReader<String>(databaseClientProvider);
+		reader.setUrisModule("/uris.xqy");
+		return reader;
+	}
+	
+	public ItemWriter<String> processWriter() {
+		MarkLogicItemWriter<String> writer = new MarkLogicItemWriter<String>(databaseClientProvider);
+		writer.setProcessModule("/process.xqy");
+		return writer;
+	}
 
 }

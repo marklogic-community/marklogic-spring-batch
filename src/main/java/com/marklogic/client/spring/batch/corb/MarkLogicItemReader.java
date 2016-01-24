@@ -14,20 +14,20 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.helper.DatabaseClientProvider;
 
 public class MarkLogicItemReader<T> implements ItemReader<T> {
-	
+
 	private DatabaseClient databaseClient;
-	private String urisModule;
+	
+	String urisModule;
+	
 	EvalResultIterator resultIterator;
 	
 	private Log log = LogFactory.getLog(MarkLogicItemReader.class);
 	
-	public MarkLogicItemReader(DatabaseClientProvider databaseClientProvider, String urisModule) {
+	public MarkLogicItemReader(DatabaseClientProvider databaseClientProvider) {
 		log.info("ML ITEM READER");
 		databaseClient = databaseClientProvider.getDatabaseClient();	
-		setUrisModule(urisModule);
 		ServerEvaluationCall callUrisModule = databaseClient.newServerEval();
-		callUrisModule.xquery("cts:uris()");
-		callUrisModule.eval();
+		callUrisModule.modulePath("/uris.xqy");
 		resultIterator = callUrisModule.eval();
 	}
 
@@ -38,15 +38,15 @@ public class MarkLogicItemReader<T> implements ItemReader<T> {
 	public void setDatabaseClient(DatabaseClient databaseClient) {
 		this.databaseClient = databaseClient;
 	}
-
+	
 	public String getUrisModule() {
 		return urisModule;
 	}
 
-	public void setUrisModule(String urisModule) {
-		this.urisModule = urisModule;
+	public void setUrisModule(final String uris) {
+		this.urisModule = uris;
 	}
-
+	
 	@Override
 	@SuppressWarnings({ "unchecked" })
 	public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
