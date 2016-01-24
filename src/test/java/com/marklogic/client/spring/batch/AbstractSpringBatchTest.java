@@ -1,6 +1,8 @@
 package com.marklogic.client.spring.batch;
 
+import org.junit.Before;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -15,9 +17,17 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 	
 	protected SpringBatchNamespaceProvider nsProvider;
 	
+	protected JobLauncherTestUtils jobLauncherTestUtils;
+	
 	public AbstractSpringBatchTest() {
 		super();
 		nsProvider = new SpringBatchNamespaceProvider();
+	}
+	
+	@Before
+	public void beforeTest() {
+		jobLauncherTestUtils = new JobLauncherTestUtils();
+		jobLauncherTestUtils.setJobLauncher(jobLauncher);
 	}
 	
 	 @Override

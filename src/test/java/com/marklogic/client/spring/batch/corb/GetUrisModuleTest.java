@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -22,8 +21,6 @@ public class GetUrisModuleTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void corbTest() throws Exception {
-		JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
-		jobLauncherTestUtils.setJobLauncher(jobLauncher);
 		jobLauncherTestUtils.setJob(corbJob);
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
