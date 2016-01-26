@@ -2,5 +2,12 @@
   "role-name": "spring-batch-reader",
   "description": "Allow users to view Spring Batch job execution metrics",
   "role": ["rest-reader"],
-  "collection": [ "spring-batch" ]
+  "collection": [ "spring-batch" ],
+  "privilege": [
+    {
+      "privilege-name": "xdbc-invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke",
+      "kind": "execute"
+    }
+  ]
 }

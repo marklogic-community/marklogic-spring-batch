@@ -35,8 +35,8 @@ public class Application {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
         Application main = context.getBean(Application.class);
         JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-        jobParametersBuilder.addString("uris", "/uris.xqy");
-        jobParametersBuilder.addString("process", "/process.xqy");        
+        jobParametersBuilder.addString("uris", "/ext/uris.xqy");
+        jobParametersBuilder.addString("process", "/ext/process.xqy");        
         main.jobLauncher.run(main.corbJob, jobParametersBuilder.toJobParameters());
         context.close();
  

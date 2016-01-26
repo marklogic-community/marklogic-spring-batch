@@ -56,13 +56,13 @@ public class CorbConfig {
 
 	public ItemReader<String> uriReader() {
 		MarkLogicItemReader<String> reader = new MarkLogicItemReader<String>(databaseClientProvider);
-		reader.setUrisModule("/uris.xqy");
+		reader.setUrisModule("/ext/uris.xqy");
 		return reader;
 	}
 	
 	public ItemWriter<String> processWriter() {
 		MarkLogicItemWriter<String> writer = new MarkLogicItemWriter<String>(databaseClientProvider);
-		writer.setProcessModule("/process.xqy");
+		writer.setProcessModule("/ext/process.xqy");
 		return writer;
 	}
 

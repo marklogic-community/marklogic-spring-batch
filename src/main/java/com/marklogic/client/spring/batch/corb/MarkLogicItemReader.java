@@ -27,7 +27,7 @@ public class MarkLogicItemReader<T> implements ItemReader<T> {
 		log.info("ML ITEM READER");
 		databaseClient = databaseClientProvider.getDatabaseClient();	
 		ServerEvaluationCall callUrisModule = databaseClient.newServerEval();
-		callUrisModule.modulePath("/uris.xqy");
+		callUrisModule.modulePath(urisModule);
 		resultIterator = callUrisModule.eval();
 	}
 
