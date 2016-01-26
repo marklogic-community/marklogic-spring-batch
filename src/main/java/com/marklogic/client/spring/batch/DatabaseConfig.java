@@ -1,4 +1,4 @@
-package com.marklogic.client.spring;
+package com.marklogic.client.spring.batch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.xcc.template.XccTemplate;
 
 @Configuration

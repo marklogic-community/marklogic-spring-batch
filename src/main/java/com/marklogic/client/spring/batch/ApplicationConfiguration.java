@@ -6,7 +6,7 @@ import org.springframework.context.annotation.FilterType;
 
 @Configuration
 @ComponentScan( 
-	basePackageClasses = { com.marklogic.client.spring.DatabaseConfig.class, ApplicationConfiguration.class  },
+	basePackageClasses = { com.marklogic.client.spring.batch.DatabaseConfig.class, ApplicationConfiguration.class  },
 	excludeFilters = @ComponentScan.Filter(value = com.marklogic.client.spring.BasicConfig.class, type = FilterType.ASSIGNABLE_TYPE)
 )
 public class ApplicationConfiguration {

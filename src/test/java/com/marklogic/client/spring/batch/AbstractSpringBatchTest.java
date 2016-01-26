@@ -13,7 +13,7 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
-@ContextConfiguration(classes = { com.marklogic.client.spring.batch.SpringBatchConfig.class, com.marklogic.client.spring.DatabaseConfig.class })
+@ContextConfiguration(classes = { com.marklogic.client.spring.batch.SpringBatchConfig.class, com.marklogic.client.spring.batch.DatabaseConfig.class })
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 	
 	@Autowired
