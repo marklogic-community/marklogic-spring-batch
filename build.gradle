@@ -9,9 +9,11 @@ buildscript {
     }
 }
 
-apply plugin: "java"
-apply plugin: "eclipse"
-apply plugin: 'spring-boot'
+plugins {
+  id "com.marklogic.ml-gradle" version "2.0rc5" 
+  id "java"
+  id "eclipse"
+}
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7

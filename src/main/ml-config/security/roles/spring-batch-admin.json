@@ -1,0 +1,5 @@
+{
+  "role-name": "spring-batch-admin",
+  "description": "Allow users to view Spring Batch job execution metrics",
+  "role": ["rest-admin"]
+}

@@ -1,0 +1,6 @@
+{
+  "database-name": "%%DATABASE%%",
+  "maintain-last-modified": true,
+  "uri-lexicon": true,
+  "collection-lexicon": true
+}

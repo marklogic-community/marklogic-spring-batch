@@ -1,0 +1,9 @@
+{
+  "collection": "spring-batch",
+  "permission": [
+    {
+      "role-name": "rest-admin",
+      "capability": "read"
+    }
+  ]
+}
