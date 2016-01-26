@@ -4,6 +4,10 @@
     {
       "role-name": "rest-admin",
       "capability": "read"
+    },
+    {
+      "role-name": "rest-admin",
+      "capability": "update"
     }
   ]
 }

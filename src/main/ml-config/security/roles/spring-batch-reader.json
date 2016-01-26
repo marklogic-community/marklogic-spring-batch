@@ -1,5 +1,6 @@
 {
   "role-name": "spring-batch-reader",
   "description": "Allow users to view Spring Batch job execution metrics",
-  "role": ["rest-reader"]
+  "role": ["rest-reader"],
+  "collection": [ "spring-batch" ]
 }

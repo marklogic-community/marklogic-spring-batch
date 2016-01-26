@@ -1,5 +1,41 @@
 {
   "role-name": "spring-batch-admin",
   "description": "Allow users to view Spring Batch job execution metrics",
-  "role": ["rest-admin"]
+  "role": ["spring-batch-reader", "rest-admin", "rest-extension-user"],
+  "privilege": [
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "any-collection",
+      "action": "http://marklogic.com/xdmp/privileges/any-collection",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:insert-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:insert",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert",
+      "kind": "execute"
+    }
+  ],
+  "permission": [
+     {
+       "role-name": "rest-admin",
+       "capability": "update"
+     },
+     {
+       "role-name": "rest-admin",
+       "capability": "read"
+     },
+     {
+       "role-name": "rest-extension-user",
+       "capability": "execute"
+     }
+   ]
 }
