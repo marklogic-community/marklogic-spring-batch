@@ -35,7 +35,6 @@ public class CorbConfig {
 		return jobBuilderFactory.get("corbJob").start(corb()).build();
 	}
 	   
-	@Bean
 	protected Step corb() {
 		
 		ItemProcessor<String, String> processor = new ItemProcessor<String, String>() {
@@ -55,14 +54,12 @@ public class CorbConfig {
 	} 
 
 	public ItemReader<String> uriReader() {
-		MarkLogicItemReader<String> reader = new MarkLogicItemReader<String>(databaseClientProvider);
-		reader.setUrisModule("/ext/uris.xqy");
+		MarkLogicItemReader<String> reader = new MarkLogicItemReader<String>(databaseClientProvider, "/ext/corb/uris.xqy");
 		return reader;
 	}
 	
 	public ItemWriter<String> processWriter() {
-		MarkLogicItemWriter<String> writer = new MarkLogicItemWriter<String>(databaseClientProvider);
-		writer.setProcessModule("/ext/process.xqy");
+		MarkLogicItemWriter<String> writer = new MarkLogicItemWriter<String>(databaseClientProvider, "/ext/corb/process.xqy");
 		return writer;
 	}
 

@@ -20,9 +20,10 @@ public class MarkLogicItemWriter<T> implements ItemWriter<T> {
 		this.processModule = process;
 	}
 	
-	public MarkLogicItemWriter(DatabaseClientProvider databaseClientProvider) {
+	public MarkLogicItemWriter(DatabaseClientProvider databaseClientProvider, String processModule) {
 		log.info("ML Item Writer");
 		databaseClient = databaseClientProvider.getDatabaseClient();
+		setProcessModule(processModule);
 	}
 
 	@Override
