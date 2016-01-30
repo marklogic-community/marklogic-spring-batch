@@ -8,6 +8,12 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobRepositoryTestUtils;
@@ -36,6 +42,12 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 	@Autowired
 	protected DatabaseClientConfig databaseClientConfig;
 	
+	@Autowired
+	protected JobBuilderFactory jobBuilderFactory;
+	
+	@Autowired
+	protected StepBuilderFactory stepBuilderFactory;
+	
 	protected SpringBatchNamespaceProvider nsProvider;
 	
 	protected JobLauncherTestUtils jobLauncherTestUtils;
@@ -59,13 +71,29 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 		jobLauncherTestUtils.setJobRepository(jobRepository);
 	}
 	
-	public void test() {
-		System.out.println(databaseClientConfig.getPort());
+	@Override
+	protected NamespaceProvider getNamespaceProvider() {
+		return nsProvider;
 	}
-	
-	 @Override
-	 protected NamespaceProvider getNamespaceProvider() {
-		 return nsProvider;
+	 
+	/**
+	     * Convenience method for testing a single step; the subclass doesn't have to bother with creating a job.
+	     * 
+	     * @param step
+	     * @return
+	 */
+	 protected void launchJobWithStep(Step step) {
+		 Job job = jobBuilderFactory.get("testJob").start(step).build();
+		 jobLauncherTestUtils.setJob(job);
+
+	     JobExecution jobExecution = null;
+	     try {
+	    	 jobExecution = jobLauncherTestUtils.launchJob();
+	     } catch (Exception e) {
+	    	 throw new RuntimeException(e);
+	     }
+	     assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+	     logger.info("Job execution time: " + (jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime()));
 	 }
 
 }

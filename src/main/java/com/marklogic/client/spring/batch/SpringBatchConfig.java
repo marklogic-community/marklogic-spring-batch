@@ -110,4 +110,9 @@ public class SpringBatchConfig {
 		return new MarkLogicJobExplorer(databaseClientProvider.getDatabaseClient());
 	}
 	
+	@Bean
+	public JobBuilderFactory jobBuilderFactory() {
+		return new JobBuilderFactory(jobRepository());
+	}
+	
 }

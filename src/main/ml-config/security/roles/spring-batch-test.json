@@ -8,6 +8,11 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "xdbc:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "unprotected-collections",
       "action": "http://marklogic.com/xdmp/privileges/unprotected-collections",
       "kind": "execute"
