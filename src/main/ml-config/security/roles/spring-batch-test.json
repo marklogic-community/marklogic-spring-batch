@@ -1,0 +1,26 @@
+{
+  "role-name" : "spring-batch-test",
+  "role" : [ "spring-batch-admin"],
+  "privilege": [
+    {
+      "privilege-name": "xdbc:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "unprotected-collections",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-collections",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke-in",
+      "kind": "execute"
+    }
+  ]
+}
