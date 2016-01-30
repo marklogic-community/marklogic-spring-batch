@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.SimpleDatabaseClientProvider;
-import com.marklogic.xcc.template.XccTemplate;
 
 @Configuration
 @PropertySource("config/application.properties")
@@ -38,7 +37,7 @@ public class DatabaseConfig {
 	protected String getDatabaseName() {
 		return env.getProperty("marklogic.spring-batch.database", "spring-batch-content");
 	}
-	
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
         PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
@@ -49,11 +48,6 @@ public class DatabaseConfig {
     @Bean
     public DatabaseClientConfig databaseClientConfig() {
         return new DatabaseClientConfig(getHost(), getPort(), getUser(), getPassword());
-    }
-
-    @Bean
-    public XccTemplate xccTemplate() {
-        return new XccTemplate(String.format("xcc://%s:%s@%s:8000/%s", getUser(), getPassword(), getHost(), getDatabaseName()));
     }
 
     @Bean
