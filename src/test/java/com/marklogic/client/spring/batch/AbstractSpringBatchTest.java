@@ -17,7 +17,7 @@ import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @ContextConfiguration(classes = { TestConfig.class })
-public abstract class AbstractBatchTest extends AbstractSpringTest {
+public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 
     @Autowired
     protected JobLauncher jobLauncher;

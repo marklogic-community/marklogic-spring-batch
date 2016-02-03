@@ -8,10 +8,10 @@ import org.springframework.batch.test.JobRepositoryTestUtils;
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.spring.batch.AbstractBatchTest;
+import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.junit.Fragment;
 
-public class CreateJobExecutionTest extends AbstractBatchTest {
+public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 
     @Test
     public void createSingleJobExecutionTest() throws Exception {

@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 
-import com.marklogic.client.spring.batch.AbstractBatchTest;
+import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 
-public class CorbJobTest extends AbstractBatchTest {
+public class CorbJobTest extends AbstractSpringBatchTest {
 
     private ItemReader<String> reader;
     private ItemWriter<String> writer;

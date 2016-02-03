@@ -12,10 +12,10 @@ import org.jdom2.input.DOMBuilder;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.marklogic.client.spring.batch.AbstractBatchTest;
+import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.junit.Fragment;
 
-public class MarshallGeonameObjectToXmlTest extends AbstractBatchTest {
+public class MarshallGeonameObjectToXmlTest extends AbstractSpringBatchTest {
 
     @Test
     public void marshallGeonameTest() throws Exception {
