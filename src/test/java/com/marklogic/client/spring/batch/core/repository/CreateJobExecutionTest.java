@@ -24,7 +24,7 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 		assertFalse(jobExecutions.isEmpty());
 		XMLDocumentManager xmlDocMgr = databaseClientProvider.getDatabaseClient().newXMLDocumentManager();
 		String id = jobExecutions.get(0).getId().toString();
-		StringHandle handle = (StringHandle) xmlDocMgr.read(MarkLogicSpringBatchRepository.SPRING_BATCH_DIR + "/job-execution/" + id, new StringHandle());
+		StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatchRepository.SPRING_BATCH_DIR + "/job-execution/" + id, new StringHandle());
 		Fragment f = new Fragment(handle.toString(), nsProvider.getNamespaces());
 		f.assertElementExists(format("/sb:jobExecution/sb:id[text() = %s]", id));
 		

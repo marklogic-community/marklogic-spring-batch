@@ -9,7 +9,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.spring.batch.reader.CollectionUrisReader;
 import com.marklogic.client.spring.batch.writer.DeleteUriWriter;
 
-public class DeleteUrisTest extends AbstractSpringBatchTest {
+public class DeleteUrisTest extends AbstractBatchTest {
 
     private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 2500;
     private final static int NUMBER_OF_DOCUMENTS_TO_DELETE_AT_ONE_TIME = 100;

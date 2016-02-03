@@ -14,29 +14,29 @@ import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 @Configuration
 @PropertySource("config/application.properties")
 public class DatabaseConfig {
-	
-	@Autowired
-	private Environment env;
 
-	protected String getHost() {
-		return env.getProperty("marklogic.host", "localhost");
-	}
-	
-	protected int getPort() {
-		return Integer.parseInt(env.getProperty("marklogic.spring-batch.port", "8000"));
-	}
-	
-	protected String getUser() {
-		return env.getProperty("marklogic.spring-batch.user", "admin");
-	}
-	
-	protected String getPassword() {
-		return env.getProperty("marklogic.spring-batch.password", "admin");
-	}
-	
-	protected String getDatabaseName() {
-		return env.getProperty("marklogic.spring-batch.database", "spring-batch-content");
-	}
+    @Autowired
+    private Environment env;
+
+    protected String getHost() {
+        return env.getProperty("marklogic.host", "localhost");
+    }
+
+    protected int getPort() {
+        return Integer.parseInt(env.getProperty("marklogic.port", "8000"));
+    }
+
+    protected String getUser() {
+        return env.getProperty("marklogic.user", "admin");
+    }
+
+    protected String getPassword() {
+        return env.getProperty("marklogic.password", "admin");
+    }
+
+    protected String getDatabaseName() {
+        return env.getProperty("marklogic.database", "Documents");
+    }
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
