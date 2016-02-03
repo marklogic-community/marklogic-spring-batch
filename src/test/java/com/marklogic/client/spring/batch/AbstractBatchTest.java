@@ -8,9 +8,12 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import com.marklogic.client.spring.batch.core.repository.MarkLogicJobRepository;
+import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @ContextConfiguration(classes = { TestConfig.class })
@@ -25,6 +28,11 @@ public abstract class AbstractBatchTest extends AbstractSpringTest {
     @Autowired
     protected JobBuilderFactory jobBuilderFactory;
 
+    @Override
+    protected NamespaceProvider getNamespaceProvider() {
+        return new SpringBatchNamespaceProvider();
+    }
+
     /**
      * Convenience method for creating a JobLauncherTestUtils that can be used to launch a job or a step in a test.
      * 
@@ -33,6 +41,13 @@ public abstract class AbstractBatchTest extends AbstractSpringTest {
     protected JobLauncherTestUtils newJobLauncherTestUtils() {
         JobLauncherTestUtils utils = new JobLauncherTestUtils();
         utils.setJobLauncher(jobLauncher);
+        return utils;
+    }
+
+    protected JobRepositoryTestUtils newJobRepositoryTestUtils() {
+        JobRepositoryTestUtils utils = new JobRepositoryTestUtils();
+        MarkLogicJobRepository repo = new MarkLogicJobRepository(getClient());
+        utils.setJobRepository(repo);
         return utils;
     }
 
