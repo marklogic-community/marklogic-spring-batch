@@ -1,4 +1,4 @@
-package com.marklogic.client.spring;
+package com.marklogic.client.spring.batch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 
 @Configuration
 @PropertySource("config/application.properties")
@@ -31,6 +32,10 @@ public class DatabaseConfig {
 
     protected String getPassword() {
         return env.getProperty("marklogic.password", "admin");
+    }
+
+    protected String getDatabaseName() {
+        return env.getProperty("marklogic.database", "Documents");
     }
 
     @Bean

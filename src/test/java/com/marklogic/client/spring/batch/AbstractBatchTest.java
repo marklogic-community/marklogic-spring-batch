@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @ContextConfiguration(classes = { TestConfig.class })
-public class AbstractBatchTest extends AbstractSpringTest {
+public abstract class AbstractBatchTest extends AbstractSpringTest {
 
     @Autowired
     protected JobLauncher jobLauncher;
