@@ -26,6 +26,17 @@ public abstract class AbstractBatchTest extends AbstractSpringTest {
     protected JobBuilderFactory jobBuilderFactory;
 
     /**
+     * Convenience method for creating a JobLauncherTestUtils that can be used to launch a job or a step in a test.
+     * 
+     * @return
+     */
+    protected JobLauncherTestUtils newJobLauncherTestUtils() {
+        JobLauncherTestUtils utils = new JobLauncherTestUtils();
+        utils.setJobLauncher(jobLauncher);
+        return utils;
+    }
+
+    /**
      * Convenience method for testing a single step; the subclass doesn't have to bother with creating a job.
      * 
      * @param step
@@ -33,8 +44,7 @@ public abstract class AbstractBatchTest extends AbstractSpringTest {
      */
     protected void launchJobWithStep(Step step) {
         Job job = jobBuilderFactory.get("testJob").start(step).build();
-        JobLauncherTestUtils utils = new JobLauncherTestUtils();
-        utils.setJobLauncher(jobLauncher);
+        JobLauncherTestUtils utils = newJobLauncherTestUtils();
         utils.setJob(job);
 
         JobExecution jobExecution = null;
