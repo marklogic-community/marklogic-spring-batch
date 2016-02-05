@@ -1,24 +1,31 @@
 package com.marklogic.client.spring.batch.corb;
 
 import org.junit.Test;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 
 import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 
-@ContextConfiguration(classes = { com.marklogic.client.spring.batch.corb.CorbConfig.class } )
 public class CorbJobTest extends AbstractSpringBatchTest {
-	
-	@Autowired
-	Job corbJob;
-	
-	@Test
-	public void corbTest() throws Exception {
-		jobLauncherTestUtils.setJob(corbJob);
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-	}
+
+    private ItemReader<String> reader;
+    private ItemWriter<String> writer;
+
+    @Test
+    public void corbTest() {
+        givenACorbReaderAndWriter();
+        whenTheJobIsRun();
+
+        // TODO Should add some assertions based on what the process module does.
+    }
+
+    private void givenACorbReaderAndWriter() {
+        reader = new MarkLogicItemReader<String>(getClient(), "/ext/corb/uris.xqy");
+        writer = new MarkLogicItemWriter<String>(getClient(), "/ext/corb/process.xqy");
+    }
+
+    private void whenTheJobIsRun() {
+        launchJobWithStep(
+                stepBuilderFactory.get("testStep").<String, String> chunk(10).reader(reader).writer(writer).build());
+    }
 }

@@ -21,11 +21,11 @@ import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentCollections;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentPermissions;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.spring.batch.AbstractBatchTest;
+import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.client.spring.batch.TestConfig;
 
 @ContextConfiguration(classes = { TestConfig.class })
-public class ReadFromHsqlTest extends AbstractBatchTest {
+public class ReadFromHsqlTest extends AbstractSpringBatchTest {
 
     private final static int TABLE_ROW_CHUNK_SIZE = 10;
 
