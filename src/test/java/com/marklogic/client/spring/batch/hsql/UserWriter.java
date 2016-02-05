@@ -18,7 +18,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.spring.batch.writer.AbstractDocumentWriter;
+import com.marklogic.spring.batch.item.AbstractDocumentWriter;
 
 /**
  * Writer class that is specific to the "ReadFromHsqlTest" test. It shows an example of how to deal with a SQL statement
