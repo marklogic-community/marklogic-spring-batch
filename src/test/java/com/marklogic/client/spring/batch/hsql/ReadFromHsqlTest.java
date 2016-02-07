@@ -20,9 +20,9 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentCollections;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentPermissions;
+import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.TestConfig;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.spring.batch.AbstractSpringBatchTest;
-import com.marklogic.client.spring.batch.TestConfig;
 
 @ContextConfiguration(classes = { TestConfig.class })
 public class ReadFromHsqlTest extends AbstractSpringBatchTest {
