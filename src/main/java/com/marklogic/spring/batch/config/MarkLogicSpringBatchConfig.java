@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.annotation.AbstractBatchConfiguration;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.support.MapJobRegistry;
@@ -23,7 +24,7 @@ import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
 @ActiveProfiles("marklogic")
 @Configuration
-public class MarkLogicSpringBatchConfig {
+public class MarkLogicSpringBatchConfig extends AbstractBatchConfiguration {
 	
 	@Autowired
 	private DatabaseClientProvider databaseClientProvider;
@@ -42,14 +43,6 @@ public class MarkLogicSpringBatchConfig {
 		JobRepository jobRepo = new MarkLogicJobRepository(databaseClientProvider.getDatabaseClient());
 	    return jobRepo;
 	}	
-	
-	@Bean
-	public JobLauncher jobLauncher(JobRepository jobRepository) {
-		SimpleJobLauncher launcher = new SimpleJobLauncher();
-		launcher.setJobRepository(jobRepository());
-		launcher.setTaskExecutor(taskExecutor());
-		return launcher;
-	}
 
 	@Bean
 	public JobRegistry jobRegistry() {
@@ -74,5 +67,13 @@ public class MarkLogicSpringBatchConfig {
 	@Bean
 	public JobExplorer jobExplorer() {
 		return new MarkLogicJobExplorer(databaseClientProvider.getDatabaseClient());
+	}
+
+	@Bean
+	public JobLauncher jobLauncher() throws Exception {
+		SimpleJobLauncher launcher = new SimpleJobLauncher();
+		launcher.setJobRepository(jobRepository());
+		launcher.setTaskExecutor(taskExecutor());
+		return launcher;
 	}
 }
