@@ -1,7 +1,5 @@
 package com.marklogic.spring.batch.config;
 
-import javax.xml.bind.JAXBContext;
-
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -14,6 +12,8 @@ import org.springframework.batch.support.transaction.ResourcelessTransactionMana
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -25,26 +25,30 @@ import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 @Configuration
 public class MarkLogicSpringBatchConfig {
 	
-	private JAXBContext jaxbContext;
-	
 	@Autowired
 	private DatabaseClientProvider databaseClientProvider;
-
-	@Bean
-	public JAXBContext jaxbContext() throws Exception {
-		jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class,
-                    org.springframework.batch.core.JobInstance.class);
-		return jaxbContext;
-	}	
 	
 	@Bean
-	public JobRepository jobRepository() {
-		return new MarkLogicJobRepository(databaseClientProvider.getDatabaseClient());
+	protected TaskExecutor taskExecutor() {
+		//CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
+		//SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
+		//sate.setConcurrencyLimit(8);
+		SyncTaskExecutor ste = new SyncTaskExecutor();
+		return ste;
 	}
 	
 	@Bean
-	public JobLauncher jobLauncher() {
-		return new SimpleJobLauncher();
+	public JobRepository jobRepository() {
+		JobRepository jobRepo = new MarkLogicJobRepository(databaseClientProvider.getDatabaseClient());
+	    return jobRepo;
+	}	
+	
+	@Bean
+	public JobLauncher jobLauncher(JobRepository jobRepository) {
+		SimpleJobLauncher launcher = new SimpleJobLauncher();
+		launcher.setJobRepository(jobRepository());
+		launcher.setTaskExecutor(taskExecutor());
+		return launcher;
 	}
 
 	@Bean
