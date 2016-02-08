@@ -12,7 +12,7 @@ public class SpringBatchNamespaceProvider extends MarkLogicNamespaceProvider {
     protected List<Namespace> buildListOfNamespaces() {
         List<Namespace> list = super.buildListOfNamespaces();
         list.add(Namespace.getNamespace("geo", "http://geonames.org"));
-        list.add(Namespace.getNamespace("sb", "http://marklogic.com/spring-batch"));
+        list.add(Namespace.getNamespace("sb", "http://projects.spring.io/spring-batch"));
         return list;
     }
 }

@@ -30,7 +30,7 @@ public class PersistSimpleJobInstanceTest extends AbstractSpringBatchTest {
         StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatchRepository.SPRING_BATCH_DIR + "/job-execution/" + id,
                 new StringHandle());
         Fragment f = parse(handle.toString());
-        f.assertElementExists(format("/sb:jobExecution/sb:jobInstance/sb:id[text() = %s]", id));		
+        f.assertElementExists(format("/sb:jobInstance/sb:id[text() = %s]", id));		
 	}
 
 	private void whenJobIsExecuted() {

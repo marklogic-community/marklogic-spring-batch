@@ -126,7 +126,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         Marshaller marshaller = null;
         try {
             JAXBElement<JobExecution> jaxbElement = new JAXBElement<JobExecution>(
-                    new QName("http://marklogic.com/spring-batch", "jobExecution"),
+                    new QName("http://projects.spring.io/spring-batch", "jobInstance"),
                     org.springframework.batch.core.JobExecution.class, jobExecution);
             marshaller = jaxbContext.createMarshaller();
             marshaller.marshal(jaxbElement, doc);
