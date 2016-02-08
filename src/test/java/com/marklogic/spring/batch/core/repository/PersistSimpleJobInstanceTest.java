@@ -2,9 +2,14 @@ package com.marklogic.spring.batch.core.repository;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.JobRepositoryTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.mock.env.MockEnvironment;
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
@@ -16,6 +21,15 @@ public class PersistSimpleJobInstanceTest extends AbstractSpringBatchTest {
 	
 	private JobExecution jobExecution;
 	
+	@Autowired
+	Environment environment;
+	
+	@Before
+	public void setup() {
+		ConfigurableEnvironment environment = new MockEnvironment();
+		environment.setActiveProfiles("marklogic");
+	}
+	
 	@Test
 	public void persistSimpleJobInstanceTest() throws Exception {
 		givenAJobExecution();
@@ -26,10 +40,10 @@ public class PersistSimpleJobInstanceTest extends AbstractSpringBatchTest {
     private void thenVerifyJobInstanceIsPersisted() {
     	XMLDocumentManager xmlDocMgr = getClient().newXMLDocumentManager();
         String id = jobExecution.getId().toString();
-        StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatchRepository.SPRING_BATCH_DIR + "/job-instance/" + id,
+        StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatchRepository.SPRING_BATCH_DIR + "/job-execution/" + id,
                 new StringHandle());
         Fragment f = parse(handle.toString());
-        f.assertElementExists(format("/sb:job-instance/sb:job-execution/sb:id[text() = %s]", id));		
+        f.assertElementExists(format("/sb:jobExecution/sb:jobInstance/sb:id[text() = %s]", id));		
 	}
 
 	private void whenJobIsExecuted() {

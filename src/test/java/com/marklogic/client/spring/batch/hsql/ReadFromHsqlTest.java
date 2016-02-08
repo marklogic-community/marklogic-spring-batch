@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.test.context.ContextConfiguration;
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -21,10 +20,8 @@ import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentCollections;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentPermissions;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
-import com.marklogic.spring.batch.TestConfig;
 import com.marklogic.client.io.StringHandle;
 
-@ContextConfiguration(classes = { TestConfig.class })
 public class ReadFromHsqlTest extends AbstractSpringBatchTest {
 
     private final static int TABLE_ROW_CHUNK_SIZE = 10;

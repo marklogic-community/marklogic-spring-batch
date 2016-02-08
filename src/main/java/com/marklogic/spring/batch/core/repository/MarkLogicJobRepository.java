@@ -64,7 +64,6 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 
     @Override
     public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
-
         return false;
     }
 
@@ -112,8 +111,13 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
     public JobExecution createJobExecution(String jobName, JobParameters jobParameters)
             throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 
-        // Create a JobExecution instance
-
+        // Check to see if JobInstance exists
+    	if (isJobInstanceExists(jobName, jobParameters)) {
+    		
+    	} else {
+    		
+    	}
+    	
         JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
         JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
         jobExecution.setId(getRandomNumber());
