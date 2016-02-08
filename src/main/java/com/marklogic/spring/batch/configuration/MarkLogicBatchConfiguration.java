@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.configuration;
 
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.AbstractBatchConfiguration;
@@ -13,18 +13,18 @@ import org.springframework.batch.support.transaction.ResourcelessTransactionMana
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
-@ActiveProfiles("marklogic")
 @Configuration
-public class MarkLogicSpringBatchConfig extends AbstractBatchConfiguration {
+@Profile("marklogic")
+public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	
 	@Autowired
 	private DatabaseClientProvider databaseClientProvider;

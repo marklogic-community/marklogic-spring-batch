@@ -11,12 +11,17 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
-@ContextConfiguration(classes = { TestConfig.class })
+@ActiveProfiles("default")
+@ContextConfiguration(classes = { 
+		com.marklogic.junit.spring.BasicTestConfig.class, 
+		com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class,
+		com.marklogic.spring.batch.configuration.DefaultBatchConfiguration.class })
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 
     @Autowired
