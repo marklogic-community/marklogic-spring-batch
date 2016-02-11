@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.bind.XmlJobExecution;
 import com.marklogic.spring.batch.bind.XmlJobParameters;
 
 public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
@@ -44,7 +45,7 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 		
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		
-		marshaller = JAXBContext.newInstance(XmlJobParameters.class, JobInstance.class, JobExecution.class).createMarshaller();
+		marshaller = JAXBContext.newInstance(XmlJobParameters.class, JobInstance.class, JobExecution.class, XmlJobExecution.class).createMarshaller();
 	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	}
 	
@@ -73,11 +74,13 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 	@Test
 	public void marshallJobExecutionTest() throws Exception {
 		JobExecution jobExecution = new JobExecution(jobInstance, jobParametersBuilder.toJobParameters());
-		JAXBElement<JobExecution> element = new JAXBElement<JobExecution>(new QName(MarkLogicSpringBatchRepository.NAMESPACE, "jobExecution"), JobExecution.class, jobExecution);
-		marshaller.marshal(element, doc);
+		XmlJobExecution xmlJobExecution = new XmlJobExecution();
+		xmlJobExecution.setJobExecution(jobExecution);
+		xmlJobExecution.setJobParameters(jobParams);
+		marshaller.marshal(xmlJobExecution, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
-        frag.assertElementValue("/sb:jobExecution/sb:jobInstance/sb:id", "123");
+        frag.assertElementValue("/sb:job/sb:jobExecution/sb:jobInstance/sb:id", "123");
 	}
 }
