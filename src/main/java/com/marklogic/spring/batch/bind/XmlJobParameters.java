@@ -1,9 +1,8 @@
 package com.marklogic.spring.batch.bind;
 
-import java.util.AbstractCollection;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,61 +10,55 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.JobParameters;
+
 
 @XmlRootElement(name="jobParameters")
 public class XmlJobParameters {
 
-    private Properties props = new Properties();
+    private List<Parameter> listOfParameters;
     
     public XmlJobParameters() {
     	
     }
     
-    public XmlJobParameters(Properties props) {
-    	this.props = props;
+    public XmlJobParameters(JobParameters jobParams) {
+    	listOfParameters = new ArrayList<Parameter>();
+    	for (Map.Entry<String, JobParameter> entry : jobParams.getParameters().entrySet()) {
+    		Parameter param = new Parameter();
+    		param.key = entry.getKey();
+    		JobParameter jobParam = entry.getValue();
+    		param.type = jobParam.getType().toString();
+    		param.identifier = Boolean.toString(jobParam.isIdentifying());
+    		switch (jobParam.getType()) {
+    			case STRING:
+    				param.value = jobParams.getString(entry.getKey());    				
+    				break;
+    			case DATE:
+    				param.value = jobParams.getDate(entry.getKey()).toString();
+    				break;
+    			case DOUBLE:
+    				param.value = jobParams.getDouble(entry.getKey()).toString();
+    				break;
+    			case LONG:
+    				param.value = jobParams.getLong(entry.getKey()).toString();
+    				break;
+    		}
+    		listOfParameters.add(param);
+    	}
+    	
     }
     
     @XmlElement(name="jobParameter")
-    public XmlProperties getProperties() {
-        return new XmlProperties(props);
+    public List<Parameter> getJobParameters() {
+        return listOfParameters;
     }
 	
-    @XmlType(name="property") static class XmlProperty {
+    @XmlType(name="property") static class Parameter {
         @XmlAttribute public String key;
+        @XmlAttribute public String type;
+        @XmlAttribute public String identifier;
         @XmlValue public String value;
     }
- 
-    static class XmlProperties extends AbstractCollection<XmlProperty> {
-        private final Properties props;
-        public XmlProperties(Properties props) { this.props = props; }
-        public int size() { return props.size(); }
-        public Iterator<XmlProperty> iterator() {
-            return new XmlPropertyIterator(props.entrySet().iterator());
-        }
-        public boolean add(XmlProperty xml) {
-            return !xml.value.equals(props.setProperty(xml.key, xml.value));
-        }
-    }
- 
-    static class XmlPropertyIterator implements Iterator<XmlProperty> {
-        private final Iterator<Map.Entry<Object, Object>> base;
-        
-        public XmlPropertyIterator(Iterator<Map.Entry<Object, Object>> base) {
-            this.base = base;
-        }
-        public boolean hasNext() { 
-        	return base.hasNext(); 
-        }
-        
-        public void remove() { base.remove(); }
-        
-        public XmlProperty next() {	
-            Map.Entry<?, ?> entry = base.next();
-            XmlProperty xml = new XmlProperty();
-            xml.key = entry.getKey().toString();
-            xml.value = entry.getValue().toString();
-            return xml;
-        }
-    }
-
 }

@@ -26,10 +26,11 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 	
 	@Before
 	public void setup() {
-		jobParametersBuilder.addString("stringTest", "Joe Cool");
-		jobParametersBuilder.addDate("start", new Date());
-		jobParametersBuilder.addLong("longTest", 1239L);
-		jobParams = new XmlJobParameters(jobParametersBuilder.toJobParameters().toProperties());
+		jobParametersBuilder.addString("stringTest", "Joe Cool", true);
+		jobParametersBuilder.addDate("start", new Date(), false);
+		jobParametersBuilder.addLong("longTest", 1239L, false);
+		jobParametersBuilder.addDouble("doubleTest", 1.35D, false);
+		jobParams = new XmlJobParameters(jobParametersBuilder.toJobParameters());
 	}
 	
 	@Test
@@ -40,7 +41,10 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
         marshaller.marshal(jobParams, w3cDoc);
         Fragment frag = new Fragment(new DOMBuilder().build(w3cDoc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
-        frag.assertElementExists("/sb:jobParameters/sb:jobParameter[@key = 'stringTest']");
-     
+        frag.assertElementExists("/sb:jobParameters/sb:jobParameter[@key = 'stringTest' and text() = 'Joe Cool' and @identifier = 'true']");
+        frag.assertElementExists("/sb:jobParameters/sb:jobParameter[@key = 'longTest' and text() = '1239' and @identifier = 'false']");
+        frag.assertElementExists("/sb:jobParameters/sb:jobParameter[@key = 'start' and @identifier = 'false']");
+        frag.assertElementExists("/sb:jobParameters/sb:jobParameter[@key = 'doubleTest' and text() = '1.35' and @identifier = 'false']");
+        frag.prettyPrint();
     }
 }
