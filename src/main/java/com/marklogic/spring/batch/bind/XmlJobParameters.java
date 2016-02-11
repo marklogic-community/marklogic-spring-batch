@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.bind;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,8 @@ public class XmlJobParameters {
     				param.value = jobParams.getString(entry.getKey());    				
     				break;
     			case DATE:
-    				param.value = jobParams.getDate(entry.getKey()).toString();
+    				String formatted = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(jobParams.getDate(entry.getKey()));
+    				param.value = formatted;
     				break;
     			case DOUBLE:
     				param.value = jobParams.getDouble(entry.getKey()).toString();
