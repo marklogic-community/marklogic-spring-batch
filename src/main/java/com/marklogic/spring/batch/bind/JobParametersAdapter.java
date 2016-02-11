@@ -5,29 +5,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 
+public class JobParametersAdapter extends XmlAdapter<AdaptedJobParameters, JobParameters> {
 
-@XmlRootElement(name="jobParameters")
-public class XmlJobParameters {
+	@Override
+	public JobParameters unmarshal(AdaptedJobParameters v) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    private List<Parameter> listOfParameters;
-    
-    public XmlJobParameters() {
+	@Override
+	public AdaptedJobParameters marshal(JobParameters jobParams) throws Exception {
+		AdaptedJobParameters adaptedJobParams = new AdaptedJobParameters();
+    	List<AdaptedJobParameters.AdaptedJobParameter> listOfParameters = new ArrayList<AdaptedJobParameters.AdaptedJobParameter>();
     	
-    }
-    
-    public XmlJobParameters(JobParameters jobParams) {
-    	listOfParameters = new ArrayList<Parameter>();
     	for (Map.Entry<String, JobParameter> entry : jobParams.getParameters().entrySet()) {
-    		Parameter param = new Parameter();
+    		AdaptedJobParameters.AdaptedJobParameter param = new AdaptedJobParameters.AdaptedJobParameter();
     		param.key = entry.getKey();
     		JobParameter jobParam = entry.getValue();
     		param.type = jobParam.getType().toString();
@@ -49,18 +46,8 @@ public class XmlJobParameters {
     		}
     		listOfParameters.add(param);
     	}
-    	
-    }
-    
-    @XmlElement(name="jobParameter")
-    public List<Parameter> getJobParameters() {
-        return listOfParameters;
-    }
-	
-    @XmlType(name="property") static class Parameter {
-        @XmlAttribute public String key;
-        @XmlAttribute public String type;
-        @XmlAttribute public String identifier;
-        @XmlValue public String value;
-    }
+    	adaptedJobParams.setParameters(listOfParameters);
+		return adaptedJobParams;
+	}
+
 }
