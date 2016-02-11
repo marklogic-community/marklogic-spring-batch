@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.configuration;
 
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.AbstractBatchConfiguration;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -75,5 +76,10 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 		launcher.setJobRepository(jobRepository());
 		launcher.setTaskExecutor(taskExecutor());
 		return launcher;
+	}
+	
+	@Bean
+	public JobParametersBuilder jobParametersBuilder() {
+		return new JobParametersBuilder();
 	}
 }
