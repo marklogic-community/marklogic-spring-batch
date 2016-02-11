@@ -12,20 +12,20 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 
-@XmlRootElement(name="myroot")
-public class JobParameters {
+@XmlRootElement(name="jobParameters")
+public class XmlJobParameters {
 
     private Properties props = new Properties();
     
-    public JobParameters() {
+    public XmlJobParameters() {
     	
     }
     
-    public JobParameters(Properties props) {
+    public XmlJobParameters(Properties props) {
     	this.props = props;
     }
     
-    @XmlElement(name="property")
+    @XmlElement(name="jobParameter")
     public XmlProperties getProperties() {
         return new XmlProperties(props);
     }
