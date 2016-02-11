@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.springframework.batch.core.JobInstance;
 
+import com.marklogic.spring.batch.core.AdaptedJobInstance;
+
 public class JobInstanceAdapter extends XmlAdapter<AdaptedJobInstance, JobInstance> {
 
 	@Override

@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 
+import com.marklogic.spring.batch.core.AdaptedJobParameters;
+
 public class JobParametersAdapter extends XmlAdapter<AdaptedJobParameters, JobParameters> {
 
 	@Override

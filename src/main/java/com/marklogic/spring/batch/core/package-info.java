@@ -6,6 +6,6 @@
 	}
 )
 
-package org.springframework.batch.core;
+package com.marklogic.spring.batch.core;
 
 import javax.xml.bind.annotation.XmlSchema;

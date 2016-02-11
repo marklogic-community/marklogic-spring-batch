@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.bind;
+package com.marklogic.spring.batch.core;
 
 import java.util.List;
 
