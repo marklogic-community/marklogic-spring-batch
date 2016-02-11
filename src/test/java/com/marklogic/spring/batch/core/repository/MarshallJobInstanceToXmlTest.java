@@ -27,6 +27,7 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 	private JobParametersBuilder jobParametersBuilder;
 	
 	XmlJobParameters jobParams;
+	JobInstance jobInstance;
 	
 	Document doc;
 	Marshaller marshaller;
@@ -39,9 +40,11 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 		jobParametersBuilder.addDouble("doubleTest", 1.35D, false);
 		jobParams = new XmlJobParameters(jobParametersBuilder.toJobParameters());
 		
+		jobInstance = new JobInstance(123L, "TestJobInstance");
+		
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		
-		marshaller = JAXBContext.newInstance(XmlJobParameters.class, JobInstance.class).createMarshaller();
+		marshaller = JAXBContext.newInstance(XmlJobParameters.class, JobInstance.class, JobExecution.class).createMarshaller();
 	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	}
 	
@@ -59,12 +62,22 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void marshallJobInstanceTest() throws Exception {
-		JobInstance jobInstance = new JobInstance(123L, "TestJobInstance");
 		JAXBElement<JobInstance> element = new JAXBElement<JobInstance>(new QName(MarkLogicSpringBatchRepository.NAMESPACE, "jobInstance"), JobInstance.class, jobInstance);
 		marshaller.marshal(element, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
         frag.assertElementValue("/sb:jobInstance/sb:id", "123");
+	}
+	
+	@Test
+	public void marshallJobExecutionTest() throws Exception {
+		JobExecution jobExecution = new JobExecution(jobInstance, jobParametersBuilder.toJobParameters());
+		JAXBElement<JobExecution> element = new JAXBElement<JobExecution>(new QName(MarkLogicSpringBatchRepository.NAMESPACE, "jobExecution"), JobExecution.class, jobExecution);
+		marshaller.marshal(element, doc);
+        Fragment frag = new Fragment(new DOMBuilder().build(doc));
+        frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
+        frag.prettyPrint();
+        frag.assertElementValue("/sb:jobExecution/sb:jobInstance/sb:id", "123");
 	}
 }
