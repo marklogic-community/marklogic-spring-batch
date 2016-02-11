@@ -23,7 +23,13 @@ public class BatchJobExecution {
 	private JobInstance jobInstance;
 	private JobExecution jobExecution;
 	private Date createDateTime;
-
+	private Date startDateTime;
+	private Date endDateTime;
+	private Date lastUpdatedDateTime;
+	private String status;
+	private String exitCode;
+	private String exitMessage;
+	
 	public BatchJobExecution() { }
 	
 	public BatchJobExecution(JobExecution jobExecution) {
@@ -31,7 +37,61 @@ public class BatchJobExecution {
 		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
 		this.createDateTime = jobExecution.getCreateTime();
+		this.endDateTime = jobExecution.getEndTime();
+		this.lastUpdatedDateTime = jobExecution.getLastUpdated();
+		this.startDateTime = jobExecution.getStartTime();
+		this.status = jobExecution.getStatus().toString();
 	}
+
+	public Date getStartDateTime() {
+		return startDateTime;
+	}
+
+	public void setStartDateTime(Date startDateTime) {
+		this.startDateTime = startDateTime;
+	}
+
+	public Date getEndDateTime() {
+		return endDateTime;
+	}
+
+	public void setEndDateTime(Date endDateTime) {
+		this.endDateTime = endDateTime;
+	}
+
+	public Date getLastUpdatedDateTime() {
+		return lastUpdatedDateTime;
+	}
+
+	public void setLastUpdatedDateTime(Date lastUpdatedDateTime) {
+		this.lastUpdatedDateTime = lastUpdatedDateTime;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getExitCode() {
+		return exitCode;
+	}
+
+	public void setExitCode(String exitCode) {
+		this.exitCode = exitCode;
+	}
+
+	public String getExitMessage() {
+		return exitMessage;
+	}
+
+	public void setExitMessage(String exitMessage) {
+		this.exitMessage = exitMessage;
+	}
+
+	
 	
 	@XmlTransient
 	public JobExecution getJobExecution() {

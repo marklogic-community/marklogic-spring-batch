@@ -74,6 +74,7 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
-        frag.assertElementValue("/sb:jobExecution/sb:jobInstance/sb:id", "123");
+        frag.assertElementExists("/sb:jobExecution/sb:createDateTime");
+        frag.assertElementValue("/sb:jobExecution/sb:status", "STARTING");
 	}
 }
