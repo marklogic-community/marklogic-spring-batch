@@ -29,11 +29,13 @@ public class BatchJobExecution {
 	private String status;
 	private String exitCode;
 	private String exitMessage;
-	
+	private Long id;
+
 	public BatchJobExecution() { }
 	
 	public BatchJobExecution(JobExecution jobExecution) {
 		this.jobExecution = jobExecution;
+		this.id = jobExecution.getId();
 		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
 		this.createDateTime = jobExecution.getCreateTime();
@@ -41,6 +43,15 @@ public class BatchJobExecution {
 		this.lastUpdatedDateTime = jobExecution.getLastUpdated();
 		this.startDateTime = jobExecution.getStartTime();
 		this.status = jobExecution.getStatus().toString();
+		this.exitCode = jobExecution.getExitStatus().toString();
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Date getStartDateTime() {

@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
@@ -45,7 +44,7 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 		
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		
-		marshaller = JAXBContext.newInstance(BatchJobExecution.class, JobParameters.class).createMarshaller();
+		marshaller = JAXBContext.newInstance(BatchJobExecution.class).createMarshaller();
 	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	    marshaller.marshal(jobExec, doc);
 	}

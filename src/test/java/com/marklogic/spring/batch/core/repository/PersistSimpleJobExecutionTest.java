@@ -13,12 +13,12 @@ import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.core.repository.MarkLogicSpringBatchRepository;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
-public class PersistSimpleJobInstanceTest extends AbstractSpringBatchTest {
+public class PersistSimpleJobExecutionTest extends AbstractSpringBatchTest {
 	
 	private JobExecution jobExecution;
 	
 	@Test
-	public void persistSimpleJobInstanceTest() throws Exception {
+	public void persistSimpleJobExecutionTest() throws Exception {
 		givenAJobExecution();
 		whenJobIsExecuted();
 		thenVerifyJobInstanceIsPersisted();
@@ -30,7 +30,8 @@ public class PersistSimpleJobInstanceTest extends AbstractSpringBatchTest {
         StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatchRepository.SPRING_BATCH_DIR + "/job-execution/" + id,
                 new StringHandle());
         Fragment f = parse(handle.toString());
-        f.assertElementExists(format("/sb:jobInstance/sb:id[text() = %s]", id));		
+        f.prettyPrint();
+        f.assertElementValue("/sb:jobExecution/sb:id", id);		
 	}
 
 	private void whenJobIsExecuted() {

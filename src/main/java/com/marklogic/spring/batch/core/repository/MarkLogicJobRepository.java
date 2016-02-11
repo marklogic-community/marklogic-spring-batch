@@ -4,10 +4,8 @@ import java.util.Collection;
 import java.util.Random;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,6 +24,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.spring.batch.core.BatchJobExecution;
 
 public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBatchRepository {
 
@@ -40,8 +39,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         this.client = client;
         initializeDocumentBuilder();
         try {
-            jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class,
-                    org.springframework.batch.core.JobInstance.class);
+            jaxbContext = JAXBContext.newInstance(BatchJobExecution.class);
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }
@@ -121,15 +119,15 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
         JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
         jobExecution.setId(getRandomNumber());
+        BatchJobExecution batchJob = new BatchJobExecution(jobExecution);
+        
 
         Document doc = documentBuilder.newDocument();
+        
         Marshaller marshaller = null;
         try {
-            JAXBElement<JobExecution> jaxbElement = new JAXBElement<JobExecution>(
-                    new QName("http://projects.spring.io/spring-batch", "jobInstance"),
-                    org.springframework.batch.core.JobExecution.class, jobExecution);
             marshaller = jaxbContext.createMarshaller();
-            marshaller.marshal(jaxbElement, doc);
+            marshaller.marshal(batchJob, doc);
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
