@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Random;
 
 import javax.xml.bind.JAXBContext;
@@ -18,6 +19,9 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
+
+import org.springframework.util.Assert;
+
 import org.w3c.dom.Document;
 
 import com.marklogic.client.DatabaseClient;
@@ -67,21 +71,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 
     @Override
     public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
-        long id = getRandomNumber();
-        JobInstance jobInstance = new JobInstance(id, jobName);
-
-        Document doc = documentBuilder.newDocument();
-        try {
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.marshal(jobInstance, doc);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
-        DOMHandle handle = new DOMHandle();
-        handle.set(doc);
-        xmlDocMgr.write(SPRING_BATCH_DIR + "/job-instance/" + id, jobInstanceMetadata, handle);
-        return jobInstance;
+    	return null;
     }
 
     @Override
@@ -121,7 +111,6 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         jobExecution.setId(getRandomNumber());
         BatchJobExecution batchJob = new BatchJobExecution(jobExecution);
         
-
         Document doc = documentBuilder.newDocument();
         
         Marshaller marshaller = null;
@@ -150,7 +139,8 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 
     @Override
     public void add(StepExecution stepExecution) {
-
+    	validateStepExecution(stepExecution);
+    	stepExecution.setLastUpdated(new Date(System.currentTimeMillis()));		
     }
 
     @Override
@@ -195,11 +185,17 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         return null;
     }
 
-    public long getRandomNumber() {
+    private long getRandomNumber() {
         long LOWER_RANGE = 0; // assign lower range value
         long UPPER_RANGE = 9999999; // assign upper range value
         Random random = new Random();
         return LOWER_RANGE + (long) (random.nextDouble() * (UPPER_RANGE - LOWER_RANGE));
     }
+    
+    private void validateStepExecution(StepExecution stepExecution) {
+		Assert.notNull(stepExecution, "StepExecution cannot be null.");
+		Assert.notNull(stepExecution.getStepName(), "StepExecution's step name cannot be null.");
+		Assert.notNull(stepExecution.getJobExecutionId(), "StepExecution must belong to persisted JobExecution");
+	}
 
 }

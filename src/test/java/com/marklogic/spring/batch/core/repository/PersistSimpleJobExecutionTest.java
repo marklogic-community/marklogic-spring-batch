@@ -31,7 +31,8 @@ public class PersistSimpleJobExecutionTest extends AbstractSpringBatchTest {
                 new StringHandle());
         Fragment f = parse(handle.toString());
         f.prettyPrint();
-        f.assertElementValue("/sb:jobExecution/sb:id", id);		
+        f.assertElementValue("/sb:jobExecution/sb:id", id);	
+        f.assertElementExists("//sb:stepExecutions");
 	}
 
 	private void whenJobIsExecuted() {
@@ -41,7 +42,8 @@ public class PersistSimpleJobExecutionTest extends AbstractSpringBatchTest {
 	private void givenAJobExecution() throws Exception {
         List<JobExecution> jobExecutions = newJobRepositoryTestUtils().createJobExecutions(1);
         assertFalse(jobExecutions.isEmpty());
-        jobExecution = jobExecutions.get(0);		
+        jobExecution = jobExecutions.get(0);	
+        jobExecution.createStepExecution("ABC-Step");
 	}
 
 }
