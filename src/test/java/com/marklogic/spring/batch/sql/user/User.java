@@ -1,4 +1,4 @@
-package com.marklogic.client.spring.batch.hsql;
+package com.marklogic.spring.batch.sql.user;
 
 import java.util.ArrayList;
 import java.util.List;

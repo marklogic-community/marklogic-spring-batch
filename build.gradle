@@ -48,6 +48,8 @@ dependencies {
   // For tests that write objects as XML
   testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
   testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
+  
+  
 }
 
 sourceSets.test.resources.srcDir 'src/test/java'
