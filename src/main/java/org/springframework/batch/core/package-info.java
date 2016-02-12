@@ -1,8 +1,8 @@
 @XmlSchema(
-	namespace="http://marklogic.com/spring-batch",
+	namespace="http://projects.spring.io/spring-batch",
 	elementFormDefault=javax.xml.bind.annotation.XmlNsForm.QUALIFIED,	
 	xmlns = {
-			@javax.xml.bind.annotation.XmlNs(prefix = "sb", namespaceURI="http://projects.spring.io/spring-batch/")
+			@javax.xml.bind.annotation.XmlNs(prefix = "sb", namespaceURI="http://projects.spring.io/spring-batch")
 	}
 )
 
