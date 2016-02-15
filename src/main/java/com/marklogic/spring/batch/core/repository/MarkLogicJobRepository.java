@@ -1,13 +1,12 @@
 package com.marklogic.spring.batch.core.repository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Random;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,12 +19,16 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
+
+import org.springframework.util.Assert;
+
 import org.w3c.dom.Document;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.spring.batch.core.BatchJobExecution;
 
 public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBatchRepository {
 
@@ -40,8 +43,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         this.client = client;
         initializeDocumentBuilder();
         try {
-            jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class,
-                    org.springframework.batch.core.JobInstance.class);
+            jaxbContext = JAXBContext.newInstance(BatchJobExecution.class);
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }
@@ -69,21 +71,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 
     @Override
     public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
-        long id = getRandomNumber();
-        JobInstance jobInstance = new JobInstance(id, jobName);
-
-        Document doc = documentBuilder.newDocument();
-        try {
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.marshal(jobInstance, doc);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
-        DOMHandle handle = new DOMHandle();
-        handle.set(doc);
-        xmlDocMgr.write(SPRING_BATCH_DIR + "/job-instance/" + id, jobInstanceMetadata, handle);
-        return jobInstance;
+    	return null;
     }
 
     @Override
@@ -121,15 +109,14 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
         JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
         jobExecution.setId(getRandomNumber());
-
+        BatchJobExecution batchJob = new BatchJobExecution(jobExecution);
+        
         Document doc = documentBuilder.newDocument();
+        
         Marshaller marshaller = null;
         try {
-            JAXBElement<JobExecution> jaxbElement = new JAXBElement<JobExecution>(
-                    new QName("http://projects.spring.io/spring-batch", "jobInstance"),
-                    org.springframework.batch.core.JobExecution.class, jobExecution);
             marshaller = jaxbContext.createMarshaller();
-            marshaller.marshal(jaxbElement, doc);
+            marshaller.marshal(batchJob, doc);
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -152,7 +139,8 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
 
     @Override
     public void add(StepExecution stepExecution) {
-
+    	validateStepExecution(stepExecution);
+    	stepExecution.setLastUpdated(new Date(System.currentTimeMillis()));		
     }
 
     @Override
@@ -197,11 +185,17 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         return null;
     }
 
-    public long getRandomNumber() {
+    private long getRandomNumber() {
         long LOWER_RANGE = 0; // assign lower range value
         long UPPER_RANGE = 9999999; // assign upper range value
         Random random = new Random();
         return LOWER_RANGE + (long) (random.nextDouble() * (UPPER_RANGE - LOWER_RANGE));
     }
+    
+    private void validateStepExecution(StepExecution stepExecution) {
+		Assert.notNull(stepExecution, "StepExecution cannot be null.");
+		Assert.notNull(stepExecution.getStepName(), "StepExecution's step name cannot be null.");
+		Assert.notNull(stepExecution.getJobExecutionId(), "StepExecution must belong to persisted JobExecution");
+	}
 
 }
