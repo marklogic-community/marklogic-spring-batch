@@ -1,11 +1,19 @@
 @XmlSchema(
-	namespace="http://projects.spring.io/spring-batch",
+	namespace=MarkLogicSpringBatch.NAMESPACE,
 	elementFormDefault=javax.xml.bind.annotation.XmlNsForm.QUALIFIED,	
 	xmlns = {
-			@javax.xml.bind.annotation.XmlNs(prefix = "sb", namespaceURI="http://projects.spring.io/spring-batch")
+			@javax.xml.bind.annotation.XmlNs(prefix = MarkLogicSpringBatch.NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.NAMESPACE)
 	}
 )
 
-package com.marklogic.spring.batch.core;
+/**
+ * Provides the classes necessary to persist JobExecution data in MarkLogic
+ *
+ * @since 1.0
+
+ */
+
+package com.marklogic.spring.batch.core; 
 
 import javax.xml.bind.annotation.XmlSchema;
+
