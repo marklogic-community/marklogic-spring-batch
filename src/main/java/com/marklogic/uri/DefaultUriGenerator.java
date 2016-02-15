@@ -1,6 +1,7 @@
 package com.marklogic.uri;
 
 import java.io.File;
+import java.util.UUID;
 
 import com.marklogic.client.helper.LoggingObject;
 
@@ -37,15 +38,21 @@ public class DefaultUriGenerator extends LoggingObject implements UriGenerator {
             return ((File) o).getAbsolutePath();
         }
         if (o instanceof String) {
-            // TODO Assume XML for now
-            String s = (String) o;
-            if (s.startsWith("<")) {
-                int pos = s.indexOf('>');
-                String rootElementName = s.substring(1, pos);
-                return "/" + rootElementName + "/" + id + ".xml";
-            }
+            String rootDir = getRootDirectory(o);
+            String path = "/" + rootDir + "/";
+            return id != null ? path + id + ".xml" : path + UUID.randomUUID() + ".xml";
         }
         return o.toString();
+    }
+
+    protected String getRootDirectory(Object o) {
+        String s = (String) o;
+        if (s.startsWith("<")) {
+            int pos = s.indexOf('>');
+            return s.substring(1, pos);
+        } else {
+            return s;
+        }
     }
 
     public String getReplacementPairs() {

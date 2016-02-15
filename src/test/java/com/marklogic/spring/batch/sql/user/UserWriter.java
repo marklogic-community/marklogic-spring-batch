@@ -1,4 +1,4 @@
-package com.marklogic.client.spring.batch.hsql;
+package com.marklogic.spring.batch.sql.user;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemWriter;
@@ -102,13 +101,4 @@ public class UserWriter extends AbstractDocumentWriter implements ItemWriter<Use
         logger.info("Closing UserWriter, and writing remaining user records");
         writeUsers(null);
     }
-
-    @Override
-    public void open(ExecutionContext executionContext) throws ItemStreamException {
-    }
-
-    @Override
-    public void update(ExecutionContext executionContext) throws ItemStreamException {
-    }
-
 }

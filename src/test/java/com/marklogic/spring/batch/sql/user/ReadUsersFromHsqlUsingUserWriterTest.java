@@ -1,42 +1,34 @@
-package com.marklogic.client.spring.batch.hsql;
+package com.marklogic.spring.batch.sql.user;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentCollections;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentPermissions;
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.spring.batch.sql.AbstractHsqlTest;
 
-public class ReadFromHsqlTest extends AbstractSpringBatchTest {
+/**
+ * This test is an example of reading from a SQL database and writing to MarkLogic via a JDBC reader, a custom Java
+ * class that maps to a table (the User class), and a RowMapper that maps a ResultSet to a User object. This pattern can
+ * be followed for data migrations where it makes sense to create a lot of Java objects and row mappers to handle
+ * different tables.
+ */
+public class ReadUsersFromHsqlUsingUserWriterTest extends AbstractHsqlTest {
 
     private final static int TABLE_ROW_CHUNK_SIZE = 10;
 
-    private EmbeddedDatabase db;
     private ItemReader<User> reader;
     private ItemWriter<User> writer;
 
-    @Before
-    public void setup() {
-        givenAnHsqlDatabaseWithSomeUsersInIt();
-    }
-
     @Test
     public void withNoMetadata() {
+        givenAnHsqlDatabaseWithSomeUsersInIt();
         givenAReaderToReadUsersFromTheHsqlDatabase();
         givenAnXmlWriterWithNoMetadata();
         whenTheJobIsRun();
@@ -45,6 +37,7 @@ public class ReadFromHsqlTest extends AbstractSpringBatchTest {
 
     @Test
     public void withCollectionsAndPermissions() {
+        givenAnHsqlDatabaseWithSomeUsersInIt();
         givenAReaderToReadUsersFromTheHsqlDatabase();
         givenAnXmlWriterWithCollectionsAndPermissions();
         whenTheJobIsRun();
@@ -52,35 +45,16 @@ public class ReadFromHsqlTest extends AbstractSpringBatchTest {
         thenMarkLogicNowHasUserDocumentsWithMetadata();
     }
 
-    @After
-    public void teardown() {
-        db.shutdown();
-    }
-
     private void givenAnHsqlDatabaseWithSomeUsersInIt() {
-        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-        db = builder.setType(EmbeddedDatabaseType.HSQL).addScript("db/create-db.sql").addScript("db/insert-data.sql")
-                .build();
+        createDb("db/create-users-db.sql", "db/insert-hundred-users.sql");
     }
 
     private void givenAReaderToReadUsersFromTheHsqlDatabase() {
         JdbcCursorItemReader<User> r = new JdbcCursorItemReader<>();
         r.setDataSource(db);
-        r.setSql("SELECT users.*, comments.comment FROM users LEFT JOIN comments ON users.id = comments.userId ORDER BY users.id");
-        r.setRowMapper(new RowMapper<User>() {
-            @Override
-            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                User user = new User();
-                user.setId(rs.getInt(1));
-                user.setName(rs.getString(2));
-                user.setEmail(rs.getString(3));
-                String comment = rs.getString(4);
-                if (comment != null) {
-                    user.getComments().add(comment);
-                }
-                return user;
-            }
-        });
+        r.setSql(
+                "SELECT users.*, comments.comment FROM users LEFT JOIN comments ON users.id = comments.userId ORDER BY users.id");
+        r.setRowMapper(new UserRowMapper());
         this.reader = r;
     }
 
