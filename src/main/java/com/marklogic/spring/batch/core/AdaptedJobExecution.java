@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.marklogic.client.pojo.annotation.Id;
 import com.marklogic.spring.batch.bind.JobInstanceAdapter;
 import com.marklogic.spring.batch.bind.JobParametersAdapter;
 import com.marklogic.spring.batch.bind.StepExecutionAdapter;
@@ -30,14 +31,14 @@ public class AdaptedJobExecution {
 	private String status;
 	private String exitCode;
 	private String exitMessage;
-	private Long id;
+	private String id;
 	private Collection<StepExecution> stepExecutions;
 
 	public AdaptedJobExecution() { }
 	
 	public AdaptedJobExecution(JobExecution jobExecution) {
 		this.jobExecution = jobExecution;
-		this.id = jobExecution.getId();
+		setId(jobExecution.getId());
 		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
 		this.createDateTime = jobExecution.getCreateTime();
@@ -57,13 +58,14 @@ public class AdaptedJobExecution {
 	public void setStepExecutions(Collection<StepExecution> stepExecutions) {
 		this.stepExecutions = stepExecutions;
 	}
-
-	public Long getId() {
+	
+	@Id
+	public String getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		this.id = MarkLogicSpringBatch.SPRING_BATCH_DIR + id;
 	}
 
 	public Date getStartDateTime() {

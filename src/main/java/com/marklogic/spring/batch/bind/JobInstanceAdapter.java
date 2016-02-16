@@ -10,8 +10,7 @@ public class JobInstanceAdapter extends XmlAdapter<AdaptedJobInstance, JobInstan
 
 	@Override
 	public JobInstance unmarshal(AdaptedJobInstance v) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return new JobInstance(v.getId(), v.getJobName());
 	}
 
 	@Override

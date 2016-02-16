@@ -29,14 +29,15 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
-public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBatchRepository {
+public class MarkLogicJobRepository implements JobRepository {
 
     private DocumentBuilder documentBuilder;
 
     private JAXBContext jaxbContext;
     private DocumentMetadataHandle jobExecutionMetadata;
-    private DocumentMetadataHandle jobInstanceMetadata;
+
     private DatabaseClient client;
 
     public MarkLogicJobRepository(DatabaseClient client) {
@@ -48,7 +49,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
             throw new RuntimeException(ex);
         }
         jobExecutionMetadata = new DocumentMetadataHandle();
-        jobExecutionMetadata.getCollections().add(COLLECTION_JOB_EXECUTION);
+        jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
 
     }
 
@@ -123,7 +124,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
         DOMHandle handle = new DOMHandle();
         handle.set(doc);
-        xmlDocMgr.write(SPRING_BATCH_DIR + "/job-execution/" + jobExecution.getId().toString(), jobExecutionMetadata,
+        xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/job-execution/" + jobExecution.getId().toString(), jobExecutionMetadata,
                 handle);
 
         return jobExecution;

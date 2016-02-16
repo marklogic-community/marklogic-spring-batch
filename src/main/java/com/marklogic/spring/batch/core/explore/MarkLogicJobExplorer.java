@@ -13,31 +13,31 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.spring.batch.core.repository.MarkLogicSpringBatchRepository;
+import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
-public class MarkLogicJobExplorer implements JobExplorer, MarkLogicSpringBatchRepository {
+public class MarkLogicJobExplorer implements JobExplorer {
+	
+	@Autowired
+	private JAXBContext jaxbContext;	
 	
 	private DatabaseClient client;
-	private XMLDocumentManager xmlDocMgr;
+	private XMLDocumentManager docMgr;
 	private QueryManager qryMgr;
-	private JAXBContext jaxbContext;
 	
 	public MarkLogicJobExplorer(DatabaseClient databaseClient) {
-		client = databaseClient;
-		try {
-			jaxbContext = JAXBContext.newInstance(org.springframework.batch.core.JobExecution.class);
-		} catch (Exception ex) {
-			
-		}
-		xmlDocMgr = client.newXMLDocumentManager();
+		this.client = databaseClient;
+		docMgr = client.newXMLDocumentManager();
 		qryMgr = client.newQueryManager();
 	}
 
@@ -56,9 +56,9 @@ public class MarkLogicJobExplorer implements JobExplorer, MarkLogicSpringBatchRe
 
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
-		StringHandle handle = xmlDocMgr.read(SPRING_BATCH_DIR + "/job-execution/" + executionId.toString(), new StringHandle());
-		System.out.println(handle.get());
-		return null;
+		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
+		docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/" + Long.toString(executionId));
+		return handle.get().getJobExecution();
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class MarkLogicJobExplorer implements JobExplorer, MarkLogicSpringBatchRe
 
 	@Override
 	public JobInstance getJobInstance(Long instanceId) {
-		DOMHandle handle = xmlDocMgr.read(SPRING_BATCH_DIR + "/job-instance/" + instanceId.toString(), new DOMHandle());
+		DOMHandle handle = docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/job-instance/" + instanceId.toString(), new DOMHandle());
 		JobInstance jobInstance = null;
 		try {
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

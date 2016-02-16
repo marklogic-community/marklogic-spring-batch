@@ -10,7 +10,7 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
-import com.marklogic.spring.batch.core.repository.MarkLogicSpringBatchRepository;
+import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
 public class PersistSimpleJobExecutionTest extends AbstractSpringBatchTest {
@@ -27,7 +27,7 @@ public class PersistSimpleJobExecutionTest extends AbstractSpringBatchTest {
     private void thenVerifyJobInstanceIsPersisted() {
     	XMLDocumentManager xmlDocMgr = getClient().newXMLDocumentManager();
         String id = jobExecution.getId().toString();
-        StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatchRepository.SPRING_BATCH_DIR + "/job-execution/" + id,
+        StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/job-execution/" + id,
                 new StringHandle());
         Fragment f = parse(handle.toString());
         f.prettyPrint();
