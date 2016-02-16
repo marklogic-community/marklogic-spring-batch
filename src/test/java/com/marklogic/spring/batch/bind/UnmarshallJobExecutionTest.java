@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 
 public class UnmarshallJobExecutionTest extends AbstractSpringBatchTest {
@@ -17,7 +18,7 @@ public class UnmarshallJobExecutionTest extends AbstractSpringBatchTest {
 	
 	@Before
 	public void setup() throws Exception {
-		unmarshaller = JAXBContext.newInstance(AdaptedJobParameters.class).createUnmarshaller();
+		unmarshaller = JAXBContext.newInstance(AdaptedJobParameters.class, AdaptedJobInstance.class).createUnmarshaller();
 	}
 	
 	@Test
@@ -30,10 +31,24 @@ public class UnmarshallJobExecutionTest extends AbstractSpringBatchTest {
 					"</msb:jobParameters>");
 		AdaptedJobParameters params = (AdaptedJobParameters)unmarshaller.unmarshal(xml);
 		assertEquals(4, params.getParameters().size());
-		assertEquals(params.getParameters().get(0).value, "Joe Cool");
-		assertEquals(params.getParameters().get(1).value, "2016-02-15T21:39:21-0500");
-		assertEquals(params.getParameters().get(2).value, "1239");
-		assertEquals(params.getParameters().get(3).value, "1.35");
+		assertEquals("Joe Cool", params.getParameters().get(0).value);
+		assertEquals("2016-02-15T21:39:21-0500", params.getParameters().get(1).value);
+		assertEquals("1239", params.getParameters().get(2).value);
+		assertEquals("1.35", params.getParameters().get(3).value);
 	}
+	
+	@Test
+	public void unmarshallJobInstance() throws Exception {
+		StringReader xml = new StringReader("<msb:jobInstance xmlns:msb=\"http://projects.spring.io/spring-batch\">" +
+									"<msb:id>123</msb:id>" +
+									"<msb:jobName>TestJobInstance</msb:jobName>" + 
+									"</msb:jobInstance>");
+		AdaptedJobInstance jobInstance = (AdaptedJobInstance)unmarshaller.unmarshal(xml);
+		assertEquals(new Long(123L), jobInstance.getId());
+		assertEquals("TestJobInstance", jobInstance.getJobName());
+		
+	}
+	
+	
 
 }
