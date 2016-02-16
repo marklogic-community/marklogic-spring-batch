@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.JAXBHandle;
@@ -39,6 +40,7 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	public void setup() throws Exception {
 		DatabaseClient client = databaseClientProvider.getDatabaseClient();
 		docMgr = client.newXMLDocumentManager();
+		DatabaseClientFactory.getHandleRegistry().register(JAXBHandle.newFactory(AdaptedJobExecution.class));
 	}
 
 	
@@ -50,7 +52,7 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	}
 
 	private void thenVerifyJobExecution() {
-		assertEquals(jobExec.getJobParameters().getString("stringTest"), "Joe Cool");
+		assertEquals("Joe Cool", jobExec.getJobParameters().getString("stringTest"));
 		
 	}
 
@@ -58,7 +60,7 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 		jobExec = jobExplorer.getJobExecution(12345L);
 	}
 
-	private void givenAJobExecution() throws JAXBException {
+	private void givenAJobExecution() throws JAXBException {		
 		JobInstance jobInstance = new JobInstance(123L, "TestJobInstance");
 		JobExecution jobExec1 = new JobExecution(jobInstance, newJobParametersUtils().getJobParameters());
 		jobExec1.setId(12345L);

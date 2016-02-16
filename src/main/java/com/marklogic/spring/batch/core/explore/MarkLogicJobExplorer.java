@@ -3,6 +3,7 @@ package com.marklogic.spring.batch.core.explore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -23,6 +24,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
@@ -31,12 +33,16 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	@Autowired
 	private JAXBContext jaxbContext;	
 	
+	private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer");	
+	
 	private DatabaseClient client;
 	private XMLDocumentManager docMgr;
 	private QueryManager qryMgr;
+	private JobExecutionAdapter jobExecutionAdapter; 
 	
 	public MarkLogicJobExplorer(DatabaseClient databaseClient) {
 		this.client = databaseClient;
+		jobExecutionAdapter = new JobExecutionAdapter();
 		docMgr = client.newXMLDocumentManager();
 		qryMgr = client.newQueryManager();
 	}
@@ -58,7 +64,14 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	public JobExecution getJobExecution(Long executionId) {
 		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
 		docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + Long.toString(executionId), handle);
-		return handle.get().getJobExecution();
+		AdaptedJobExecution exec = handle.get();
+		JobExecution jobExecution = null;
+		try {
+			 jobExecution = jobExecutionAdapter.unmarshal(exec);
+		} catch (Exception ex) {
+			logger.severe(ex.getMessage());
+		}
+		return jobExecution;
 	}
 
 	@Override

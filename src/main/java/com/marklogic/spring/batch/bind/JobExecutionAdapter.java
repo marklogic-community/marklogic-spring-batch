@@ -1,0 +1,25 @@
+package com.marklogic.spring.batch.bind;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import org.springframework.batch.core.JobExecution;
+
+import com.marklogic.spring.batch.core.AdaptedJobExecution;
+
+public class JobExecutionAdapter extends XmlAdapter<AdaptedJobExecution, JobExecution>{
+
+	@Override
+	public JobExecution unmarshal(AdaptedJobExecution v) throws Exception {
+		JobExecution jobExec = new JobExecution(v.getId(), v.getJobParameters());
+		jobExec.setCreateTime(v.getCreateDateTime());
+		jobExec.setEndTime(v.getEndDateTime());
+		jobExec.setJobInstance(v.getJobInstance());
+		return jobExec;
+	}
+
+	@Override
+	public AdaptedJobExecution marshal(JobExecution v) throws Exception {
+		return new AdaptedJobExecution(v);
+	}
+
+}

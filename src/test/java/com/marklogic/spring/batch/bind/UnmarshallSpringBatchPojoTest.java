@@ -7,6 +7,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.core.JobExecution;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
@@ -14,7 +15,7 @@ import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
-public class UnmarshallJobExecutionTest extends AbstractSpringBatchTest {
+public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	Unmarshaller unmarshaller;
 	
@@ -72,6 +73,11 @@ public class UnmarshallJobExecutionTest extends AbstractSpringBatchTest {
 			"</msb:jobExecution>");
 		AdaptedJobExecution jobExecution = (AdaptedJobExecution)unmarshaller.unmarshal(xml);
 		assertEquals(MarkLogicSpringBatch.SPRING_BATCH_DIR + "12345", jobExecution.getUri());
+		assertEquals(Long.valueOf(12345L), jobExecution.getId());
+		
+		JobExecutionAdapter adapter = new JobExecutionAdapter();
+		JobExecution jobExec = adapter.unmarshal(jobExecution);
+		assertNotNull(jobExec);
 		assertEquals(Long.valueOf(12345L), jobExecution.getId());
 	}
 	

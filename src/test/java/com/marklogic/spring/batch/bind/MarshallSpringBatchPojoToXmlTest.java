@@ -15,7 +15,7 @@ import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 
-public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
+public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
 	AdaptedJobExecution jobExec;
 	
@@ -29,13 +29,12 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 		
 		JobExecution jobExecution = new JobExecution(jobInstance, newJobParametersUtils().getJobParameters());
 		jobExecution.setId(12345L);
-		jobExec = new AdaptedJobExecution(jobExecution);
-		
+		AdaptedJobExecution adaptedJobExecution = new AdaptedJobExecution(jobExecution);
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		
 		marshaller = JAXBContext.newInstance(AdaptedJobExecution.class).createMarshaller();
 	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-	    marshaller.marshal(jobExec, doc);
+	    marshaller.marshal(adaptedJobExecution, doc);
 	}
 	
 	@Test

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Date;
  
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.marklogic.client.pojo.annotation.Id;
@@ -17,13 +16,11 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 
-
 @XmlRootElement(name = "jobExecution")
 public class AdaptedJobExecution {
 	
 	private JobParameters jobParameters;
 	private JobInstance jobInstance;
-	private JobExecution jobExecution;
 	private Date createDateTime;
 	private Date startDateTime;
 	private Date endDateTime;
@@ -36,10 +33,9 @@ public class AdaptedJobExecution {
 
 	private Collection<StepExecution> stepExecutions;
 
-	public AdaptedJobExecution() { }
+	protected AdaptedJobExecution() { }
 	
 	public AdaptedJobExecution(JobExecution jobExecution) {
-		this.jobExecution = jobExecution;
 		setId(jobExecution.getId());
 		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
@@ -125,15 +121,6 @@ public class AdaptedJobExecution {
 
 	public void setExitMessage(String exitMessage) {
 		this.exitMessage = exitMessage;
-	}
-
-	@XmlTransient
-	public JobExecution getJobExecution() {
-		return jobExecution;
-	}
-	
-	public void setJobExecution(JobExecution jobExecution) {
-		this.jobExecution = jobExecution;
 	}
 	
 	public Date getCreateDateTime() {
