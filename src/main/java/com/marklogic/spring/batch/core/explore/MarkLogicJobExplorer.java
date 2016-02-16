@@ -57,7 +57,7 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
 		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
-		docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/" + Long.toString(executionId));
+		docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + Long.toString(executionId), handle);
 		return handle.get().getJobExecution();
 	}
 

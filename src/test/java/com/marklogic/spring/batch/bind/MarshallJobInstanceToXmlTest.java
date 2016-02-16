@@ -28,7 +28,7 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 		JobInstance jobInstance = new JobInstance(123L, "TestJobInstance");
 		
 		JobExecution jobExecution = new JobExecution(jobInstance, newJobParametersUtils().getJobParameters());
-		
+		jobExecution.setId(12345L);
 		jobExec = new AdaptedJobExecution(jobExecution);
 		
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -62,6 +62,7 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
+        frag.assertElementValue("/sb:jobExecution/sb:id", "12345");
         frag.assertElementExists("/sb:jobExecution/sb:createDateTime");
         frag.assertElementValue("/sb:jobExecution/sb:status", "STARTING");
 	}

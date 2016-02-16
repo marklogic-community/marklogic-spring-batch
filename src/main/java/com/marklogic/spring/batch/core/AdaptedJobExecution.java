@@ -31,7 +31,9 @@ public class AdaptedJobExecution {
 	private String status;
 	private String exitCode;
 	private String exitMessage;
-	private String id;
+	private Long id;
+	private String uri;
+
 	private Collection<StepExecution> stepExecutions;
 
 	public AdaptedJobExecution() { }
@@ -54,18 +56,27 @@ public class AdaptedJobExecution {
 	public Collection<StepExecution> getStepExecutions() {
 		return stepExecutions;
 	}
+	
+	@Id
+	public String getUri() {
+		return uri;
+	}
+
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
 
 	public void setStepExecutions(Collection<StepExecution> stepExecutions) {
 		this.stepExecutions = stepExecutions;
 	}
 	
-	@Id
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
-		this.id = MarkLogicSpringBatch.SPRING_BATCH_DIR + id;
+		setUri(MarkLogicSpringBatch.SPRING_BATCH_DIR + id);
+		this.id = id;
 	}
 
 	public Date getStartDateTime() {

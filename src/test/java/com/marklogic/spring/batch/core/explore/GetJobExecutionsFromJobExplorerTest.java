@@ -1,7 +1,5 @@
 package com.marklogic.spring.batch.core.explore;
 
-import java.util.Date;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
@@ -10,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,13 +29,9 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	private JAXBContext jaxbContext;
 	
 	@Autowired
-	private JobParametersBuilder jobParametersBuilder;
-	
-	@Autowired
 	private JobExplorer jobExplorer;
 	
 	private JobExecution jobExec;
-	private Long jobExecId;
 	
 	private XMLDocumentManager docMgr;
 	
@@ -50,7 +43,7 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 
 	
 	@Test
-	public void FindJobInstanceByJobNameTest() throws Exception {
+	public void getJobExecutionByIdTest() throws Exception {
 		givenAJobExecution();
 		whenGetJobExecutionFromJobExplorer();
 		thenVerifyJobExecution();
@@ -62,23 +55,17 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	}
 
 	private void whenGetJobExecutionFromJobExplorer() {
-		jobExec = jobExplorer.getJobExecution(jobExecId);
+		jobExec = jobExplorer.getJobExecution(12345L);
 	}
 
 	private void givenAJobExecution() throws JAXBException {
-		jobParametersBuilder.addString("stringTest", "Joe Cool", true);
-		jobParametersBuilder.addDate("start", new Date(), false);
-		jobParametersBuilder.addLong("longTest", 1239L, false);
-		jobParametersBuilder.addDouble("doubleTest", 1.35D, false);
-		
 		JobInstance jobInstance = new JobInstance(123L, "TestJobInstance");
-		
-		JobExecution jobExec1 = new JobExecution(jobInstance, jobParametersBuilder.toJobParameters());
+		JobExecution jobExec1 = new JobExecution(jobInstance, newJobParametersUtils().getJobParameters());
 		jobExec1.setId(12345L);
 		AdaptedJobExecution jobExecution = new AdaptedJobExecution(jobExec1);
 		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
 		handle.set(jobExecution);
-		docMgr.write(jobExecution.getId(), handle);
+		docMgr.write(jobExecution.getUri(), handle);
 	}
 
 		
