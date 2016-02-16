@@ -33,7 +33,7 @@ public class AdaptedJobParameters {
         public String type;
         
         @XmlAttribute 
-        public String identifier;
+        public boolean identifier;
         
         @XmlValue 
         public String value;

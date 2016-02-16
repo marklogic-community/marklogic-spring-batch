@@ -57,6 +57,10 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
         utils.setJobRepository(jobRepository);
         return utils;
     }
+    
+    protected JobParametersTestUtils newJobParametersUtils() {
+    	return new JobParametersTestUtils();
+    }
 
     /**
      * Convenience method for testing a single step; the subclass doesn't have to bother with creating a job.

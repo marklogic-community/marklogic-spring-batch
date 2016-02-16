@@ -9,15 +9,32 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 
 public class JobParametersAdapter extends XmlAdapter<AdaptedJobParameters, JobParameters> {
-
+	
 	@Override
-	public JobParameters unmarshal(AdaptedJobParameters v) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public JobParameters unmarshal(AdaptedJobParameters params) throws Exception {
+		JobParametersBuilder jobParametersBuilder  = new JobParametersBuilder();
+		for (AdaptedJobParameters.AdaptedJobParameter param : params.getParameters()) {
+    		switch (param.type) {
+    			case "STRING":
+    				jobParametersBuilder.addString(param.key, param.value, param.identifier);
+    				break;
+    			case "DATE":
+    				jobParametersBuilder.addString(param.key, param.value, param.identifier);
+    				break;
+    			case "DOUBLE":
+    				jobParametersBuilder.addDouble(param.key, Double.valueOf(param.value), param.identifier);
+    				break;
+    			case "LONG":
+    				jobParametersBuilder.addLong(param.key, Long.valueOf(param.value), param.identifier);
+    				break;
+    		}
+		}
+		return jobParametersBuilder.toJobParameters();
 	}
 
 	@Override
@@ -30,7 +47,7 @@ public class JobParametersAdapter extends XmlAdapter<AdaptedJobParameters, JobPa
     		param.key = entry.getKey();
     		JobParameter jobParam = entry.getValue();
     		param.type = jobParam.getType().toString();
-    		param.identifier = Boolean.toString(jobParam.isIdentifying());
+    		param.identifier = jobParam.isIdentifying();
     		switch (jobParam.getType()) {
     			case STRING:
     				param.value = jobParams.getString(entry.getKey());    				

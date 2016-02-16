@@ -1,7 +1,5 @@
 package com.marklogic.spring.batch.bind;
 
-import java.util.Date;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -11,8 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
 import com.marklogic.junit.Fragment;
@@ -21,9 +17,6 @@ import com.marklogic.spring.batch.core.AdaptedJobExecution;
 
 public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 	
-	@Autowired
-	private JobParametersBuilder jobParametersBuilder;
-	
 	AdaptedJobExecution jobExec;
 	
 	Document doc;
@@ -31,14 +24,10 @@ public class MarshallJobInstanceToXmlTest extends AbstractSpringBatchTest {
 	
 	@Before
 	public void setup() throws Exception {
-		jobParametersBuilder.addString("stringTest", "Joe Cool", true);
-		jobParametersBuilder.addDate("start", new Date(), false);
-		jobParametersBuilder.addLong("longTest", 1239L, false);
-		jobParametersBuilder.addDouble("doubleTest", 1.35D, false);
 		
 		JobInstance jobInstance = new JobInstance(123L, "TestJobInstance");
 		
-		JobExecution jobExecution = new JobExecution(jobInstance, jobParametersBuilder.toJobParameters());
+		JobExecution jobExecution = new JobExecution(jobInstance, newJobParametersUtils().getJobParameters());
 		
 		jobExec = new AdaptedJobExecution(jobExecution);
 		
