@@ -7,7 +7,7 @@
 )
 
 /**
- * Provides the classes necessary to persist JobExecution data in MarkLogic
+ * Provides the adapted JAXB classes necessary to persist JobExecution data in MarkLogic
  *
  * @since 1.0
 

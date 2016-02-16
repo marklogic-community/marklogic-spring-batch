@@ -28,7 +28,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.spring.batch.core.BatchJobExecution;
+import com.marklogic.spring.batch.core.AdaptedJobExecution;
 
 public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBatchRepository {
 
@@ -43,15 +43,13 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         this.client = client;
         initializeDocumentBuilder();
         try {
-            jaxbContext = JAXBContext.newInstance(BatchJobExecution.class);
+            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class);
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }
         jobExecutionMetadata = new DocumentMetadataHandle();
         jobExecutionMetadata.getCollections().add(COLLECTION_JOB_EXECUTION);
 
-        jobInstanceMetadata = new DocumentMetadataHandle();
-        jobInstanceMetadata.getCollections().add(COLLETION_JOB_INSTANCE);
     }
 
     protected void initializeDocumentBuilder() {
@@ -109,7 +107,7 @@ public class MarkLogicJobRepository implements JobRepository, MarkLogicSpringBat
         JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
         JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
         jobExecution.setId(getRandomNumber());
-        BatchJobExecution batchJob = new BatchJobExecution(jobExecution);
+        AdaptedJobExecution batchJob = new AdaptedJobExecution(jobExecution);
         
         Document doc = documentBuilder.newDocument();
         

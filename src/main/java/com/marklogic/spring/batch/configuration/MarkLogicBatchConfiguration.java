@@ -23,7 +23,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.core.BatchJobExecution;
+import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
@@ -38,7 +38,7 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	protected JAXBContext jaxbContext() {
 		JAXBContext jaxbContext = null;
 		try {
-            jaxbContext = JAXBContext.newInstance(BatchJobExecution.class);
+            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class);
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }

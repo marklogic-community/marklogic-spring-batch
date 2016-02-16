@@ -18,7 +18,7 @@ import org.springframework.batch.core.StepExecution;
 
 
 @XmlRootElement(name = "jobExecution")
-public class BatchJobExecution {
+public class AdaptedJobExecution {
 	
 	private JobParameters jobParameters;
 	private JobInstance jobInstance;
@@ -33,9 +33,9 @@ public class BatchJobExecution {
 	private Long id;
 	private Collection<StepExecution> stepExecutions;
 
-	public BatchJobExecution() { }
+	public AdaptedJobExecution() { }
 	
-	public BatchJobExecution(JobExecution jobExecution) {
+	public AdaptedJobExecution(JobExecution jobExecution) {
 		this.jobExecution = jobExecution;
 		this.id = jobExecution.getId();
 		this.jobInstance = jobExecution.getJobInstance();

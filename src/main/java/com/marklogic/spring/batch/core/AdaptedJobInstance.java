@@ -21,11 +21,11 @@ public class AdaptedJobInstance {
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
 	}
-	public String getId() {
-		return Long.toString(id);
+	public Long getId() {
+		return id;
 	}
-	public void setId(String id) {
-		this.id = Long.getLong(id);
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }
