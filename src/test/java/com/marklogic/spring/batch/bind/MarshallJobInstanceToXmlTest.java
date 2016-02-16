@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.core.repository;
+package com.marklogic.spring.batch.bind;
 
 import java.util.Date;
 
