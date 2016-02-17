@@ -1,5 +1,8 @@
 package com.marklogic.spring.batch.core.explore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
@@ -8,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -64,6 +68,8 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 		JobInstance jobInstance = new JobInstance(123L, "TestJobInstance");
 		JobExecution jobExec1 = new JobExecution(jobInstance, newJobParametersUtils().getJobParameters());
 		jobExec1.setId(12345L);
+		List<StepExecution> listOfSteps = new ArrayList<StepExecution>();
+		listOfSteps.add(new StepExecution("Step1", jobExec1));
 		AdaptedJobExecution jobExecution = new AdaptedJobExecution(jobExec1);
 		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
 		handle.set(jobExecution);

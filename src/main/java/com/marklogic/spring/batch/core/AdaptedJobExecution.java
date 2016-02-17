@@ -2,7 +2,8 @@ package com.marklogic.spring.batch.core;
 
 import java.util.Collection;
 import java.util.Date;
- 
+import java.util.concurrent.CopyOnWriteArraySet;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -31,7 +32,7 @@ public class AdaptedJobExecution {
 	private Long id;
 	private String uri;
 
-	private Collection<StepExecution> stepExecutions;
+	//private Collection<StepExecution> stepExecutions = new CopyOnWriteArraySet<StepExecution>();
 
 	protected AdaptedJobExecution() { }
 	
@@ -45,14 +46,18 @@ public class AdaptedJobExecution {
 		this.startDateTime = jobExecution.getStartTime();
 		this.status = jobExecution.getStatus().toString();
 		this.exitCode = jobExecution.getExitStatus().toString();
-		this.stepExecutions = jobExecution.getStepExecutions();
+		//this.stepExecutions = jobExecution.getStepExecutions();
 	}
-	 	
+	 /*	
 	@XmlJavaTypeAdapter(StepExecutionAdapter.class)
 	public Collection<StepExecution> getStepExecutions() {
 		return stepExecutions;
 	}
-	
+
+	public void setStepExecutions(Collection<StepExecution> stepExecutions) {
+		this.stepExecutions = stepExecutions;
+	}
+	*/
 	@Id
 	public String getUri() {
 		return uri;
@@ -60,10 +65,6 @@ public class AdaptedJobExecution {
 
 	public void setUri(String uri) {
 		this.uri = uri;
-	}
-
-	public void setStepExecutions(Collection<StepExecution> stepExecutions) {
-		this.stepExecutions = stepExecutions;
 	}
 	
 	public Long getId() {
