@@ -1,9 +1,11 @@
 package com.marklogic.spring.batch.core;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -21,6 +23,7 @@ import org.springframework.batch.core.StepExecution;
 public class AdaptedJobExecution {
 	
 	private JobParameters jobParameters;
+	private List<StepExecution> stepExecution;
 	private JobInstance jobInstance;
 	private Date createDateTime;
 	private Date startDateTime;
@@ -32,11 +35,12 @@ public class AdaptedJobExecution {
 	private Long id;
 	private String uri;
 
-	//private Collection<StepExecution> stepExecutions = new CopyOnWriteArraySet<StepExecution>();
-
-	protected AdaptedJobExecution() { }
+	protected AdaptedJobExecution() { 
+		stepExecution = new ArrayList<StepExecution>();
+	}
 	
 	public AdaptedJobExecution(JobExecution jobExecution) {
+		this();
 		setId(jobExecution.getId());
 		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
@@ -46,18 +50,21 @@ public class AdaptedJobExecution {
 		this.startDateTime = jobExecution.getStartTime();
 		this.status = jobExecution.getStatus().toString();
 		this.exitCode = jobExecution.getExitStatus().toString();
-		//this.stepExecutions = jobExecution.getStepExecutions();
-	}
-	 /*	
-	@XmlJavaTypeAdapter(StepExecutionAdapter.class)
-	public Collection<StepExecution> getStepExecutions() {
-		return stepExecutions;
+		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
 	}
 
-	public void setStepExecutions(Collection<StepExecution> stepExecutions) {
-		this.stepExecutions = stepExecutions;
+		
+	@XmlJavaTypeAdapter(StepExecutionAdapter.class)
+	@XmlElementWrapper( name="stepExecutions" )
+	@XmlElement(name = "stepExecution")
+	public List<StepExecution> getStepExecutions() {
+		return stepExecution;
 	}
-	*/
+
+	public void setStepExecutions(List<StepExecution> stepExecutions) {
+		this.stepExecution = stepExecutions;
+	}	
+
 	@Id
 	public String getUri() {
 		return uri;

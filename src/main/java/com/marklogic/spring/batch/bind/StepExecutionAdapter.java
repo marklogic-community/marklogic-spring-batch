@@ -1,33 +1,27 @@
 package com.marklogic.spring.batch.bind;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArraySet;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.springframework.batch.core.StepExecution;
 
-import com.marklogic.spring.batch.core.AdaptedStepExecutions;
-import com.marklogic.spring.batch.core.AdaptedStepExecutions.AdaptedStepExecution;
+import com.marklogic.spring.batch.core.AdaptedStepExecution;
 
-public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecutions, Collection<StepExecution>> {
+public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepExecution> {
 
 	@Override
-	public Collection<StepExecution> unmarshal(AdaptedStepExecutions v) throws Exception {
-		Collection<StepExecution> steps = new CopyOnWriteArraySet<StepExecution>();
-		for (AdaptedStepExecution adaptedStep : new ArrayList<AdaptedStepExecution>(v.getStepExecutions())) {
-			StepExecution step = new StepExecution(adaptedStep.stepName, v.getJobExecution());
-			steps.add(step);
-		}
-		return steps;
+	public StepExecution unmarshal(AdaptedStepExecution v) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public AdaptedStepExecutions marshal(Collection<StepExecution> v) throws Exception {
-		AdaptedStepExecutions adaptedSteps = new AdaptedStepExecutions();
-		return adaptedSteps;
+	public AdaptedStepExecution marshal(StepExecution v) throws Exception {
+		AdaptedStepExecution adaptedStep = new AdaptedStepExecution();
+		adaptedStep.setStepName(v.getStepName());
+		return adaptedStep;
 	}
+
+
 
 	
 	

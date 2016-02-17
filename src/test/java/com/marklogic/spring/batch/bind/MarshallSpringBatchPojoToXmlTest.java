@@ -9,11 +9,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.StepExecution;
 import org.w3c.dom.Document;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.JobExecutionTestUtils;
+import com.marklogic.spring.batch.JobParametersTestUtils;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.AdaptedStepExecution;
 
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
@@ -24,14 +28,8 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
 	@Before
 	public void setup() throws Exception {
-		
-		JobInstance jobInstance = new JobInstance(123L, "TestJobInstance");
-		
-		JobExecution jobExecution = new JobExecution(jobInstance, newJobParametersUtils().getJobParameters());
-		jobExecution.setId(12345L);
-		AdaptedJobExecution adaptedJobExecution = new AdaptedJobExecution(jobExecution);
-		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-		
+		AdaptedJobExecution adaptedJobExecution = new AdaptedJobExecution(JobExecutionTestUtils.getJobExecution());
+		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();	
 		marshaller = JAXBContext.newInstance(AdaptedJobExecution.class).createMarshaller();
 	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	    marshaller.marshal(adaptedJobExecution, doc);
@@ -64,5 +62,13 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
         frag.assertElementValue("/sb:jobExecution/sb:id", "12345");
         frag.assertElementExists("/sb:jobExecution/sb:createDateTime");
         frag.assertElementValue("/sb:jobExecution/sb:status", "STARTING");
+	}
+	
+	@Test
+	public void marshallStepExecutionTest() throws Exception {
+		Fragment frag = new Fragment(new DOMBuilder().build(doc));
+		frag.setNamespaces(getNamespaceProvider().getNamespaces());
+		frag.prettyPrint();
+		frag.assertElementExists("/sb:jobExecution/sb:stepExecutions/sb:stepExecution[1]");
 	}
 }

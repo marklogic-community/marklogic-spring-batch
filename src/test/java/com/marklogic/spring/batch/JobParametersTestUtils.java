@@ -7,7 +7,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 
 public class JobParametersTestUtils {
 	
-	public JobParameters getJobParameters() {
+	public static JobParameters getJobParameters() {
 		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 		jobParametersBuilder.addString("stringTest", "Joe Cool", true);
 		jobParametersBuilder.addDate("start", new Date(), false);
