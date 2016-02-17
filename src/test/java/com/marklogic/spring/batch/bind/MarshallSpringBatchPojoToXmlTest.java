@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.bind;
 
+import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -7,17 +9,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.jdom2.input.DOMBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.StepExecution;
 import org.w3c.dom.Document;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobExecutionTestUtils;
-import com.marklogic.spring.batch.JobParametersTestUtils;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
-import com.marklogic.spring.batch.core.AdaptedStepExecution;
 
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
@@ -69,6 +66,9 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		Fragment frag = new Fragment(new DOMBuilder().build(doc));
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		frag.prettyPrint();
-		frag.assertElementExists("/sb:jobExecution/sb:stepExecutions/sb:stepExecution[1]");
+		List<Fragment> steps = frag.getFragments("/sb:jobExecution/sb:stepExecutions/sb:stepExecution");
+		steps.get(0).assertElementValue("/sb:stepExecution/sb:stepName", "sampleStep1");
+		steps.get(1).assertElementValue("/sb:stepExecution/sb:stepName", "sampleStep2");
+		
 	}
 }
