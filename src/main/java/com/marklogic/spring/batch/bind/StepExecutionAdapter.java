@@ -19,11 +19,6 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 		AdaptedStepExecution adaptedStep = new AdaptedStepExecution();
 		adaptedStep.setStepName(v.getStepName());
 		return adaptedStep;
-	}
-
-
-
-	
-	
+	}	
 	
 }

@@ -53,7 +53,9 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 
 	private void thenVerifyJobExecution() {
 		assertEquals("Joe Cool", jobExec.getJobParameters().getString("stringTest"));
-		
+		assertEquals("sampleJob", jobExec.getJobInstance().getJobName());
+		assertFalse(jobExec.getStepExecutions().isEmpty());
+		assertEquals(2, jobExec.getStepExecutions().size());		
 	}
 
 	private void whenGetJobExecutionFromJobExplorer() {
