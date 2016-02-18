@@ -10,6 +10,7 @@ Thank you for choosing to contribute to the MarkLogic Spring Batch (MSB) project
 
 [How Can I Contribute?](#how-can-i-contribute)
   * [Development Environment](#development-environment)
+  * [Test Driven Development](#test-driven-development)
   * [Asking Questions](#asking-questions)
   * [Reporting Bugs](#reporting-bugs)
   * [Pull Requests](#pull-requests)
@@ -48,6 +49,14 @@ If you have cloned this project and wish to set up an Eclipse project, please ex
 gradlew eclipse
 ````
 
+### Test Driven Development
+The success of this project is based on the tests that exercise the code.  Every issue that is worked should be accompanied by one or more tests that test the primary use cases and several edge cases.  Code that is submitted without any accompanied tests will not be accepted.  Before submitting a pull request, run the test suite and confirm 100% test passing with the following gradle command.  
+
+````
+./gradlew test
+````
+Please review the [CorbJobTest](src/test/java/com/marklogic/spring/batch/corb/CorbJobTest.java) for an example of a proper test.  
+
 ### Asking Questions
 Please open an Issue and label it as a Question.  Please don't use email.  This is the best way to ask once and answer for all.  If you are a MarkLogic employee, I recommend that you subscribe to the java-sig email newsgroup.  
 
@@ -74,10 +83,3 @@ Once you are assigned an issue, please utilize pull requests to submit your chan
  * No Warnings
  * Use Javadocs
  * Each package should have a package-info.java
-
-
-
-
-
-
-
