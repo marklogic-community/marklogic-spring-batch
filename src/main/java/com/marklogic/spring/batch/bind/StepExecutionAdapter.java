@@ -10,8 +10,8 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 
 	@Override
 	public StepExecution unmarshal(AdaptedStepExecution v) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		StepExecution step = new StepExecution(v.getStepName(), v.getJobExecution());
+		return step;
 	}
 
 	@Override

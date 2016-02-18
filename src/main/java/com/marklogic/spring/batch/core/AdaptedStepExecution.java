@@ -27,7 +27,7 @@ public class AdaptedStepExecution {
 	private Date endTime = null;
 	private Date lastUpdated = null;
 	//private ExecutionContext executionContext = new ExecutionContext();
-	private ExitStatus exitStatus = ExitStatus.EXECUTING;
+	private String exitStatus = ExitStatus.EXECUTING.toString();
 	private boolean terminateOnly;
 	private int filterCount;
 	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
@@ -136,12 +136,12 @@ public class AdaptedStepExecution {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public ExitStatus getExitStatus() {
+	public String getExitStatus() {
 		return exitStatus;
 	}
 
 	public void setExitStatus(ExitStatus exitStatus) {
-		this.exitStatus = exitStatus;
+		this.exitStatus = exitStatus.toString();
 	}
 
 	public boolean isTerminateOnly() {
