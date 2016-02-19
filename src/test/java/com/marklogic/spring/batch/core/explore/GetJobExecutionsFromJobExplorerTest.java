@@ -53,6 +53,7 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 		givenAJobExecution();
 		whenGetJobExecutionByJobInstanceFromJobExplorer();
 		assertEquals(1, jobExecutions.size());
+		thenVerifyJobExecution();
 	}
 
 	@Test
@@ -71,6 +72,7 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	
 	private void whenGetJobExecutionByJobInstanceFromJobExplorer() {
 		jobExecutions = jobExplorer.getJobExecutions(jobInstance);
+		jobExec = jobExecutions.get(0);
 	}
 
 	private void whenGetJobExecutionFromJobExplorer() {
