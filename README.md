@@ -1,12 +1,22 @@
-# MarkLogic Spring Batch Project
+# Installation
 
-The goal of this project is to facilitate loading of data into MarkLogic via the Spring Batch Framework. 
+## Prerequisites
+* [MarkLogic Server](http://developer.marklogic.com/products)
+* Java Development Kit 1.8
 
-## Configuration
-See [application.properties](https://github.com/sastafford/marklogic-spring-batch/blob/master/src/main/resources/config/application.properties) for connection to MarkLogic.  
+## Deploy MarkLogic Spring Batch Admin
+1. Review the connection properties listed in [application.properties](https://github.com/sastafford/marklogic-spring-batch/blob/master/src/main/resources/config/application.properties).  
 
-## Jobs
- * loadGeonamesJob - [Geonames](http://www.geonames.org) - Geonames is an example of a CSV file with a few lookup values
- * corbJob - Runs a basic corb job.  Executes uris module (/uris.xqy) and process module (/process.xqy).  Uris module should only return uris, no count needed.  See \marklogic-spring-batch\src\test\java\com\marklogic\client\spring\batch\corb\CorbTest.java
- 
+1. Set up your MarkLogic environment.  MarkLogic deployment uses [Gradle](http://gradle.org/) and the [MarkLogic Gradle Plugin](http://developer.marklogic.com/code/ml-gradle). 
+````
+./gradlew mlDeploy
+````
+
+## Execute Tests
+1. Run integration and unit tests
+````
+./gradlew test
+````
+
+1. If all tests passed, then you are setup and ready to go!  The test report can be reviewed at build/reports/tests/index.html for full test report.  If you get failures please contact @sastafford. 
  
