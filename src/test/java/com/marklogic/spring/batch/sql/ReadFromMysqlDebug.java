@@ -7,7 +7,10 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import com.marklogic.migration.sql.SqlMigrator;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 
-public class ReadFromMysqlTest extends AbstractSpringBatchTest {
+/**
+ * "Debug" program for manual testing, as it depends on MySQL running locally.
+ */
+public class ReadFromMysqlDebug extends AbstractSpringBatchTest {
 
     private SqlMigrator sqlMigrator;
 
