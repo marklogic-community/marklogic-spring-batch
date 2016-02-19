@@ -48,25 +48,35 @@ public class DefaultStaxColumnMapSerializer extends LoggingObject implements Col
     private void writeColumnMap(Map<String, Object> columnMap, XMLStreamWriter sw) throws XMLStreamException {
         for (String key : columnMap.keySet()) {
             Object value = columnMap.get(key);
-            if (value instanceof List) {
-                List list = (List) value;
-                for (Object item : list) {
-                    sw.writeStartElement(key);
-                    if (item instanceof Map) {
-                        writeColumnMap((Map<String, Object>) item, sw);
-                    } else {
-                        sw.writeCharacters(item.toString());
+            if (value != null) {
+                if (value instanceof List) {
+                    List list = (List) value;
+                    for (Object item : list) {
+                        if (item != null) {
+                            sw.writeStartElement(key);
+                            if (item instanceof Map) {
+                                writeColumnMap((Map<String, Object>) item, sw);
+                            } else {
+                                sw.writeCharacters(item.toString());
+                            }
+                            sw.writeEndElement();
+                        }
                     }
+                } else if (value instanceof Map) {
+                    sw.writeStartElement(key);
+                    writeColumnMap((Map<String, Object>) value, sw);
                     sw.writeEndElement();
+                } else if (value instanceof byte[]) {
+                    // TODO Figure out what to do with blobs by default
+                    logger.info("Ignoring blob, key: " + key);
+                } else {
+                    String text = value.toString();
+                    if (text != null && text.trim().length() > 0) {
+                        sw.writeStartElement(key);
+                        sw.writeCharacters(text);
+                        sw.writeEndElement();
+                    }
                 }
-            } else if (value instanceof Map) {
-                sw.writeStartElement(key);
-                writeColumnMap((Map<String, Object>) value, sw);
-                sw.writeEndElement();
-            } else {
-                sw.writeStartElement(key);
-                sw.writeCharacters(columnMap.get(key).toString());
-                sw.writeEndElement();
             }
         }
     }
