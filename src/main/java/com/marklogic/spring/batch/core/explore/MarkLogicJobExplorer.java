@@ -24,7 +24,6 @@ import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
-import com.marklogic.client.query.MatchLocation;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
@@ -38,29 +37,49 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	@Autowired
 	private JAXBContext jaxbContext;	
 	
+	private final String SEARCH_OPTIONS_NAME = "default";
+	
 	private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer");	
 	
 	private DatabaseClient client;
 	private XMLDocumentManager docMgr;
-	private QueryManager qryMgr;
-	private JobExecutionAdapter jobExecutionAdapter; 
+	private QueryOptionsManager queryOptionsMgr;
+	private QueryManager queryMgr;
+	
+	private JobExecutionAdapter jobExecutionAdapter;
+	
 	
 	public MarkLogicJobExplorer(DatabaseClient databaseClient) {
 		this.client = databaseClient;
 		jobExecutionAdapter = new JobExecutionAdapter();
 		docMgr = client.newXMLDocumentManager();
-		qryMgr = client.newQueryManager();
+		queryMgr = client.newQueryManager();
+		queryOptionsMgr = client.newServerConfigManager().newQueryOptionsManager();
+		String options = 
+		"<options xmlns=\"http://marklogic.com/appservices/search\">" +
+		  "<constraint name=\"jobInstance\">" +
+		  	"<element-query name=\"jobInstance\" ns=\"" + MarkLogicSpringBatch.NAMESPACE + "\" />" +
+		  "</constraint>" +
+		  "<constraint name=\"jobName\">" +
+		  	"<value>" +
+		  		"<element name=\"jobName\" ns=\"" + MarkLogicSpringBatch.NAMESPACE + "\" />" +  
+		  	"</value>" +
+		  "</constraint>" +
+		  "<transform-results apply=\"raw\" />" +
+		"</options>";
+		StringHandle writeHandle = new StringHandle(options);
+		queryOptionsMgr.writeOptions(SEARCH_OPTIONS_NAME, writeHandle);
 	}
 
 	@Override
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
 		List<JobInstance> jobInstances = new ArrayList<JobInstance>();
-		StructuredQueryBuilder sb = qryMgr.newStructuredQueryBuilder("myopt");
+		StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("myopt");
 
 		// put code from examples here
 		StructuredQueryDefinition criteria = sb.collection("http://marklogic.com/spring-batch/job-instance");
 
-		StringHandle searchHandle = qryMgr.search(criteria, new StringHandle());
+		StringHandle searchHandle = queryMgr.search(criteria, new StringHandle());
 		System.out.println(searchHandle.get());
 		return jobInstances;
 	}
@@ -99,55 +118,35 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	}
 
 	@Override
-	public List<JobExecution> getJobExecutions(JobInstance jobInstance) {
-		List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
-		QueryOptionsManager optionsManager= client.newServerConfigManager().newQueryOptionsManager();
-		String options = 
-		"<options xmlns=\"http://marklogic.com/appservices/search\">" +
-		  "<constraint name=\"jobInstance\">" +
-		  	"<element-query name=\"jobInstance\" ns=\"http://projects.spring.io/spring-batch\" />" +
-		  "</constraint>" +
-		  "<constraint name=\"jobName\">" +
-		  	"<value>" +
-		  		"<element name=\"jobName\" ns=\"http://projects.spring.io/spring-batch\" />" +  
-		  	"</value>" +
-		  "</constraint>" +
-		  "<transform-results apply=\"raw\" />" +
-		"</options>";
-		StringHandle writeHandle = new StringHandle(options);
-		optionsManager.writeOptions("options", writeHandle);
-		
-		QueryManager queryMgr = client.newQueryManager();
-		
+	public List<JobExecution> getJobExecutions(JobInstance jobInstance) {		
 		String query = 
 				"<query xmlns=\"http://marklogic.com/appservices/search\">" + 
 						"<container-constraint-query>" + 
 							"<constraint-name>jobInstance</constraint-name>" + 
 							"<value-constraint-query>" +
 								"<constraint-name>jobName</constraint-name>" +
-								"<text>sampleJob</text>" +
+								"<text>" + jobInstance.getJobName() + "</text>" +
 							"</value-constraint-query>" +
 						"</container-constraint-query>" +
 				"</query>";
 		StringHandle rawHandle = new StringHandle(query);
-		RawStructuredQueryDefinition querydef = queryMgr.newRawStructuredQueryDefinition(rawHandle, "options");
-
+		RawStructuredQueryDefinition querydef = queryMgr.newRawStructuredQueryDefinition(rawHandle, SEARCH_OPTIONS_NAME);
 		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		
+		List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		AdaptedJobExecution jobExec = null;
 		for (MatchDocumentSummary summary : summaries ) {
 			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
 			summary.getFirstSnippet(jaxbHandle);
 			jobExec = jaxbHandle.get();
-			
-		}
-		JobExecutionAdapter adapter = new JobExecutionAdapter();
-		try {
-			jobExecutions.add(adapter.unmarshal(jobExec));
-		} catch (Exception ex) {
-			logger.severe(ex.getMessage());
-		}
-		
+			JobExecutionAdapter adapter = new JobExecutionAdapter();
+			try {
+				jobExecutions.add(adapter.unmarshal(jobExec));
+			} catch (Exception ex) {
+				logger.severe(ex.getMessage());
+			}
+		}	
 		return jobExecutions;
 	}
 
