@@ -17,11 +17,16 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.MatchDocumentSummary;
+import com.marklogic.client.query.MatchLocation;
 import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
@@ -64,10 +69,10 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	public JobExecution getJobExecution(Long executionId) {
 		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
 		docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + Long.toString(executionId), handle);
-		AdaptedJobExecution exec = handle.get();
+		
 		JobExecution jobExecution = null;
 		try {
-			 jobExecution = jobExecutionAdapter.unmarshal(exec);
+			 jobExecution = jobExecutionAdapter.unmarshal(handle.get());
 		} catch (Exception ex) {
 			logger.severe(ex.getMessage());
 		}
@@ -95,8 +100,55 @@ public class MarkLogicJobExplorer implements JobExplorer {
 
 	@Override
 	public List<JobExecution> getJobExecutions(JobInstance jobInstance) {
-		// TODO Auto-generated method stub
-		return null;
+		List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		QueryOptionsManager optionsManager= client.newServerConfigManager().newQueryOptionsManager();
+		String options = 
+		"<options xmlns=\"http://marklogic.com/appservices/search\">" +
+		  "<constraint name=\"jobInstance\">" +
+		  	"<element-query name=\"jobInstance\" ns=\"http://projects.spring.io/spring-batch\" />" +
+		  "</constraint>" +
+		  "<constraint name=\"jobName\">" +
+		  	"<value>" +
+		  		"<element name=\"jobName\" ns=\"http://projects.spring.io/spring-batch\" />" +  
+		  	"</value>" +
+		  "</constraint>" +
+		  "<transform-results apply=\"raw\" />" +
+		"</options>";
+		StringHandle writeHandle = new StringHandle(options);
+		optionsManager.writeOptions("options", writeHandle);
+		
+		QueryManager queryMgr = client.newQueryManager();
+		
+		String query = 
+				"<query xmlns=\"http://marklogic.com/appservices/search\">" + 
+						"<container-constraint-query>" + 
+							"<constraint-name>jobInstance</constraint-name>" + 
+							"<value-constraint-query>" +
+								"<constraint-name>jobName</constraint-name>" +
+								"<text>sampleJob</text>" +
+							"</value-constraint-query>" +
+						"</container-constraint-query>" +
+				"</query>";
+		StringHandle rawHandle = new StringHandle(query);
+		RawStructuredQueryDefinition querydef = queryMgr.newRawStructuredQueryDefinition(rawHandle, "options");
+
+		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+		AdaptedJobExecution jobExec = null;
+		for (MatchDocumentSummary summary : summaries ) {
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
+			summary.getFirstSnippet(jaxbHandle);
+			jobExec = jaxbHandle.get();
+			
+		}
+		JobExecutionAdapter adapter = new JobExecutionAdapter();
+		try {
+			jobExecutions.add(adapter.unmarshal(jobExec));
+		} catch (Exception ex) {
+			logger.severe(ex.getMessage());
+		}
+		
+		return jobExecutions;
 	}
 
 	@Override

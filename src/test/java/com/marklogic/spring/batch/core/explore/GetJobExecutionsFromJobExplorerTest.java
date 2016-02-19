@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.core.explore;
 
+import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
@@ -7,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,8 +35,10 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	@Autowired
 	private JobExplorer jobExplorer;
 	
+	private JobInstance jobInstance;
 	private JobExecution jobExec;
-	
+	private List<JobExecution> jobExecutions;
+	private Long jobExecId;
 	private XMLDocumentManager docMgr;
 	
 	@Before
@@ -42,8 +47,14 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 		docMgr = client.newXMLDocumentManager();
 		DatabaseClientFactory.getHandleRegistry().register(JAXBHandle.newFactory(AdaptedJobExecution.class));
 	}
-
 	
+	@Test
+	public void getJobExecutionByJobInstanceTest() throws Exception {
+		givenAJobExecution();
+		whenGetJobExecutionByJobInstanceFromJobExplorer();
+		assertEquals(1, jobExecutions.size());
+	}
+
 	@Test
 	public void getJobExecutionByIdTest() throws Exception {
 		givenAJobExecution();
@@ -57,12 +68,19 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 		assertFalse(jobExec.getStepExecutions().isEmpty());
 		assertEquals(2, jobExec.getStepExecutions().size());		
 	}
+	
+	private void whenGetJobExecutionByJobInstanceFromJobExplorer() {
+		jobExecutions = jobExplorer.getJobExecutions(jobInstance);
+	}
 
 	private void whenGetJobExecutionFromJobExplorer() {
-		jobExec = jobExplorer.getJobExecution(12345L);
+		jobExec = jobExplorer.getJobExecution(jobExecId);
 	}
 
 	private void givenAJobExecution() throws JAXBException {		
+		JobExecution tempJob = JobExecutionTestUtils.getJobExecution();
+		jobInstance = tempJob.getJobInstance();
+		jobExecId = tempJob.getId();
 		AdaptedJobExecution jobExecution = new AdaptedJobExecution(JobExecutionTestUtils.getJobExecution());
 		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
 		handle.set(jobExecution);
