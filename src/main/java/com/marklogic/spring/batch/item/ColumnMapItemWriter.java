@@ -74,24 +74,34 @@ public class ColumnMapItemWriter extends AbstractDocumentWriter implements ItemW
             if (idsToIgnore == null || !idsToIgnore.contains(id)) {
                 Map<String, Object> columnMap = recordMap.get(id);
                 try {
-                    logger.info("Writing record: " + columnMap);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Writing record: " + columnMap);
+                    }
                     String xml = columnMapSerializer.serializeColumnMap(columnMap, this.rootElementName, null);
                     String uri = generateUri(this.rootElementName, id.toString());
                     set.add(uri, buildMetadata(), new StringHandle(xml));
-                    logger.info("Writing URI: " + uri + "; xml: " + xml);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Writing URI: " + uri + "; xml: " + xml);
+                    }
                     idsToRemove.add(id);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
-                logger.info("Ignoring ID for now: " + id);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Ignoring ID for now: " + id);
+                }
             }
         }
 
         if (!set.isEmpty()) {
-            logger.debug("Writing set of documents");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Writing set of documents");
+            }
             mgr.write(set);
-            logger.debug("Finished writing set of documents");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Finished writing set of documents");
+            }
         }
         recordIds.removeAll(idsToRemove);
     }
@@ -113,7 +123,9 @@ public class ColumnMapItemWriter extends AbstractDocumentWriter implements ItemW
      */
     @Override
     public void close() throws ItemStreamException {
-        logger.info("Closing Writer, and writing remaining records");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Closing Writer, and writing remaining records");
+        }
         writeRecords(null);
     }
 
