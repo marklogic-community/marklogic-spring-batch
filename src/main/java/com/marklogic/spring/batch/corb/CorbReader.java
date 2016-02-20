@@ -5,13 +5,13 @@ import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.batch.item.support.AbstractItemStreamItemReader;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.spring.batch.item.AbstractItemStreamReader;
 
-public class CorbReader<T> extends AbstractItemStreamReader<T> {
+public class CorbReader<T> extends AbstractItemStreamItemReader<T> {
 
     private String urisModule;
     private DatabaseClient client;
