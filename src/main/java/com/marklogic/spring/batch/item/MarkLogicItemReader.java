@@ -1,4 +1,4 @@
-package org.springframework.batch.item.data;
+package com.marklogic.spring.batch.item;
 
 import java.net.URI;
 import java.util.Date;

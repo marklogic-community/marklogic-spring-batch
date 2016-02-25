@@ -3,9 +3,9 @@ package com.marklogic.spring.batch.corb;
 import org.junit.Test;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.data.MarkLogicItemReader;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.item.MarkLogicItemReader;
 
 public class CorbJobTest extends AbstractSpringBatchTest {
 
