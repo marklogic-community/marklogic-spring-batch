@@ -1,0 +1,11 @@
+<options xmlns="http://marklogic.com/appservices/search">
+	<constraint name="jobInstance">
+		<element-query name="jobInstance" ns="" />
+	</constraint>
+	<constraint name="jobName">
+		<value>
+			<element name="jobName" ns="" />  
+		</value>
+	</constraint>
+	<transform-results apply="raw" />
+</options>
