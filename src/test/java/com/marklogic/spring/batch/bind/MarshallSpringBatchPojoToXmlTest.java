@@ -36,10 +36,10 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
     public void marshallJobParametersTest() throws Exception {
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
-        frag.assertElementExists("/sb:jobExecution/sb:jobParameters/sb:jobParameter[@key = 'stringTest' and text() = 'Joe Cool' and @identifier = 'true']");
-        frag.assertElementExists("/sb:jobExecution/sb:jobParameters/sb:jobParameter[@key = 'longTest' and text() = '1239' and @identifier = 'false']");
-        frag.assertElementExists("/sb:jobExecution/sb:jobParameters/sb:jobParameter[@key = 'start' and @identifier = 'false']");
-        frag.assertElementExists("/sb:jobExecution/sb:jobParameters/sb:jobParameter[@key = 'doubleTest' and text() = '1.35' and @identifier = 'false']");
+        frag.assertElementExists("/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key = 'stringTest' and text() = 'Joe Cool' and @identifier = 'true']");
+        frag.assertElementExists("/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key = 'longTest' and text() = '1239' and @identifier = 'false']");
+        frag.assertElementExists("/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key = 'start' and @identifier = 'false']");
+        frag.assertElementExists("/msb:jobExecution/msb:jobParameters/msb:jobParameter[@key = 'doubleTest' and text() = '1.35' and @identifier = 'false']");
         frag.prettyPrint();
     }
 	
@@ -48,7 +48,7 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
-        frag.assertElementExists("/sb:jobExecution/sb:jobInstance/sb:id");
+        frag.assertElementExists("/msb:jobExecution/msb:jobInstance/msb:id");
 	}
 
 	@Test
@@ -56,9 +56,9 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
-        frag.assertElementExists("/sb:jobExecution/sb:id");
-        frag.assertElementExists("/sb:jobExecution/sb:createDateTime");
-        frag.assertElementValue("/sb:jobExecution/sb:status", "STARTING");
+        frag.assertElementExists("/msb:jobExecution/msb:id");
+        frag.assertElementExists("/msb:jobExecution/msb:createDateTime");
+        frag.assertElementValue("/msb:jobExecution/msb:status", "STARTING");
 	}
 	
 	@Test
@@ -66,9 +66,9 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		Fragment frag = new Fragment(new DOMBuilder().build(doc));
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		frag.prettyPrint();
-		List<Fragment> steps = frag.getFragments("/sb:jobExecution/sb:stepExecutions/sb:stepExecution");
-		steps.get(0).assertElementValue("/sb:stepExecution/sb:stepName", "sampleStep1");
-		steps.get(1).assertElementValue("/sb:stepExecution/sb:stepName", "sampleStep2");
+		List<Fragment> steps = frag.getFragments("/msb:jobExecution/msb:stepExecutions/msb:stepExecution");
+		steps.get(0).assertElementValue("/msb:stepExecution/msb:stepName", "sampleStep1");
+		steps.get(1).assertElementValue("/msb:stepExecution/msb:stepName", "sampleStep2");
 		
 	}
 }

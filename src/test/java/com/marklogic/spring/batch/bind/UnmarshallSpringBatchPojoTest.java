@@ -27,7 +27,7 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void unmarshallJobParameters() throws Exception {
-		StringReader xml = new StringReader("<msb:jobParameters xmlns:msb=\"http://projects.spring.io/spring-batch\">" + 
+		StringReader xml = new StringReader("<msb:jobParameters xmlns:msb=\"http://marklogic.com/spring-batch\">" + 
 						"<msb:jobParameter key=\"stringTest\" type=\"STRING\" identifier=\"true\">Joe Cool</msb:jobParameter>" + 
 						"<msb:jobParameter key=\"start\" type=\"DATE\" identifier=\"false\">2016-02-15T21:39:21-0500</msb:jobParameter>" +
 						"<msb:jobParameter key=\"longTest\" type=\"LONG\" identifier=\"false\">1239</msb:jobParameter>" +
@@ -43,7 +43,7 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void unmarshallJobInstance() throws Exception {
-		StringReader xml = new StringReader("<msb:jobInstance xmlns:msb=\"http://projects.spring.io/spring-batch\">" +
+		StringReader xml = new StringReader("<msb:jobInstance xmlns:msb=\"http://marklogic.com/spring-batch\">" +
 									"<msb:id>123</msb:id>" +
 									"<msb:jobName>TestJobInstance</msb:jobName>" + 
 									"</msb:jobInstance>");
@@ -55,7 +55,7 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void unmarshallJobExecution() throws Exception {
-		StringReader xml = new StringReader("<msb:jobExecution xmlns:msb=\"http://projects.spring.io/spring-batch\">" +
+		StringReader xml = new StringReader("<msb:jobExecution xmlns:msb=\"http://marklogic.com/spring-batch\">" +
 				"<msb:id>12345</msb:id>" +
 			    "<msb:createDateTime>2016-02-16T09:37:14.263-05:00</msb:createDateTime>" +
 			    "<msb:exitCode>exitCode=UNKNOWN;exitDescription=</msb:exitCode>" +
@@ -84,7 +84,7 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void unmarshallStepExecution() throws Exception {
-		StringReader xml = new StringReader("<msb:stepExecution xmlns:msb=\"http://projects.spring.io/spring-batch\">" +
+		StringReader xml = new StringReader("<msb:stepExecution xmlns:msb=\"http://marklogic.com/spring-batch\">" +
 			      "<msb:commitCount>0</msb:commitCount>" +
 			      "<msb:exitStatus />" +
 			      "<msb:filterCount>0</msb:filterCount>" +
