@@ -3,6 +3,8 @@ package com.marklogic.spring.batch.core.repository;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Random;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,26 +21,39 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
-
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 import org.w3c.dom.Document;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.io.QueryOptionsListHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
-public class MarkLogicJobRepository implements JobRepository {
+public class MarkLogicJobRepository implements JobRepository, InitializingBean {
+	
+	@Autowired
+	ApplicationContext ctx;
 
     private DocumentBuilder documentBuilder;
-
     private JAXBContext jaxbContext;
     private DocumentMetadataHandle jobExecutionMetadata;
-
     private DatabaseClient client;
+    
+    private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
+    
+	private final String SEARCH_OPTIONS_NAME = "spring-batch";
 
     public MarkLogicJobRepository(DatabaseClient client) {
         this.client = client;
@@ -65,6 +80,18 @@ public class MarkLogicJobRepository implements JobRepository {
 
     @Override
     public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
+    	QueryManager queryMgr = client.newQueryManager();
+    	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+    	String query = 
+				"<query xmlns=\"http://marklogic.com/appservices/search\">" + 
+						"<container-constraint-query>" + 
+							"<constraint-name>jobInstance</constraint-name>" + 
+							"<value-constraint-query>" +
+								"<constraint-name>jobName</constraint-name>" +
+								"<text>" + jobName + "</text>" +
+							"</value-constraint-query>" +
+						"</container-constraint-query>" +
+				"</query>";
         return false;
     }
 
@@ -195,6 +222,18 @@ public class MarkLogicJobRepository implements JobRepository {
 		Assert.notNull(stepExecution, "StepExecution cannot be null.");
 		Assert.notNull(stepExecution.getStepName(), "StepExecution's step name cannot be null.");
 		Assert.notNull(stepExecution.getJobExecutionId(), "StepExecution must belong to persisted JobExecution");
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		QueryOptionsManager queryOptionsMgr = client.newServerConfigManager().newQueryOptionsManager();
+		Resource options = ctx.getResource("classpath:/options/spring-batch-options.xml");
+		InputStreamHandle handle = new InputStreamHandle(options.getInputStream());
+		queryOptionsMgr.writeOptions(SEARCH_OPTIONS_NAME, handle);
+		logger.info(SEARCH_OPTIONS_NAME + " options loaded");
+		QueryOptionsListHandle qolHandle = queryOptionsMgr.optionsList(new QueryOptionsListHandle());
+		Set<String> results = qolHandle.getValuesMap().keySet();
+		assert(results.contains(SEARCH_OPTIONS_NAME) == true);
 	}
 
 }
