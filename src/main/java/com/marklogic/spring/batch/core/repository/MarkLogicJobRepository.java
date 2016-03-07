@@ -36,6 +36,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
+import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
@@ -80,12 +81,9 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
     	QueryManager queryMgr = client.newQueryManager();
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	StructuredQueryDefinition querydef = 
-    		    qb.and(qb.term("neighborhood"), 
-    		           qb.valueConstraint("industry", "Real Estate"));
-    	String query;
-				
-        return false;
+    	StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		return (results.getTotalResults() > 0);
     }
 
     @Override
