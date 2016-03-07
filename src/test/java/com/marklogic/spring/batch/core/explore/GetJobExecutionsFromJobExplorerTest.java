@@ -17,7 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobExecutionTestUtils;
@@ -25,9 +24,6 @@ import com.marklogic.spring.batch.core.AdaptedJobExecution;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
 public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest {
-
-	@Autowired
-	private DatabaseClientProvider databaseClientProvider;
 	
 	@Autowired
 	private JAXBContext jaxbContext;
@@ -43,7 +39,7 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	
 	@Before
 	public void setup() throws Exception {
-		DatabaseClient client = databaseClientProvider.getDatabaseClient();
+		DatabaseClient client = getClient();
 		docMgr = client.newXMLDocumentManager();
 		DatabaseClientFactory.getHandleRegistry().register(JAXBHandle.newFactory(AdaptedJobExecution.class));
 	}
