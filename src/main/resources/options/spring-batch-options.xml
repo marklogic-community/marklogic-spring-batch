@@ -1,10 +1,10 @@
 <options xmlns="http://marklogic.com/appservices/search">
 	<constraint name="jobInstance">
-		<element-query name="jobInstance" ns="" />
+		<element-query name="jobInstance" ns="http://marklogic.com/spring-batch" />
 	</constraint>
 	<constraint name="jobName">
 		<value>
-			<element name="jobName" ns="" />  
+			<element name="jobName" ns="http://marklogic.com/spring-batch" />  
 		</value>
 	</constraint>
 	<transform-results apply="raw" />

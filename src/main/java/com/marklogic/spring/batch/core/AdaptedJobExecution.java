@@ -79,7 +79,7 @@ public class AdaptedJobExecution {
 	}
 
 	public void setId(Long id) {
-		setUri(MarkLogicSpringBatch.SPRING_BATCH_DIR + id);
+		setUri(MarkLogicSpringBatch.SPRING_BATCH_DIR + id + ".xml");
 		this.id = id;
 	}
 

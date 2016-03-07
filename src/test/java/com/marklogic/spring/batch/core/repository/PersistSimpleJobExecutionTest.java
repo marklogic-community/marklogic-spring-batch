@@ -27,7 +27,7 @@ public class PersistSimpleJobExecutionTest extends AbstractSpringBatchTest {
     private void thenVerifyJobInstanceIsPersisted() {
     	XMLDocumentManager xmlDocMgr = getClient().newXMLDocumentManager();
         String id = jobExecution.getId().toString();
-        StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/job-execution/" + id,
+        StringHandle handle = xmlDocMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + id + ".xml",
                 new StringHandle());
         Fragment f = parse(handle.toString());
         f.prettyPrint();

@@ -38,16 +38,19 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
 public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 	
 	@Autowired
-	ApplicationContext ctx;
+	private ApplicationContext ctx;
 
+	@Autowired
+	private JAXBContext jaxbContext;
+	
     private DocumentBuilder documentBuilder;
-    private JAXBContext jaxbContext;
     private DocumentMetadataHandle jobExecutionMetadata;
     private DatabaseClient client;
     
@@ -58,11 +61,6 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     public MarkLogicJobRepository(DatabaseClient client) {
         this.client = client;
         initializeDocumentBuilder();
-        try {
-            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class);
-        } catch (JAXBException ex) {
-            throw new RuntimeException(ex);
-        }
         jobExecutionMetadata = new DocumentMetadataHandle();
         jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
 
@@ -82,6 +80,9 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
     	QueryManager queryMgr = client.newQueryManager();
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+    	StructuredQueryDefinition querydef = 
+    		    qb.and(qb.term("neighborhood"), 
+    		           qb.valueConstraint("industry", "Real Estate"));
     	String query;
 				
         return false;
@@ -108,8 +109,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
         XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
         DOMHandle handle = new DOMHandle();
         handle.set(doc);
-        xmlDocMgr.write("/tes123t.xml", handle);
-
+        xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/" + jobExecution.getId() + ".xml", handle);
         return jobExecution;
     }
 
@@ -143,7 +143,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
         XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
         DOMHandle handle = new DOMHandle();
         handle.set(doc);
-        xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/job-execution/" + jobExecution.getId().toString(), jobExecutionMetadata,
+        xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata,
                 handle);
 
         return jobExecution;
