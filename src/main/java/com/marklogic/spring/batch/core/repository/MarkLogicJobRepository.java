@@ -53,7 +53,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     
     private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
     
-	private final String SEARCH_OPTIONS_NAME = "spring-batch";
+	public final static String SEARCH_OPTIONS_NAME = "spring-batch";
 
     public MarkLogicJobRepository(DatabaseClient client) {
         this.client = client;
@@ -82,16 +82,8 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
     	QueryManager queryMgr = client.newQueryManager();
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	String query = 
-				"<query xmlns=\"http://marklogic.com/appservices/search\">" + 
-						"<container-constraint-query>" + 
-							"<constraint-name>jobInstance</constraint-name>" + 
-							"<value-constraint-query>" +
-								"<constraint-name>jobName</constraint-name>" +
-								"<text>" + jobName + "</text>" +
-							"</value-constraint-query>" +
-						"</container-constraint-query>" +
-				"</query>";
+    	String query;
+				
         return false;
     }
 
