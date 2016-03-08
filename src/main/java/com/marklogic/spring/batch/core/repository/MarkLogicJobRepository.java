@@ -1,7 +1,9 @@
 package com.marklogic.spring.batch.core.repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -81,7 +84,15 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
     	QueryManager queryMgr = client.newQueryManager();
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));
+    	List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
+    	for (String paramName : jobParameters.getParameters().keySet()) {
+    		JobParameter param = jobParameters.getParameters().get(paramName);
+    		if (param.isIdentifying()) {
+    			paramValues.add(qb.valueConstraint("jobParameter", param.getValue().toString()));
+    		}
+    	}
+    	paramValues.add(qb.valueConstraint("jobName", jobName));
+    	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
 		return (results.getTotalResults() > 0);
     }

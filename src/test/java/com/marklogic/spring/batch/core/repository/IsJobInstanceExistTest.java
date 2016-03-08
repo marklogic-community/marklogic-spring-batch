@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.core.repository;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;

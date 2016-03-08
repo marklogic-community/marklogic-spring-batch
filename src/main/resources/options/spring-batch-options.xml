@@ -2,6 +2,11 @@
 	<constraint name="jobInstance">
 		<element-query name="jobInstance" ns="http://marklogic.com/spring-batch" />
 	</constraint>
+	<constraint name="jobParameter">
+		<value>
+			<element name="jobParameter" ns="http://marklogic.com/spring-batch" />  
+		</value>
+	</constraint>
 	<constraint name="jobName">
 		<value>
 			<element name="jobName" ns="http://marklogic.com/spring-batch" />  

@@ -73,7 +73,7 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 			    "<msb:stepExecutions/>" +
 			"</msb:jobExecution>");
 		AdaptedJobExecution jobExecution = (AdaptedJobExecution)unmarshaller.unmarshal(xml);
-		assertEquals(MarkLogicSpringBatch.SPRING_BATCH_DIR + "12345", jobExecution.getUri());
+		assertEquals(MarkLogicSpringBatch.SPRING_BATCH_DIR + "12345.xml", jobExecution.getUri());
 		assertEquals(Long.valueOf(12345L), jobExecution.getId());
 		
 		JobExecutionAdapter adapter = new JobExecutionAdapter();
