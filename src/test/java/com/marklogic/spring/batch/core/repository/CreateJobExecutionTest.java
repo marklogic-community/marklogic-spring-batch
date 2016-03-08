@@ -31,6 +31,15 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 		whenAJobExecutionIsCreated();
 		thenVerifyJobExecutionExists();
 	}
+	
+	@Test(expected=JobExecutionAlreadyRunningException.class)
+	public void throwJobExecutionAlreadyRunningExceptionTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+		givenAJob();
+		whenAJobExecutionIsCreated();
+		whenAJobExecutionIsCreated();
+		thenVerifyJobExecutionExists();
+		
+	}
 
 
 	private void thenVerifyJobExecutionExists() {

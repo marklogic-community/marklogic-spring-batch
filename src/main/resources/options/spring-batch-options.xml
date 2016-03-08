@@ -12,5 +12,10 @@
 			<element name="jobName" ns="http://marklogic.com/spring-batch" />  
 		</value>
 	</constraint>
+	<constraint name="status">
+		<value>
+			<element name="status" ns="http://marklogic.com/spring-batch" />  
+		</value>
+	</constraint>
 	<transform-results apply="raw" />
 </options>

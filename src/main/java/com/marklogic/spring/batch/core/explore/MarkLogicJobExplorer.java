@@ -1,10 +1,12 @@
 package com.marklogic.spring.batch.core.explore;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.batch.runtime.BatchStatus;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -56,10 +58,7 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
 		List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 		StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("myopt");
-
-		// put code from examples here
 		StructuredQueryDefinition criteria = sb.collection("http://marklogic.com/spring-batch/job-instance");
-
 		StringHandle searchHandle = queryMgr.search(criteria, new StringHandle());
 		System.out.println(searchHandle.get());
 		return jobInstances;
@@ -103,28 +102,22 @@ public class MarkLogicJobExplorer implements JobExplorer {
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
 		StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobInstance", jobInstance.getJobName()));
 		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
-		
-		List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
-		MatchDocumentSummary[] summaries = results.getMatchResults();
-		AdaptedJobExecution jobExec = null;
-		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
-			summary.getFirstSnippet(jaxbHandle);
-			jobExec = jaxbHandle.get();
-			JobExecutionAdapter adapter = new JobExecutionAdapter();
-			try {
-				jobExecutions.add(adapter.unmarshal(jobExec));
-			} catch (Exception ex) {
-				logger.severe(ex.getMessage());
-			}
-		}	
-		return jobExecutions;
+		return getJobExecutionsFromSearchResults(results);
 	}
 
 	@Override
 	public Set<JobExecution> findRunningJobExecutions(String jobName) {
-		// TODO Auto-generated method stub
-		return null;
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		StructuredQueryDefinition querydef = 
+				qb.and(
+						qb.valueConstraint("jobInstance", jobName),
+						qb.not(
+								qb.valueConstraint("status", BatchStatus.COMPLETED.toString(), BatchStatus.ABANDONED.toString(), BatchStatus.FAILED.toString(), BatchStatus.STOPPED.toString())
+							)
+					);
+		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		Set<JobExecution> jobExecutions = new HashSet<JobExecution>(getJobExecutionsFromSearchResults(results));
+		return jobExecutions;
 	}
 
 	@Override
@@ -143,6 +136,24 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	public int getJobInstanceCount(String jobName) throws NoSuchJobException {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	private List<JobExecution> getJobExecutionsFromSearchResults(SearchHandle results) {
+		List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+		AdaptedJobExecution jobExec = null;
+		for (MatchDocumentSummary summary : summaries ) {
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
+			summary.getFirstSnippet(jaxbHandle);
+			jobExec = jaxbHandle.get();
+			JobExecutionAdapter adapter = new JobExecutionAdapter();
+			try {
+				jobExecutions.add(adapter.unmarshal(jobExec));
+			} catch (Exception ex) {
+				logger.severe(ex.getMessage());
+			}
+		}
+		return jobExecutions;
 	}
 
 }

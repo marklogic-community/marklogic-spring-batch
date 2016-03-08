@@ -20,6 +20,7 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -53,6 +54,9 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
 	@Autowired
 	private JAXBContext jaxbContext;
+	
+	@Autowired
+	private JobExplorer jobExplorer;
 	
     private DocumentBuilder documentBuilder;
     private DocumentMetadataHandle jobExecutionMetadata;
@@ -125,36 +129,31 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public JobExecution createJobExecution(String jobName, JobParameters jobParameters)
             throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-
-        // Check to see if JobInstance exists
-    	if (isJobInstanceExists(jobName, jobParameters)) {
-    		
-    	} else {
-    		
-    	}
     	
+    	if (jobExplorer.findRunningJobExecutions(jobName).size() > 0) {
+    		throw new JobExecutionAlreadyRunningException(jobName);
+    	}
+
         JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
         JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
         jobExecution.setId(getRandomNumber());
         AdaptedJobExecution batchJob = new AdaptedJobExecution(jobExecution);
-        
+            
         Document doc = documentBuilder.newDocument();
-        
+            
         Marshaller marshaller = null;
         try {
             marshaller = jaxbContext.createMarshaller();
             marshaller.marshal(batchJob, doc);
         } catch (JAXBException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	e.printStackTrace();
         }
 
-        XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
-        DOMHandle handle = new DOMHandle();
-        handle.set(doc);
-        xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata,
-                handle);
-
+            XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
+            DOMHandle handle = new DOMHandle();
+            handle.set(doc);
+            xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata,
+                    handle);
         return jobExecution;
     }
 
