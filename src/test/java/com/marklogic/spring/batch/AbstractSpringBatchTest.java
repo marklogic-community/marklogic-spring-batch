@@ -7,9 +7,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,9 +31,6 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 
     @Autowired
     protected JobBuilderFactory jobBuilderFactory;
-    
-    @Autowired
-    protected JobRepository jobRepository;
 
     @Override
     protected NamespaceProvider getNamespaceProvider() {
@@ -50,12 +45,6 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
     protected JobLauncherTestUtils newJobLauncherTestUtils() {
         JobLauncherTestUtils utils = new JobLauncherTestUtils();
         utils.setJobLauncher(jobLauncher);
-        return utils;
-    }
-
-    protected JobRepositoryTestUtils newJobRepositoryTestUtils() {
-        JobRepositoryTestUtils utils = new JobRepositoryTestUtils();
-        utils.setJobRepository(jobRepository);
         return utils;
     }
     
