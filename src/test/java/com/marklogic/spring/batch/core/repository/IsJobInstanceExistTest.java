@@ -20,16 +20,15 @@ public class IsJobInstanceExistTest extends AbstractSpringBatchTest {
 	@Autowired 
 	private JobRepositoryTestUtils jobRepositoryTestUtils;
 	
-	private JobExecution jobExec;
+	private final String jobName = "job";
 	
 	@Before 
 	public void createJobExecution() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		jobExec = jobRepositoryTestUtils.createJobExecutions(1).get(0);
+		jobRepositoryTestUtils.createJobExecutions(1);
 	}
 	
 	@Test
 	public void verifyJobInstanceExistsTest()  {	
-		String jobName = "job";
 		JobParametersBuilder builder = new JobParametersBuilder();
 		builder.addLong("count", 0L);
 		JobParameters params = builder.toJobParameters();
@@ -37,16 +36,19 @@ public class IsJobInstanceExistTest extends AbstractSpringBatchTest {
 	}
 	
 	@Test
-	public void verifyJobInstanceDoesNotExistTest() {
-		String jobName = jobExec.getJobInstance().getJobName();
-		JobParameters params = jobExec.getJobParameters();
+	public void verifyJobInstanceDoesNotExistWithJobNameTest() {
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addLong("count", 0L);
+		JobParameters params = builder.toJobParameters();
 		assertFalse(jobRepository.isJobInstanceExists(jobName + "-test", params));
 	}
 	
 	@Test 
-	public void verifyJobInstanceWithJobParametersTest() {
-		
-		
+	public void verifyJobInstanceDoesNotExistWithJobParametersTest() {
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addLong("count", 1L);
+		JobParameters params = builder.toJobParameters();
+		assertFalse(jobRepository.isJobInstanceExists(jobName, params));
 	}
 
 }
