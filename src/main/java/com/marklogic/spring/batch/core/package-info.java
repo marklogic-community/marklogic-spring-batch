@@ -2,7 +2,8 @@
 	namespace=MarkLogicSpringBatch.NAMESPACE,
 	elementFormDefault=javax.xml.bind.annotation.XmlNsForm.QUALIFIED,	
 	xmlns = {
-			@javax.xml.bind.annotation.XmlNs(prefix = MarkLogicSpringBatch.NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.NAMESPACE)
+			@XmlNs(prefix = MarkLogicSpringBatch.NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.NAMESPACE),
+			@XmlNs(prefix = "inst", namespaceURI="http://marklogic.com/spring-batch/job-instance")
 	}
 )
 
@@ -16,4 +17,4 @@
 package com.marklogic.spring.batch.core; 
 
 import javax.xml.bind.annotation.XmlSchema;
-
+import javax.xml.bind.annotation.XmlNs;

@@ -15,6 +15,7 @@ import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobExecutionTestUtils;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.AdaptedJobInstance;
 
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
@@ -45,10 +46,17 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void marshallJobInstanceTest() throws Exception {
+		AdaptedJobInstance jobInstance = new AdaptedJobInstance();
+		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();	
+		jobInstance.setId(123L);
+		jobInstance.setJobName("test");
+		Marshaller marshaller = JAXBContext.newInstance(AdaptedJobInstance.class).createMarshaller();
+	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	    marshaller.marshal(jobInstance, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
-        frag.assertElementExists("/msb:jobExecution/msb:jobInstance/msb:id");
+        frag.assertElementExists("/inst:jobInstance/inst:id");
 	}
 
 	@Test
