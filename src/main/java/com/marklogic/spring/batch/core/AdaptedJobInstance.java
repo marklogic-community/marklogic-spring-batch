@@ -3,8 +3,8 @@ package com.marklogic.spring.batch.core;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "jobInstance", namespace="http://marklogic.com/spring-batch/job-instance")
-@XmlType(namespace="http://marklogic.com/spring-batch/job-instance")
+@XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
 public class AdaptedJobInstance {
 	
 	private String jobName;

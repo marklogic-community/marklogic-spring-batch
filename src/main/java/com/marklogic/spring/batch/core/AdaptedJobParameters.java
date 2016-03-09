@@ -5,9 +5,11 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-@XmlRootElement(name="jobParameters")
+@XmlRootElement(name="jobParameters", namespace=MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE)
 public class AdaptedJobParameters {
 
 	private List<AdaptedJobParameter> parameters;

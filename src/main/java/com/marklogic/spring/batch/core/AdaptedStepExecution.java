@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 
 @XmlRootElement(name = "stepExecution")
+@XmlType(namespace="http://marklogic.com/spring-batch/step-execution")
 public class AdaptedStepExecution {
 	
 	private JobExecution jobExecution;
