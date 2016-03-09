@@ -1,9 +1,11 @@
 @XmlSchema(
-	namespace=MarkLogicSpringBatch.NAMESPACE,
+	namespace=MarkLogicSpringBatch.JOB_EXECUTION_NAMESPACE,
 	elementFormDefault=javax.xml.bind.annotation.XmlNsForm.QUALIFIED,	
 	xmlns = {
-			@XmlNs(prefix = MarkLogicSpringBatch.NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.NAMESPACE),
-			@XmlNs(prefix = "inst", namespaceURI="http://marklogic.com/spring-batch/job-instance")
+		@XmlNs(prefix = MarkLogicSpringBatch.JOB_EXECUTION_NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.JOB_EXECUTION_NAMESPACE),
+		@XmlNs(prefix = MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE),
+		@XmlNs(prefix = MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE),
+		@XmlNs(prefix = MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE_PREFIX, namespaceURI=MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE)
 	}
 )
 
