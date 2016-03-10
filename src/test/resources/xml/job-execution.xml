@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msb:jobExecution xmlns:msb="http://marklogic.com/spring-batch" xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:step="http://marklogic.com/spring-batch/step-execution">
+  <msb:createDateTime>2016-03-10T15:44:34.917-05:00</msb:createDateTime>
+  <msb:exitCode>exitCode=UNKNOWN;exitDescription=</msb:exitCode>
+  <msb:id>5128016860359238732</msb:id>
+  <inst:jobInstance>
+    <inst:id>5128016860359238732</inst:id>
+    <inst:jobName>sampleJob</inst:jobName>
+  </inst:jobInstance>
+  <jp:jobParameters>
+    <jp:jobParameter identifier="true" key="stringTest" type="STRING">Joe Cool</jp:jobParameter>
+    <jp:jobParameter identifier="false" key="start" type="DATE">2016-03-10T15:44:34-0500</jp:jobParameter>
+    <jp:jobParameter identifier="false" key="longTest" type="LONG">1239</jp:jobParameter>
+    <jp:jobParameter identifier="false" key="doubleTest" type="DOUBLE">1.35</jp:jobParameter>
+  </jp:jobParameters>
+  <msb:status>STARTING</msb:status>
+  <step:stepExecutions>
+    <step:stepExecution>
+      <step:commitCount>0</step:commitCount>
+      <step:filterCount>0</step:filterCount>
+      <step:processSkipCount>0</step:processSkipCount>
+      <step:readCount>0</step:readCount>
+      <step:readSkipCount>0</step:readSkipCount>
+      <step:rollbackCount>0</step:rollbackCount>
+      <step:startTime>2016-03-10T15:44:34.919-05:00</step:startTime>
+      <step:status>STARTING</step:status>
+      <step:stepName>sampleStep1</step:stepName>
+      <step:terminateOnly>false</step:terminateOnly>
+      <step:writeCount>0</step:writeCount>
+      <step:writeSkipCount>0</step:writeSkipCount>
+    </step:stepExecution>
+    <step:stepExecution>
+      <step:commitCount>0</step:commitCount>
+      <step:filterCount>0</step:filterCount>
+      <step:processSkipCount>0</step:processSkipCount>
+      <step:readCount>0</step:readCount>
+      <step:readSkipCount>0</step:readSkipCount>
+      <step:rollbackCount>0</step:rollbackCount>
+      <step:startTime>2016-03-10T15:44:34.919-05:00</step:startTime>
+      <step:status>STARTING</step:status>
+      <step:stepName>sampleStep2</step:stepName>
+      <step:terminateOnly>false</step:terminateOnly>
+      <step:writeCount>0</step:writeCount>
+      <step:writeSkipCount>0</step:writeSkipCount>
+    </step:stepExecution>
+  </step:stepExecutions>
+  <msb:uri>/projects.spring.io/spring-batch/5128016860359238732.xml</msb:uri>
+</msb:jobExecution>
