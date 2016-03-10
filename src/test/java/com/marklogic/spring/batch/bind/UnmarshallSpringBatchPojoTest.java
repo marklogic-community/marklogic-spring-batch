@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -96,23 +97,11 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void unmarshallStepExecution() throws Exception {
-		StringReader xml = new StringReader("<msb:stepExecution xmlns:msb=\"http://marklogic.com/spring-batch\">" +
-			      "<msb:commitCount>0</msb:commitCount>" +
-			      "<msb:exitStatus />" +
-			      "<msb:filterCount>0</msb:filterCount>" +
-			      "<msb:processSkipCount>0</msb:processSkipCount>" +
-			      "<msb:readCount>0</msb:readCount>" +
-			      "<msb:readSkipCount>0</msb:readSkipCount>" +
-			      "<msb:rollbackCount>0</msb:rollbackCount>" +
-			      "<msb:startTime>2016-02-17T16:48:24.927-05:00</msb:startTime>" +
-			      "<msb:status>STARTING</msb:status>" +
-			      "<msb:stepName>sampleStep1</msb:stepName>" +
-			      "<msb:terminateOnly>false</msb:terminateOnly>" +
-			      "<msb:writeCount>0</msb:writeCount>" +
-			      "<msb:writeSkipCount>0</msb:writeSkipCount>" +
-			    "</msb:stepExecution>");
-		AdaptedStepExecution stepExecution = (AdaptedStepExecution)unmarshaller.unmarshal(xml);
-		assertEquals("sampleStep1", stepExecution.getStepName());
+		Resource stepExecutionXml = ctx.getResource("classpath:/xml/step-execution.xml");
+		AdaptedStepExecution adStepExecution = (AdaptedStepExecution)unmarshaller.unmarshal(stepExecutionXml.getInputStream());
+		StepExecutionAdapter adapter = new StepExecutionAdapter();
+		StepExecution stepExecution = adapter.unmarshal(adStepExecution);
+		assertEquals("testStep", stepExecution.getStepName());
 	}
 
 }
