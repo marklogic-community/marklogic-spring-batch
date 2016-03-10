@@ -10,6 +10,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -55,13 +56,12 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void unmarshallJobInstance() throws Exception {
-		StringReader xml = new StringReader("<msb:jobInstance xmlns:msb=\"http://marklogic.com/spring-batch\">" +
-									"<msb:id>123</msb:id>" +
-									"<msb:jobName>TestJobInstance</msb:jobName>" + 
-									"</msb:jobInstance>");
-		AdaptedJobInstance jobInstance = (AdaptedJobInstance)unmarshaller.unmarshal(xml);
+		Resource jobInstanceXml = ctx.getResource("classpath:/xml/job-instance.xml");
+		AdaptedJobInstance adJobInstance = (AdaptedJobInstance)unmarshaller.unmarshal(jobInstanceXml.getInputStream());
+		JobInstanceAdapter adapter = new JobInstanceAdapter();
+		JobInstance jobInstance = adapter.unmarshal(adJobInstance);
 		assertEquals(new Long(123L), jobInstance.getId());
-		assertEquals("TestJobInstance", jobInstance.getJobName());
+		assertEquals("test", jobInstance.getJobName());
 		
 	}
 	
