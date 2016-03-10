@@ -56,7 +56,7 @@ public class AdaptedJobExecution {
 		
 	@XmlJavaTypeAdapter(StepExecutionAdapter.class)
 	@XmlElementWrapper( name="stepExecutions", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE )
-	@XmlElement(name = "stepExecution")
+	@XmlElement(name = "stepExecution", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
 	public List<StepExecution> getStepExecutions() {
 		return stepExecution;
 	}
@@ -150,6 +150,7 @@ public class AdaptedJobExecution {
 	}
 	
 	@XmlJavaTypeAdapter(JobParametersAdapter.class)
+	@XmlElement(namespace=MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE)
 	public JobParameters getJobParameters() {
 		return jobParameters;
 	}
