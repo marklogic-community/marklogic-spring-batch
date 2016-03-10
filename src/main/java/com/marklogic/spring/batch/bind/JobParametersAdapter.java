@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.bind;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +19,14 @@ public class JobParametersAdapter extends XmlAdapter<AdaptedJobParameters, JobPa
 	@Override
 	public JobParameters unmarshal(AdaptedJobParameters params) throws Exception {
 		JobParametersBuilder jobParametersBuilder  = new JobParametersBuilder();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
 		for (AdaptedJobParameters.AdaptedJobParameter param : params.getParameters()) {
     		switch (param.type) {
     			case "STRING":
     				jobParametersBuilder.addString(param.key, param.value, param.identifier);
     				break;
     			case "DATE":
-    				jobParametersBuilder.addString(param.key, param.value, param.identifier);
+    				jobParametersBuilder.addDate(param.key, df.parse(param.value), param.identifier);
     				break;
     			case "DOUBLE":
     				jobParametersBuilder.addDouble(param.key, Double.valueOf(param.value), param.identifier);
