@@ -11,8 +11,8 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 
-@XmlRootElement(name = "stepExecution")
-@XmlType(namespace="http://marklogic.com/spring-batch/step-execution")
+@XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
 public class AdaptedStepExecution {
 	
 	private JobExecution jobExecution;

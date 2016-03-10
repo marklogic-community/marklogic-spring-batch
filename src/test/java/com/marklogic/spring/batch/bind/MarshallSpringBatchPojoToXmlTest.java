@@ -9,7 +9,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.jdom2.input.DOMBuilder;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.w3c.dom.Document;
@@ -21,6 +24,7 @@ import com.marklogic.spring.batch.JobParametersTestUtils;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
+import com.marklogic.spring.batch.core.AdaptedStepExecution;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
@@ -34,6 +38,8 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	@Before
 	public void setup() throws Exception {
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();	
+		marshaller = jaxbContext.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	}
 	
 	@Test
@@ -41,8 +47,6 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		JobParameters params = JobParametersTestUtils.getJobParameters();
 		JobParametersAdapter adapter = new JobParametersAdapter();
 		AdaptedJobParameters adaptedParams = adapter.marshal(params);
-		Marshaller marshaller = jaxbContext.createMarshaller();
-	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	    marshaller.marshal(adaptedParams, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
@@ -55,10 +59,10 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void marshallJobInstanceTest() throws Exception {
-		AdaptedJobInstance jobInstance = new AdaptedJobInstance(123L, "test");	
-		Marshaller marshaller = JAXBContext.newInstance(AdaptedJobInstance.class).createMarshaller();
-	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-	    marshaller.marshal(jobInstance, doc);
+		JobInstance jobInstance = new JobInstance(123L, "test");
+		JobInstanceAdapter adapter = new JobInstanceAdapter();
+		AdaptedJobInstance adJobInstance = adapter.marshal(jobInstance);
+	    marshaller.marshal(adJobInstance, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
         frag.prettyPrint();
@@ -69,8 +73,6 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	@Test
 	public void marshallJobExecutionTest() throws Exception {
 		AdaptedJobExecution adaptedJobExecution = new AdaptedJobExecution(JobExecutionTestUtils.getJobExecution());
-		marshaller = JAXBContext.newInstance(AdaptedJobExecution.class).createMarshaller();
-	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	    marshaller.marshal(adaptedJobExecution, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
@@ -78,16 +80,26 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
         frag.assertElementExists("/msb:jobExecution/msb:id");
         frag.assertElementExists("/msb:jobExecution/msb:createDateTime");
         frag.assertElementValue("/msb:jobExecution/msb:status", "STARTING");
+        frag.assertElementExists("/msb:jobExecution/inst:jobInstance");
+        frag.assertElementExists("/msb:jobExecution/jp:jobParameters");
+        frag.assertElementExists("/msb:jobExecution/step:stepExecutions");
+        List<Fragment> steps = frag.getFragments("msb:jobExecution/step:stepExecutions/step:stepExecution");
+      	steps.get(0).assertElementValue("/step:stepExecution/step:stepName", "sampleStep1");
+      	steps.get(1).assertElementValue("/step:stepExecution/step:stepName", "sampleStep2");
 	}
 	
 	@Test
 	public void marshallStepExecutionTest() throws Exception {
+		StepExecution step = new StepExecution("testStep", new JobExecution(123L));
+		StepExecutionAdapter adapter = new StepExecutionAdapter();
+		AdaptedStepExecution adStep = adapter.marshal(step);
+	    marshaller.marshal(adStep, doc);
 		Fragment frag = new Fragment(new DOMBuilder().build(doc));
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		frag.prettyPrint();
-		List<Fragment> steps = frag.getFragments("/msb:jobExecution/msb:stepExecutions/msb:stepExecution");
-		steps.get(0).assertElementValue("/msb:stepExecution/msb:stepName", "sampleStep1");
-		steps.get(1).assertElementValue("/msb:stepExecution/msb:stepName", "sampleStep2");
+		frag.assertElementExists("/step:stepExecution");
+		frag.assertElementValue("/step:stepExecution/step:stepName", "testStep");
+		
 		
 	}
 }
