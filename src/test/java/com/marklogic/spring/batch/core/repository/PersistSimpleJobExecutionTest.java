@@ -37,7 +37,7 @@ public class PersistSimpleJobExecutionTest extends AbstractSpringBatchTest {
         Fragment f = parse(handle.toString());
         f.prettyPrint();
         f.assertElementValue("/msb:jobExecution/msb:id", id);	
-        f.assertElementExists("//msb:stepExecutions");
+        f.assertElementExists("//step:stepExecutions");
 	}
 
 	private void whenJobIsExecuted() {

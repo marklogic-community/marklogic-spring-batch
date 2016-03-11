@@ -44,6 +44,7 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
@@ -61,6 +62,8 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     private DocumentBuilder documentBuilder;
     private DocumentMetadataHandle jobExecutionMetadata;
     private DatabaseClient client;
+    private XMLDocumentManager xmlDocMgr;
+    private QueryManager queryMgr;
     
     private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
     
@@ -71,7 +74,8 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
         initializeDocumentBuilder();
         jobExecutionMetadata = new DocumentMetadataHandle();
         jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
-
+        xmlDocMgr = client.newXMLDocumentManager();
+        queryMgr = client.newQueryManager();
     }
 
     protected void initializeDocumentBuilder() {
@@ -86,7 +90,6 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
     @Override
     public boolean isJobInstanceExists(String jobName, JobParameters jobParameters) {
-    	QueryManager queryMgr = client.newQueryManager();
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
     	List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
     	for (String paramName : jobParameters.getParameters().keySet()) {
@@ -103,64 +106,43 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
     @Override
     public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
-    	return null;
+    	JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
+    	return jobInstance;
     }
 
     @Override
     public JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters,
             String jobConfigurationLocation) {
-        JobExecution jobExecution = new JobExecution(jobInstance, jobParameters, jobConfigurationLocation);
-        Document doc = documentBuilder.newDocument();
-        Marshaller marshaller = null;
-        try {
-            marshaller = jaxbContext.createMarshaller();
-            marshaller.marshal(jobExecution, doc);
-        } catch (JAXBException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
-        DOMHandle handle = new DOMHandle();
-        handle.set(doc);
-        xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/" + jobExecution.getId() + ".xml", handle);
+        JobExecution jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, jobConfigurationLocation);
+        update(jobExecution);
         return jobExecution;
     }
-
+   
     @Override
     public JobExecution createJobExecution(String jobName, JobParameters jobParameters)
-            throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-    	
-    	if (jobExplorer.findRunningJobExecutions(jobName).size() > 0) {
-    		throw new JobExecutionAlreadyRunningException(jobName);
-    	}
-
-        JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
-        JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
-        jobExecution.setId(getRandomNumber());
-        AdaptedJobExecution batchJob = new AdaptedJobExecution(jobExecution);
-            
-        Document doc = documentBuilder.newDocument();
-            
-        Marshaller marshaller = null;
-        try {
-            marshaller = jaxbContext.createMarshaller();
-            marshaller.marshal(batchJob, doc);
-        } catch (JAXBException e) {
-        	e.printStackTrace();
-        }
-
-            XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
-            DOMHandle handle = new DOMHandle();
-            handle.set(doc);
-            xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata,
-                    handle);
+            throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {	
+        JobInstance jobInstance = createJobInstance(jobName, jobParameters);
+    	JobExecution jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, jobName);       
+        update(jobExecution);
         return jobExecution;
     }
 
     @Override
     public void update(JobExecution jobExecution) {
-        // TODO Auto-generated method stub
-
+        try {
+        	Document doc = documentBuilder.newDocument();
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            JobExecutionAdapter adapter = new JobExecutionAdapter();
+            AdaptedJobExecution aje = adapter.marshal(jobExecution);
+            marshaller.marshal(aje, doc);
+            DOMHandle handle = new DOMHandle();
+            handle.set(doc);
+            xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata, handle);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
     }
 
     @Override
@@ -207,8 +189,13 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
     @Override
     public JobExecution getLastJobExecution(String jobName, JobParameters jobParameters) {
-        // TODO Auto-generated method stub
-        return null;
+        JobExecution jobExecution = null;
+        StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+    	StructuredQueryDefinition querydef = 
+    			qb.and(
+    					qb.valueConstraint("jobInstance", jobName)
+    				);
+        return jobExecution;
     }
 
     private long getRandomNumber() {

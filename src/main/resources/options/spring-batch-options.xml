@@ -1,15 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <options xmlns="http://marklogic.com/appservices/search">
 	<constraint name="jobInstance">
-		<element-query name="jobInstance" ns="http://marklogic.com/spring-batch" />
+		<element-query name="jobInstance" ns="http://marklogic.com/spring-batch/job-instance" />
 	</constraint>
-	<constraint name="jobParameter">
+	<constraint name="jobInstanceId">
 		<value>
-			<element name="jobParameter" ns="http://marklogic.com/spring-batch" />  
+			<element name="id" ns="http://marklogic.com/spring-batch/job-instance" />
 		</value>
 	</constraint>
 	<constraint name="jobName">
 		<value>
-			<element name="jobName" ns="http://marklogic.com/spring-batch" />  
+			<element name="jobName" ns="http://marklogic.com/spring-batch/job-instance" />  
+		</value>
+	</constraint>
+	<constraint name="jobParameter">
+		<value>
+			<element name="jobParameter" ns="http://marklogic.com/spring-batch/job-parameter" />  
 		</value>
 	</constraint>
 	<constraint name="status">
@@ -17,5 +23,17 @@
 			<element name="status" ns="http://marklogic.com/spring-batch" />  
 		</value>
 	</constraint>
+	<operator name="sort">
+   		<state name="relevance">
+    		<sort-order>
+        	 	<score/>
+      		</sort-order>
+   		</state>
+   		<state name="date">
+      		<sort-order direction="descending" type="xs:dateTime">
+         		<element ns="my-ns" name="date"/>
+      		</sort-order>
+		</state>
+ 	</operator>
 	<transform-results apply="raw" />
 </options>

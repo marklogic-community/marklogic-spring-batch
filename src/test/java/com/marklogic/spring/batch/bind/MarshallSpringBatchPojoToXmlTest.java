@@ -72,7 +72,9 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 
 	@Test
 	public void marshallJobExecutionTest() throws Exception {
-		AdaptedJobExecution adaptedJobExecution = new AdaptedJobExecution(JobExecutionTestUtils.getJobExecution());
+		JobExecution jobExecution = JobExecutionTestUtils.getJobExecution();
+		JobExecutionAdapter adapter = new JobExecutionAdapter();
+		AdaptedJobExecution adaptedJobExecution = adapter.marshal(jobExecution);
 	    marshaller.marshal(adaptedJobExecution, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 

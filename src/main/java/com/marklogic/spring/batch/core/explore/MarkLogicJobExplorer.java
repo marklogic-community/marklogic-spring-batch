@@ -23,7 +23,6 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
@@ -57,10 +56,13 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	@Override
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
 		List<JobInstance> jobInstances = new ArrayList<JobInstance>();
-		StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("myopt");
-		StructuredQueryDefinition criteria = sb.collection("http://marklogic.com/spring-batch/job-instance");
-		StringHandle searchHandle = queryMgr.search(criteria, new StringHandle());
-		System.out.println(searchHandle.get());
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));
+		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		List<JobExecution> jobExecutions = getJobExecutionsFromSearchResults(results);
+		for (JobExecution jobExecution : jobExecutions) {
+			jobInstances.add(jobExecution.getJobInstance());
+		}
 		return jobInstances;
 	}
 
@@ -100,7 +102,11 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	@Override
 	public List<JobExecution> getJobExecutions(JobInstance jobInstance) {
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
-		StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobInstance", jobInstance.getJobName()));
+		StructuredQueryDefinition querydef = qb.and(
+				qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()),
+				qb.valueConstraint("jobName", jobInstance.getJobName())
+			);	
+		logger.info(querydef.serialize());
 		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
 		return getJobExecutionsFromSearchResults(results);
 	}
