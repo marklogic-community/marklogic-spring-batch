@@ -69,14 +69,13 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	@Test
 	public void unmarshallJobExecution() throws Exception {
 		Resource jobExecutionXml = ctx.getResource("classpath:/xml/job-execution.xml");
-		AdaptedJobExecution jobExecution = (AdaptedJobExecution)unmarshaller.unmarshal(jobExecutionXml.getInputStream());
-		assertEquals(MarkLogicSpringBatch.SPRING_BATCH_DIR + "12345.xml", jobExecution.getUri());
-		assertEquals(Long.valueOf(12345L), jobExecution.getId());
-		
+		AdaptedJobExecution adJobExecution = (AdaptedJobExecution)unmarshaller.unmarshal(jobExecutionXml.getInputStream());
 		JobExecutionAdapter adapter = new JobExecutionAdapter();
-		JobExecution jobExec = adapter.unmarshal(jobExecution);
-		assertNotNull(jobExec);
-		assertEquals(Long.valueOf(12345L), jobExecution.getId());
+		JobExecution jobExecution = adapter.unmarshal(adJobExecution);
+		assertNotNull(jobExecution);
+		assertEquals(Long.valueOf(5128016860359238732L), jobExecution.getId());
+		assertEquals("STARTING", jobExecution.getStatus().toString());
+		assertEquals(2, jobExecution.getStepExecutions().size());
 	}
 	
 	@Test
