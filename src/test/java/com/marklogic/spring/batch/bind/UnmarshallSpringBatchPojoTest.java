@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.bind;
 
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -23,7 +22,6 @@ import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
-import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
 public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
