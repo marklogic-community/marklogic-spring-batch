@@ -20,7 +20,6 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -55,9 +54,6 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
 	@Autowired
 	private JAXBContext jaxbContext;
-	
-	@Autowired
-	private JobExplorer jobExplorer;
 	
     private DocumentBuilder documentBuilder;
     private DocumentMetadataHandle jobExecutionMetadata;
