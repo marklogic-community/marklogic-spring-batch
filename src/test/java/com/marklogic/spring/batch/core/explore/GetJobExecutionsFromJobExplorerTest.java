@@ -6,10 +6,7 @@ import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -25,47 +22,20 @@ public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest
 	
 	@Autowired
 	private JobRepository jobRepository;
-	
-	private JobInstance jobInstance;
-	private JobExecution jobExec;
-	private List<JobExecution> jobExecutions;
-	private Long jobExecId;
-	
+
 	@Test
 	public void getJobExecutionByJobInstanceTest() throws Exception {
-		givenAJobExecution();
-		whenGetJobExecutionByJobInstanceFromJobExplorer();
+		JobInstance jobInstance = jobRepository.createJobInstance("sampleJob", JobParametersTestUtils.getJobParameters());
+		List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
 		assertEquals(1, jobExecutions.size());
-		thenVerifyJobExecution();
+		assertEquals(jobExecutions.get(0).getJobInstance().getInstanceId(), jobInstance.getInstanceId());
 	}
 
 	@Test
 	public void getJobExecutionByIdTest() throws Exception {
-		givenAJobExecution();
-		whenGetJobExecutionFromJobExplorer();
-		thenVerifyJobExecution();
+		JobExecution jobExecution = jobRepository.createJobExecution("sampleJob", JobParametersTestUtils.getJobParameters());
+		JobExecution persistedJobExecution = jobExplorer.getJobExecution(jobExecution.getId());
+		assertEquals(persistedJobExecution.getId(), jobExecution.getId());
 	}
-
-	private void thenVerifyJobExecution() {
-		assertEquals("Joe Cool", jobExec.getJobParameters().getString("stringTest"));
-		assertEquals("sampleJob", jobExec.getJobInstance().getJobName());	
-	}
-	
-	private void whenGetJobExecutionByJobInstanceFromJobExplorer() {
-		jobExecutions = jobExplorer.getJobExecutions(jobInstance);
-		jobExec = jobExecutions.get(0);
-	}
-
-	private void whenGetJobExecutionFromJobExplorer() {
-		jobExec = jobExplorer.getJobExecution(jobExecId);
-	}
-
-	private void givenAJobExecution() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {	
-		jobInstance = jobRepository.createJobInstance("sampleJob", JobParametersTestUtils.getJobParameters());
-		JobExecution tempJob = jobRepository.createJobExecution(jobInstance, JobParametersTestUtils.getJobParameters(), "Abc");
-		jobInstance = tempJob.getJobInstance();
-		jobExecId = tempJob.getId();
-	}
-
 		
 }

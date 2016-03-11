@@ -22,30 +22,25 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 	
 	@Autowired
 	private JobExplorer jobExplorer;
-	
-	private JobInstance jobInstance;
+
 	private JobExecution jobExecution;
 	
 	@Test
 	public void createJobExecutionFromJobNameAndParametersTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		givenAJobInstance();
 		whenAJobExecutionIsCreatedFromJobNameAndParameters();
 		thenVerifyAJobExecutionIsPersisted();
 	}
 	
 	@Test
 	public void createJobExecutionFromJobInstanceAndParametersTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		givenAJobInstance();
 		whenAJobExecutionIsCreatedFromJobInstance();
 		thenVerifyAJobExecutionIsPersisted();
 	}
-	/*
+
 	@Test(expected=JobExecutionAlreadyRunningException.class)
 	public void throwJobExecutionAlreadyRunningExceptionTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		givenAJobInstance();
-		whenAJobExecutionIsCreated();
-		whenAJobExecutionIsCreated();
-		thenVerifyJobExecutionExists();
+		whenAJobExecutionIsCreatedFromJobNameAndParameters();
+		whenAJobExecutionIsCreatedFromJobNameAndParameters();
 	}
 /*
 	@Ignore
@@ -55,15 +50,14 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 		whenAJobExecutionIsCreated();
 	}
 */
-	private void givenAJobInstance() {
-		jobInstance = jobRepository.createJobInstance("testJob", JobParametersTestUtils.getJobParameters());
-	}
 	
 	private void whenAJobExecutionIsCreatedFromJobNameAndParameters() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		jobExecution = jobRepository.createJobExecution(jobInstance.getJobName(), JobParametersTestUtils.getJobParameters());
+		jobExecution = jobRepository.createJobExecution("testJob", JobParametersTestUtils.getJobParameters());
+		
 	}
 	
 	private void whenAJobExecutionIsCreatedFromJobInstance() {
+		JobInstance jobInstance = new JobInstance(123L, "testJob");
 		jobExecution = jobRepository.createJobExecution(jobInstance, JobParametersTestUtils.getJobParameters(), "placeholder");
 	}
 	

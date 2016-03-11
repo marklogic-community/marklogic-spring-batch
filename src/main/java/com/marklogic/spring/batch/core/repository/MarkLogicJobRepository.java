@@ -20,6 +20,7 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -54,6 +55,9 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
 	@Autowired
 	private JAXBContext jaxbContext;
+	
+	@Autowired
+	private JobExplorer jobExplorer;
 	
     private DocumentBuilder documentBuilder;
     private DocumentMetadataHandle jobExecutionMetadata;
@@ -103,6 +107,8 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
     	JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
+   		JobExecution jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
+  		update(jobExecution);
     	return jobInstance;
     }
 
@@ -117,9 +123,18 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public JobExecution createJobExecution(String jobName, JobParameters jobParameters)
             throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {	
-        JobInstance jobInstance = createJobInstance(jobName, jobParameters);
-    	JobExecution jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, jobName);       
-        update(jobExecution);
+    	JobInstance jobInstance = null;
+    	JobExecution jobExecution = null;
+    	if (isJobInstanceExists(jobName, jobParameters)) {
+    		Set<JobExecution> jobExecutions = jobExplorer.findRunningJobExecutions(jobName);
+    		if (jobExecutions.size() > 0) {
+    			throw new JobExecutionAlreadyRunningException(jobName);
+    		}    		
+    	} else {
+    		jobInstance = new JobInstance(getRandomNumber(), jobName);
+       		jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
+       		update(jobExecution);
+    	}      
         return jobExecution;
     }
 
@@ -186,11 +201,6 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public JobExecution getLastJobExecution(String jobName, JobParameters jobParameters) {
         JobExecution jobExecution = null;
-        StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
-    	StructuredQueryDefinition querydef = 
-    			qb.and(
-    					qb.valueConstraint("jobInstance", jobName)
-    				);
         return jobExecution;
     }
 
