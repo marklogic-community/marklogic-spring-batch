@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository;
 
 import org.junit.Test;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -42,14 +43,15 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 		whenAJobExecutionIsCreatedFromJobNameAndParameters();
 		whenAJobExecutionIsCreatedFromJobNameAndParameters();
 	}
-/*
-	@Ignore
+
 	@Test(expected=JobInstanceAlreadyCompleteException.class)
 	public void throwJobInstanceAlreadyCompleteException() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		givenACompletedJobExecution();
-		whenAJobExecutionIsCreated();
+		whenAJobExecutionIsCreatedFromJobNameAndParameters();
+		jobExecution.setStatus(BatchStatus.COMPLETED);
+		jobRepository.update(jobExecution);
+		whenAJobExecutionIsCreatedFromJobNameAndParameters();
 	}
-*/
+
 	
 	private void whenAJobExecutionIsCreatedFromJobNameAndParameters() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 		jobExecution = jobRepository.createJobExecution("testJob", JobParametersTestUtils.getJobParameters());

@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
@@ -39,8 +40,10 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
@@ -129,7 +132,12 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     		Set<JobExecution> jobExecutions = jobExplorer.findRunningJobExecutions(jobName);
     		if (jobExecutions.size() > 0) {
     			throw new JobExecutionAlreadyRunningException(jobName);
-    		}    		
+    		}   
+    		for (JobExecution je : getJobExecutions(jobName, jobParameters)) {
+    			if (je.getStatus().equals(BatchStatus.COMPLETED)) {
+    				throw new JobInstanceAlreadyCompleteException(jobName);
+    			}
+    		}
     	} else {
     		jobInstance = new JobInstance(getRandomNumber(), jobName);
        		jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
@@ -138,6 +146,36 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
         return jobExecution;
     }
 
+    private List<JobExecution> getJobExecutions(String jobName, JobParameters jobParameters) {   	
+    	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+    	List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
+    	for (String paramName : jobParameters.getParameters().keySet()) {
+    		JobParameter param = jobParameters.getParameters().get(paramName);
+    		if (param.isIdentifying()) {
+    			paramValues.add(qb.valueConstraint("jobParameter", param.getValue().toString()));
+    		}
+    	}
+    	paramValues.add(qb.valueConstraint("jobName", jobName));
+    	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+    	
+    	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+		AdaptedJobExecution jobExec = null;
+		for (MatchDocumentSummary summary : summaries ) {
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
+			summary.getFirstSnippet(jaxbHandle);
+			jobExec = jaxbHandle.get();
+			JobExecutionAdapter adapter = new JobExecutionAdapter();
+			try {
+				jobExecutions.add(adapter.unmarshal(jobExec));
+			} catch (Exception ex) {
+				logger.severe(ex.getMessage());
+			}
+		}
+		return jobExecutions;
+    }
+    
     @Override
     public void update(JobExecution jobExecution) {
         try {
