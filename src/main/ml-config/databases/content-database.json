@@ -2,5 +2,13 @@
   "database-name": "%%DATABASE%%",
   "maintain-last-modified": true,
   "uri-lexicon": true,
-  "collection-lexicon": true
+  "collection-lexicon": true, 
+  "range-element-index": [{
+		"scalar-type": "dateTime",
+		"namespace-uri": "http://marklogic.com/spring-batch",
+		"localname": "createDateTime",
+		"collation": "",
+		"range-value-positions": false,
+		"invalid-values": "reject"
+  }]
 }

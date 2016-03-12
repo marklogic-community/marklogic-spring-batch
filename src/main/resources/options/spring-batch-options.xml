@@ -24,16 +24,14 @@
 		</value>
 	</constraint>
 	<operator name="sort">
-   		<state name="relevance">
-    		<sort-order>
-        	 	<score/>
-      		</sort-order>
-   		</state>
    		<state name="date">
       		<sort-order direction="descending" type="xs:dateTime">
-         		<element ns="my-ns" name="date"/>
+         		<element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
       		</sort-order>
 		</state>
  	</operator>
+ 	<sort-order type="xs:dateTime" direction="descending">
+  		<element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
+    </sort-order>
 	<transform-results apply="raw" />
 </options>
