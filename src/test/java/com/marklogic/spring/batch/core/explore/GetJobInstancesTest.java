@@ -52,6 +52,13 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 	}
 	
 	@Test
+	public void findJobInstancesTest() {
+		createJobInstances();
+		List<JobInstance> jobInstances = jobExplorer.findJobInstancesByJobName(JOB_NAME, 1, 2);
+		assertEquals(2, jobInstances.size());
+	}
+	
+	@Test
 	public void getJobNamesTest() {
 		createJobInstances();
 		List<String> jobNames = jobExplorer.getJobNames();

@@ -142,8 +142,7 @@ public class MarkLogicJobExplorer implements JobExplorer {
 
 	@Override
 	public List<JobInstance> findJobInstancesByJobName(String jobName, int start, int count) {
-		// TODO Auto-generated method stub
-		return null;
+		return getJobInstances(jobName, start, count);
 	}
 
 	@Override
