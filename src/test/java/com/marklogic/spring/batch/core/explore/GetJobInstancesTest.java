@@ -34,7 +34,7 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 	@Test
 	public void getJobInstanceCountTest() throws NoSuchJobException {
 		createJobInstances();
-		assertEquals(2, jobExplorer.getJobInstanceCount(JOB_NAME));
+		assertEquals(3, jobExplorer.getJobInstanceCount(JOB_NAME));
 	}
 	
 	@Test(expected=NoSuchJobException.class)
@@ -45,11 +45,12 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 	@Test
 	public void getJobInstancesTest() {
 		createJobInstances();
-		List<JobInstance> jobInstances = jobExplorer.getJobInstances(JOB_NAME, 1, 1);
-		assertEquals(1, jobInstances.size());		
+		List<JobInstance> jobInstances = jobExplorer.getJobInstances(JOB_NAME, 1, 2);
+		assertEquals(2, jobInstances.size());		
 	}
 	
 	private void createJobInstances() {
+		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
 		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
 		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
 		jobRepository.createJobInstance(JOB_NAME + "2", JobParametersTestUtils.getJobParameters());
