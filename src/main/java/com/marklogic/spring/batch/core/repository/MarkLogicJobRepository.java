@@ -110,10 +110,13 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
     @Override
     public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
-    	JobInstance jobInstance = new JobInstance(getRandomNumber(), jobName);
-   		JobExecution jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
-  		update(jobExecution);
-    	return jobInstance;
+    	JobExecution jobExecution = null;
+		try {
+			jobExecution = createJobExecution(jobName, jobParameters);
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException e) {
+			e.printStackTrace();
+		}
+    	return jobExecution.getJobInstance();
     }
 
     @Override
