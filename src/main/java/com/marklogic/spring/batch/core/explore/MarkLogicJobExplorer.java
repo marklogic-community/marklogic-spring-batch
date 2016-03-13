@@ -8,8 +8,6 @@ import java.util.logging.Logger;
 
 import javax.batch.runtime.BatchStatus;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -20,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
@@ -88,15 +85,13 @@ public class MarkLogicJobExplorer implements JobExplorer {
 
 	@Override
 	public JobInstance getJobInstance(Long instanceId) {
-		DOMHandle handle = docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + "/job-instance/" + instanceId.toString(), new DOMHandle());
-		JobInstance jobInstance = null;
-		try {
-			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			jobInstance = (JobInstance)unmarshaller.unmarshal(handle.get());
-		} catch (JAXBException ex) {
-			ex.printStackTrace();
-		}
-		return jobInstance;
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		StructuredQueryDefinition querydef = qb.and(
+				qb.valueConstraint("jobInstanceId", instanceId.toString())
+			);	
+		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		List<JobExecution> jobExecutions = getJobExecutionsFromSearchResults(results);		
+		return jobExecutions.get(0).getJobInstance();
 	}
 
 	@Override
