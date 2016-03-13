@@ -103,6 +103,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     	}
     	paramValues.add(qb.valueConstraint("jobName", jobName));
     	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+    	logger.info(querydef.serialize());
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
 		return (results.getTotalResults() > 0);
     }
@@ -133,10 +134,18 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     		if (jobExecutions.size() > 0) {
     			throw new JobExecutionAlreadyRunningException(jobName);
     		}   
+    		boolean isJobFailed = false;
     		for (JobExecution je : getJobExecutions(jobName, jobParameters)) {
     			if (je.getStatus().equals(BatchStatus.COMPLETED)) {
     				throw new JobInstanceAlreadyCompleteException(jobName);
+    			} else if (je.getStatus().isUnsuccessful()) {
+    				isJobFailed = true;
+    				jobInstance = je.getJobInstance();
     			}
+    		}
+    		if (isJobFailed) {
+    			jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
+           		update(jobExecution);
     		}
     	} else {
     		jobInstance = new JobInstance(getRandomNumber(), jobName);

@@ -13,8 +13,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
@@ -108,7 +106,7 @@ public class MarkLogicJobExplorer implements JobExplorer {
 				qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()),
 				qb.valueConstraint("jobName", jobInstance.getJobName())
 			);	
-		logger.info(querydef.serialize());
+		logger.fine(querydef.serialize());
 		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
 		return getJobExecutionsFromSearchResults(results);
 	}
