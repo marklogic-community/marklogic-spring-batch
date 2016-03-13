@@ -19,7 +19,7 @@ import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobParametersTestUtils;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
-public class GetJobExecutionsFromJobExplorerTest extends AbstractSpringBatchTest {
+public class GetJobExecutionsTest extends AbstractSpringBatchTest {
 
 	@Autowired
 	private JobExplorer jobExplorer;
