@@ -17,7 +17,6 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.ValuesHandle;
@@ -30,7 +29,6 @@ import com.marklogic.client.query.ValueQueryDefinition;
 import com.marklogic.client.query.ValuesDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
-import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
 public class MarkLogicJobExplorer implements JobExplorer {
@@ -41,16 +39,11 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer");	
 	
 	private DatabaseClient client;
-	private XMLDocumentManager docMgr;
 	private QueryManager queryMgr;
-	
-	private JobExecutionAdapter jobExecutionAdapter;
 	
 	
 	public MarkLogicJobExplorer(DatabaseClient databaseClient) {
 		this.client = databaseClient;
-		jobExecutionAdapter = new JobExecutionAdapter();
-		docMgr = client.newXMLDocumentManager();
 		queryMgr = client.newQueryManager();
 	}
 
@@ -73,16 +66,14 @@ public class MarkLogicJobExplorer implements JobExplorer {
 
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
-		JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
-		docMgr.read(MarkLogicSpringBatch.SPRING_BATCH_DIR + Long.toString(executionId) + ".xml", handle);
-		
-		JobExecution jobExecution = null;
-		try {
-			 jobExecution = jobExecutionAdapter.unmarshal(handle.get());
-		} catch (Exception ex) {
-			logger.severe(ex.getMessage());
-		}
-		return jobExecution;
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		StructuredQueryDefinition querydef = qb.and(
+				qb.valueConstraint("jobExecutionId", executionId.toString())
+			);	
+		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		List<JobExecution> jobExecutions = getJobExecutionsFromSearchResults(results);
+		assert(jobExecutions.size() == 1);
+		return jobExecutions.get(0);
 	}
 
 	@Override
