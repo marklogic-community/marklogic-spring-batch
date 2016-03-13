@@ -131,8 +131,13 @@ public class MarkLogicJobExplorer implements JobExplorer {
 
 	@Override
 	public List<String> getJobNames() {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> jobNames = new ArrayList<String>();
+		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobName", MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		ValuesHandle results = queryMgr.values(valuesDef, new ValuesHandle());
+		for (CountedDistinctValue value : results.getValues()) {
+			jobNames.add(value.get("xs:string", String.class));
+		}
+		return jobNames;
 	}
 
 	@Override

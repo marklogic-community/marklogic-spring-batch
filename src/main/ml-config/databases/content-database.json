@@ -17,5 +17,12 @@
 		"collation": "",
 		"range-value-positions": false,
 		"invalid-values": "reject"
-  }]
+  	}, {
+  		"scalar-type": "string",
+		"namespace-uri": "http://marklogic.com/spring-batch/job-instance",
+		"localname": "jobName",
+		"collation": "http://marklogic.com/collation/codepoint",
+		"range-value-positions": false,
+		"invalid-values": "reject"
+  	}]
 }

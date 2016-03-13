@@ -28,6 +28,11 @@
       		<element ns="http://marklogic.com/spring-batch/job-instance" name="id" />
     	</range>
   	</values>
+  	<values name="jobName">
+    	<range type="xs:string">
+      		<element ns="http://marklogic.com/spring-batch/job-instance" name="jobName" />
+    	</range>
+  	</values>
 	<operator name="sort">
    		<state name="date">
       		<sort-order direction="descending" type="xs:dateTime">

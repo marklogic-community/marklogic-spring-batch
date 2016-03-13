@@ -53,6 +53,7 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void getJobNamesTest() {
+		createJobInstances();
 		List<String> jobNames = jobExplorer.getJobNames();
 		assertEquals(3, jobNames.size());
 		assertTrue(jobNames.get(0).equals(JOB_NAME));
