@@ -21,6 +21,7 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.ValuesHandle;
+import com.marklogic.client.query.CountedDistinctValue;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
@@ -56,12 +57,15 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	@Override
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
 		List<JobInstance> jobInstances = new ArrayList<JobInstance>();
+		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobInstanceId", MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
-		StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));
-		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
-		List<JobExecution> jobExecutions = getJobExecutionsFromSearchResults(results);
-		for (JobExecution jobExecution : jobExecutions) {
-			jobInstances.add(jobExecution.getJobInstance());
+		ValueQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));	
+		valuesDef.setQueryDefinition(querydef);
+		ValuesHandle results = queryMgr.values(valuesDef, new ValuesHandle());
+		for (CountedDistinctValue value : results.getValues()) {
+			Long id = value.get("xs:unsignedLong", Long.class);
+			JobInstance jobInstance = new JobInstance(id, jobName);
+			jobInstances.add(jobInstance);
 		}
 		return jobInstances;
 	}

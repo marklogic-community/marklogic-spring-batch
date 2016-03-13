@@ -24,7 +24,7 @@
 		</value>
 	</constraint>
 	<values name="jobInstanceId">
-    	<range type="xs:long">
+    	<range type="xs:unsignedLong">
       		<element ns="http://marklogic.com/spring-batch/job-instance" name="id" />
     	</range>
   	</values>
