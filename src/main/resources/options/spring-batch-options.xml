@@ -23,6 +23,11 @@
 			<element name="status" ns="http://marklogic.com/spring-batch" />  
 		</value>
 	</constraint>
+	<values name="jobInstanceId">
+    	<range type="xs:long">
+      		<element ns="http://marklogic.com/spring-batch/job-instance" name="id" />
+    	</range>
+  	</values>
 	<operator name="sort">
    		<state name="date">
       		<sort-order direction="descending" type="xs:dateTime">

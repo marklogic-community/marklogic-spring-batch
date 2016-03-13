@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +33,7 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 	public void getJobInstanceCountTest() throws NoSuchJobException {
 		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
 		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
+		jobRepository.createJobInstance(JOB_NAME + "2", JobParametersTestUtils.getJobParameters());
 		assertEquals(2, jobExplorer.getJobInstanceCount(JOB_NAME));
 	}
 	

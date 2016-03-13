@@ -20,10 +20,13 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.io.ValuesHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.query.ValueQueryDefinition;
+import com.marklogic.client.query.ValuesDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
@@ -135,8 +138,16 @@ public class MarkLogicJobExplorer implements JobExplorer {
 
 	@Override
 	public int getJobInstanceCount(String jobName) throws NoSuchJobException {
-		// TODO Auto-generated method stub
-		return 0;
+		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobInstanceId", MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		ValueQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));	
+		valuesDef.setQueryDefinition(querydef);
+		ValuesHandle results = queryMgr.values(valuesDef, new ValuesHandle());
+		int numberOfResults = results.getValues().length;
+		if (numberOfResults == 0) {
+			throw new NoSuchJobException(jobName);
+		}
+		return numberOfResults;
 	}
 	
 	private List<JobExecution> getJobExecutionsFromSearchResults(SearchHandle results) {
