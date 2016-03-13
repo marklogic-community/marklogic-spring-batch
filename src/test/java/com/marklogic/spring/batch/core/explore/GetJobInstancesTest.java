@@ -23,6 +23,8 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 	JobRepository jobRepository;
 	
 	private final String JOB_NAME = "testJob";
+	private final String JOB_NAME_2 = JOB_NAME + "2";
+	private final String JOB_NAME_3 = JOB_NAME + "3";
 	
 	@Test
 	public void retrieveJobInstanceByIdTest() {
@@ -49,11 +51,21 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 		assertEquals(2, jobInstances.size());		
 	}
 	
+	@Test
+	public void getJobNamesTest() {
+		List<String> jobNames = jobExplorer.getJobNames();
+		assertEquals(3, jobNames.size());
+		assertTrue(jobNames.get(0).equals(JOB_NAME));
+		assertTrue(jobNames.get(1).equals(JOB_NAME_2));
+		assertTrue(jobNames.get(2).equals(JOB_NAME_3));
+	}
+	
 	private void createJobInstances() {
 		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
 		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
 		jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
-		jobRepository.createJobInstance(JOB_NAME + "2", JobParametersTestUtils.getJobParameters());
+		jobRepository.createJobInstance(JOB_NAME_2, JobParametersTestUtils.getJobParameters());
+		jobRepository.createJobInstance(JOB_NAME_3, JobParametersTestUtils.getJobParameters());
 	}
 
 }
