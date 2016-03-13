@@ -103,7 +103,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     	}
     	paramValues.add(qb.valueConstraint("jobName", jobName));
     	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
-    	logger.info(querydef.serialize());
+    	logger.finer(querydef.serialize());
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
 		return (results.getTotalResults() > 0);
     }

@@ -31,14 +31,15 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void createJobExecutionFromJobNameAndParametersTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		whenAJobExecutionIsCreatedFromJobNameAndParameters();
-		thenVerifyAJobExecutionIsPersisted();
+		JobExecution jobExecution = jobRepository.createJobExecution(JOB_NAME, JobParametersTestUtils.getJobParameters());
+		thenVerifyAJobExecutionIsPersisted(jobExecution);
 	}
 	
 	@Test
 	public void createJobExecutionFromJobInstanceAndParametersTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		whenAJobExecutionIsCreatedFromJobInstance();
-		thenVerifyAJobExecutionIsPersisted();
+		JobInstance jobInstance = givenAJobInstance();
+		JobExecution jobExecution = whenAJobExecutionIsCreated(jobInstance, JobParametersTestUtils.getJobParameters());
+		thenVerifyAJobExecutionIsPersisted(jobExecution);
 	}
 
 	@Test(expected=JobExecutionAlreadyRunningException.class)
@@ -74,17 +75,12 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 		return new JobInstance(123L, JOB_NAME);
 	}
 	
-	private void whenAJobExecutionIsCreatedFromJobNameAndParameters() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		jobExecution = jobRepository.createJobExecution(JOB_NAME, JobParametersTestUtils.getJobParameters());		
+	private JobExecution whenAJobExecutionIsCreated(JobInstance jobInstance, JobParameters jobParameters) {
+		return jobRepository.createJobExecution(jobInstance, jobParameters, null);
 	}
 	
-	private void whenAJobExecutionIsCreatedFromJobInstance() {
-		JobInstance jobInstance = givenAJobInstance();
-		jobExecution = jobRepository.createJobExecution(jobInstance, JobParametersTestUtils.getJobParameters(), "placeholder");
-	}
-	
-	private void thenVerifyAJobExecutionIsPersisted() {
-		JobExecution jobExec = jobExplorer.getJobExecution(jobExecution.getId());
+	private void thenVerifyAJobExecutionIsPersisted(JobExecution expectedJobExecution) {
+		JobExecution jobExec = jobExplorer.getJobExecution(expectedJobExecution.getId());
 		assertNotNull(jobExec);
 		assertEquals(jobExec.getJobInstance().getJobName(), JOB_NAME);
 	}
