@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.core.explore;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -40,6 +42,12 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 	@Test(expected=NoSuchJobException.class)
 	public void getJobInstanceCountNoJobException() throws NoSuchJobException {
 		jobExplorer.getJobInstanceCount("NoJobs");
+	}
+	
+	@Test
+	public void getJobInstancesTest() {
+		List<JobInstance> jobInstances = jobExplorer.getJobInstances(JOB_NAME, 1, 2);
+		assertEquals(3, jobInstances.size());		
 	}
 
 }
