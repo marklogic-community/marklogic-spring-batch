@@ -10,5 +10,12 @@
 		"collation": "",
 		"range-value-positions": false,
 		"invalid-values": "reject"
+	}, {
+		"scalar-type": "long",
+		"namespace-uri": "http://marklogic.com/spring-batch/job-instance",
+		"localname": "id",
+		"collation": "",
+		"range-value-positions": false,
+		"invalid-values": "reject"
   }]
 }
