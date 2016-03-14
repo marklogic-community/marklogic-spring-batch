@@ -8,13 +8,13 @@ import java.util.logging.Logger;
 
 import javax.batch.runtime.BatchStatus;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.JAXBHandle;
@@ -31,10 +31,7 @@ import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
-public class MarkLogicJobExplorer implements JobExplorer {
-	
-	@Autowired
-	private JAXBContext jaxbContext;	
+public class MarkLogicJobExplorer implements JobExplorer {	
 	
 	private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer");	
 	
@@ -154,8 +151,8 @@ public class MarkLogicJobExplorer implements JobExplorer {
 		List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		AdaptedJobExecution jobExec = null;
-		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
+		for (MatchDocumentSummary summary : summaries ) {			
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
 			summary.getFirstSnippet(jaxbHandle);
 			jobExec = jaxbHandle.get();
 			JobExecutionAdapter adapter = new JobExecutionAdapter();
@@ -167,5 +164,17 @@ public class MarkLogicJobExplorer implements JobExplorer {
 		}
 		return jobExecutions;
 	}
+	
+	protected JAXBContext jaxbContext() {
+		JAXBContext jaxbContext = null;
+		try {
+            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class);
+        } catch (JAXBException ex) {
+            throw new RuntimeException(ex);
+        }
+		return jaxbContext;
+	}
+	
+	
 
 }

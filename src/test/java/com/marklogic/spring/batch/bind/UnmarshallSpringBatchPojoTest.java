@@ -3,7 +3,6 @@ package com.marklogic.spring.batch.bind;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
@@ -27,16 +26,13 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	
 	@Autowired
-	private JAXBContext jaxbContext;
-	
-	@Autowired
 	private ApplicationContext ctx;
 	
 	private Unmarshaller unmarshaller;
 	
 	@Before
 	public void setup() throws Exception {
-		unmarshaller = jaxbContext.createUnmarshaller();
+		unmarshaller = jaxbContext().createUnmarshaller();
 	}
 	
 	@Test

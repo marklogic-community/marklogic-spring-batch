@@ -1,7 +1,5 @@
 package com.marklogic.spring.batch.configuration;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -23,10 +21,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.core.AdaptedJobExecution;
-import com.marklogic.spring.batch.core.AdaptedJobInstance;
-import com.marklogic.spring.batch.core.AdaptedJobParameters;
-import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
@@ -36,17 +30,6 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	
 	@Autowired
 	private DatabaseClientProvider databaseClientProvider;
-	
-	@Bean
-	protected JAXBContext jaxbContext() {
-		JAXBContext jaxbContext = null;
-		try {
-            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class, AdaptedJobInstance.class, AdaptedJobParameters.class, AdaptedStepExecution.class);
-        } catch (JAXBException ex) {
-            throw new RuntimeException(ex);
-        }
-		return jaxbContext;
-	}
 	
 	@Bean
 	protected TaskExecutor taskExecutor() {

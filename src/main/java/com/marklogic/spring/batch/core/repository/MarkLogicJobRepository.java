@@ -49,6 +49,9 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.AdaptedJobInstance;
+import com.marklogic.spring.batch.core.AdaptedJobParameters;
+import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
 public class MarkLogicJobRepository implements JobRepository, InitializingBean {
@@ -56,9 +59,6 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 	@Autowired
 	private ApplicationContext ctx;
 
-	@Autowired
-	private JAXBContext jaxbContext;
-	
 	@Autowired
 	private JobExplorer jobExplorer;
 	
@@ -175,7 +175,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		AdaptedJobExecution jobExec = null;
 		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
 			summary.getFirstSnippet(jaxbHandle);
 			jobExec = jaxbHandle.get();
 			JobExecutionAdapter adapter = new JobExecutionAdapter();
@@ -192,7 +192,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     public void update(JobExecution jobExecution) {
         try {
         	Document doc = documentBuilder.newDocument();
-            Marshaller marshaller = jaxbContext.createMarshaller();
+            Marshaller marshaller = jaxbContext().createMarshaller();
             JobExecutionAdapter adapter = new JobExecutionAdapter();
             AdaptedJobExecution aje = adapter.marshal(jobExecution);
             marshaller.marshal(aje, doc);
@@ -277,6 +277,16 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 		QueryOptionsListHandle qolHandle = queryOptionsMgr.optionsList(new QueryOptionsListHandle());
 		Set<String> results = qolHandle.getValuesMap().keySet();
 		assert(results.contains(SEARCH_OPTIONS_NAME) == true);
+	}
+	
+	protected JAXBContext jaxbContext() {
+		JAXBContext jaxbContext = null;
+		try {
+            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class, AdaptedJobInstance.class, AdaptedJobParameters.class, AdaptedStepExecution.class);
+        } catch (JAXBException ex) {
+            throw new RuntimeException(ex);
+        }
+		return jaxbContext;
 	}
 
 }
