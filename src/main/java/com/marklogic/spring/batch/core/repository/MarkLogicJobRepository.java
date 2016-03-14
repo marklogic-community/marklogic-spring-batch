@@ -71,6 +71,10 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
     
 	public final static String SEARCH_OPTIONS_NAME = "spring-batch";
+	
+	public MarkLogicJobRepository() {
+		
+	}
 
     public MarkLogicJobRepository(DatabaseClient client) {
         this.client = client;
