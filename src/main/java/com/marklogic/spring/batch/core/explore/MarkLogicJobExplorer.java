@@ -38,8 +38,12 @@ public class MarkLogicJobExplorer implements JobExplorer {
 	private DatabaseClient client;
 	private QueryManager queryMgr;
 	
+	public MarkLogicJobExplorer() {
+		
+	}
 	
 	public MarkLogicJobExplorer(DatabaseClient databaseClient) {
+		this();
 		this.client = databaseClient;
 		queryMgr = client.newQueryManager();
 	}
