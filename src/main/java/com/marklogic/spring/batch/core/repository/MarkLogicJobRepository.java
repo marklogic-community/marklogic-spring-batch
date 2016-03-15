@@ -62,37 +62,50 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 	@Autowired
 	private JobExplorer jobExplorer;
 	
-    private DocumentBuilder documentBuilder;
-    private DocumentMetadataHandle jobExecutionMetadata;
     private DatabaseClient client;
-    private XMLDocumentManager xmlDocMgr;
-    private QueryManager queryMgr;
     
-    private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
+    public DatabaseClient getClient() {
+		return client;
+	}
+
+	public ApplicationContext getCtx() {
+		return ctx;
+	}
+
+	public void setCtx(ApplicationContext ctx) {
+		this.ctx = ctx;
+	}
+
+	public JobExplorer getJobExplorer() {
+		return jobExplorer;
+	}
+
+	public void setJobExplorer(JobExplorer jobExplorer) {
+		this.jobExplorer = jobExplorer;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	public static String getSearchOptionsName() {
+		return SEARCH_OPTIONS_NAME;
+	}
+
+	public void setClient(DatabaseClient client) {
+		this.client = client;
+	}
+
+	private final static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
     
 	public final static String SEARCH_OPTIONS_NAME = "spring-batch";
 	
 	public MarkLogicJobRepository() {
-		
 	}
 
     public MarkLogicJobRepository(DatabaseClient client) {
+    	super();
         this.client = client;
-        initializeDocumentBuilder();
-        jobExecutionMetadata = new DocumentMetadataHandle();
-        jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
-        xmlDocMgr = client.newXMLDocumentManager();
-        queryMgr = client.newQueryManager();
-    }
-
-    protected void initializeDocumentBuilder() {
-        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-        domFactory.setNamespaceAware(true);
-        try {
-            this.documentBuilder = domFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     @Override
@@ -108,6 +121,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     	paramValues.add(qb.valueConstraint("jobName", jobName));
     	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
     	logger.finer(querydef.serialize());
+        QueryManager queryMgr = client.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
 		return (results.getTotalResults() > 0);
     }
@@ -173,6 +187,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     	}
     	paramValues.add(qb.valueConstraint("jobName", jobName));
     	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+        QueryManager queryMgr = client.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
     	
     	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
@@ -195,6 +210,9 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public void update(JobExecution jobExecution) {
         try {
+        	DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+            domFactory.setNamespaceAware(true);
+            DocumentBuilder documentBuilder = domFactory.newDocumentBuilder();
         	Document doc = documentBuilder.newDocument();
             Marshaller marshaller = jaxbContext().createMarshaller();
             JobExecutionAdapter adapter = new JobExecutionAdapter();
@@ -202,10 +220,15 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
             marshaller.marshal(aje, doc);
             DOMHandle handle = new DOMHandle();
             handle.set(doc);
+            DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
+            jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
+            XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
             xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata, handle);
         } catch (JAXBException e) {
             e.printStackTrace();
-        } catch (Exception e) {
+        } catch (ParserConfigurationException ex) {
+            ex.printStackTrace();
+        }catch (Exception e) {
         	e.printStackTrace();
         }
     }
