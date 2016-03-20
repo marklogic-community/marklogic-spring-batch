@@ -140,7 +140,8 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters,
             String jobConfigurationLocation) {
-        JobExecution jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, jobConfigurationLocation);
+        JobExecution jobExecution = new JobExecution(jobInstance, jobParameters, jobConfigurationLocation);
+        jobExecution.setId(getRandomNumber());
         update(jobExecution);
         return jobExecution;
     }
@@ -165,15 +166,17 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     			}
     		}
     		if (isJobFailed) {
-    			jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
+    			jobExecution = new JobExecution(jobInstance, jobParameters, null);
+    			jobExecution.setId(getRandomNumber());
            		update(jobExecution);
     		}
     	} else {
     		jobInstance = new JobInstance(getRandomNumber(), jobName);
-       		jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
+       		jobExecution = new JobExecution(jobInstance, jobParameters, null);
+       		jobExecution.setId(getRandomNumber());
        		update(jobExecution);
     	}      
-        return jobExecution;
+        return jobExecution;	
     }
 
     private List<JobExecution> getJobExecutions(String jobName, JobParameters jobParameters) {   	
