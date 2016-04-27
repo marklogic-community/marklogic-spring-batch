@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 
 public class JobRepositoryTestUtils implements InitializingBean {
@@ -101,6 +103,21 @@ public class JobRepositoryTestUtils implements InitializingBean {
 	public List<JobExecution> createJobExecutions(int count) throws JobExecutionAlreadyRunningException,
 	JobRestartException, JobInstanceAlreadyCompleteException, org.springframework.batch.core.repository.JobRestartException {
 		return createJobExecutions("job", new String[] { "step" }, count);
+	}
+	
+	/**
+	 * Remove the {@link JobExecution} instances, and all associated
+	 * {@link JobInstance} and {@link StepExecution} instances from the standard
+	 * RDBMS locations used by Spring Batch.
+	 *
+	 * @param list a list of {@link JobExecution}
+	 * @throws DataAccessException if there is a problem
+	 */
+	public void removeJobExecutions(Collection<JobExecution> list) throws DataAccessException {
+		for (JobExecution jobExecution : list) {
+			Long id = jobExecution.getId();
+			
+		}
 	}
 
 }
