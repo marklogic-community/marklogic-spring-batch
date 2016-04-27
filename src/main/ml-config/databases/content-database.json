@@ -12,6 +12,13 @@
 		"invalid-values": "reject"
 	}, {
 		"scalar-type": "unsignedLong",
+		"namespace-uri": "http://marklogic.com/spring-batch",
+		"localname": "id",
+		"collation": "",
+		"range-value-positions": false,
+		"invalid-values": "reject"
+  	}, {
+		"scalar-type": "unsignedLong",
 		"namespace-uri": "http://marklogic.com/spring-batch/job-instance",
 		"localname": "id",
 		"collation": "",
