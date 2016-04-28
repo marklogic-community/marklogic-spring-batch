@@ -280,8 +280,11 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
     @Override
     public JobExecution getLastJobExecution(String jobName, JobParameters jobParameters) {
-        JobExecution jobExecution = null;
-        return jobExecution;
+        List<JobExecution> jobExecutions = getJobExecutions(jobName, jobParameters);
+        if (jobExecutions.isEmpty()) 
+        	return null;
+        else
+        	return jobExecutions.get(0);
     }
 
     private long getRandomNumber() {
