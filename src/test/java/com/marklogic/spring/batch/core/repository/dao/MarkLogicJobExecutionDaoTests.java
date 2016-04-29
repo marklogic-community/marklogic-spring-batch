@@ -36,6 +36,9 @@ public class MarkLogicJobExecutionDaoTests {
 
 	@Autowired
 	protected JobExecutionDao dao;
+	
+	@Autowired
+	protected JobInstanceDao jobInstanceDao;
 
 	protected JobInstance jobInstance;
 
@@ -51,7 +54,7 @@ public class MarkLogicJobExecutionDaoTests {
 	}
 
 	protected JobInstanceDao getJobInstanceDao() {
-		return null;
+		return jobInstanceDao;
 	}
 
 	/**
