@@ -10,6 +10,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
@@ -27,6 +29,8 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
 public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao implements JobExecutionDao, InitializingBean {
+	
+	private static final Log logger = LogFactory.getLog(MarkLogicJobExecutionDao.class);
 	
 	public MarkLogicJobExecutionDao() {
 	}
@@ -73,7 +77,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public JobExecution getLastJobExecution(JobInstance jobInstance) {
-		// TODO Auto-generated method stub
+		logger.debug("");
 		return null;
 	}
 
