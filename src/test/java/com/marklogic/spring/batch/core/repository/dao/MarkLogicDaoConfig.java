@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
+import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,13 @@ public class MarkLogicDaoConfig {
 		MarkLogicJobExecutionDao jobExecutionDao = new MarkLogicJobExecutionDao();
 		jobExecutionDao.setDatabaseClient(databaseClientProvider.getDatabaseClient());
 		return jobExecutionDao;
+	}
+	
+	@Bean
+	public JobInstanceDao jobInstanceDao() {
+		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao();
+		jobInstanceDao.setDatabaseClient(databaseClientProvider.getDatabaseClient());
+		return jobInstanceDao;
 	}
 	
 	
