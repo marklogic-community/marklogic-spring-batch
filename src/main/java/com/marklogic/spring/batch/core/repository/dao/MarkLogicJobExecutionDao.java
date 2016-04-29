@@ -38,6 +38,9 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public void saveJobExecution(JobExecution jobExecution) {
+		if (jobExecution.getId() == null) {
+			jobExecution.setId(generateId());
+		}
 		try {
         	DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
             domFactory.setNamespaceAware(true);

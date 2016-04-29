@@ -28,7 +28,6 @@ public class MarkLogicDaoConfig {
 		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao();
 		jobInstanceDao.setDatabaseClient(databaseClientProvider.getDatabaseClient());
 		return jobInstanceDao;
-	}
-	
+	} 
 	
 }

@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao implements JobInstanceDao, InitializingBean {
-	
-	@Autowired
-	SecureRandom random;
 
 	@Override
 	public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
