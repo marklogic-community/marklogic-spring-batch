@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,12 @@ import org.w3c.dom.Document;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.MatchDocumentSummary;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
@@ -74,8 +81,29 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public List<JobExecution> findJobExecutions(JobInstance jobInstance) {
-		// TODO Auto-generated method stub
-		return null;
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+    	List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
+    	paramValues.add(qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()));
+    	paramValues.add(qb.valueConstraint("jobName", jobInstance.getJobName()));
+    	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+    	QueryManager queryMgr = databaseClient.newQueryManager();
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+    	
+    	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+		AdaptedJobExecution jobExec = null;
+		for (MatchDocumentSummary summary : summaries ) {
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
+			summary.getFirstSnippet(jaxbHandle);
+			jobExec = jaxbHandle.get();
+			JobExecutionAdapter adapter = new JobExecutionAdapter();
+			try {
+				jobExecutions.add(adapter.unmarshal(jobExec));
+			} catch (Exception ex) {
+				logger.error(ex.getMessage());
+			}
+		}
+		return jobExecutions;
 	}
 
 	@Override

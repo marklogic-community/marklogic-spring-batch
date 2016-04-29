@@ -1,10 +1,5 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,9 +25,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.marklogic.junit.spring.AbstractSpringTest;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class })
-public class MarkLogicJobExecutionDaoTests {
+public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 
 	@Autowired
 	protected JobExecutionDao dao;
