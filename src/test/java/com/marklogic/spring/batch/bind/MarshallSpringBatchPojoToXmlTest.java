@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.bind;
 
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -13,7 +12,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.w3c.dom.Document;
 
@@ -29,16 +27,13 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
-	@Autowired
-	private JAXBContext jaxbContext;
-	
 	Document doc;
 	Marshaller marshaller;
 	
 	@Before
 	public void setup() throws Exception {
 		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();	
-		marshaller = jaxbContext.createMarshaller();
+		marshaller = jaxbContext().createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	}
 	

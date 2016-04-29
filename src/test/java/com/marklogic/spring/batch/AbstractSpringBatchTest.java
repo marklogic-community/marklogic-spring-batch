@@ -1,5 +1,8 @@
 package com.marklogic.spring.batch;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -14,6 +17,10 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.AdaptedJobInstance;
+import com.marklogic.spring.batch.core.AdaptedJobParameters;
+import com.marklogic.spring.batch.core.AdaptedStepExecution;
 
 @ActiveProfiles("default")
 @ContextConfiguration(classes = { 
@@ -73,4 +80,14 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
         logger.info(
                 "Job execution time: " + (jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime()));
     }
+    
+    protected JAXBContext jaxbContext() {
+		JAXBContext jaxbContext = null;
+		try {
+            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class, AdaptedJobInstance.class, AdaptedJobParameters.class, AdaptedStepExecution.class);
+        } catch (JAXBException ex) {
+            throw new RuntimeException(ex);
+        }
+		return jaxbContext;
+	}
 }

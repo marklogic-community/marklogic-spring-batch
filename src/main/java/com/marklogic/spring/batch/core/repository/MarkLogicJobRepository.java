@@ -49,6 +49,9 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.AdaptedJobInstance;
+import com.marklogic.spring.batch.core.AdaptedJobParameters;
+import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
 public class MarkLogicJobRepository implements JobRepository, InitializingBean {
@@ -57,38 +60,52 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 	private ApplicationContext ctx;
 
 	@Autowired
-	private JAXBContext jaxbContext;
-	
-	@Autowired
 	private JobExplorer jobExplorer;
 	
-    private DocumentBuilder documentBuilder;
-    private DocumentMetadataHandle jobExecutionMetadata;
     private DatabaseClient client;
-    private XMLDocumentManager xmlDocMgr;
-    private QueryManager queryMgr;
     
-    private static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
+    public DatabaseClient getClient() {
+		return client;
+	}
+
+	public ApplicationContext getCtx() {
+		return ctx;
+	}
+
+	public void setCtx(ApplicationContext ctx) {
+		this.ctx = ctx;
+	}
+
+	public JobExplorer getJobExplorer() {
+		return jobExplorer;
+	}
+
+	public void setJobExplorer(JobExplorer jobExplorer) {
+		this.jobExplorer = jobExplorer;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	public static String getSearchOptionsName() {
+		return SEARCH_OPTIONS_NAME;
+	}
+
+	public void setClient(DatabaseClient client) {
+		this.client = client;
+	}
+
+	private final static Logger logger = Logger.getLogger("com.marklogic.spring.batch.core.repository.MarkLogicJobRepository");
     
 	public final static String SEARCH_OPTIONS_NAME = "spring-batch";
+	
+	public MarkLogicJobRepository() {
+	}
 
     public MarkLogicJobRepository(DatabaseClient client) {
+    	super();
         this.client = client;
-        initializeDocumentBuilder();
-        jobExecutionMetadata = new DocumentMetadataHandle();
-        jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
-        xmlDocMgr = client.newXMLDocumentManager();
-        queryMgr = client.newQueryManager();
-    }
-
-    protected void initializeDocumentBuilder() {
-        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-        domFactory.setNamespaceAware(true);
-        try {
-            this.documentBuilder = domFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     @Override
@@ -104,6 +121,7 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     	paramValues.add(qb.valueConstraint("jobName", jobName));
     	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
     	logger.finer(querydef.serialize());
+        QueryManager queryMgr = client.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
 		return (results.getTotalResults() > 0);
     }
@@ -122,7 +140,8 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public JobExecution createJobExecution(JobInstance jobInstance, JobParameters jobParameters,
             String jobConfigurationLocation) {
-        JobExecution jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, jobConfigurationLocation);
+        JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
+        jobExecution.setId(getRandomNumber());
         update(jobExecution);
         return jobExecution;
     }
@@ -147,15 +166,17 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     			}
     		}
     		if (isJobFailed) {
-    			jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
+    			jobExecution = new JobExecution(jobInstance, jobParameters);
+    			jobExecution.setId(getRandomNumber());
            		update(jobExecution);
     		}
     	} else {
     		jobInstance = new JobInstance(getRandomNumber(), jobName);
-       		jobExecution = new JobExecution(jobInstance, getRandomNumber(), jobParameters, null);
+       		jobExecution = new JobExecution(jobInstance, jobParameters);
+       		jobExecution.setId(getRandomNumber());
        		update(jobExecution);
     	}      
-        return jobExecution;
+        return jobExecution;	
     }
 
     private List<JobExecution> getJobExecutions(String jobName, JobParameters jobParameters) {   	
@@ -169,13 +190,14 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     	}
     	paramValues.add(qb.valueConstraint("jobName", jobName));
     	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+        QueryManager queryMgr = client.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
     	
     	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		AdaptedJobExecution jobExec = null;
 		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext);
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
 			summary.getFirstSnippet(jaxbHandle);
 			jobExec = jaxbHandle.get();
 			JobExecutionAdapter adapter = new JobExecutionAdapter();
@@ -191,17 +213,25 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
     @Override
     public void update(JobExecution jobExecution) {
         try {
+        	DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+            domFactory.setNamespaceAware(true);
+            DocumentBuilder documentBuilder = domFactory.newDocumentBuilder();
         	Document doc = documentBuilder.newDocument();
-            Marshaller marshaller = jaxbContext.createMarshaller();
+            Marshaller marshaller = jaxbContext().createMarshaller();
             JobExecutionAdapter adapter = new JobExecutionAdapter();
             AdaptedJobExecution aje = adapter.marshal(jobExecution);
             marshaller.marshal(aje, doc);
             DOMHandle handle = new DOMHandle();
             handle.set(doc);
+            DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
+            jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
+            XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
             xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata, handle);
         } catch (JAXBException e) {
             e.printStackTrace();
-        } catch (Exception e) {
+        } catch (ParserConfigurationException ex) {
+            ex.printStackTrace();
+        }catch (Exception e) {
         	e.printStackTrace();
         }
     }
@@ -250,8 +280,11 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 
     @Override
     public JobExecution getLastJobExecution(String jobName, JobParameters jobParameters) {
-        JobExecution jobExecution = null;
-        return jobExecution;
+        List<JobExecution> jobExecutions = getJobExecutions(jobName, jobParameters);
+        if (jobExecutions.isEmpty()) 
+        	return null;
+        else
+        	return jobExecutions.get(0);
     }
 
     private long getRandomNumber() {
@@ -277,6 +310,16 @@ public class MarkLogicJobRepository implements JobRepository, InitializingBean {
 		QueryOptionsListHandle qolHandle = queryOptionsMgr.optionsList(new QueryOptionsListHandle());
 		Set<String> results = qolHandle.getValuesMap().keySet();
 		assert(results.contains(SEARCH_OPTIONS_NAME) == true);
+	}
+	
+	protected JAXBContext jaxbContext() {
+		JAXBContext jaxbContext = null;
+		try {
+            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class, AdaptedJobInstance.class, AdaptedJobParameters.class, AdaptedStepExecution.class);
+        } catch (JAXBException ex) {
+            throw new RuntimeException(ex);
+        }
+		return jaxbContext;
 	}
 
 }

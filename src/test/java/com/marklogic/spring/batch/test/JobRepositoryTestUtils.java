@@ -1,24 +1,38 @@
 package com.marklogic.spring.batch.test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.batch.operations.JobRestartException;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersIncrementer;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
+
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.ValuesHandle;
+import com.marklogic.client.query.CountedDistinctValue;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.ValuesDefinition;
+import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
+import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
 public class JobRepositoryTestUtils implements InitializingBean {
 	
 	private JobRepository jobRepository;
+	private JobExplorer jobExplorer;
+	
+	private DatabaseClient databaseClient;
 	
 	private JobParametersIncrementer jobParametersIncrementer = new JobParametersIncrementer() {
 
@@ -43,8 +57,10 @@ public class JobRepositoryTestUtils implements InitializingBean {
 	 *
 	 * @param jobRepository a {@link JobRepository} backed by a database
 	 */
-	public JobRepositoryTestUtils(JobRepository jobRepository) {
+	public JobRepositoryTestUtils(DatabaseClient databaseClient, JobRepository jobRepository, JobExplorer jobExplorer) {
+		this.databaseClient = databaseClient;
 		this.jobRepository = jobRepository;
+		this.jobExplorer = jobExplorer;
 	}
 	
 	/**
@@ -73,9 +89,10 @@ public class JobRepositoryTestUtils implements InitializingBean {
 	 * create
 	 * @return a collection of {@link JobExecution}
 	 * @throws org.springframework.batch.core.repository.JobRestartException 
+	 * @throws org.springframework.batch.core.repository.JobRestartException 
 	 */
 	public List<JobExecution> createJobExecutions(String jobName, String[] stepNames, int count)
-			throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, org.springframework.batch.core.repository.JobRestartException {
+			throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobRestartException {
 		List<JobExecution> list = new ArrayList<JobExecution>();
 		JobParameters jobParameters = new JobParameters();
 		for (int i = 0; i < count; i++) {
@@ -98,9 +115,48 @@ public class JobRepositoryTestUtils implements InitializingBean {
 	 * @return a collection of {@link JobExecution}
 	 * @throws org.springframework.batch.core.repository.JobRestartException 
 	 */
-	public List<JobExecution> createJobExecutions(int count) throws JobExecutionAlreadyRunningException,
-	JobRestartException, JobInstanceAlreadyCompleteException, org.springframework.batch.core.repository.JobRestartException {
+	public List<JobExecution> createJobExecutions(int count) 
+			throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 		return createJobExecutions("job", new String[] { "step" }, count);
+	}
+	
+	/**
+	 * Remove the {@link JobExecution} instances, and all associated
+	 * {@link JobInstance} and {@link StepExecution} instances from the standard
+	 * RDBMS locations used by Spring Batch.
+	 *
+	 * @param list a list of {@link JobExecution}
+	 * @throws DataAccessException if there is a problem
+	 */
+	public void removeJobExecutions(Collection<JobExecution> list) throws DataAccessException {
+		for (JobExecution jobExecution : list) {
+			Long id = jobExecution.getId();
+			XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
+			String uri = MarkLogicSpringBatch.SPRING_BATCH_DIR + id.toString() + ".xml";
+			docMgr.delete(uri);		
+		}
+	}
+	
+	/**
+	 * Remove all the {@link JobExecution} instances, and all associated
+	 * {@link JobInstance} and {@link StepExecution} instances from the standard
+	 * RDBMS locations used by Spring Batch.
+	 *
+	 * @throws DataAccessException if there is a problem
+	 */
+	public void removeJobExecutions() throws DataAccessException {
+		QueryManager queryMgr = databaseClient.newQueryManager();
+		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobExecutionId", MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		ValuesHandle results = queryMgr.values(valuesDef, new ValuesHandle());
+		
+		Collection<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		CountedDistinctValue[] values = results.getValues();
+		for (int i = 0; i < values.length; i++) {
+			CountedDistinctValue value = results.getValues()[i];
+			Long id = value.get("xs:unsignedLong", Long.class);
+			jobExecutions.add(jobExplorer.getJobExecution(id));
+		}
+		removeJobExecutions(jobExecutions);
 	}
 
 }

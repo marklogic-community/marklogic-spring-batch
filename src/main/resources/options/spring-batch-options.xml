@@ -28,6 +28,11 @@
 			<element name="id" ns="http://marklogic.com/spring-batch" />  
 		</value>
 	</constraint>
+	<values name="jobExecutionId">
+    	<range type="xs:unsignedLong">
+      		<element ns="http://marklogic.com/spring-batch" name="id" />
+    	</range>
+  	</values>
 	<values name="jobInstanceId">
     	<range type="xs:unsignedLong">
       		<element ns="http://marklogic.com/spring-batch/job-instance" name="id" />
