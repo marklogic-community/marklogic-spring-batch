@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.batch.core.JobExecution;
@@ -9,7 +8,6 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao implements JobInstanceDao, InitializingBean {

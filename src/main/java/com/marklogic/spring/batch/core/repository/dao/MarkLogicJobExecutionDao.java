@@ -1,9 +1,11 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.batch.runtime.BatchStatus;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -16,9 +18,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -35,16 +38,30 @@ import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
-public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao implements JobExecutionDao, InitializingBean {
+public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao implements JobExecutionDao {
 	
 	private static final Log logger = LogFactory.getLog(MarkLogicJobExecutionDao.class);
 	
 	public MarkLogicJobExecutionDao() {
+		try {
+			super.afterPropertiesSet();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
-
+	
+	public MarkLogicJobExecutionDao(DatabaseClient databaseClient) {
+		super();
+		setDatabaseClient(databaseClient);
+	}
 
 	@Override
 	public void saveJobExecution(JobExecution jobExecution) {
+		validateJobExecution(jobExecution);
+		jobExecution.incrementVersion();
+		
 		if (jobExecution.getId() == null) {
 			jobExecution.setId(generateId());
 		}
@@ -72,6 +89,21 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
         }
 
 	}
+	
+	/**
+	 * Validate JobExecution. At a minimum, JobId, StartTime, EndTime, and
+	 * Status cannot be null.
+	 *
+	 * @param jobExecution
+	 * @throws IllegalArgumentException
+	 */
+	private void validateJobExecution(JobExecution jobExecution) {
+
+		Assert.notNull(jobExecution);
+		Assert.notNull(jobExecution.getJobId(), "JobExecution Job-Id cannot be null.");
+		Assert.notNull(jobExecution.getStatus(), "JobExecution status cannot be null.");
+		Assert.notNull(jobExecution.getCreateTime(), "JobExecution create time cannot be null");
+	}
 
 	@Override
 	public void updateJobExecution(JobExecution jobExecution) {
@@ -81,41 +113,38 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public List<JobExecution> findJobExecutions(JobInstance jobInstance) {
-		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
     	List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
+    	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
     	paramValues.add(qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()));
     	paramValues.add(qb.valueConstraint("jobName", jobInstance.getJobName()));
     	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
-    	QueryManager queryMgr = databaseClient.newQueryManager();
-    	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
-    	
-    	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
-		MatchDocumentSummary[] summaries = results.getMatchResults();
-		AdaptedJobExecution jobExec = null;
-		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
-			summary.getFirstSnippet(jaxbHandle);
-			jobExec = jaxbHandle.get();
-			JobExecutionAdapter adapter = new JobExecutionAdapter();
-			try {
-				jobExecutions.add(adapter.unmarshal(jobExec));
-			} catch (Exception ex) {
-				logger.error(ex.getMessage());
-			}
-		}
-		return jobExecutions;
+		return findJobExecutions(querydef);
+		
 	}
 
 	@Override
 	public JobExecution getLastJobExecution(JobInstance jobInstance) {
-		logger.debug("");
-		return null;
+		List<JobExecution> jobExecutions = findJobExecutions(jobInstance);
+		if (jobExecutions.size() > 0) {
+			return jobExecutions.get(0);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public Set<JobExecution> findRunningJobExecutions(String jobName) {
-		// TODO Auto-generated method stub
-		return null;
+		List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
+    	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+    	paramValues.add(qb.valueConstraint("status", BatchStatus.STARTED.toString(), BatchStatus.STARTING.toString()));
+    	paramValues.add(qb.valueConstraint("jobName", jobName));
+    	paramValues.add(qb.containerConstraint("endDateTime", qb.and())); 
+    	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+    	Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
+    	for ( JobExecution jobExecution : findJobExecutions(querydef) ) {
+    		jobExecutions.add(jobExecution);
+    	}
+    	return jobExecutions;
 	}
 
 	@Override
@@ -130,6 +159,26 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	}
 	
+	private List<JobExecution> findJobExecutions(StructuredQueryDefinition querydef) {
+    	QueryManager queryMgr = databaseClient.newQueryManager();
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
+    	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+		AdaptedJobExecution jobExec = null;
+		for (MatchDocumentSummary summary : summaries ) {
+			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
+			summary.getFirstSnippet(jaxbHandle);
+			jobExec = jaxbHandle.get();
+			JobExecutionAdapter adapter = new JobExecutionAdapter();
+			try {
+				jobExecutions.add(adapter.unmarshal(jobExec));
+			} catch (Exception ex) {
+				logger.error(ex.getMessage());
+			}
+		}
+		return jobExecutions;		
+	}
+	
 	protected JAXBContext jaxbContext() {
 		JAXBContext jaxbContext = null;
 		try {
@@ -139,5 +188,11 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
         }
 		return jaxbContext;
 	}
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
+	}
+	
 
 }
