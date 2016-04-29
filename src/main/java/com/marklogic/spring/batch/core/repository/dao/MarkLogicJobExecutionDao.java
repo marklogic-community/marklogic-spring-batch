@@ -13,9 +13,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
+import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Document;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -26,17 +26,11 @@ import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 
-public class MarkLogicJobExecutionDao implements JobExecutionDao {
-	
-	private DatabaseClient client;
+public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao implements JobExecutionDao, InitializingBean {
 	
 	public MarkLogicJobExecutionDao() {
 	}
 
-    public MarkLogicJobExecutionDao(DatabaseClient client) {
-    	super();
-        this.client = client;
-    }
 
 	@Override
 	public void saveJobExecution(JobExecution jobExecution) {
@@ -53,7 +47,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
             handle.set(doc);
             DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
             jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
-            XMLDocumentManager xmlDocMgr = client.newXMLDocumentManager();
+            XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
             xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata, handle);
         } catch (JAXBException e) {
             e.printStackTrace();
