@@ -56,8 +56,14 @@ public class MarkLogicJobExplorer implements JobExplorer {
 		ValueQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));	
 		valuesDef.setQueryDefinition(querydef);
 		ValuesHandle results = queryMgr.values(valuesDef, new ValuesHandle());
+		CountedDistinctValue[] values = results.getValues();
+		int total = values.length;
+		if (start + count > total) {
+		   count = total - start;
+		}
+		
 		for (int i = start; i < start + count; i++) {
-			CountedDistinctValue value = results.getValues()[i];
+			CountedDistinctValue value = values[i];
 			Long id = value.get("xs:unsignedLong", Long.class);
 			JobInstance jobInstance = new JobInstance(id, jobName);
 			jobInstances.add(jobInstance);
