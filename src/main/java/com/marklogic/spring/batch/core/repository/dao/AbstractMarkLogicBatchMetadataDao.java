@@ -8,6 +8,14 @@ public class AbstractMarkLogicBatchMetadataDao implements org.springframework.be
 	
 	protected DatabaseClient databaseClient;
 
+	public DatabaseClient getDatabaseClient() {
+		return databaseClient;
+	}
+
+	public void setDatabaseClient(DatabaseClient databaseClient) {
+		this.databaseClient = databaseClient;
+	}
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(databaseClient);

@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
@@ -22,12 +23,18 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class })
 public class MarkLogicJobExecutionDaoTests {
 
+	@Autowired
 	protected JobExecutionDao dao;
 
 	protected JobInstance jobInstance;
@@ -40,7 +47,7 @@ public class MarkLogicJobExecutionDaoTests {
 	 * @return tested object ready for use
 	 */
 	protected JobExecutionDao getJobExecutionDao() {
-		return null;
+		return dao;
 	}
 
 	protected JobInstanceDao getJobInstanceDao() {
