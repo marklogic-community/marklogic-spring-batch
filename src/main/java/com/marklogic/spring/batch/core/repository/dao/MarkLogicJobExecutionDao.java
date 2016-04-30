@@ -52,7 +52,6 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	@Override
 	public void saveJobExecution(JobExecution jobExecution) {
 		validateJobExecution(jobExecution);
-		jobExecution.incrementVersion();
 		
 		if (jobExecution.getId() == null) {
 			jobExecution.setId(generateId());
@@ -158,8 +157,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public void synchronizeStatus(JobExecution jobExecution) {
-		// TODO Auto-generated method stub
-
+		saveJobExecution(jobExecution);
 	}
 	
 	private List<JobExecution> findJobExecutions(StructuredQueryDefinition querydef) {
