@@ -318,6 +318,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 
 		assertEquals(exec1.getVersion(), exec2.getVersion());
 		assertEquals(exec1.getStatus(), exec2.getStatus());
+		
 	}
 
 	/**
@@ -343,7 +344,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 
 		dao.synchronizeStatus(exec2);
 
-		assertEquals(new Integer(7), exec2.getVersion());
+		assertEquals(exec1.getVersion(), exec2.getVersion());
 		assertEquals(BatchStatus.UNKNOWN, exec2.getStatus());
 	}
 

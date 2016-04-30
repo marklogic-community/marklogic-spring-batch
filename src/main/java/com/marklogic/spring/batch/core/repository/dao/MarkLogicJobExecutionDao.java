@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.batch.runtime.BatchStatus;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -31,6 +30,7 @@ import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import org.springframework.batch.core.BatchStatus;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
@@ -157,7 +157,14 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public void synchronizeStatus(JobExecution jobExecution) {
-		saveJobExecution(jobExecution);
+		JobExecution je = getJobExecution(jobExecution.getId());
+		int currentVersion = je.getVersion().intValue();
+
+		if (currentVersion != jobExecution.getVersion().intValue()) {
+			BatchStatus status = je.getStatus();
+			jobExecution.upgradeStatus(status);
+			jobExecution.setVersion(currentVersion);
+		}
 	}
 	
 	private List<JobExecution> findJobExecutions(StructuredQueryDefinition querydef) {
