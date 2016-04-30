@@ -43,18 +43,10 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	private static final Log logger = LogFactory.getLog(MarkLogicJobExecutionDao.class);
 	
 	public MarkLogicJobExecutionDao() {
-		try {
-			super.afterPropertiesSet();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 	
 	public MarkLogicJobExecutionDao(DatabaseClient databaseClient) {
-		super();
-		setDatabaseClient(databaseClient);
+		this.databaseClient = databaseClient;
 	}
 
 	@Override
@@ -113,11 +105,12 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public List<JobExecution> findJobExecutions(JobInstance jobInstance) {
-    	List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	paramValues.add(qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()));
-    	paramValues.add(qb.valueConstraint("jobName", jobInstance.getJobName()));
-    	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+    	StructuredQueryDefinition querydef = 
+    			qb.and(
+    				qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()), 
+    				qb.valueConstraint("jobName", jobInstance.getJobName())
+    			);
 		return findJobExecutions(querydef);
 		
 	}
@@ -187,12 +180,6 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
             throw new RuntimeException(ex);
         }
 		return jaxbContext;
-	}
-	
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		super.afterPropertiesSet();
-	}
-	
+	}	
 
 }
