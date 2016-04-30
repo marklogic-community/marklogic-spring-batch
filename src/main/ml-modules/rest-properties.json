@@ -2,6 +2,6 @@
   "debug": "true",
   "validate-queries": "true",
   "document-transform-all": "false",
-  "update-policy": "MERGE_METADATA",
+  "update-policy": "VERSION_OPTIONAL",
   "validate-options": "true"
 }
