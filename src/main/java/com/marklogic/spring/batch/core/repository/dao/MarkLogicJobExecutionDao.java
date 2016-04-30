@@ -142,8 +142,13 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
-		// TODO Auto-generated method stub
-		return null;
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+		StructuredQueryDefinition querydef = qb.and(
+				qb.valueConstraint("jobExecutionId", executionId.toString())
+			);	
+		List<JobExecution> jobExecutions = findJobExecutions(querydef);
+		assert(jobExecutions.size() == 1);
+		return jobExecutions.get(0);
 	}
 
 	@Override
