@@ -18,6 +18,7 @@ public class JobExecutionAdapter extends XmlAdapter<AdaptedJobExecution, JobExec
 		jobExec.setJobInstance(v.getJobInstance());
 		jobExec.setStatus(BatchStatus.valueOf(v.getStatus()));	
 		jobExec.addStepExecutions(v.getStepExecutions());
+		jobExec.setVersion(v.getVersion());
 		return jobExec;
 	}
 

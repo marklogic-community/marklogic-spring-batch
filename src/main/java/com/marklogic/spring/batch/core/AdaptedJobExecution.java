@@ -34,6 +34,7 @@ public class AdaptedJobExecution {
 	private String exitMessage;
 	private Long id;
 	private String uri;
+	private int version;
 
 	protected AdaptedJobExecution() { 
 		stepExecution = new ArrayList<StepExecution>();
@@ -42,6 +43,7 @@ public class AdaptedJobExecution {
 	public AdaptedJobExecution(JobExecution jobExecution) {
 		this();
 		setId(jobExecution.getId());
+		jobExecution.setVersion(new Integer(0));
 		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
 		this.createDateTime = jobExecution.getCreateTime();
@@ -157,6 +159,14 @@ public class AdaptedJobExecution {
 	
 	public void setJobParameters(JobParameters jobParameters) {
 		this.jobParameters = jobParameters;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 	
 }
