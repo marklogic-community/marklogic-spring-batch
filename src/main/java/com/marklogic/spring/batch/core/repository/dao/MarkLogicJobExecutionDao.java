@@ -127,12 +127,13 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public Set<JobExecution> findRunningJobExecutions(String jobName) {
-		List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	paramValues.add(qb.valueConstraint("status", BatchStatus.STARTED.toString(), BatchStatus.STARTING.toString()));
-    	paramValues.add(qb.valueConstraint("jobName", jobName));
-    	paramValues.add(qb.containerConstraint("endDateTime", qb.and())); 
-    	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+    	StructuredQueryDefinition querydef = 
+    			qb.and(
+    				qb.valueConstraint("status", BatchStatus.STARTED.toString(), BatchStatus.STARTING.toString()),
+    				qb.valueConstraint("jobName", jobName),
+    				qb.not(qb.containerConstraint("endDateTime", qb.and()))
+    			);
     	Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
     	for ( JobExecution jobExecution : findJobExecutions(querydef) ) {
     		jobExecutions.add(jobExecution);
@@ -147,8 +148,12 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 				qb.valueConstraint("jobExecutionId", executionId.toString())
 			);	
 		List<JobExecution> jobExecutions = findJobExecutions(querydef);
-		assert(jobExecutions.size() == 1);
-		return jobExecutions.get(0);
+		if (jobExecutions.size() == 1) {
+			return jobExecutions.get(0);
+		} else {
+			return null;
+		}
+		
 	}
 
 	@Override
@@ -158,6 +163,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	}
 	
 	private List<JobExecution> findJobExecutions(StructuredQueryDefinition querydef) {
+    	logger.info(querydef.serialize());
     	QueryManager queryMgr = databaseClient.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
     	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
