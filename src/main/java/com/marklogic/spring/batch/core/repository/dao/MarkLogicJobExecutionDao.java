@@ -17,10 +17,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
+import org.springframework.batch.core.repository.dao.NoSuchObjectException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -53,32 +57,44 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	public void saveJobExecution(JobExecution jobExecution) {
 		validateJobExecution(jobExecution);
 		
-		if (jobExecution.getId() == null) {
-			jobExecution.setId(generateId());
-		}
+		jobExecution.incrementVersion();
+		
+		jobExecution.setId(incrementer.nextLongValue());
+		
+	
+		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
+		String uri = MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml";
+        DocumentDescriptor desc = xmlDocMgr.newDescriptor(uri);
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true);
+        DocumentBuilder documentBuilder;
+        Document doc = null;
 		try {
-        	DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-            domFactory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = domFactory.newDocumentBuilder();
-        	Document doc = documentBuilder.newDocument();
-            Marshaller marshaller = jaxbContext().createMarshaller();
-            JobExecutionAdapter adapter = new JobExecutionAdapter();
-            AdaptedJobExecution aje = adapter.marshal(jobExecution);
-            marshaller.marshal(aje, doc);
-            DOMHandle handle = new DOMHandle();
-            handle.set(doc);
-            DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
-            jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
-            XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
-            xmlDocMgr.write(MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml", jobExecutionMetadata, handle);
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException ex) {
-            ex.printStackTrace();
-        }catch (Exception e) {
-        	e.printStackTrace();
-        }
-
+			documentBuilder = domFactory.newDocumentBuilder();
+			doc = documentBuilder.newDocument();
+	        Marshaller marshaller = jaxbContext().createMarshaller();
+	        JobExecutionAdapter adapter = new JobExecutionAdapter();
+	        AdaptedJobExecution aje  = adapter.marshal(jobExecution);;
+	        marshaller.marshal(aje, doc);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        DOMHandle handle = new DOMHandle();
+        handle.set(doc);      
+      
+        //Set document metadata
+        DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
+        jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
+        
+		xmlDocMgr.write(desc, jobExecutionMetadata, handle);
+		logger.info("insert:" + uri + "," + desc.getVersion());
+            
+			
+            
 	}
 	
 	/**
@@ -98,9 +114,62 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public void updateJobExecution(JobExecution jobExecution) {
-		saveJobExecution(jobExecution);
+		validateJobExecution(jobExecution);
+		Assert.notNull(jobExecution.getId(),
+				"JobExecution ID cannot be null. JobExecution must be saved before it can be updated");
 
+		Assert.notNull(jobExecution.getVersion(),
+				"JobExecution version cannot be null. JobExecution must be saved before it can be updated");
+		
+		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
+        String uri = SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml";
+		
+		
+		synchronized (jobExecution) {
+			DocumentDescriptor desc = xmlDocMgr.exists(uri);
+			
+			if (desc == null) {
+				throw new NoSuchObjectException("Invalid JobExecution, Document " + uri + " not found.");
+			}
+			jobExecution.setVersion(jobExecution.getVersion() + 1);
+			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+	        domFactory.setNamespaceAware(true);
+	        DocumentBuilder documentBuilder;
+	        Document doc = null;
+			try {
+				documentBuilder = domFactory.newDocumentBuilder();
+				doc = documentBuilder.newDocument();
+		        Marshaller marshaller = jaxbContext().createMarshaller();
+		        JobExecutionAdapter adapter = new JobExecutionAdapter();
+		        AdaptedJobExecution aje  = adapter.marshal(jobExecution);
+		        marshaller.marshal(aje, doc);
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	        DOMHandle handle = new DOMHandle();
+	        handle.set(doc);      
+	      
+	        //Set document metadata
+	        DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
+	        jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
+	        try {
+	        	xmlDocMgr.write(desc, jobExecutionMetadata, handle);
+				logger.info("update:" + uri + "," + desc.getVersion());
+	        } catch (FailedRequestException ex) {
+	        	logger.error(ex.getMessage());
+	        	throw new OptimisticLockingFailureException(ex.getMessage());
+	        } catch (Exception ex) {
+	        	logger.error(ex.getMessage());
+	        	ex.printStackTrace();
+	        }
+			
+		}
 	}
+	
 
 	@Override
 	public List<JobExecution> findJobExecutions(JobInstance jobInstance) {
@@ -196,6 +265,6 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
             throw new RuntimeException(ex);
         }
 		return jaxbContext;
-	}	
+	}
 
 }

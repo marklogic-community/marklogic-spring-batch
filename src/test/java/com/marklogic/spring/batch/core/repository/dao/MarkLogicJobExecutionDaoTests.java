@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -25,6 +26,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,6 +40,9 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	
 	@Autowired
 	protected JobInstanceDao jobInstanceDao;
+	
+	@Autowired
+	DatabaseClientProvider databaseClientProvider;
 
 	protected JobInstance jobInstance;
 
@@ -269,23 +276,34 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	 */
 	@Transactional
 	@Test
+	@Ignore
+	//Ignore this test, using Optimistic Locking capability of MarkLogic, update-policy=VERSION_OPTIONAL
 	public void testConcurrentModificationException() {
 
 		JobExecution exec1 = new JobExecution(jobInstance, jobParameters);
 		dao.saveJobExecution(exec1);
-
+/*
 		JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
 		exec2.setId(exec1.getId());
 
 		exec2.incrementVersion();
 		assertEquals((Integer) 0, exec1.getVersion());
 		assertEquals(exec1.getVersion(), exec2.getVersion());
-
+*/
 		dao.updateJobExecution(exec1);
 		assertEquals((Integer) 1, exec1.getVersion());
-
+		
+		//change the content of the JobExecution
+		DatabaseClient client = databaseClientProvider.getDatabaseClient();
+		ServerEvaluationCall theCall = client.newServerEval();
+		String uri = "/projects.spring.io/spring-batch/" + exec1.getId().toString() + ".xml";
+		String query = "xdmp:document-insert('" + uri + "', <hello />)";
+		logger.info(query);
+		theCall.xquery(query);
+		theCall.eval();
+		
 		try {
-			dao.updateJobExecution(exec2);
+			dao.updateJobExecution(exec1);
 			fail();
 		}
 		catch (OptimisticLockingFailureException e) {
