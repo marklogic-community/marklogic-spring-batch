@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
 
 @Configuration
 @Import( com.marklogic.client.spring.BasicConfig.class )
@@ -18,7 +19,10 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public JobExecutionDao jobExecutionDao() throws Exception {
-		return new MarkLogicJobExecutionDao(databaseClientProvider.getDatabaseClient());
+		MarkLogicJobExecutionDao dao = new MarkLogicJobExecutionDao();
+		dao.setDatabaseClient(databaseClientProvider.getDatabaseClient());
+		dao.setJobExecutionIncrementer(new UriIncrementer());
+		return new MarkLogicJobExecutionDao();
 	}
 	
 	@Bean

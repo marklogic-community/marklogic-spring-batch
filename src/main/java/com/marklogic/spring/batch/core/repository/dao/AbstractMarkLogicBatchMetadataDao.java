@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,10 +64,6 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 		QueryOptionsListHandle qolHandle = queryOptionsMgr.optionsList(new QueryOptionsListHandle());
 		Set<String> results = qolHandle.getValuesMap().keySet();
 		assert(results.contains(SEARCH_OPTIONS_NAME) == true);
-	}
-	
-	public Long generateId() {
-		return Math.abs(ThreadLocalRandom.current().nextLong());
 	}
 
 }
