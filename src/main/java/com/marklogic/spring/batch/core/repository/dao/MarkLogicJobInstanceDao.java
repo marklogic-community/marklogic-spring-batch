@@ -37,7 +37,6 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.query.ValuesDefinition;
-import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.bind.JobInstanceAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
@@ -64,6 +63,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 				"JobInstance must not already exist");
 		
 		JobInstance jobInstance = new JobInstance(incrementer.nextLongValue(), jobName);
+		jobInstance.incrementVersion();
 		
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
 		String uri = SPRING_BATCH_INSTANCE_DIR + jobInstance.getId().toString() + ".xml";
@@ -170,8 +170,29 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
-		// TODO Auto-generated method stub
-		return null;
+		QueryManager queryMgr = databaseClient.newQueryManager();
+    	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+    	StructuredQueryDefinition querydef = 
+    			qb.and(
+    				qb.valueConstraint("jobName", jobName),
+    				qb.collection(COLLECTION_JOB_INSTANCE)
+    			);
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
+    	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+		AdaptedJobInstance aji = null;
+		for (MatchDocumentSummary summary : summaries ) {
+			JAXBHandle<AdaptedJobInstance> jaxbHandle = new JAXBHandle<AdaptedJobInstance>(jaxbContext());
+			summary.getFirstSnippet(jaxbHandle);
+			aji = jaxbHandle.get();
+			JobInstanceAdapter adapter = new JobInstanceAdapter();
+			try {
+				jobInstances.add(adapter.unmarshal(aji));
+			} catch (Exception ex) {
+				logger.error(ex.getMessage());
+			}
+		}
+		return jobInstances;
 	}
 
 	@Override
@@ -188,35 +209,13 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public List<JobInstance> findJobInstancesByName(String jobName, int start, int count) {
-		// TODO Auto-generated method stub
-		return null;
+    	return null;	
 	}
 
 	@Override
 	public int getJobInstanceCount(String jobName) throws NoSuchJobException {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-	
-	private List<JobExecution> findJobExecutions(StructuredQueryDefinition querydef) {
-    	logger.info(querydef.serialize());
-    	QueryManager queryMgr = databaseClient.newQueryManager();
-    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
-    	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
-		MatchDocumentSummary[] summaries = results.getMatchResults();
-		AdaptedJobExecution jobExec = null;
-		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
-			summary.getFirstSnippet(jaxbHandle);
-			jobExec = jaxbHandle.get();
-			JobExecutionAdapter adapter = new JobExecutionAdapter();
-			try {
-				jobExecutions.add(adapter.unmarshal(jobExec));
-			} catch (Exception ex) {
-				logger.error(ex.getMessage());
-			}
-		}
-		return jobExecutions;		
 	}
 	
 	protected JAXBContext jaxbContext() {
