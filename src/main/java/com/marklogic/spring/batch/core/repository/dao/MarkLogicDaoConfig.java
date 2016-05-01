@@ -26,8 +26,7 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public JobInstanceDao jobInstanceDao() {
-		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao();
-		jobInstanceDao.setDatabaseClient(databaseClientProvider.getDatabaseClient());
+		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(databaseClientProvider.getDatabaseClient());
 		jobInstanceDao.setIncrementer(new UriIncrementer());
 		return jobInstanceDao;
 	}	
