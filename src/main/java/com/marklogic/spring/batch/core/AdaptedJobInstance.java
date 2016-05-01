@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.core;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,6 +31,8 @@ public class AdaptedJobInstance extends Entity {
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
 	}
+	
+	@XmlElement(name = "id", namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
 	public Long getId() {
 		return id;
 	}

@@ -177,7 +177,8 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
     	StructuredQueryDefinition querydef = 
     			qb.and(
     				qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()), 
-    				qb.valueConstraint("jobName", jobInstance.getJobName())
+    				qb.valueConstraint("jobName", jobInstance.getJobName()),
+    				qb.collection(COLLECTION_JOB_EXECUTION)
     			);
 		return findJobExecutions(querydef);
 		
