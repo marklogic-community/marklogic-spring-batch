@@ -141,16 +141,25 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public JobInstance getJobInstance(Long instanceId) {
-		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-		StructuredQueryDefinition querydef = qb.and(
-				qb.valueConstraint("jobInstanceId", instanceId.toString())
-			);	
-		List<JobExecution> jobExecutions = findJobExecutions(querydef);		
-		if (jobExecutions.size() == 1) {
-			return jobExecutions.get(0).getJobInstance();
-		} else {
+		String uri = SPRING_BATCH_INSTANCE_DIR + instanceId.toString() + ".xml";
+		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
+		DocumentDescriptor desc = xmlDocMgr.exists(uri);
+		if (desc == null) {
 			return null;
+		} else {
+			JAXBHandle<AdaptedJobInstance> jaxbHandle = xmlDocMgr.read(uri, new JAXBHandle<AdaptedJobInstance>(jaxbContext()));
+			AdaptedJobInstance aji = jaxbHandle.get();
+			JobInstanceAdapter adapter = new JobInstanceAdapter();
+			JobInstance jobInstance = null;
+			try {
+				jobInstance = adapter.unmarshal(aji);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			return jobInstance;
 		}
+		
+	
 	}
 
 	@Override
