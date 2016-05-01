@@ -63,7 +63,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 		
 	
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
-		String uri = MarkLogicSpringBatch.SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml";
+		String uri = SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml";
         DocumentDescriptor desc = xmlDocMgr.newDescriptor(uri);
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true);

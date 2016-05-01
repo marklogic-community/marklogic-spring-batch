@@ -45,7 +45,10 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 	public final String JOB_PARAMETER_NAMESPACE_PREFIX = "jp";
 	
 	public final String SPRING_BATCH_DIR = "/projects.spring.io/spring-batch/";
+	public final String SPRING_BATCH_INSTANCE_DIR = SPRING_BATCH_DIR + "instance/";
+	
 	public final String COLLECTION_JOB_EXECUTION = "http://marklogic.com/spring-batch/job-execution";
+	public final String COLLECTION_JOB_INSTANCE = "http://marklogic.com/spring-batch/job-instance";
 
 	public DatabaseClient getDatabaseClient() {
 		return databaseClient;
