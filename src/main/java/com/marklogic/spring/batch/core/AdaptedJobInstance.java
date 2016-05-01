@@ -9,7 +9,7 @@ public class AdaptedJobInstance {
 	
 	private String jobName;
 	private Long id;
-	private String jobKey;
+	private String jobParametersKey;
 	
 	public AdaptedJobInstance() { }
 	
@@ -31,12 +31,12 @@ public class AdaptedJobInstance {
 		this.id = id;
 	}
 
-	public String getJobKey() {
-		return jobKey;
+	public String getJobParametersKey() {
+		return jobParametersKey;
 	}
 
-	public void setJobKey(String jobKey) {
-		this.jobKey = jobKey;
+	public void setJobParametersKey(String jobParametersKey) {
+		this.jobParametersKey = jobParametersKey;
 	}
 
 }

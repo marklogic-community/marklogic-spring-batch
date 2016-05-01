@@ -13,6 +13,11 @@
 			<element name="jobName" ns="http://marklogic.com/spring-batch/job-instance" />  
 		</value>
 	</constraint>
+	<constraint name="jobParametersKey">
+		<value>
+			<element name="jobParametersKey" ns="http://marklogic.com/spring-batch/job-instance" />  
+		</value>
+	</constraint>
 	<constraint name="jobParameter">
 		<value>
 			<element name="jobParameter" ns="http://marklogic.com/spring-batch/job-parameter" />  

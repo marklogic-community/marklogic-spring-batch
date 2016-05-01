@@ -16,7 +16,6 @@ import org.springframework.batch.core.DefaultJobKeyGenerator;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobKeyGenerator;
-import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
@@ -84,7 +83,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	        Marshaller marshaller = jaxbContext().createMarshaller();
 	        JobInstanceAdapter adapter = new JobInstanceAdapter();
 	        AdaptedJobInstance aji  = adapter.marshal(jobInstance);
-	        aji.setJobKey(jobKeyGenerator.generateKey(jobParameters));
+	        aji.setJobParametersKey(jobKeyGenerator.generateKey(jobParameters));
 	        marshaller.marshal(aji, doc);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -109,16 +108,12 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	@Override
 	public JobInstance getJobInstance(String jobName, JobParameters jobParameters) {
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	List<StructuredQueryDefinition> paramValues = new ArrayList<StructuredQueryDefinition>();
-    	for (String paramName : jobParameters.getParameters().keySet()) {
-    		JobParameter param = jobParameters.getParameters().get(paramName);
-    		if (param.isIdentifying()) {
-    			paramValues.add(qb.valueConstraint("jobParameter", param.getValue().toString()));
-    		}
-    	}
-    	paramValues.add(qb.valueConstraint("jobName", jobName));
-    	paramValues.add(qb.collection(COLLECTION_JOB_INSTANCE));
-    	StructuredQueryDefinition querydef = qb.and(paramValues.toArray(new StructuredQueryDefinition[paramValues.size()]));
+    	StructuredQueryDefinition querydef = 
+    			qb.and(
+    				qb.valueConstraint("jobParametersKey", jobKeyGenerator.generateKey(jobParameters)),
+    				qb.valueConstraint("jobName", jobName),
+    				qb.collection(COLLECTION_JOB_INSTANCE)
+    			);
         QueryManager queryMgr = databaseClient.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
     	
