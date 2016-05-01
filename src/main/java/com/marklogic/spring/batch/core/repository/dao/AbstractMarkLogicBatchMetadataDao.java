@@ -8,6 +8,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
 
 import com.marklogic.client.DatabaseClient;
@@ -21,6 +22,8 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 	protected ApplicationContext ctx;
 	
 	protected DatabaseClient databaseClient;
+	
+	protected DataFieldMaxValueIncrementer incrementer;
 	
 	private static final Log logger = LogFactory.getLog(AbstractMarkLogicBatchMetadataDao.class);
 	
@@ -51,6 +54,14 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 	public void setDatabaseClient(DatabaseClient databaseClient) {
 		this.databaseClient = databaseClient;
 	}
+	
+	public DataFieldMaxValueIncrementer getIncrementer() {
+		return incrementer;
+	}
+
+	public void setIncrementer(DataFieldMaxValueIncrementer incrementer) {
+		this.incrementer = incrementer;
+	}	
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

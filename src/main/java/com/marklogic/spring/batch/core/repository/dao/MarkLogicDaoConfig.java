@@ -19,16 +19,16 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public JobExecutionDao jobExecutionDao() throws Exception {
-		MarkLogicJobExecutionDao dao = new MarkLogicJobExecutionDao();
-		dao.setDatabaseClient(databaseClientProvider.getDatabaseClient());
-		dao.setJobExecutionIncrementer(new UriIncrementer());
-		return new MarkLogicJobExecutionDao();
+		MarkLogicJobExecutionDao dao = new MarkLogicJobExecutionDao(databaseClientProvider.getDatabaseClient());
+		dao.setIncrementer(new UriIncrementer());
+		return dao;
 	}
 	
 	@Bean
 	public JobInstanceDao jobInstanceDao() {
 		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao();
 		jobInstanceDao.setDatabaseClient(databaseClientProvider.getDatabaseClient());
+		jobInstanceDao.setIncrementer(new UriIncrementer());
 		return jobInstanceDao;
 	}	
 	

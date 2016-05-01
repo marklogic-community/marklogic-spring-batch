@@ -20,7 +20,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 		Assert.state(getJobInstance(jobName, jobParameters) == null,
 				"JobInstance must not already exist");
 		
-		JobInstance jobInstance = new JobInstance(generateId(), jobName);
+		JobInstance jobInstance = new JobInstance(incrementer.nextLongValue(), "test-job");
     	return jobInstance;
 	}
 
