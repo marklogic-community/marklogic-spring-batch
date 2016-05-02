@@ -11,14 +11,14 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 	@Override
 	public StepExecution unmarshal(AdaptedStepExecution v) throws Exception {
 		StepExecution step = new StepExecution(v.getStepName(), v.getJobExecution());
+		step.setId(v.getId());
+		step.setStartTime(v.getStartTime());
 		return step;
 	}
 
 	@Override
 	public AdaptedStepExecution marshal(StepExecution v) throws Exception {
-		AdaptedStepExecution adaptedStep = new AdaptedStepExecution();
-		adaptedStep.setStepName(v.getStepName());
-		return adaptedStep;
+		return new AdaptedStepExecution(v);
 	}	
 	
 }

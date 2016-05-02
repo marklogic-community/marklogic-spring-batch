@@ -8,13 +8,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.StepExecution;
 
 @XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
 @XmlType(namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
-public class AdaptedStepExecution {
+public class AdaptedStepExecution extends Entity {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JobExecution jobExecution;
 	private String stepName;
 	private BatchStatus status = BatchStatus.STARTING;
@@ -25,7 +31,7 @@ public class AdaptedStepExecution {
 	private int readSkipCount = 0;
 	private int processSkipCount = 0;
 	private int writeSkipCount = 0;
-	private Date startTime = new Date(System.currentTimeMillis());
+	private Date startTime = null;
 	private Date endTime = null;
 	private Date lastUpdated = null;
 	//private ExecutionContext executionContext = new ExecutionContext();
@@ -33,6 +39,16 @@ public class AdaptedStepExecution {
 	private boolean terminateOnly;
 	private int filterCount;
 	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<Throwable>();
+	
+	public AdaptedStepExecution() { 
+		
+	}
+	
+	public AdaptedStepExecution(StepExecution stepExec) {
+		this.setId(stepExec.getId());
+		this.startTime = stepExec.getStartTime();
+		
+	}
 	
 	public JobExecution getJobExecution() {
 		return jobExecution;
@@ -168,12 +184,6 @@ public class AdaptedStepExecution {
 
 	public void setFailureExceptions(List<Throwable> failureExceptions) {
 		this.failureExceptions = failureExceptions;
-	}
-
-	
-	public AdaptedStepExecution() { 
-		
-	}
-    
+	}    
     	
 }

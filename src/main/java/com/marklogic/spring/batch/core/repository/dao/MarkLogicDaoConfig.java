@@ -40,6 +40,8 @@ public class MarkLogicDaoConfig {
 	@Bean
 	public StepExecutionDao stepExecutionDao() throws Exception {
 		MarkLogicStepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(databaseClientProvider.getDatabaseClient());
+		stepExecutionDao.setJobExecutionDao(jobExecutionDao());
+		stepExecutionDao.setIncrementer(new UriIncrementer());
 		return stepExecutionDao;
 	}
 	
