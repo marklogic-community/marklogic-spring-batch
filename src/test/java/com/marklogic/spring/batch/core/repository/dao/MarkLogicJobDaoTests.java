@@ -28,12 +28,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.junit.spring.AbstractSpringTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { 
 		com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, 
 		com.marklogic.junit.spring.BasicTestConfig.class })
-public class MarkLogicJobDaoTests {
+public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	
 	@Autowired
 	protected JobInstanceDao jobInstanceDao;
