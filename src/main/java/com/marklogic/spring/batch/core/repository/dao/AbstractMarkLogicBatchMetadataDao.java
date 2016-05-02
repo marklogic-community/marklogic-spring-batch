@@ -49,6 +49,7 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 	
 	public final String COLLECTION_JOB_EXECUTION = "http://marklogic.com/spring-batch/job-execution";
 	public final String COLLECTION_JOB_INSTANCE = "http://marklogic.com/spring-batch/job-instance";
+	public final String COLLECTION_STEP_EXECUTION = "http://marklogic.com/spring-batch/step-execution";
 
 	public DatabaseClient getDatabaseClient() {
 		return databaseClient;

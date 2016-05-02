@@ -1,7 +1,12 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
+import org.springframework.batch.core.repository.dao.MapExecutionContextDao;
+import org.springframework.batch.core.repository.dao.StepExecutionDao;
+import org.springframework.batch.core.repository.support.SimpleJobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,5 +36,23 @@ public class MarkLogicDaoConfig {
 		jobInstanceDao.setJobExecutionDao(jobExecutionDao());
 		return jobInstanceDao;
 	}	
+	
+	@Bean
+	public StepExecutionDao stepExecutionDao() throws Exception {
+		MarkLogicStepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(databaseClientProvider.getDatabaseClient());
+		return stepExecutionDao;
+	}
+	
+	@Bean
+	public ExecutionContextDao executionContextDao() throws Exception {
+		MapExecutionContextDao executionContextDao = new MapExecutionContextDao();
+		return executionContextDao;
+	}
+	
+	@Bean
+	public JobRepository jobRepository() throws Exception {
+		SimpleJobRepository jobRepository = new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
+		return jobRepository;
+	}
 	
 }
