@@ -2,6 +2,7 @@ package com.marklogic.spring.batch.bind;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
@@ -16,7 +17,8 @@ public class JobExecutionAdapter extends XmlAdapter<AdaptedJobExecution, JobExec
 		jobExec.setLastUpdated(v.getLastUpdatedDateTime());
 		jobExec.setStartTime(v.getStartDateTime());
 		jobExec.setJobInstance(v.getJobInstance());
-		jobExec.setStatus(BatchStatus.valueOf(v.getStatus()));	
+		jobExec.setStatus(BatchStatus.valueOf(v.getStatus()));
+		jobExec.setExitStatus(new ExitStatus(v.getExitCode(), ""));
 		jobExec.addStepExecutions(v.getStepExecutions());
 		jobExec.setVersion(v.getVersion());
 		return jobExec;

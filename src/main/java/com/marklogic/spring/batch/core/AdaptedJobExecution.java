@@ -30,8 +30,8 @@ public class AdaptedJobExecution {
 	private Date endDateTime;
 	private Date lastUpdatedDateTime;
 	private String status;
+	private String exitStatus;
 	private String exitCode;
-	private String exitMessage;
 	private Long id;
 	private String uri;
 	private Integer version;
@@ -54,7 +54,7 @@ public class AdaptedJobExecution {
 		this.lastUpdatedDateTime = jobExecution.getLastUpdated();
 		this.startDateTime = jobExecution.getStartTime();
 		this.status = jobExecution.getStatus().toString();
-		this.exitCode = jobExecution.getExitStatus().toString();
+		this.exitStatus = jobExecution.getExitStatus().toString();
 		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
 	}
 
@@ -119,22 +119,6 @@ public class AdaptedJobExecution {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
-	public String getExitCode() {
-		return exitCode;
-	}
-
-	public void setExitCode(String exitCode) {
-		this.exitCode = exitCode;
-	}
-
-	public String getExitMessage() {
-		return exitMessage;
-	}
-
-	public void setExitMessage(String exitMessage) {
-		this.exitMessage = exitMessage;
-	}
 	
 	public Date getCreateDateTime() {
 		return createDateTime;
@@ -170,6 +154,22 @@ public class AdaptedJobExecution {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public String getExitStatus() {
+		return exitStatus;
+	}
+
+	public void setExitStatus(String exitStatus) {
+		this.exitStatus = exitStatus;
+	}
+
+	public String getExitCode() {
+		return exitStatus.split("=|;")[1];
+	}
+
+	public void setExitCode(String exitCode) {
+		this.exitCode = exitCode;
 	}
 	
 }
