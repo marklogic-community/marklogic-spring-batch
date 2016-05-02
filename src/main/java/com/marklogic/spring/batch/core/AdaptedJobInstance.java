@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.core;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -17,6 +19,7 @@ public class AdaptedJobInstance extends Entity {
 	private String jobName;
 	private Long id;
 	private String jobParametersKey;
+	private Date createDateTime;
 	
 	public AdaptedJobInstance() { }
 	
@@ -46,6 +49,14 @@ public class AdaptedJobInstance extends Entity {
 
 	public void setJobParametersKey(String jobParametersKey) {
 		this.jobParametersKey = jobParametersKey;
+	}
+
+	public Date getCreateDateTime() {
+		return createDateTime;
+	}
+
+	public void setCreateDateTime(Date createDateTime) {
+		this.createDateTime = createDateTime;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -83,6 +84,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	        Marshaller marshaller = jaxbContext().createMarshaller();
 	        JobInstanceAdapter adapter = new JobInstanceAdapter();
 	        AdaptedJobInstance aji  = adapter.marshal(jobInstance);
+	        aji.setCreateDateTime(new Date(System.currentTimeMillis()));
 	        aji.setJobParametersKey(jobKeyGenerator.generateKey(jobParameters));
 	        marshaller.marshal(aji, doc);
 		} catch (ParserConfigurationException e) {
