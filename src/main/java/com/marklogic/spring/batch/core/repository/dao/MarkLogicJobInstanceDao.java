@@ -175,15 +175,15 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
 		QueryManager queryMgr = databaseClient.newQueryManager();    	
     	StringQueryDefinition querydef = queryMgr.newStringDefinition(SEARCH_OPTIONS_NAME);
-    	querydef.setCriteria("jobName: " + jobName + " AND type:jobInstance");
+    	querydef.setCriteria("jobName: " + jobName + " AND type:job-instance");
+    	logger.info(querydef.getCriteria());
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 
-    	logger.info(results.getTotalResults());
     	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		AdaptedJobInstance aji = null;
-		for (MatchDocumentSummary summary : summaries ) {
+		for (int i = start; i < start+count; i++) {
 			JAXBHandle<AdaptedJobInstance> jaxbHandle = new JAXBHandle<AdaptedJobInstance>(jaxbContext());
-			summary.getFirstSnippet(jaxbHandle);
+			summaries[i].getFirstSnippet(jaxbHandle);
 			aji = jaxbHandle.get();
 			JobInstanceAdapter adapter = new JobInstanceAdapter();
 			try {
