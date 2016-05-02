@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -79,18 +78,12 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 
 	@Transactional @Test
 	public void testVersionIsNotNullForJob() throws Exception {
-		//int version = jdbcTemplate.queryForObject("select version from BATCH_JOB_INSTANCE where JOB_INSTANCE_ID="
-			//	+ jobInstance.getId(), Integer.class);
-		int version = 1;
-		assertEquals(0, version);
+		assertEquals(0, jobInstanceDao.getJobInstance(jobInstance.getId()).getVersion().intValue());
 	}
 
 	@Transactional @Test
 	public void testVersionIsNotNullForJobExecution() throws Exception {
-		//int version = jdbcTemplate.queryForObject("select version from BATCH_JOB_EXECUTION where JOB_EXECUTION_ID="
-				//+ jobExecution.getId(), Integer.class);
-		int version = 1;
-		assertEquals(0, version);
+		assertEquals(0, jobExecutionDao.getJobExecution(jobExecution.getId()).getVersion().intValue());
 	}
 
 	@Transactional @Test
@@ -201,13 +194,10 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 		// Create job.
 		jobInstance = jobInstanceDao.createJobInstance(testJob, jobParameters);
 
-//		List<Map<String, Object>> jobs = jdbcTemplate.queryForList(
-//				"SELECT * FROM BATCH_JOB_INSTANCE where JOB_INSTANCE_ID=?",
-//				jobInstance.getId());
+		JobInstance jobInst = jobInstanceDao.getJobInstance(jobInstance.getId());
 		
-		//assertEquals(1, jobs.size());
-		//assertEquals("test", jobs.get(0).get("JOB_NAME"));
-		assertEquals(1, 0);
+		assertNotNull(jobInst);
+		assertEquals("test", jobInst.getJobName());
 
 	}
 

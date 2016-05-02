@@ -31,7 +31,6 @@ public class AdaptedJobExecution {
 	private Date lastUpdatedDateTime;
 	private String status;
 	private String exitStatus;
-	private String exitCode;
 	private Long id;
 	private String uri;
 	private Integer version;
@@ -169,7 +168,7 @@ public class AdaptedJobExecution {
 	}
 
 	public void setExitCode(String exitCode) {
-		this.exitCode = exitCode;
+		return;
 	}
 	
 }

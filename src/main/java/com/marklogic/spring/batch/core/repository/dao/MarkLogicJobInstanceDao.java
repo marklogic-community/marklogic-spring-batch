@@ -58,8 +58,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public JobInstance createJobInstance(String jobName, JobParameters jobParameters) {
-		Assert.notNull(jobName, "Job name must not be null.");
-		Assert.notNull(jobParameters, "JobParameters must not be null.");
+		validateJobInstanceParameters(jobName, jobParameters);
 
 		Assert.state(getJobInstance(jobName, jobParameters) == null,
 				"JobInstance must not already exist");
@@ -110,6 +109,8 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public JobInstance getJobInstance(String jobName, JobParameters jobParameters) {
+		validateJobInstanceParameters(jobName, jobParameters);
+		
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
     	StructuredQueryDefinition querydef = 
     			qb.and(
@@ -237,6 +238,11 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	public void setJobExecutionDao(JobExecutionDao jobExecutionDao) {
 		this.jobExecutionDao = jobExecutionDao;
+	}
+	
+	private void validateJobInstanceParameters(String jobName, JobParameters jobParameters) {
+		Assert.notNull(jobName, "Job name must not be null.");
+		Assert.notNull(jobParameters, "JobParameters must not be null.");
 	}
 
 
