@@ -35,6 +35,7 @@ import com.marklogic.client.io.ValuesHandle;
 import com.marklogic.client.query.CountedDistinctValue;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.query.ValuesDefinition;
@@ -172,14 +173,11 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
-		QueryManager queryMgr = databaseClient.newQueryManager();
-    	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	StructuredQueryDefinition querydef = 
-    			qb.and(
-    				qb.valueConstraint("jobName", jobName),
-    				qb.collection(COLLECTION_JOB_INSTANCE)
-    			);
-    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
+		QueryManager queryMgr = databaseClient.newQueryManager();    	
+    	StringQueryDefinition querydef = queryMgr.newStringDefinition(SEARCH_OPTIONS_NAME);
+    	querydef.setCriteria("jobName: " + jobName + " AND type:jobInstance");
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 
+    	logger.info(results.getTotalResults());
     	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		AdaptedJobInstance aji = null;
