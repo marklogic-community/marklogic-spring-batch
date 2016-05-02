@@ -181,6 +181,9 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
     	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		AdaptedJobInstance aji = null;
+		if (start+count > summaries.length) {
+			return jobInstances;
+		}
 		for (int i = start; i < start+count; i++) {
 			JAXBHandle<AdaptedJobInstance> jaxbHandle = new JAXBHandle<AdaptedJobInstance>(jaxbContext());
 			summaries[i].getFirstSnippet(jaxbHandle);
