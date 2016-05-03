@@ -111,6 +111,10 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		}
 		List<StepExecution> executions = new ArrayList<StepExecution>(je.getStepExecutions());
 		
+		if (executions.isEmpty()) {
+			return null;
+		}
+		
 		StepExecution execution = null;
 		for (StepExecution se : executions) {
 			if (se.getId().equals(stepExecutionId)) {
@@ -118,8 +122,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 			}
 		}
 
-		Assert.notNull(execution, "There can be at most one step execution with given name for single job execution");
-		if (executions.isEmpty()) {
+		if (execution == null) {
 			return null;
 		} else {
 			return execution;
