@@ -21,7 +21,8 @@ public class AdaptedStepExecution extends Entity {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JobExecution jobExecution;
+	//private JobExecution jobExecution;
+	private Long jobExecutionId;
 	private String stepName;
 	private BatchStatus status = BatchStatus.STARTING;
 	private int readCount = 0;
@@ -46,16 +47,24 @@ public class AdaptedStepExecution extends Entity {
 	
 	public AdaptedStepExecution(StepExecution stepExec) {
 		this.setId(stepExec.getId());
+		this.setStepName(stepExec.getStepName());
+		this.setStatus(stepExec.getStatus());
+		this.setReadSkipCount(stepExec.getReadSkipCount());
+		this.setWriteSkipCount(stepExec.getWriteSkipCount());
+		this.setRollbackCount(stepExec.getRollbackCount());
+		//this.jobExecution = stepExec.getJobExecution();
+		this.setJobExecutionId(stepExec.getJobExecutionId());
 		this.startTime = stepExec.getStartTime();
-		
+		this.lastUpdated = stepExec.getLastUpdated();		
 	}
 	
 	public JobExecution getJobExecution() {
-		return jobExecution;
+		//return jobExecution;
+		return null;
 	}
 
 	public void setJobExecution(JobExecution jobExecution) {
-		this.jobExecution = jobExecution;
+		//this.jobExecution = jobExecution;
 	}
 
 	public String getStepName() {
@@ -184,6 +193,14 @@ public class AdaptedStepExecution extends Entity {
 
 	public void setFailureExceptions(List<Throwable> failureExceptions) {
 		this.failureExceptions = failureExceptions;
+	}
+
+	public Long getJobExecutionId() {
+		return jobExecutionId;
+	}
+
+	public void setJobExecutionId(Long jobExecutionId) {
+		this.jobExecutionId = jobExecutionId;
 	}    
     	
 }

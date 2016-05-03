@@ -25,6 +25,7 @@ public class AdaptedJobExecution {
 	private JobParameters jobParameters;
 	private List<StepExecution> stepExecution;
 	private JobInstance jobInstance;
+	private Long jobInstanceId;
 	private Date createDateTime;
 	private Date startDateTime;
 	private Date endDateTime;
@@ -169,6 +170,14 @@ public class AdaptedJobExecution {
 
 	public void setExitCode(String exitCode) {
 		return;
+	}
+
+	public Long getJobInstanceId() {
+		return jobInstanceId;
+	}
+
+	public void setJobInstanceId(Long jobInstanceId) {
+		this.jobInstanceId = jobInstanceId;
 	}
 	
 }

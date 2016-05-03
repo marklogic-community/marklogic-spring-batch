@@ -45,6 +45,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
 		stepExecutions.add(stepExecution);
 		jobExecution.addStepExecutions(stepExecutions);
+		jobExecutionDao.updateJobExecution(jobExecution);
 		logger.info("insert step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
     	return;
 
@@ -65,8 +66,26 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 
 	@Override
 	public void updateStepExecution(StepExecution stepExecution) {
-		// TODO Auto-generated method stub
+		validateStepExecution(stepExecution);
+		Assert.notNull(stepExecution.getId(), "StepExecution Id cannot be null. StepExecution must saved"
+				+ " before it can be updated.");
+		
+		
+		Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
+		JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecutionId());
+		Assert.notNull(jobExecution, "JobExecution must be saved already.");
+		
+		validateStepExecution(stepExecution);
 
+		stepExecution.incrementVersion();
+		
+		List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
+		
+		stepExecutions.add(stepExecution);
+		jobExecution.addStepExecutions(stepExecutions);
+		jobExecutionDao.updateJobExecution(jobExecution);
+		logger.info("insert step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
+    	return;
 	}
 
 	@Override
@@ -75,7 +94,6 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		if (jobExecutionCheck == null) {
 			return null;
 		}
-		
 		for ( StepExecution stepExecution : jobExecution.getStepExecutions() ) {
 			if (stepExecution.getId() == stepExecutionId) {
 				return stepExecution;
@@ -86,7 +104,9 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 
 	@Override
 	public void addStepExecutions(JobExecution jobExecution) {
-		// TODO Auto-generated method stub
+		Collection<StepExecution> stepExecutions = jobExecutionDao.getJobExecution(jobExecution.getId()).getStepExecutions();
+		List<StepExecution> stepExecutionList = new ArrayList<StepExecution>(stepExecutions);
+		jobExecution.addStepExecutions(stepExecutionList);
 
 	}
 	
