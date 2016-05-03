@@ -65,8 +65,8 @@ public class AdaptedStepExecution extends Entity {
 		this.setVersion(stepExec.getVersion());
 		this.setJobInstanceId(stepExec.getJobExecution().getJobInstance().getId());
 		this.setJobName(stepExec.getJobExecution().getJobInstance().getJobName());
-		this.startTime = stepExec.getStartTime();
-		this.lastUpdated = stepExec.getLastUpdated();		
+		this.setStartTime(stepExec.getStartTime());
+		this.setLastUpdated(stepExec.getLastUpdated());		
 	}
 	
 	public String getExitCode() {

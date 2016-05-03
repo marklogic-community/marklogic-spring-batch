@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.bind;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.Marshaller;
@@ -90,7 +91,8 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		JobInstance jobInstance = new JobInstance(1234L, "test");
 		JobExecution jobExecution = new JobExecution(123L);
 		jobExecution.setJobInstance(jobInstance);
-		StepExecution step = new StepExecution("testStep", jobExecution);		
+		StepExecution step = new StepExecution("testStep", jobExecution);	
+		step.setLastUpdated(new Date(System.currentTimeMillis()));
 		StepExecutionAdapter adapter = new StepExecutionAdapter();
 		AdaptedStepExecution adStep = adapter.marshal(step);
 	    marshaller.marshal(adStep, doc);
@@ -98,8 +100,7 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		frag.prettyPrint();
 		frag.assertElementExists("/step:stepExecution");
+		frag.assertElementExists("/step:stepExecution/step:lastUpdated");
 		frag.assertElementValue("/step:stepExecution/step:stepName", "testStep");
-		
-		
 	}
 }
