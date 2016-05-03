@@ -23,6 +23,8 @@ public class AdaptedStepExecution extends Entity {
 	private static final long serialVersionUID = 1L;
 	//private JobExecution jobExecution;
 	private Long jobExecutionId;
+	private Long jobInstanceId;
+	private String jobName;
 	private String stepName;
 	private BatchStatus status = BatchStatus.STARTING;
 	private int readCount = 0;
@@ -61,6 +63,8 @@ public class AdaptedStepExecution extends Entity {
 		this.setVersion(stepExec.getVersion());
 		this.setExitStatus(stepExec.getExitStatus());
 		this.setVersion(stepExec.getVersion());
+		this.setJobInstanceId(stepExec.getJobExecution().getJobInstance().getId());
+		this.setJobName(stepExec.getJobExecution().getJobInstance().getJobName());
 		this.startTime = stepExec.getStartTime();
 		this.lastUpdated = stepExec.getLastUpdated();		
 	}
@@ -212,6 +216,22 @@ public class AdaptedStepExecution extends Entity {
 
 	public void setJobExecutionId(Long jobExecutionId) {
 		this.jobExecutionId = jobExecutionId;
+	}
+
+	public Long getJobInstanceId() {
+		return jobInstanceId;
+	}
+
+	public void setJobInstanceId(Long jobInstanceId) {
+		this.jobInstanceId = jobInstanceId;
+	}
+
+	public String getJobName() {
+		return jobName;
+	}
+
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
 	}    
     	
 }
