@@ -91,6 +91,9 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 	@Override
 	public StepExecution getStepExecution(JobExecution jobExecution, Long stepExecutionId) {
 		JobExecution je = jobExecutionDao.getJobExecution(jobExecution.getId());
+		if (je == null) {
+			return null;
+		}
 		List<StepExecution> executions = new ArrayList<StepExecution>(je.getStepExecutions());
 
 		Assert.state(executions.size() <= 1,

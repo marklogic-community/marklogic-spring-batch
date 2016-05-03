@@ -23,6 +23,7 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 		step.setFilterCount(v.getFilterCount());
 		step.setRollbackCount(v.getRollbackCount());
 		step.setExitStatus(new ExitStatus(v.getExitCode()));
+		step.setLastUpdated(v.getLastUpdated());
 		return step;
 	}
 
