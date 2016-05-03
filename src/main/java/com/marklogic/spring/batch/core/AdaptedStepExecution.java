@@ -60,6 +60,7 @@ public class AdaptedStepExecution extends Entity {
 		this.setFilterCount(stepExec.getFilterCount());
 		this.setVersion(stepExec.getVersion());
 		this.setExitStatus(stepExec.getExitStatus());
+		this.setVersion(stepExec.getVersion());
 		this.startTime = stepExec.getStartTime();
 		this.lastUpdated = stepExec.getLastUpdated();		
 	}
