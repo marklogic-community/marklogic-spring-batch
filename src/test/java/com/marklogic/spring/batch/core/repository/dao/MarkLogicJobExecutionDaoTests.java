@@ -273,11 +273,12 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	/**
 	 * Exception should be raised when the version of update argument doesn't
 	 * match the version of persisted entity.
+	 * 
+	 * Ignore this test, using Optimistic Locking capability of MarkLogic, update-policy=VERSION_OPTIONAL
 	 */
 	@Transactional
 	@Test
 	@Ignore
-	//Ignore this test, using Optimistic Locking capability of MarkLogic, update-policy=VERSION_OPTIONAL
 	public void testConcurrentModificationException() {
 
 		JobExecution exec1 = new JobExecution(jobInstance, jobParameters);

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -238,9 +239,13 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractSpringTest {
 	/**
 	 * Exception should be raised when the version of update argument doesn't
 	 * match the version of persisted entity.
+	 * 
+	 * Ignore this test, using Optimistic Locking capability of MarkLogic, update-policy=VERSION_OPTIONAL
+	 * 
 	 */
 	@Transactional
 	@Test
+	@Ignore
 	public void testConcurrentModificationException() {
 		step = new StepSupport("foo");
 
