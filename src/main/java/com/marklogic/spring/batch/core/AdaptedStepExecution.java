@@ -51,9 +51,13 @@ public class AdaptedStepExecution extends Entity {
 		this.setStatus(stepExec.getStatus());
 		this.setReadSkipCount(stepExec.getReadSkipCount());
 		this.setWriteSkipCount(stepExec.getWriteSkipCount());
+		this.setProcessSkipCount(stepExec.getProcessSkipCount());
 		this.setRollbackCount(stepExec.getRollbackCount());
 		//this.jobExecution = stepExec.getJobExecution();
 		this.setJobExecutionId(stepExec.getJobExecutionId());
+		this.setReadCount(stepExec.getReadCount());
+		this.setWriteCount(stepExec.getWriteCount());
+		this.setFilterCount(stepExec.getFilterCount());
 		this.startTime = stepExec.getStartTime();
 		this.lastUpdated = stepExec.getLastUpdated();		
 	}
