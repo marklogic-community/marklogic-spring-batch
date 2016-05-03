@@ -56,9 +56,24 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		Assert.notNull(stepExecutions, "Attempt to save a null collection of step executions");
 
         if (!stepExecutions.isEmpty()) {
+        	
         	Long jobExecutionId = stepExecutions.iterator().next().getJobExecutionId();
-        	JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
-        	List<StepExecution> stepExecutionList = new ArrayList<StepExecution>(stepExecutions);
+        	Assert.notNull(jobExecutionId, "JobExecution must be saved already.");
+    		JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
+    		Assert.notNull(jobExecution, "JobExecution must be saved already.");
+        	
+        	List<StepExecution> stepExecutionList = new ArrayList<StepExecution>();
+        	
+        	for (StepExecution stepExecution : stepExecutions) {
+        		Assert.isTrue(stepExecution.getId() == null);
+        		Assert.isTrue(stepExecution.getVersion() == null);
+        		validateStepExecution(stepExecution);
+        		
+        		stepExecution.setId(incrementer.nextLongValue());
+        		stepExecution.incrementVersion();
+        		stepExecutionList.add(stepExecution);
+        	}
+        	
         	jobExecution.addStepExecutions(stepExecutionList);
         	jobExecutionDao.updateJobExecution(jobExecution);
         }	
@@ -95,13 +110,19 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 			return null;
 		}
 		List<StepExecution> executions = new ArrayList<StepExecution>(je.getStepExecutions());
+		
+		StepExecution execution = null;
+		for (StepExecution se : executions) {
+			if (se.getId().equals(stepExecutionId)) {
+				execution = se;
+			}
+		}
 
-		Assert.state(executions.size() <= 1,
-				"There can be at most one step execution with given name for single job execution");
+		Assert.notNull(execution, "There can be at most one step execution with given name for single job execution");
 		if (executions.isEmpty()) {
 			return null;
 		} else {
-			return executions.get(0);
+			return execution;
 		}
 	}
 
