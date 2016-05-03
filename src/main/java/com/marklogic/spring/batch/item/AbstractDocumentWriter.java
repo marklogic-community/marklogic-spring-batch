@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.item;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.ItemStreamSupport;
 
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -14,7 +14,7 @@ import com.marklogic.uri.UriGenerator;
  */
 public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+	protected static final Log logger = LogFactory.getLog(AbstractDocumentWriter.class);
 
     private UriGenerator uriGenerator = new DefaultUriGenerator();
 
