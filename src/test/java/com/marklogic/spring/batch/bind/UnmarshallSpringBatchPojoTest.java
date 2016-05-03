@@ -73,6 +73,18 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 	}
 	
 	@Test
+	public void unmarshallJobExecutionTest() throws Exception {
+		Resource jobExecutionXml = ctx.getResource("classpath:/xml/job-execution-2.xml");
+		AdaptedJobExecution adJobExecution = (AdaptedJobExecution)unmarshaller.unmarshal(jobExecutionXml.getInputStream());
+		JobExecutionAdapter adapter = new JobExecutionAdapter();
+		JobExecution jobExecution = adapter.unmarshal(adJobExecution);
+		assertNotNull(jobExecution);
+		assertEquals(Long.valueOf(6275688569778434925L), jobExecution.getId());
+		assertEquals("STARTING", jobExecution.getStatus().toString());
+		assertEquals(1, jobExecution.getStepExecutions().size());
+	}
+	
+	@Test
 	public void unmarshallStepExecution() throws Exception {
 		Resource stepExecutionXml = ctx.getResource("classpath:/xml/step-execution.xml");
 		AdaptedStepExecution adStepExecution = (AdaptedStepExecution)unmarshaller.unmarshal(stepExecutionXml.getInputStream());

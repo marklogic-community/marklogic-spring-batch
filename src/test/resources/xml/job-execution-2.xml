@@ -1,0 +1,37 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<msb:jobExecution xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:msb="http://marklogic.com/spring-batch" xmlns:step="http://marklogic.com/spring-batch/step-execution">
+	<msb:createDateTime>2016-05-02T21:24:53.225-04:00</msb:createDateTime>
+	<msb:exitCode>UNKNOWN</msb:exitCode>
+	<msb:exitStatus>exitCode=UNKNOWN;exitDescription=</msb:exitStatus>
+	<msb:id>6275688569778434925</msb:id>
+	<inst:jobInstance>
+		<version>0</version>
+		<inst:id>5036934157084150201</inst:id>
+		<inst:jobName>job</inst:jobName>
+	</inst:jobInstance>
+	<jp:jobParameters>
+	</jp:jobParameters>
+	<msb:lastUpdatedDateTime>2016-05-02T21:24:53.225-04:00</msb:lastUpdatedDateTime>
+	<msb:status>STARTING</msb:status>
+	<step:stepExecutions>
+		<step:stepExecution>
+			<id>5540325527973473631</id>
+			<step:commitCount>0</step:commitCount>
+			<step:filterCount>0</step:filterCount>
+			<step:jobExecutionId>6275688569778434925</step:jobExecutionId>
+			<step:lastUpdated>2016-05-02T21:24:53.386-04:00</step:lastUpdated>
+			<step:processSkipCount>0</step:processSkipCount>
+			<step:readCount>0</step:readCount>
+			<step:readSkipCount>7</step:readSkipCount>
+			<step:rollbackCount>3</step:rollbackCount>
+			<step:startTime>2016-05-02T21:24:53.386-04:00</step:startTime>
+			<step:status>STARTED</step:status>
+			<step:stepName>foo</step:stepName>
+			<step:terminateOnly>false</step:terminateOnly>
+			<step:writeCount>0</step:writeCount>
+			<step:writeSkipCount>5</step:writeSkipCount>
+		</step:stepExecution>
+	</step:stepExecutions>
+	<msb:uri>/projects.spring.io/spring-batch/6275688569778434925.xml</msb:uri>
+	<msb:version>1</msb:version>
+</msb:jobExecution>
