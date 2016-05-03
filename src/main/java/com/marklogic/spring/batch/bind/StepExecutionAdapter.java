@@ -28,6 +28,7 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 		step.setExitStatus(new ExitStatus(v.getExitCode()));
 		step.setLastUpdated(v.getLastUpdated());
 		step.setVersion(v.getVersion());
+		step.setStatus(v.getStatus());
 		return step;
 	}
 
