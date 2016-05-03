@@ -87,7 +87,10 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	
 	@Test
 	public void marshallStepExecutionTest() throws Exception {
-		StepExecution step = new StepExecution("testStep", new JobExecution(123L));
+		JobInstance jobInstance = new JobInstance(1234L, "test");
+		JobExecution jobExecution = new JobExecution(123L);
+		jobExecution.setJobInstance(jobInstance);
+		StepExecution step = new StepExecution("testStep", jobExecution);		
 		StepExecutionAdapter adapter = new StepExecutionAdapter();
 		AdaptedStepExecution adStep = adapter.marshal(step);
 	    marshaller.marshal(adStep, doc);
