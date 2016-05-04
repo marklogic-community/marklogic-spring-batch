@@ -176,7 +176,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
 		QueryManager queryMgr = databaseClient.newQueryManager();    	
     	StringQueryDefinition querydef = queryMgr.newStringDefinition(SEARCH_OPTIONS_NAME);
-    	querydef.setCriteria("jobName: " + jobName + " AND type:job-instance");
+    	querydef.setCriteria("jobName: " + jobName + " AND type:job-instance AND sort:date");
     	logger.info(querydef.getCriteria());
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 
     	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
