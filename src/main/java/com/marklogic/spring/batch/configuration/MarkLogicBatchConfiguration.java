@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.configuration;
 
-
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.AbstractBatchConfiguration;
@@ -16,7 +15,6 @@ import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.MapExecutionContextDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
-import org.springframework.batch.core.repository.support.SimpleJobRepository;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +26,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.core.explore.MarkLogicJobExplorer;
+import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
@@ -71,7 +70,7 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	
 	@Bean
 	public JobRepository jobRepository() throws Exception {
-		SimpleJobRepository jobRepository = new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
+		MarkLogicSimpleJobRepository jobRepository = new MarkLogicSimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 		return jobRepository;
 	}
 	
