@@ -10,6 +10,7 @@ import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.util.Assert;
 
 public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 	
@@ -49,6 +50,7 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 
 	@Override
 	public void saveExecutionContexts(Collection<StepExecution> stepExecutions) {
+		Assert.notNull(stepExecutions, "Attempt to save an null collection of step executions");
 		for (StepExecution stepExec : stepExecutions ) {
 			saveExecutionContext(stepExec);
 		}
