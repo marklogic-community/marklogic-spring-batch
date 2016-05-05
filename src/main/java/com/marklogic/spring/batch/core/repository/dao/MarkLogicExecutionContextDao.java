@@ -49,19 +49,20 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 
 	@Override
 	public void saveExecutionContexts(Collection<StepExecution> stepExecutions) {
-		// TODO Auto-generated method stub
-
+		for (StepExecution stepExec : stepExecutions ) {
+			saveExecutionContext(stepExec);
+		}
 	}
 
 	@Override
 	public void updateExecutionContext(JobExecution jobExecution) {
-		// TODO Auto-generated method stub
+		jobExecutionDao.updateJobExecution(jobExecution);
 
 	}
 
 	@Override
 	public void updateExecutionContext(StepExecution stepExecution) {
-		// TODO Auto-generated method stub
+		stepExecutionDao.updateStepExecution(stepExecution);
 
 	}
 
