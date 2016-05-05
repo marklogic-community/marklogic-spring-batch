@@ -118,7 +118,10 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		frag.prettyPrint();
 		frag.assertElementExists("/ec:executionContext/ec:map/entry/key[text() = 'testName']");
-		frag.assertElementExists("/ec:executionContext/ec:map/entry/value[text() = 'testValue']");
+		frag.assertElementExists("/ec:executionContext/ec:map/entry/value[@xsi:type = 'xs:int'][text() = '123']");
+		frag.assertElementExists("/ec:executionContext/ec:map/entry/value[@xsi:type = 'xs:long'][text() = '123']");
+		frag.assertElementExists("/ec:executionContext/ec:map/entry/value[@xsi:type = 'xs:string'][text() = 'testValue']");
+		frag.assertElementExists("/ec:executionContext/ec:map/entry/value[@xsi:type = 'xs:double'][text() = '123.0']");
 		frag.assertElementExists("/ec:executionContext/ec:hashCode");
 	}
 }
