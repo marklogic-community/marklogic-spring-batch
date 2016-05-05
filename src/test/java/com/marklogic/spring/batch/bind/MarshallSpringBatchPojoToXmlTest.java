@@ -47,11 +47,11 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	    marshaller.marshal(adaptedParams, doc);
         Fragment frag = new Fragment(new DOMBuilder().build(doc));
         frag.setNamespaces(getNamespaceProvider().getNamespaces()); 
+        frag.prettyPrint();
         frag.assertElementExists("/jp:jobParameters/jp:jobParameter[@key = 'stringTest' and text() = 'Joe Cool' and @identifier = 'true']");
         frag.assertElementExists("/jp:jobParameters/jp:jobParameter[@key = 'longTest' and text() = '1239' and @identifier = 'false']");
         frag.assertElementExists("/jp:jobParameters/jp:jobParameter[@key = 'start' and @identifier = 'false']");
         frag.assertElementExists("/jp:jobParameters/jp:jobParameter[@key = 'doubleTest' and text() = '1.35' and @identifier = 'false']");
-        frag.prettyPrint();
     }
 	
 	@Test
@@ -109,8 +109,9 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	public void marshallExecutionContextTest() throws Exception {
 		ExecutionContext ec = new ExecutionContext();
 		ec.putString("testName", "testValue");
-		ec.putLong("testLong", 1234L);
+		ec.putLong("testLong", 123L);
 		ec.putDouble("testDouble", 123D);
+		ec.putInt("testInteger", 123);
 		ExecutionContextAdapter adapter = new ExecutionContextAdapter();
 		marshaller.marshal(adapter.marshal(ec), doc);
 		Fragment frag = new Fragment(new DOMBuilder().build(doc));

@@ -24,7 +24,7 @@ public class AdaptedExecutionContext {
 		
 	}
 	
-	public AdaptedExecutionContext(ExecutionContext exeContext) {
+	public AdaptedExecutionContext(ExecutionContext exeContext) throws InstantiationException, IllegalAccessException {
 		this.hashCode = exeContext.hashCode();
 		this.dirtyFlag = exeContext.isDirty();
 		
@@ -36,8 +36,8 @@ public class AdaptedExecutionContext {
 	    while(i.hasNext()) {
 	    	Entry<String, Object> me = i.next();
 	    	String name = me.getKey();
-	    	Object value = me.getValue();
-	    	map.put(name, value);
+	    	Object obj = getValue(me.getValue());
+	    	map.put(name, obj);
 	    }
 	}
 	
@@ -63,6 +63,22 @@ public class AdaptedExecutionContext {
 
 	public void setDirtyFlag(boolean dirtyFlag) {
 		this.dirtyFlag = dirtyFlag;
+	}
+	
+	private Object getValue(Object value) {
+	
+		if (String.class.isInstance(value)) {
+			value = (String) value;
+		} else if (Long.class.isInstance(value)) {
+			value = (Long) value;
+		} else if (Double.class.isInstance(value)) {
+			value = (Double) value;
+		} else if (Integer.class.isInstance(value)) {
+			value = (Integer) value;
+		} else {
+			value = (String)value;
+		}	
+		return value;
 	}
 
 }
