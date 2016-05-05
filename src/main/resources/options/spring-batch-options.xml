@@ -73,8 +73,5 @@
       		</sort-order>
 		</state>
  	</operator>
- 	<sort-order type="xs:dateTime" direction="descending">
-  		<element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
-    </sort-order>
 	<transform-results apply="raw" />
 </options>
