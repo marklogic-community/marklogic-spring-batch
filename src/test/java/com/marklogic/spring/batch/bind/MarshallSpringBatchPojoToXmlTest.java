@@ -110,12 +110,13 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	public void marshallExecutionContextTest() throws Exception {
 		ExecutionContext ec = new ExecutionContext();
 		ec.putString("testName", "testValue");
-		AdaptedExecutionContext aec = new AdaptedExecutionContext(ec);
-		marshaller.marshal(aec, doc);
+		ExecutionContextAdapter adapter = new ExecutionContextAdapter();
+		marshaller.marshal(adapter.marshal(ec), doc);
 		Fragment frag = new Fragment(new DOMBuilder().build(doc));
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		frag.prettyPrint();
 		frag.assertElementExists("/ec:executionContext/ec:map/entry/key[text() = 'testName']");
 		frag.assertElementExists("/ec:executionContext/ec:map/entry/value[text() = 'testValue']");
+		frag.assertElementExists("/ec:executionContext/ec:hashCode");
 	}
 }

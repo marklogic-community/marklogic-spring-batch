@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.batch.item.ExecutionContext;
@@ -17,19 +18,14 @@ public class AdaptedExecutionContext {
 	
 	private Map<String, String> map = new HashMap<String, String>();
 	
+	private int hashCode;
+	
 	public AdaptedExecutionContext() {
 		
 	}
 	
-	public Map<String, String> getMap() {
-		return map;
-	}
-
-	public void setMap(Map<String, String> map) {
-		this.map = map;
-	}
-
-	public AdaptedExecutionContext(ExecutionContext exeContext) {
+	public AdaptedExecutionContext(ExecutionContext exeContext, int hashCode) {
+		this.hashCode = hashCode;
 		// Get a set of the entries
 		Set<Entry<String, Object>> set = exeContext.entrySet();
 	    // Get an iterator
@@ -41,6 +37,31 @@ public class AdaptedExecutionContext {
 	    	String value = me.getValue().toString();
 	    	map.put(name, value);
 	    }
+	}
+	
+	public Map<String, String> getMap() {
+		return map;
+	}
+
+	public void setMap(Map<String, String> map) {
+		this.map = map;
+	}
+
+	@XmlTransient
+	public Map<String, Object> getExecutionContextMap() {
+		Map<String, Object> ecStuff = new HashMap<String, Object>();
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			ecStuff.put(entry.getKey(), entry.getValue());
+		}
+		return ecStuff;
+	}
+	
+	public int getHashCode() {
+		return hashCode;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
 	}
 
 }
