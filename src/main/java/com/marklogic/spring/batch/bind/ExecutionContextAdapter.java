@@ -10,12 +10,12 @@ public class ExecutionContextAdapter extends XmlAdapter<AdaptedExecutionContext,
 
 	@Override
 	public ExecutionContext unmarshal(AdaptedExecutionContext v) throws Exception {
-		return new ExecutionContext(v.getExecutionContextMap()); 
+		return new ExecutionContext(v.getMap()); 
 	}
 
 	@Override
 	public AdaptedExecutionContext marshal(ExecutionContext v) throws Exception {
-		return new AdaptedExecutionContext(v, v.hashCode());
+		return new AdaptedExecutionContext(v);
 	}
 
 }

@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.batch.item.ExecutionContext;
@@ -16,16 +15,19 @@ import org.springframework.batch.item.ExecutionContext;
 @XmlType(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
 public class AdaptedExecutionContext {
 	
-	private Map<String, String> map = new HashMap<String, String>();
+	private Map<String, Object> map = new HashMap<String, Object>();
 	
 	private int hashCode;
+	private boolean dirtyFlag;
 	
 	public AdaptedExecutionContext() {
 		
 	}
 	
-	public AdaptedExecutionContext(ExecutionContext exeContext, int hashCode) {
-		this.hashCode = hashCode;
+	public AdaptedExecutionContext(ExecutionContext exeContext) {
+		this.hashCode = exeContext.hashCode();
+		this.dirtyFlag = exeContext.isDirty();
+		
 		// Get a set of the entries
 		Set<Entry<String, Object>> set = exeContext.entrySet();
 	    // Get an iterator
@@ -34,26 +36,17 @@ public class AdaptedExecutionContext {
 	    while(i.hasNext()) {
 	    	Entry<String, Object> me = i.next();
 	    	String name = me.getKey();
-	    	String value = me.getValue().toString();
+	    	Object value = me.getValue();
 	    	map.put(name, value);
 	    }
 	}
 	
-	public Map<String, String> getMap() {
+	public Map<String, Object> getMap() {
 		return map;
 	}
 
-	public void setMap(Map<String, String> map) {
+	public void setMap(Map<String, Object> map) {
 		this.map = map;
-	}
-
-	@XmlTransient
-	public Map<String, Object> getExecutionContextMap() {
-		Map<String, Object> ecStuff = new HashMap<String, Object>();
-		for (Map.Entry<String, String> entry : map.entrySet()) {
-			ecStuff.put(entry.getKey(), entry.getValue());
-		}
-		return ecStuff;
 	}
 	
 	public int getHashCode() {
@@ -62,6 +55,14 @@ public class AdaptedExecutionContext {
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public boolean isDirtyFlag() {
+		return dirtyFlag;
+	}
+
+	public void setDirtyFlag(boolean dirtyFlag) {
+		this.dirtyFlag = dirtyFlag;
 	}
 
 }

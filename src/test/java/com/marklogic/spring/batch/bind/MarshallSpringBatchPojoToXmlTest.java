@@ -21,7 +21,6 @@ import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobExecutionTestUtils;
 import com.marklogic.spring.batch.JobParametersTestUtils;
-import com.marklogic.spring.batch.core.AdaptedExecutionContext;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
@@ -110,6 +109,8 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 	public void marshallExecutionContextTest() throws Exception {
 		ExecutionContext ec = new ExecutionContext();
 		ec.putString("testName", "testValue");
+		ec.putLong("testLong", 1234L);
+		ec.putDouble("testDouble", 123D);
 		ExecutionContextAdapter adapter = new ExecutionContextAdapter();
 		marshaller.marshal(adapter.marshal(ec), doc);
 		Fragment frag = new Fragment(new DOMBuilder().build(doc));
