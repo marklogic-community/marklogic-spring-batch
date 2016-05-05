@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
+import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
@@ -49,17 +50,20 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	public MarkLogicJobExecutionDao() {
 	}
 	
-	public MarkLogicJobExecutionDao(DatabaseClient databaseClient) {
+	private JobInstanceDao jobInstanceDao;
+	
+	public MarkLogicJobExecutionDao(DatabaseClient databaseClient, JobInstanceDao jobInstanceDao) {
 		this.databaseClient = databaseClient;
+		this.jobInstanceDao = jobInstanceDao;
 	}
 
 	@Override
 	public void saveJobExecution(JobExecution jobExecution) {
 		validateJobExecution(jobExecution);
 		
-		jobExecution.incrementVersion();
-		
+		jobExecution.incrementVersion();		
 		jobExecution.setId(incrementer.nextLongValue());
+		
 		
 	
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
@@ -266,6 +270,14 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
             throw new RuntimeException(ex);
         }
 		return jaxbContext;
+	}
+
+	public JobInstanceDao getJobInstanceDao() {
+		return jobInstanceDao;
+	}
+
+	public void setJobInstanceDao(JobInstanceDao jobInstanceDao) {
+		this.jobInstanceDao = jobInstanceDao;
 	}
 
 }

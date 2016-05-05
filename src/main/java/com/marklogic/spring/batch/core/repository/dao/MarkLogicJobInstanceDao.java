@@ -19,7 +19,6 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobKeyGenerator;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
@@ -45,8 +44,6 @@ import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
 public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao implements JobInstanceDao {
-	
-	private JobExecutionDao jobExecutionDao;
 	
 	private static final Log logger = LogFactory.getLog(MarkLogicJobInstanceDao.class);
 	
@@ -170,7 +167,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	@Override
 	public JobInstance getJobInstance(JobExecution jobExecution) {
 		Assert.notNull(jobExecution.getId());
-		return jobExecutionDao.getJobExecution(jobExecution.getId()).getJobInstance();
+		return getJobInstance(jobExecution.getJobInstance().getId());
 	}
 
 	@Override
@@ -231,14 +228,6 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
             throw new RuntimeException(ex);
         }
 		return jaxbContext;
-	}
-
-	public JobExecutionDao getJobExecutionDao() {
-		return jobExecutionDao;
-	}
-
-	public void setJobExecutionDao(JobExecutionDao jobExecutionDao) {
-		this.jobExecutionDao = jobExecutionDao;
 	}
 	
 	private void validateJobInstanceParameters(String jobName, JobParameters jobParameters) {
