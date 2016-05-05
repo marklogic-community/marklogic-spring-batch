@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.marklogic.client.pojo.annotation.Id;
+import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
 import com.marklogic.spring.batch.bind.JobInstanceAdapter;
 import com.marklogic.spring.batch.bind.JobParametersAdapter;
 import com.marklogic.spring.batch.bind.StepExecutionAdapter;
@@ -18,6 +19,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
 
 @XmlRootElement(name = "jobExecution")
 public class AdaptedJobExecution {
@@ -35,6 +37,7 @@ public class AdaptedJobExecution {
 	private Long id;
 	private String uri;
 	private Integer version;
+	private ExecutionContext executionContext;
 
 	protected AdaptedJobExecution() { 
 		stepExecution = new ArrayList<StepExecution>();
@@ -56,6 +59,7 @@ public class AdaptedJobExecution {
 		this.status = jobExecution.getStatus().toString();
 		this.exitStatus = jobExecution.getExitStatus().toString();
 		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
+		this.executionContext = jobExecution.getExecutionContext();
 	}
 
 		
@@ -178,6 +182,16 @@ public class AdaptedJobExecution {
 
 	public void setJobInstanceId(Long jobInstanceId) {
 		this.jobInstanceId = jobInstanceId;
+	}
+
+	@XmlJavaTypeAdapter(ExecutionContextAdapter.class)
+	@XmlElement(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
+	public ExecutionContext getExecutionContext() {
+		return executionContext;
+	}
+
+	public void setExecutionContext(ExecutionContext executionContext) {
+		this.executionContext = executionContext;
 	}
 	
 }

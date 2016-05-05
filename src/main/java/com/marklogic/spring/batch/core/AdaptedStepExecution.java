@@ -4,14 +4,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
+
+import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
 
 @XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
 @XmlType(namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
@@ -37,7 +42,7 @@ public class AdaptedStepExecution extends Entity {
 	private Date startTime = null;
 	private Date endTime = null;
 	private Date lastUpdated = null;
-	//private ExecutionContext executionContext = new ExecutionContext();
+	private ExecutionContext executionContext;
 	private String exitStatus = ExitStatus.EXECUTING.toString();
 	private boolean terminateOnly;
 	private int filterCount;
@@ -66,7 +71,8 @@ public class AdaptedStepExecution extends Entity {
 		this.setJobInstanceId(stepExec.getJobExecution().getJobInstance().getId());
 		this.setJobName(stepExec.getJobExecution().getJobInstance().getJobName());
 		this.setStartTime(stepExec.getStartTime());
-		this.setLastUpdated(stepExec.getLastUpdated());		
+		this.setLastUpdated(stepExec.getLastUpdated());	
+		this.setExecutionContext(stepExec.getExecutionContext());
 	}
 	
 	public String getExitCode() {
@@ -232,6 +238,16 @@ public class AdaptedStepExecution extends Entity {
 
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
+	}
+
+	@XmlJavaTypeAdapter(ExecutionContextAdapter.class)
+	@XmlElement(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
+	public ExecutionContext getExecutionContext() {
+		return executionContext;
+	}
+
+	public void setExecutionContext(ExecutionContext executionContext) {
+		this.executionContext = executionContext;
 	}    
     	
 }

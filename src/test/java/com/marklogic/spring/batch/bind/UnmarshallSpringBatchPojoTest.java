@@ -11,12 +11,14 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.core.AdaptedExecutionContext;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
@@ -91,6 +93,19 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 		StepExecutionAdapter adapter = new StepExecutionAdapter();
 		StepExecution stepExecution = adapter.unmarshal(adStepExecution);
 		assertEquals("testStep", stepExecution.getStepName());
+	}
+	
+	@Test
+	public void unmarshallExecutionContext() throws Exception {
+		Resource executionContextXml = ctx.getResource("classpath:/xml/execution-context.xml");
+		AdaptedExecutionContext aec = (AdaptedExecutionContext)unmarshaller.unmarshal(executionContextXml.getInputStream());
+		ExecutionContextAdapter adapter = new ExecutionContextAdapter();
+		ExecutionContext executionContext = adapter.unmarshal(aec);
+		assertEquals("testValue", executionContext.get("testName"));
+		assertEquals(123L, executionContext.getLong("testLong"));
+		assertEquals(new Double(123D), new Double(executionContext.getDouble("testDouble")));
+		assertEquals(123, executionContext.getInt("testInteger"));
+		assertEquals(683181905, executionContext.hashCode());
 	}
 
 }

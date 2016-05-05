@@ -41,6 +41,16 @@
 	<constraint name="type">
 		<collection prefix="http://marklogic.com/spring-batch/" facet="false" />
 	</constraint>
+	<constraint name="jobExecution-createDateTime">
+		<range>
+			<element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
+		</range>
+	</constraint>
+	<constraint name="jobInstance-createDateTime">
+		<range>
+			<element ns="http://marklogic.com/spring-batch/job-instance" name="createDateTime"/>
+		</range>
+	</constraint>
 	<values name="jobExecutionId">
     	<range type="xs:unsignedLong">
       		<element ns="http://marklogic.com/spring-batch" name="id" />

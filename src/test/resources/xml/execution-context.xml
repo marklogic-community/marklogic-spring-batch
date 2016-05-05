@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ec:executionContext xmlns:ec="http://marklogic.com/spring-batch/execution-context" xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:msb="http://marklogic.com/spring-batch" xmlns:step="http://marklogic.com/spring-batch/step-execution" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ec:dirtyFlag>true</ec:dirtyFlag>
+	<ec:hashCode>683181905</ec:hashCode>
+	<ec:map>
+		<entry>
+			<key>testInteger</key>
+			<value xsi:type="xs:int">123</value>
+		</entry>
+		<entry>
+			<key>testDouble</key>
+			<value xsi:type="xs:double">123.0</value>
+		</entry>
+		<entry>
+			<key>testName</key>
+			<value xsi:type="xs:string">testValue</value>
+		</entry>
+		<entry>
+			<key>testLong</key>
+			<value xsi:type="xs:long">123</value>
+		</entry>
+	</ec:map>
+</ec:executionContext>

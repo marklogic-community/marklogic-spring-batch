@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +15,8 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
+//import org.springframework.util.SerializationUtils;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
@@ -94,13 +97,12 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 
 		Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
 		synchronized (stepExecution) {
+			
+			
 			for (StepExecution se : stepExecutions) {
-				if (se.getId().equals(stepExecution.getId())) {	
-					se.incrementVersion();
-					se.setLastUpdated(stepExecution.getLastUpdated());
-					se.setStatus(stepExecution.getStatus());
-					
+				if (se.getId().equals(stepExecution.getId())) {
 					stepExecution.incrementVersion();
+					copy(stepExecution, se);
 				}
 			}
 			
@@ -167,5 +169,21 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 
 	public void setJobExecutionDao(JobExecutionDao jobExecutionDao) {
 		this.jobExecutionDao = jobExecutionDao;
+	}
+/*
+	private static StepExecution copy(StepExecution original) {
+		return (StepExecution) SerializationUtils.deserialize(SerializationUtils.serialize(original));
+	}
+*/
+	private static void copy(final StepExecution sourceExecution, final StepExecution targetExecution) {
+		// Cheaper than full serialization is a reflective field copy, which is
+		// fine for volatile storage
+		ReflectionUtils.doWithFields(StepExecution.class, new ReflectionUtils.FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				field.setAccessible(true);
+				field.set(targetExecution, field.get(sourceExecution));
+			}
+		}, ReflectionUtils.COPYABLE_FIELDS);
 	}
 }

@@ -4,15 +4,14 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.batch.core.repository.dao.MapExecutionContextDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
-import org.springframework.batch.core.repository.support.SimpleJobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
 
 @Configuration
@@ -47,13 +46,13 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public ExecutionContextDao executionContextDao() throws Exception {
-		MapExecutionContextDao executionContextDao = new MapExecutionContextDao();
+		MarkLogicExecutionContextDao executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao(), stepExecutionDao());
 		return executionContextDao;
 	}
 	
 	@Bean
 	public JobRepository jobRepository() throws Exception {
-		SimpleJobRepository jobRepository = new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
+		MarkLogicSimpleJobRepository jobRepository = new MarkLogicSimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 		return jobRepository;
 	}
 	

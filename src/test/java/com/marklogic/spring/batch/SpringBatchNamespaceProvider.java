@@ -17,6 +17,9 @@ public class SpringBatchNamespaceProvider extends MarkLogicNamespaceProvider {
         list.add(Namespace.getNamespace(MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE_PREFIX, MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE));
         list.add(Namespace.getNamespace(MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE_PREFIX, MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE));
         list.add(Namespace.getNamespace(MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE_PREFIX, MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE));
+        list.add(Namespace.getNamespace(MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE_PREFIX, MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE));
+        list.add(Namespace.getNamespace("xs", "http://www.w3.org/2001/XMLSchema"));  
+        list.add(Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance"));  
         list.add(Namespace.getNamespace("search", "http://marklogic.com/appservices/search"));        
         return list;
     }

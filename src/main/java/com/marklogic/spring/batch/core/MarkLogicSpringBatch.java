@@ -14,6 +14,9 @@ public interface MarkLogicSpringBatch {
 	public static final String JOB_PARAMETER_NAMESPACE = "http://marklogic.com/spring-batch/job-parameter";
 	public static final String JOB_PARAMETER_NAMESPACE_PREFIX = "jp";
 	
+	public static final String EXECUTION_CONTEXT_NAMESPACE = "http://marklogic.com/spring-batch/execution-context";
+	public static final String EXECUTION_CONTEXT_NAMESPACE_PREFIX = "ec";
+	
 	public static final String SPRING_BATCH_DIR = "/projects.spring.io/spring-batch/";
 	public static final String COLLECTION_JOB_EXECUTION = "http://marklogic.com/spring-batch/job-execution";
 	
