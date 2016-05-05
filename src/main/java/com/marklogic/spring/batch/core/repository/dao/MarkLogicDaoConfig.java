@@ -4,7 +4,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.batch.core.repository.dao.MapExecutionContextDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +46,7 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public ExecutionContextDao executionContextDao() throws Exception {
-		MapExecutionContextDao executionContextDao = new MapExecutionContextDao();
+		MarkLogicExecutionContextDao executionContextDao = new MarkLogicExecutionContextDao();
 		return executionContextDao;
 	}
 	

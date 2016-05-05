@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.junit.spring.AbstractSpringTest;
-import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +9,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -20,17 +20,25 @@ import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, com.marklogic.junit.spring.BasicTestConfig.class })
 public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 	
+	@Autowired
 	private JobInstanceDao jobInstanceDao;
 
+	@Autowired
 	private JobExecutionDao jobExecutionDao;
 
+	@Autowired
 	private StepExecutionDao stepExecutionDao;
 
+	@Autowired
 	private ExecutionContextDao contextDao;
 
 	private JobExecution jobExecution;
