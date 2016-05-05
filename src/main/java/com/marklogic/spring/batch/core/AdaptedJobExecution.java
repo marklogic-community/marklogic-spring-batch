@@ -58,6 +58,7 @@ public class AdaptedJobExecution {
 		this.status = jobExecution.getStatus().toString();
 		this.exitStatus = jobExecution.getExitStatus().toString();
 		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
+		this.executionContext = jobExecution.getExecutionContext();
 	}
 
 		
@@ -182,6 +183,7 @@ public class AdaptedJobExecution {
 		this.jobInstanceId = jobInstanceId;
 	}
 
+	@XmlElement(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
 	public ExecutionContext getExecutionContext() {
 		return executionContext;
 	}

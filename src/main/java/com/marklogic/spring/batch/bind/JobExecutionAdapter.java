@@ -21,6 +21,7 @@ public class JobExecutionAdapter extends XmlAdapter<AdaptedJobExecution, JobExec
 		jobExec.setExitStatus(new ExitStatus(v.getExitCode(), ""));
 		jobExec.addStepExecutions(v.getStepExecutions());
 		jobExec.setVersion(v.getVersion());
+		jobExec.setExecutionContext(v.getExecutionContext());
 		return jobExec;
 	}
 

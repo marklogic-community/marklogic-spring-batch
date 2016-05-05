@@ -82,6 +82,7 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
         frag.assertElementExists("/msb:jobExecution/inst:jobInstance");
         frag.assertElementExists("/msb:jobExecution/jp:jobParameters");
         frag.assertElementExists("/msb:jobExecution/step:stepExecutions");
+        frag.assertElementExists("/msb:jobExecution/ec:executionContext");
         List<Fragment> steps = frag.getFragments("msb:jobExecution/step:stepExecutions/step:stepExecution");
       	steps.get(0).assertElementValue("/step:stepExecution/step:stepName", "sampleStep1");
       	steps.get(1).assertElementValue("/step:stepExecution/step:stepName", "sampleStep2");
