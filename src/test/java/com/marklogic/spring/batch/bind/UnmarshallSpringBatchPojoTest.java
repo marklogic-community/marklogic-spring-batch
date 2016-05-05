@@ -102,8 +102,10 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 		ExecutionContextAdapter adapter = new ExecutionContextAdapter();
 		ExecutionContext executionContext = adapter.unmarshal(aec);
 		assertEquals("testValue", executionContext.get("testName"));
-		assertEquals("1234", executionContext.get("testLong"));
-		assertEquals(235893925, executionContext.hashCode());
+		assertEquals(123L, executionContext.getLong("testLong"));
+		assertEquals(new Double(123D), new Double(executionContext.getDouble("testDouble")));
+		assertEquals(123, executionContext.getInt("testInteger"));
+		assertEquals(683181905, executionContext.hashCode());
 	}
 
 }
