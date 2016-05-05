@@ -115,7 +115,7 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		Fragment frag = new Fragment(new DOMBuilder().build(doc));
 		frag.setNamespaces(getNamespaceProvider().getNamespaces());
 		frag.prettyPrint();
-		
-		
+		frag.assertElementExists("/ec:executionContext/ec:map/entry/key[text() = 'testName']");
+		frag.assertElementExists("/ec:executionContext/ec:map/entry/value[text() = 'testValue']");
 	}
 }
