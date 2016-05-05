@@ -60,7 +60,7 @@ public class AdaptedJobInstance {
 	}
 	
 	@XmlJavaTypeAdapter(JobParametersAdapter.class)
-	@XmlElement(name = "jobExecution", namespace=MarkLogicSpringBatch.JOB_EXECUTION_NAMESPACE)
+	@XmlElement(name = "jobParameters", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public JobParameters getJobParameters() {
 		return jobParameters;
 	}

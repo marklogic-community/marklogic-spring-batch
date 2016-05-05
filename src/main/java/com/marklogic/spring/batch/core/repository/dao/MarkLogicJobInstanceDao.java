@@ -115,7 +115,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
     	StructuredQueryDefinition querydef = 
     			qb.and(
-    				qb.valueConstraint("jobParametersKey", jobKeyGenerator.generateKey(jobParameters)),
+    				qb.valueConstraint("jobKey", jobKeyGenerator.generateKey(jobParameters)),
     				qb.valueConstraint("jobName", jobName),
     				qb.collection(COLLECTION_JOB_INSTANCE)
     			);
@@ -146,7 +146,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public JobInstance getJobInstance(Long instanceId) {
-		String uri = SPRING_BATCH_INSTANCE_DIR + instanceId.toString() + ".xml";
+		String uri = SPRING_BATCH_DIR + instanceId.toString() + ".xml";
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
 		DocumentDescriptor desc = xmlDocMgr.exists(uri);
 		if (desc == null) {
@@ -177,7 +177,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	public List<JobInstance> getJobInstances(String jobName, int start, int count) {
 		QueryManager queryMgr = databaseClient.newQueryManager();    	
     	StringQueryDefinition querydef = queryMgr.newStringDefinition(SEARCH_OPTIONS_NAME);
-    	querydef.setCriteria("jobName: " + jobName + " AND type:job-instance AND sort:date");
+    	querydef.setCriteria("jobName: " + jobName + " AND sort:date");
     	logger.info(querydef.getCriteria());
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 
     	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
