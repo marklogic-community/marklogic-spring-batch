@@ -2,17 +2,29 @@ package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
+import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.item.ExecutionContext;
 
-public class MarkLogicExecutionContextDao extends AbstractMarkLogicBatchMetadataDao implements ExecutionContextDao {
+public class MarkLogicExecutionContextDao implements ExecutionContextDao {
+	
+	private static final Log logger = LogFactory.getLog(MarkLogicExecutionContextDao.class);
+	
+	private JobExecutionDao jobExecutionDao;
+	
+	
+	public MarkLogicExecutionContextDao(JobExecutionDao jobExecDao) {
+		this.jobExecutionDao = jobExecDao;
+	}
+	
 
 	@Override
 	public ExecutionContext getExecutionContext(JobExecution jobExecution) {
-		// TODO Auto-generated method stub
-		return null;
+		return jobExecutionDao.getJobExecution(jobExecution.getId()).getExecutionContext();
 	}
 
 	@Override
@@ -23,8 +35,8 @@ public class MarkLogicExecutionContextDao extends AbstractMarkLogicBatchMetadata
 
 	@Override
 	public void saveExecutionContext(JobExecution jobExecution) {
-		// TODO Auto-generated method stub
-
+		jobExecution.incrementVersion();
+		jobExecutionDao.saveJobExecution(jobExecution);
 	}
 
 	@Override

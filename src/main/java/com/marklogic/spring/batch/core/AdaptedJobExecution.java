@@ -18,6 +18,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
 
 @XmlRootElement(name = "jobExecution")
 public class AdaptedJobExecution {
@@ -35,6 +36,7 @@ public class AdaptedJobExecution {
 	private Long id;
 	private String uri;
 	private Integer version;
+	private ExecutionContext executionContext;
 
 	protected AdaptedJobExecution() { 
 		stepExecution = new ArrayList<StepExecution>();
@@ -178,6 +180,14 @@ public class AdaptedJobExecution {
 
 	public void setJobInstanceId(Long jobInstanceId) {
 		this.jobInstanceId = jobInstanceId;
+	}
+
+	public ExecutionContext getExecutionContext() {
+		return executionContext;
+	}
+
+	public void setExecutionContext(ExecutionContext executionContext) {
+		this.executionContext = executionContext;
 	}
 	
 }
