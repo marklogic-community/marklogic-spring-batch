@@ -46,7 +46,7 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public ExecutionContextDao executionContextDao() throws Exception {
-		MarkLogicExecutionContextDao executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao());
+		MarkLogicExecutionContextDao executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao(), stepExecutionDao());
 		return executionContextDao;
 	}
 	

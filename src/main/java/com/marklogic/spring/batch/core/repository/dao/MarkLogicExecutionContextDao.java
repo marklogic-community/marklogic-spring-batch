@@ -2,23 +2,25 @@ package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
+import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.item.ExecutionContext;
 
 public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 	
-	private static final Log logger = LogFactory.getLog(MarkLogicExecutionContextDao.class);
+	//private static final Log logger = LogFactory.getLog(MarkLogicExecutionContextDao.class);
 	
 	private JobExecutionDao jobExecutionDao;
+	private StepExecutionDao stepExecutionDao;
 	
-	
-	public MarkLogicExecutionContextDao(JobExecutionDao jobExecDao) {
+	public MarkLogicExecutionContextDao(JobExecutionDao jobExecDao, StepExecutionDao stepExecDao) {
 		this.jobExecutionDao = jobExecDao;
+		this.stepExecutionDao = stepExecDao;
 	}
 	
 
@@ -36,12 +38,13 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 	@Override
 	public void saveExecutionContext(JobExecution jobExecution) {
 		jobExecution.incrementVersion();
-		jobExecutionDao.saveJobExecution(jobExecution);
+		jobExecutionDao.updateJobExecution(jobExecution);
 	}
 
 	@Override
 	public void saveExecutionContext(StepExecution stepExecution) {
-		// TODO Auto-generated method stub
+		stepExecution.incrementVersion();
+		stepExecutionDao.updateStepExecution(stepExecution);
 
 	}
 
