@@ -41,7 +41,7 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	
 	@Bean
 	public JobExecutionDao jobExecutionDao() throws Exception {
-		MarkLogicJobExecutionDao dao = new MarkLogicJobExecutionDao(databaseClientProvider.getDatabaseClient());
+		MarkLogicJobExecutionDao dao = new MarkLogicJobExecutionDao(databaseClientProvider.getDatabaseClient(), jobInstanceDao());
 		dao.setIncrementer(new UriIncrementer());
 		return dao;
 	}
@@ -50,7 +50,6 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	public JobInstanceDao jobInstanceDao() throws Exception {
 		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(databaseClientProvider.getDatabaseClient());
 		jobInstanceDao.setIncrementer(new UriIncrementer());
-		jobInstanceDao.setJobExecutionDao(jobExecutionDao());
 		return jobInstanceDao;
 	}	
 	

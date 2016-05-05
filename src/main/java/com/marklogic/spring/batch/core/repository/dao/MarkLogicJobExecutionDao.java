@@ -192,7 +192,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
     			qb.and(
     				qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()), 
     				qb.valueConstraint("jobName", jobInstance.getJobName()),
-    				qb.collection(COLLECTION_JOB_EXECUTION)
+    				qb.collection(COLLECTION_JOB_INSTANCE)
     			);
 		return findJobExecutions(querydef);
 		
