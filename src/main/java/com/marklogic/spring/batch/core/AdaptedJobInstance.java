@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.core;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class AdaptedJobInstance {
 		this.setId(jobInstance.getId());
 		this.setVersion(jobInstance.getVersion());
 		this.jobName = jobInstance.getJobName();
+		jobExecutions = new ArrayList<JobExecution>();
 	}
 	
 	public String getJobName() {

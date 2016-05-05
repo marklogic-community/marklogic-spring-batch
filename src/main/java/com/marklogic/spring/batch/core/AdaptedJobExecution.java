@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.batch.runtime.BatchStatus;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,7 +33,7 @@ public class AdaptedJobExecution {
 	private Date startDateTime;
 	private Date endDateTime;
 	private Date lastUpdatedDateTime;
-	private String status;
+	private String status = BatchStatus.STARTING.toString();
 	private String exitStatus;
 	private Long id;
 	private String uri;
@@ -56,7 +57,11 @@ public class AdaptedJobExecution {
 		this.endDateTime = jobExecution.getEndTime();
 		this.lastUpdatedDateTime = jobExecution.getLastUpdated();
 		this.startDateTime = jobExecution.getStartTime();
-		this.status = jobExecution.getStatus().toString();
+		if (jobExecution.getStatus() == null) {
+			this.status = BatchStatus.STARTING.toString();
+		} else {
+			this.status = jobExecution.getStatus().toString();
+		}
 		this.exitStatus = jobExecution.getExitStatus().toString();
 		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
 		this.executionContext = jobExecution.getExecutionContext();

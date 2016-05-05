@@ -8,9 +8,12 @@ import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +25,8 @@ import org.springframework.batch.core.repository.dao.NoSuchObjectException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
@@ -29,14 +34,16 @@ import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.util.EditableNamespaceContext;
+
 import org.springframework.batch.core.BatchStatus;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
+import com.marklogic.spring.batch.bind.JobInstanceAdapter;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
@@ -63,11 +70,12 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 		
 		jobExecution.incrementVersion();		
 		jobExecution.setId(incrementer.nextLongValue());
+		JobInstance jobInstance = jobInstanceDao.getJobInstance(jobExecution.getJobInstance().getId());
+
 		
 		
-	
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
-		String uri = SPRING_BATCH_DIR + jobExecution.getId().toString() + ".xml";
+		String uri = SPRING_BATCH_DIR + jobInstance.getId().toString() + ".xml";
         DocumentDescriptor desc = xmlDocMgr.newDescriptor(uri);
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true);
@@ -77,9 +85,11 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 			documentBuilder = domFactory.newDocumentBuilder();
 			doc = documentBuilder.newDocument();
 	        Marshaller marshaller = jaxbContext().createMarshaller();
-	        JobExecutionAdapter adapter = new JobExecutionAdapter();
-	        AdaptedJobExecution aje  = adapter.marshal(jobExecution);;
-	        marshaller.marshal(aje, doc);
+	        JobInstanceAdapter adapter = new JobInstanceAdapter();
+	        AdaptedJobInstance aji  = adapter.marshal(jobInstance);
+	        List<JobExecution> jobExecutions = aji.getJobExecutions();
+	        jobExecutions.add(jobExecution);
+	        marshaller.marshal(aji, doc);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
@@ -91,10 +101,10 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
         handle.set(doc);      
       
         //Set document metadata
-        DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
-        jobExecutionMetadata.getCollections().add(MarkLogicSpringBatch.COLLECTION_JOB_EXECUTION);
+        DocumentMetadataHandle jobInstanceMetadata = new DocumentMetadataHandle();
+        jobInstanceMetadata.getCollections().add(COLLECTION_JOB_INSTANCE);
         
-		xmlDocMgr.write(desc, jobExecutionMetadata, handle);
+		xmlDocMgr.write(desc, jobInstanceMetadata, handle);
 		logger.info("insert:" + uri + "," + desc.getVersion());
             
 			
@@ -247,17 +257,30 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
     	List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
-		AdaptedJobExecution jobExec = null;
 		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
-			summary.getFirstSnippet(jaxbHandle);
-			jobExec = jaxbHandle.get();
-			JobExecutionAdapter adapter = new JobExecutionAdapter();
 			try {
-				jobExecutions.add(adapter.unmarshal(jobExec));
-			} catch (Exception ex) {
-				logger.error(ex.getMessage());
+	        	DOMHandle handle = new DOMHandle();
+				summary.getFirstSnippet(handle);
+				
+				// configure namespace bindings for the XPath processor
+		        EditableNamespaceContext namespaces = new EditableNamespaceContext();
+		        namespaces.setNamespaceURI("msb", "http://marklogic.com/spring-batch");
+		        handle.getXPathProcessor().setNamespaceContext(namespaces);
+		        XPathExpression resultsExpression = handle.compileXPath("/msb:jobInstance/msb:jobExecution");
+		        NodeList resultList = handle.evaluateXPath(resultsExpression, NodeList.class);
+		        JobExecutionAdapter adapter = new JobExecutionAdapter();
+		        for (int i = 0; i < resultList.getLength(); i++) {
+		        	Node jobExecNode = resultList.item(i);
+	        		Unmarshaller unmarshal = jaxbContext().createUnmarshaller();
+	        		AdaptedJobExecution aje = (AdaptedJobExecution)unmarshal.unmarshal(jobExecNode);
+					jobExecutions.add(adapter.unmarshal(aje));
+		        }
+		    } catch (XPathExpressionException ex) {
+	        	ex.printStackTrace(); 	
+	        } catch (Exception ex) {
+	        	ex.printStackTrace();
 			}
+	        		
 		}
 		return jobExecutions;		
 	}

@@ -29,9 +29,9 @@
 		</value>
 	</constraint>
 	<constraint name="jobExecutionId">
-		<value>
-			<element name="id" ns="http://marklogic.com/spring-batch" />  
-		</value>
+		<range type="xs:unsignedLong" facet="false">
+      		<path-index xmlns:msb="http://marklogic.com/spring-batch">/msb:jobInstance/msb:jobExecution/msb:id</path-index>
+    	</range>
 	</constraint>
 	<constraint name="endDateTime">
 		<container>

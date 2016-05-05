@@ -25,5 +25,16 @@
 		"range-value-positions": false,
 		"invalid-values": "reject"
   	}
-  ]
+  ],
+  "path-namespace": [{
+		"prefix": "msb",
+		"namespace-uri": "http://marklogic.com/spring-batch"
+	}],
+  "range-path-index": [{
+		"scalar-type": "unsignedLong",
+		"collation": "",
+		"path-expression": "/msb:jobInstance/msb:jobExecution/msb:id",
+		"range-value-positions": false,
+		"invalid-values": "reject"
+	}]
 }
