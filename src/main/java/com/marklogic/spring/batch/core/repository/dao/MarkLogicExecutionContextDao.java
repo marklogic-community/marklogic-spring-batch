@@ -31,8 +31,7 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 
 	@Override
 	public ExecutionContext getExecutionContext(StepExecution stepExecution) {
-		// TODO Auto-generated method stub
-		return null;
+		return stepExecutionDao.getStepExecution(stepExecution.getJobExecution(), stepExecution.getId()).getExecutionContext();
 	}
 
 	@Override
