@@ -67,7 +67,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 		jobInstance.incrementVersion();
 		
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
-		String uri = SPRING_BATCH_INSTANCE_DIR + jobInstance.getId().toString() + ".xml";
+		String uri = SPRING_BATCH_DIR + jobInstance.getId().toString() + ".xml";
         
 		DocumentDescriptor desc = xmlDocMgr.exists(uri);
 		if (desc == null) {
@@ -84,8 +84,9 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	        Marshaller marshaller = jaxbContext().createMarshaller();
 	        JobInstanceAdapter adapter = new JobInstanceAdapter();
 	        AdaptedJobInstance aji  = adapter.marshal(jobInstance);
+	        aji.setJobParameters(jobParameters);
 	        aji.setCreateDateTime(new Date(System.currentTimeMillis()));
-	        aji.setJobParametersKey(jobKeyGenerator.generateKey(jobParameters));
+	        aji.setJobKey(jobKeyGenerator.generateKey(jobParameters));
 	        marshaller.marshal(aji, doc);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

@@ -1,31 +1,39 @@
 package com.marklogic.spring.batch.core;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.springframework.batch.core.Entity;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobParameters;
 
-@XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
-@XmlType(namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
-public class AdaptedJobInstance extends Entity {
+import com.marklogic.spring.batch.bind.JobExecutionAdapter;
+import com.marklogic.spring.batch.bind.JobParametersAdapter;
+
+
+@XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+public class AdaptedJobInstance {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String jobName;
 	private Long id;
-	private String jobParametersKey;
+	private Integer version;
 	private Date createDateTime;
+	private String jobName;
+	private String jobKey;
+	private JobParameters jobParameters;
+	private List<JobExecution> jobExecutions;
 	
 	public AdaptedJobInstance() { }
 	
-	public AdaptedJobInstance(Long id, String jobName) {
-		this.id = id;
-		this.jobName = jobName;
+	public AdaptedJobInstance(JobInstance jobInstance) {
+		this.setId(jobInstance.getId());
+		this.setVersion(jobInstance.getVersion());
+		this.jobName = jobInstance.getJobName();
 	}
 	
 	public String getJobName() {
@@ -34,21 +42,13 @@ public class AdaptedJobInstance extends Entity {
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
 	}
-	
-	@XmlElement(name = "id", namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
+
+	public String getJobKey() {
+		return jobKey;
 	}
 
-	public String getJobParametersKey() {
-		return jobParametersKey;
-	}
-
-	public void setJobParametersKey(String jobParametersKey) {
-		this.jobParametersKey = jobParametersKey;
+	public void setJobKey(String jobKey) {
+		this.jobKey = jobKey;
 	}
 
 	public Date getCreateDateTime() {
@@ -57,6 +57,42 @@ public class AdaptedJobInstance extends Entity {
 
 	public void setCreateDateTime(Date createDateTime) {
 		this.createDateTime = createDateTime;
+	}
+	
+	@XmlJavaTypeAdapter(JobParametersAdapter.class)
+	@XmlElement(name = "jobExecution", namespace=MarkLogicSpringBatch.JOB_EXECUTION_NAMESPACE)
+	public JobParameters getJobParameters() {
+		return jobParameters;
+	}
+
+	public void setJobParameters(JobParameters jobParameters) {
+		this.jobParameters = jobParameters;
+	}
+
+	@XmlJavaTypeAdapter(JobExecutionAdapter.class)
+	@XmlElement(name = "jobExecution", namespace=MarkLogicSpringBatch.JOB_EXECUTION_NAMESPACE)
+	public List<JobExecution> getJobExecutions() {
+		return jobExecutions;
+	}
+
+	public void setJobExecutions(List<JobExecution> jobExecutions) {
+		this.jobExecutions = jobExecutions;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 }
