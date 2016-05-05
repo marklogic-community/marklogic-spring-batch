@@ -13,6 +13,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.w3c.dom.Document;
 
@@ -20,6 +21,7 @@ import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobExecutionTestUtils;
 import com.marklogic.spring.batch.JobParametersTestUtils;
+import com.marklogic.spring.batch.core.AdaptedExecutionContext;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
@@ -102,5 +104,18 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		frag.assertElementExists("/step:stepExecution");
 		frag.assertElementExists("/step:stepExecution/step:lastUpdated");
 		frag.assertElementValue("/step:stepExecution/step:stepName", "testStep");
+	}
+	
+	@Test
+	public void marshallExecutionContextTest() throws Exception {
+		ExecutionContext ec = new ExecutionContext();
+		ec.putString("testName", "testValue");
+		AdaptedExecutionContext aec = new AdaptedExecutionContext(ec);
+		marshaller.marshal(aec, doc);
+		Fragment frag = new Fragment(new DOMBuilder().build(doc));
+		frag.setNamespaces(getNamespaceProvider().getNamespaces());
+		frag.prettyPrint();
+		
+		
 	}
 }
