@@ -15,12 +15,20 @@ import org.springframework.batch.item.ExecutionContext;
 @XmlType(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
 public class AdaptedExecutionContext {
 	
-	private Map<String, String> valuesMap = new HashMap<String, String>();
+	private Map<String, String> map = new HashMap<String, String>();
 	
 	public AdaptedExecutionContext() {
 		
 	}
 	
+	public Map<String, String> getMap() {
+		return map;
+	}
+
+	public void setMap(Map<String, String> map) {
+		this.map = map;
+	}
+
 	public AdaptedExecutionContext(ExecutionContext exeContext) {
 		// Get a set of the entries
 		Set<Entry<String, Object>> set = exeContext.entrySet();
@@ -31,7 +39,7 @@ public class AdaptedExecutionContext {
 	    	Entry<String, Object> me = i.next();
 	    	String name = me.getKey();
 	    	String value = me.getValue().toString();
-	    	valuesMap.put(name, value);
+	    	map.put(name, value);
 	    }
 	}
 
