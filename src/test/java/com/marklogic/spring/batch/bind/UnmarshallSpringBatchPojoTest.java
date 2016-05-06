@@ -103,6 +103,7 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 		MarkLogicJobInstance mji = (MarkLogicJobInstance)unmarshaller.unmarshal(xml.getInputStream());
 		assertNotNull(mji);
 		assertEquals(new Long(1930652603895744222L), mji.getJobInstance().getId());
+		assertEquals(1, mji.getJobExecutions().size());
 		assertEquals(1, mji.getJobExecutions().get(0).getStepExecutions().size());
 	}
 
