@@ -159,13 +159,8 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	@Override
 	public Set<JobExecution> findRunningJobExecutions(String jobName) {
     	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	StructuredQueryDefinition querydef = 
-    			qb.and(
-    				qb.valueConstraint("status", BatchStatus.STARTED.toString(), BatchStatus.STARTING.toString()),
-    				qb.valueConstraint("jobName", jobName),
-    				qb.not(qb.containerConstraint("endDateTime", qb.and()))
-    			);
-    	
+    	StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));
+    	logger.info(querydef.serialize());
     	QueryManager queryMgr = databaseClient.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	    	
 		Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
@@ -174,7 +169,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
     		summary.getFirstSnippet(handle);
     		MarkLogicJobInstance mji = handle.get();
     		for (JobExecution je : mji.getJobExecutions()) {
-    			if (je.getStatus().isRunning()) {
+    			if (je.getStatus().isRunning() && je.getEndTime() == null) {
     				jobExecutions.add(je);
     			}
     		}
