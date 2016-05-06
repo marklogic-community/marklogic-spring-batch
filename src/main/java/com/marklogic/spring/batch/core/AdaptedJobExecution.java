@@ -26,9 +26,8 @@ import org.springframework.batch.item.ExecutionContext;
 public class AdaptedJobExecution {
 	
 	private JobParameters jobParameters;
-	private List<StepExecution> stepExecution;
+	private List<StepExecution> stepExecution = new ArrayList<StepExecution>();;
 	private JobInstance jobInstance;
-	private Long jobInstanceId;
 	private Date createDateTime;
 	private Date startDateTime;
 	private Date endDateTime;
@@ -37,21 +36,19 @@ public class AdaptedJobExecution {
 	private String exitStatus;
 	private Long id;
 	private String uri;
-	private Integer version;
+	private Integer version = new Integer(0);
 	private ExecutionContext executionContext;
 
 	protected AdaptedJobExecution() { 
-		stepExecution = new ArrayList<StepExecution>();
 	}
 	
 	public AdaptedJobExecution(JobExecution jobExecution) {
-		this();
-		setId(jobExecution.getId());
+		this.id = jobExecution.getId();
 		if (jobExecution.getVersion() == null) {
 			jobExecution.setVersion(new Integer(0));
+		} else {
+			this.version = jobExecution.getVersion();
 		}
-		this.version = jobExecution.getVersion();
-		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
 		this.createDateTime = jobExecution.getCreateTime();
 		this.endDateTime = jobExecution.getEndTime();
@@ -65,12 +62,14 @@ public class AdaptedJobExecution {
 		this.exitStatus = jobExecution.getExitStatus().toString();
 		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
 		this.executionContext = jobExecution.getExecutionContext();
+		this.jobInstance = jobExecution.getJobInstance();
+		
 	}
 
 		
 	@XmlJavaTypeAdapter(StepExecutionAdapter.class)
-	@XmlElementWrapper( name="stepExecutions", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE )
-	@XmlElement(name = "stepExecution", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
+	@XmlElementWrapper( name="stepExecutions", namespace=MarkLogicSpringBatch.JOB_NAMESPACE )
+	@XmlElement(name = "stepExecution", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public List<StepExecution> getStepExecutions() {
 		return stepExecution;
 	}
@@ -136,19 +135,9 @@ public class AdaptedJobExecution {
 	public void setCreateDateTime(Date createDateTime) {
 		this.createDateTime = createDateTime;
 	}
-
-	@XmlJavaTypeAdapter(JobInstanceAdapter.class)
-	@XmlElement(namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
-	public JobInstance getJobInstance() {
-		return jobInstance;
-	}
-
-	public void setJobInstance(JobInstance jobInstance) {
-		this.jobInstance = jobInstance;
-	}
 	
 	@XmlJavaTypeAdapter(JobParametersAdapter.class)
-	@XmlElement(namespace=MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE)
+	@XmlElement(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public JobParameters getJobParameters() {
 		return jobParameters;
 	}
@@ -181,22 +170,24 @@ public class AdaptedJobExecution {
 		return;
 	}
 
-	public Long getJobInstanceId() {
-		return jobInstanceId;
-	}
-
-	public void setJobInstanceId(Long jobInstanceId) {
-		this.jobInstanceId = jobInstanceId;
-	}
-
 	@XmlJavaTypeAdapter(ExecutionContextAdapter.class)
-	@XmlElement(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
+	@XmlElement(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public ExecutionContext getExecutionContext() {
 		return executionContext;
 	}
 
 	public void setExecutionContext(ExecutionContext executionContext) {
 		this.executionContext = executionContext;
+	}
+
+	@XmlJavaTypeAdapter(JobInstanceAdapter.class)
+	@XmlElement(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+	public JobInstance getJobInstance() {
+		return jobInstance;
+	}
+
+	public void setJobInstance(JobInstance jobInstance) {
+		this.jobInstance = jobInstance;
 	}
 	
 }

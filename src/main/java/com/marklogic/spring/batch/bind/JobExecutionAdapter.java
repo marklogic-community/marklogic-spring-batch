@@ -16,7 +16,6 @@ public class JobExecutionAdapter extends XmlAdapter<AdaptedJobExecution, JobExec
 		jobExec.setEndTime(v.getEndDateTime());
 		jobExec.setLastUpdated(v.getLastUpdatedDateTime());
 		jobExec.setStartTime(v.getStartDateTime());
-		jobExec.setJobInstance(v.getJobInstance());
 		jobExec.setStatus(BatchStatus.valueOf(v.getStatus()));
 		jobExec.setExitStatus(new ExitStatus(v.getExitCode(), ""));
 		jobExec.addStepExecutions(v.getStepExecutions());

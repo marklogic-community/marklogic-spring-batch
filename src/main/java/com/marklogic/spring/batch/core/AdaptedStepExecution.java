@@ -18,8 +18,8 @@ import org.springframework.batch.item.ExecutionContext;
 
 import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
 
-@XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
-@XmlType(namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
+@XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 public class AdaptedStepExecution extends Entity {
 	
 	/**
