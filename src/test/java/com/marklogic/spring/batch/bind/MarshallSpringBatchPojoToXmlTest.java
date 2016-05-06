@@ -21,7 +21,6 @@ import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobExecutionTestUtils;
 import com.marklogic.spring.batch.JobParametersTestUtils;
-import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
 

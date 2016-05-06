@@ -43,10 +43,10 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 		AdaptedJobParameters adParams = (AdaptedJobParameters)unmarshaller.unmarshal(jobParametersXml.getInputStream());
 		JobParametersAdapter adapter = new JobParametersAdapter();
 		JobParameters params = adapter.unmarshal(adParams);
-		assertEquals(4, params.getParameters().size());
+		assertEquals(5, params.getParameters().size());
 		assertEquals("Joe Cool", params.getString("stringTest"));
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-		assertEquals(df.parse("2016-03-10T15:22:45-0500").toString(), params.getDate("start").toString());
+		assertEquals(df.parse("2016-05-05T20:49:24-0400").toString(), params.getDate("start").toString());
 		assertEquals(Long.valueOf(1239L), params.getLong("longTest"));
 		assertEquals(Double.valueOf(1.35D), params.getDouble("doubleTest"));
 	}
@@ -69,21 +69,9 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 		JobExecutionAdapter adapter = new JobExecutionAdapter();
 		JobExecution jobExecution = adapter.unmarshal(adJobExecution);
 		assertNotNull(jobExecution);
-		assertEquals(Long.valueOf(5128016860359238732L), jobExecution.getId());
+		assertEquals(Long.valueOf(123), jobExecution.getId());
 		assertEquals("STARTING", jobExecution.getStatus().toString());
 		assertEquals(2, jobExecution.getStepExecutions().size());
-	}
-	
-	@Test
-	public void unmarshallJobExecutionTest() throws Exception {
-		Resource jobExecutionXml = ctx.getResource("classpath:/xml/job-execution-2.xml");
-		AdaptedJobExecution adJobExecution = (AdaptedJobExecution)unmarshaller.unmarshal(jobExecutionXml.getInputStream());
-		JobExecutionAdapter adapter = new JobExecutionAdapter();
-		JobExecution jobExecution = adapter.unmarshal(adJobExecution);
-		assertNotNull(jobExecution);
-		assertEquals(Long.valueOf(6275688569778434925L), jobExecution.getId());
-		assertEquals("STARTING", jobExecution.getStatus().toString());
-		assertEquals(1, jobExecution.getStepExecutions().size());
 	}
 	
 	@Test

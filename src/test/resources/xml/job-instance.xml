@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<inst:jobInstance xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:msb="http://marklogic.com/spring-batch" xmlns:step="http://marklogic.com/spring-batch/step-execution">
-  <inst:id>123</inst:id>
-  <inst:jobName>test</inst:jobName>
-</inst:jobInstance>
+<msb:jobInstance xmlns:msb="http://marklogic.com/spring-batch" xmlns:ec="http://marklogic.com/spring-batch/execution-context" xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:step="http://marklogic.com/spring-batch/step-execution" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <msb:id>123</msb:id>
+  <msb:jobName>test</msb:jobName>
+  <msb:version>0</msb:version>
+</msb:jobInstance>

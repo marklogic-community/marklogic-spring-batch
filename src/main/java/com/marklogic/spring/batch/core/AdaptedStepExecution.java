@@ -241,7 +241,7 @@ public class AdaptedStepExecution extends Entity {
 	}
 
 	@XmlJavaTypeAdapter(ExecutionContextAdapter.class)
-	@XmlElement(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
+	@XmlElement(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public ExecutionContext getExecutionContext() {
 		return executionContext;
 	}
