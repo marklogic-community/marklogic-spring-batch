@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -38,9 +37,7 @@ import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.query.ValuesDefinition;
-import com.marklogic.spring.batch.bind.JobInstanceAdapter;
-import com.marklogic.spring.batch.core.AdaptedJobExecution;
-import com.marklogic.spring.batch.core.AdaptedJobInstance;
+import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
 public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao implements JobInstanceDao {
@@ -79,12 +76,9 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 			documentBuilder = domFactory.newDocumentBuilder();
 			doc = documentBuilder.newDocument();
 	        Marshaller marshaller = jaxbContext().createMarshaller();
-	        JobInstanceAdapter adapter = new JobInstanceAdapter();
-	        AdaptedJobInstance aji  = adapter.marshal(jobInstance);
-	        aji.setJobParameters(jobParameters);
-	        aji.setCreateDateTime(new Date(System.currentTimeMillis()));
-	        aji.setJobKey(jobKeyGenerator.generateKey(jobParameters));
-	        marshaller.marshal(aji, doc);
+	        MarkLogicJobInstance mji = new MarkLogicJobInstance(jobInstance);
+	        mji.setJobKey(jobKeyGenerator.generateKey(jobParameters));
+	        marshaller.marshal(mji, doc);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
@@ -121,14 +115,13 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
     	
     	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
-		AdaptedJobInstance jobInstance = null;
+		MarkLogicJobInstance jobInstance = null;
 		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<AdaptedJobInstance> jaxbHandle = new JAXBHandle<AdaptedJobInstance>(jaxbContext());
+			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
 			summary.getFirstSnippet(jaxbHandle);
 			jobInstance = jaxbHandle.get();
-			JobInstanceAdapter adapter = new JobInstanceAdapter();
 			try {
-				jobInstances.add(adapter.unmarshal(jobInstance));
+				jobInstances.add(jobInstance.getJobInstance());
 			} catch (Exception ex) {
 				logger.error(ex.getMessage());
 			}
@@ -149,16 +142,9 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 		if (desc == null) {
 			return null;
 		} else {
-			JAXBHandle<AdaptedJobInstance> jaxbHandle = xmlDocMgr.read(uri, new JAXBHandle<AdaptedJobInstance>(jaxbContext()));
-			AdaptedJobInstance aji = jaxbHandle.get();
-			JobInstanceAdapter adapter = new JobInstanceAdapter();
-			JobInstance jobInstance = null;
-			try {
-				jobInstance = adapter.unmarshal(aji);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			return jobInstance;
+			JAXBHandle<MarkLogicJobInstance> jaxbHandle = xmlDocMgr.read(uri, new JAXBHandle<MarkLogicJobInstance>(jaxbContext()));
+			MarkLogicJobInstance mji = jaxbHandle.get();
+			return mji.getJobInstance();
 		}
 		
 	
@@ -179,20 +165,15 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 
     	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
-		AdaptedJobInstance aji = null;
+		MarkLogicJobInstance mji = null;
 		if (start+count > summaries.length) {
 			return jobInstances;
 		}
 		for (int i = start; i < start+count; i++) {
-			JAXBHandle<AdaptedJobInstance> jaxbHandle = new JAXBHandle<AdaptedJobInstance>(jaxbContext());
+			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
 			summaries[i].getFirstSnippet(jaxbHandle);
-			aji = jaxbHandle.get();
-			JobInstanceAdapter adapter = new JobInstanceAdapter();
-			try {
-				jobInstances.add(adapter.unmarshal(aji));
-			} catch (Exception ex) {
-				logger.error(ex.getMessage());
-			}
+			mji = jaxbHandle.get();
+			jobInstances.add(mji.getJobInstance());
 		}
 		return jobInstances;
 	}
@@ -223,7 +204,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	protected JAXBContext jaxbContext() {
 		JAXBContext jaxbContext = null;
 		try {
-            jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class);
+            jaxbContext = JAXBContext.newInstance(MarkLogicJobInstance.class);
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }
