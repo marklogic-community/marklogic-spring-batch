@@ -17,7 +17,7 @@ public class AdaptedJobInstance {
 	public AdaptedJobInstance() { }
 	
 	public AdaptedJobInstance(JobInstance jobInstance) {
-		this.setId(jobInstance.getId());
+		this.id = jobInstance.getId();
 		if (jobInstance.getVersion() == null) {
 			jobInstance.setVersion(new Integer(0));
 		} else {

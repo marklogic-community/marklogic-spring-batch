@@ -59,4 +59,8 @@ public class MarkLogicJobInstance {
 	public void setJobKey(String jobKey) {
 		this.jobKey = jobKey;
 	}
+	
+	public void addJobExecution(JobExecution jobExecution) {
+		jobExecutions.add(jobExecution);
+	}
 }

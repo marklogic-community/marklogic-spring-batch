@@ -49,6 +49,7 @@ public class AdaptedJobExecution {
 		} else {
 			this.version = jobExecution.getVersion();
 		}
+		this.jobInstance = jobExecution.getJobInstance();
 		this.jobParameters = jobExecution.getJobParameters();
 		this.createDateTime = jobExecution.getCreateTime();
 		this.endDateTime = jobExecution.getEndTime();
@@ -61,9 +62,7 @@ public class AdaptedJobExecution {
 		}
 		this.exitStatus = jobExecution.getExitStatus().toString();
 		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
-		this.executionContext = jobExecution.getExecutionContext();
-		this.jobInstance = jobExecution.getJobInstance();
-		
+		this.executionContext = jobExecution.getExecutionContext();		
 	}
 
 		
