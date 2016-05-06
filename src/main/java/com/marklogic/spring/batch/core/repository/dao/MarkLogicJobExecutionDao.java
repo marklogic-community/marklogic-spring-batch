@@ -1,13 +1,12 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,15 +15,12 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
-import org.w3c.dom.Document;
+
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
@@ -95,9 +91,6 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 		Assert.notNull(jobExecution.getVersion(),
 				"JobExecution version cannot be null. JobExecution must be saved before it can be updated");
 		
-		JobInstance jobInstance = jobInstanceDao.getJobInstance(jobExecution);
-		Assert.notNull(jobInstance);
-		
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
         String uri = SPRING_BATCH_DIR + jobExecution.getJobInstance().getId().toString() + ".xml";
 				
@@ -108,49 +101,35 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 				throw new NoSuchObjectException("Invalid JobExecution, Document " + uri + " not found.");
 			}
 			jobExecution.setVersion(jobExecution.getVersion() + 1);	
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-	        domFactory.setNamespaceAware(true);
-	        DocumentBuilder documentBuilder;
-	        Document doc = null;
-	        DOMHandle handle = new DOMHandle();
-	        handle.set(doc);      
-	      
+			JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+			xmlDocMgr.read(uri, handle);
+			MarkLogicJobInstance mji = handle.get();
+			mji.updateJobExecution(jobExecution);
 	        //Set document metadata
 	        DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
 	        jobExecutionMetadata.getCollections().add(COLLECTION_JOB_INSTANCE);
-	        try {
-	        	xmlDocMgr.write(desc, jobExecutionMetadata, handle);
-				logger.info("update:" + uri + "," + desc.getVersion());
-	        } catch (FailedRequestException ex) {
-	        	logger.error(ex.getMessage());
-	        	throw new OptimisticLockingFailureException(ex.getMessage());
-	        } catch (Exception ex) {
-	        	logger.error(ex.getMessage());
-	        	ex.printStackTrace();
-	        }
-			
+        	xmlDocMgr.write(desc, jobExecutionMetadata, handle);
+			logger.info("update JobExecution:" + uri + "," + desc.getVersion());
 		}
 	}
 	
 
 	@Override
 	public List<JobExecution> findJobExecutions(JobInstance jobInstance) {
-    	StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-    	StructuredQueryDefinition querydef = 
-    			qb.and(
-    				qb.valueConstraint("jobInstanceId", jobInstance.getId().toString()), 
-    				qb.valueConstraint("jobName", jobInstance.getJobName()),
-    				qb.collection(COLLECTION_JOB_INSTANCE)
-    			);
-		return findJobExecutions(querydef);
-		
+		String uri = SPRING_BATCH_DIR + jobInstance.getId().toString() + ".xml";
+    	XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
+    	JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+    	MarkLogicJobInstance mji = xmlDocMgr.read(uri, handle).get();
+    	List<JobExecution> jobExecutions = mji.getJobExecutions();
+    	Collections.reverse(mji.getJobExecutions());
+		return jobExecutions;
 	}
 
 	@Override
 	public JobExecution getLastJobExecution(JobInstance jobInstance) {
 		List<JobExecution> jobExecutions = findJobExecutions(jobInstance);
 		if (jobExecutions.size() > 0) {
-			return jobExecutions.get(jobExecutions.size() - 1);
+			return jobExecutions.get(0);
 		} else {
 			return null;
 		}

@@ -63,4 +63,13 @@ public class MarkLogicJobInstance {
 	public void addJobExecution(JobExecution jobExecution) {
 		jobExecutions.add(jobExecution);
 	}
+	
+	public void updateJobExecution(JobExecution jobExecution) {
+		for (JobExecution je : jobExecutions) {
+			if (je.getId().equals(jobExecution.getId())) {
+				jobExecutions.remove(je);
+			}
+			jobExecutions.add(jobExecution);
+		}
+	}
 }
