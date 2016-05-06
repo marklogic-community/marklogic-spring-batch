@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.StepExecution;
 
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
@@ -13,6 +14,8 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 	@Override
 	public StepExecution unmarshal(AdaptedStepExecution v) throws Exception {
 		JobExecution je = new JobExecution(v.getJobExecutionId());
+		JobInstance ji = new JobInstance(je.getJobInstance().getId(), je.getJobInstance().getJobName());
+		je.setJobInstance(ji);
 		StepExecution step = new StepExecution(v.getStepName(), je);
 		step.setId(v.getId());
 		step.setStartTime(v.getStartTime());
