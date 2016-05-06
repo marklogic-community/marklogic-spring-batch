@@ -23,6 +23,7 @@ import com.marklogic.spring.batch.JobExecutionTestUtils;
 import com.marklogic.spring.batch.JobParametersTestUtils;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
+import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
@@ -120,5 +121,19 @@ public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 		frag.assertElementExists("/msb:executionContext/msb:map/entry/value[@xsi:type = 'xs:string'][text() = 'testValue']");
 		frag.assertElementExists("/msb:executionContext/msb:map/entry/value[@xsi:type = 'xs:double'][text() = '123.0']");
 		frag.assertElementExists("/msb:executionContext/msb:hashCode");
+	}
+	
+	@Test
+	public void marshallMarkLogicJobInstanceTest() throws Exception {
+		JobExecution jobExecution = JobExecutionTestUtils.getJobExecution();
+		jobExecution.createStepExecution("stepA");
+		jobExecution.createStepExecution("stepB");
+		MarkLogicJobInstance mji = new MarkLogicJobInstance(jobExecution.getJobInstance());
+		mji.addJobExecution(jobExecution);
+		marshaller.marshal(mji, doc);
+		Fragment frag = new Fragment(new DOMBuilder().build(doc));
+		frag.setNamespaces(getNamespaceProvider().getNamespaces());
+		frag.prettyPrint();
+		
 	}
 }
