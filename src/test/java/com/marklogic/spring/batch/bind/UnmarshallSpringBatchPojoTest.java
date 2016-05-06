@@ -23,6 +23,7 @@ import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
+import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 @ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
 public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
@@ -94,6 +95,14 @@ public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 		assertEquals(new Double(123D), new Double(executionContext.getDouble("testDouble")));
 		assertEquals(123, executionContext.getInt("testInteger"));
 		assertEquals(683181905, executionContext.hashCode());
+	}
+	
+	@Test
+	public void unmarshallMarkLogicJobInstance() throws Exception {
+		Resource xml = ctx.getResource("classpath:/xml/ml-job-instance.xml");
+		MarkLogicJobInstance mji = (MarkLogicJobInstance)unmarshaller.unmarshal(xml.getInputStream());
+		assertNotNull(mji);
+		
 	}
 
 }
