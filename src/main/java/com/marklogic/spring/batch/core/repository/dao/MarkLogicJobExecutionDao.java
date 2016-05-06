@@ -150,7 +150,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	public JobExecution getLastJobExecution(JobInstance jobInstance) {
 		List<JobExecution> jobExecutions = findJobExecutions(jobInstance);
 		if (jobExecutions.size() > 0) {
-			return jobExecutions.get(0);
+			return jobExecutions.get(jobExecutions.size() - 1);
 		} else {
 			return null;
 		}
@@ -165,9 +165,19 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
     				qb.valueConstraint("jobName", jobName),
     				qb.not(qb.containerConstraint("endDateTime", qb.and()))
     			);
-    	Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
-    	for ( JobExecution jobExecution : findJobExecutions(querydef) ) {
-    		jobExecutions.add(jobExecution);
+    	
+    	QueryManager queryMgr = databaseClient.newQueryManager();
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	    	
+		Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
+		for ( MatchDocumentSummary summary : results.getMatchResults() ) {
+			JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+    		summary.getFirstSnippet(handle);
+    		MarkLogicJobInstance mji = handle.get();
+    		for (JobExecution je : mji.getJobExecutions()) {
+    			if (je.getStatus().isRunning()) {
+    				jobExecutions.add(je);
+    			}
+    		}
     	}
     	return jobExecutions;
 	}
