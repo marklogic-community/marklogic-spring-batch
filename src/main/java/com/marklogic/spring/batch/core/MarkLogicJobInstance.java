@@ -68,14 +68,19 @@ public class MarkLogicJobInstance {
 	}
 	
 	public void updateJobExecution(JobExecution jobExecution) {
+		Integer jobExecutionIndex = null;
 		for (JobExecution je : jobExecutions) {
 			if (je.getId().equals(jobExecution.getId())) {
-				jobExecutions.remove(je);
-			} else {
-				throw new NoSuchObjectException("Invalid JobExecution, ID " + jobExecution.getId() + " not found.");
-			}
-			jobExecutions.add(jobExecution);
+				jobExecutionIndex = jobExecutions.indexOf(je);
+			} 
 		}
+		if (jobExecutionIndex.intValue() >= 0) {
+			jobExecutions.remove(jobExecutions.remove(jobExecutionIndex.intValue()));
+			jobExecutions.add(jobExecutionIndex.intValue(), jobExecution);
+		} else {
+			throw new NoSuchObjectException("JobExecution " + jobExecution.getId() + " does not exist");
+		}
+		
 	}
 
 	public Date getCreateDateTime() {
