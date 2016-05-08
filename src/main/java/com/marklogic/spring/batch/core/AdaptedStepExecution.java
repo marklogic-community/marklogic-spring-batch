@@ -50,6 +50,7 @@ public class AdaptedStepExecution {
 	
 	public AdaptedStepExecution(StepExecution stepExec) {
 		this.setId(stepExec.getId());
+		this.setJobInstanceId(stepExec.getJobExecution().getJobInstance().getId());
 		this.setStepName(stepExec.getStepName());
 		this.setStatus(stepExec.getStatus());
 		this.setReadSkipCount(stepExec.getReadSkipCount());
