@@ -14,7 +14,7 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 	@Override
 	public StepExecution unmarshal(AdaptedStepExecution v) throws Exception {
 		JobExecution je = new JobExecution(v.getJobExecutionId());
-		JobInstance ji = new JobInstance(je.getJobInstance().getId(), je.getJobInstance().getJobName());
+		JobInstance ji = new JobInstance(v.getJobInstanceId(), v.getJobName());
 		je.setJobInstance(ji);
 		StepExecution step = new StepExecution(v.getStepName(), je);
 		step.setId(v.getId());

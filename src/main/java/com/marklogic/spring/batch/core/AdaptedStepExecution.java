@@ -24,6 +24,7 @@ public class AdaptedStepExecution {
 	private Long id;
 	private Integer version = new Integer(0);
 	private Long jobExecutionId;
+	private Long jobInstanceId;
 	private String jobName;
 	private String stepName;
 	private BatchStatus status = BatchStatus.STARTING;
@@ -249,6 +250,14 @@ public class AdaptedStepExecution {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public Long getJobInstanceId() {
+		return jobInstanceId;
+	}
+
+	public void setJobInstanceId(Long jobInstanceId) {
+		this.jobInstanceId = jobInstanceId;
 	}    
     	
 }

@@ -162,9 +162,14 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 		StructuredQueryDefinition querydef = qb.and(
 				qb.valueConstraint("jobExecutionId", executionId.toString())
 			);	
-		List<JobExecution> jobExecutions = findJobExecutions(querydef);
-		if (jobExecutions.size() == 1) {
-			return jobExecutions.get(0);
+		QueryManager queryMgr = databaseClient.newQueryManager();
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+		JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+		MarkLogicJobInstance mji = summaries[0].getFirstSnippet(handle).get();
+		
+		if (mji.getJobExecutions().size() == 1) {
+			return mji.getJobExecutions().get(0);
 		} else {
 			return null;
 		}
@@ -181,16 +186,6 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 			jobExecution.upgradeStatus(status);
 			jobExecution.setVersion(currentVersion);
 		}
-	}
-	
-	private List<JobExecution> findJobExecutions(StructuredQueryDefinition querydef) {
-    	logger.info(querydef.serialize());
-    	QueryManager queryMgr = databaseClient.newQueryManager();
-    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
-		MatchDocumentSummary[] summaries = results.getMatchResults();
-		JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
-		summaries[0].getFirstSnippet(handle);
-		return handle.get().getJobExecutions();	
 	}
 	
 	protected JAXBContext jaxbContext() {

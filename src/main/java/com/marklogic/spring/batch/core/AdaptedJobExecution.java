@@ -26,7 +26,7 @@ import org.springframework.batch.item.ExecutionContext;
 public class AdaptedJobExecution {
 	
 	private JobParameters jobParameters;
-	private List<StepExecution> stepExecution = new ArrayList<StepExecution>();;
+	private List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
 	private JobInstance jobInstance;
 	private Date createDateTime;
 	private Date startDateTime;
@@ -61,7 +61,9 @@ public class AdaptedJobExecution {
 			this.status = jobExecution.getStatus().toString();
 		}
 		this.exitStatus = jobExecution.getExitStatus().toString();
-		this.stepExecution = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
+		for (StepExecution step : jobExecution.getStepExecutions()) {
+			stepExecutions.add(step);
+		}
 		this.executionContext = jobExecution.getExecutionContext();		
 	}
 
@@ -70,11 +72,11 @@ public class AdaptedJobExecution {
 	@XmlElementWrapper( name="stepExecutions", namespace=MarkLogicSpringBatch.JOB_NAMESPACE )
 	@XmlElement(name = "stepExecution", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public List<StepExecution> getStepExecutions() {
-		return stepExecution;
+		return stepExecutions;
 	}
 
 	public void setStepExecutions(List<StepExecution> stepExecutions) {
-		this.stepExecution = stepExecutions;
+		this.stepExecutions = stepExecutions;
 	}	
 
 	@Id
