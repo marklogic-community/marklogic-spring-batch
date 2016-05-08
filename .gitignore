@@ -4,4 +4,6 @@ build/
 .project
 .gradle
 .settings
+.idea/
+*.iml
 marklogic-spring-batch.sublime*
