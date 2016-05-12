@@ -91,6 +91,12 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 		Assert.notNull(jobExecution.getVersion(),
 				"JobExecution version cannot be null. JobExecution must be saved before it can be updated");
 		
+		JobExecution je = getJobExecution(jobExecution.getId());
+		if (je == null) {
+			throw new NoSuchObjectException("JobExecution " + jobExecution.getJobInstance().getJobName() + " " + jobExecution.getId() + " not found");
+		}
+		
+		
 		XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
         String uri = SPRING_BATCH_DIR + jobExecution.getJobInstance().getId().toString() + ".xml";
 				
