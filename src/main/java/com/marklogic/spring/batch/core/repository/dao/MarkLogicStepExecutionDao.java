@@ -37,7 +37,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		Assert.isTrue(stepExecution.getVersion() == null);
 		
 		Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
-		JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecutionId());
+		JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecution().getId());
 		Assert.notNull(jobExecution, "JobExecution must be saved already.");
 		
 		validateStepExecution(stepExecution);

@@ -168,11 +168,15 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 		JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
 		MarkLogicJobInstance mji = summaries[0].getFirstSnippet(handle).get();
 		
-		if (mji.getJobExecutions().size() == 1) {
-			return mji.getJobExecutions().get(0);
-		} else {
-			return null;
-		}
+		JobExecution jobExec = null;
+		if (mji.getJobExecutions().size() >= 1) {
+			for (JobExecution je : mji.getJobExecutions()) {
+				if (je.getId().equals(executionId)) { 
+					jobExec = je;
+				}
+			}			
+		} 
+		return jobExec;
 		
 	}
 
