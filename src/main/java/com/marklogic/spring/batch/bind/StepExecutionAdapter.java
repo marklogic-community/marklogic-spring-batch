@@ -19,6 +19,7 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 		StepExecution step = new StepExecution(v.getStepName(), je);
 		step.setId(v.getId());
 		step.setStartTime(v.getStartTime());
+		step.setEndTime(v.getEndTime());
 		step.setReadSkipCount(v.getReadSkipCount());
 		step.setWriteSkipCount(v.getWriteSkipCount());
 		step.setProcessSkipCount(v.getProcessSkipCount());

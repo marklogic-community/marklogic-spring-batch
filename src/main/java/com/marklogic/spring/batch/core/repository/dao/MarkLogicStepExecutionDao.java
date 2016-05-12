@@ -105,7 +105,8 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 					copy(stepExecution, se);
 				}
 			}
-			
+			List<StepExecution> steps = new ArrayList<StepExecution>(stepExecutions);
+			stepExecution.getJobExecution().addStepExecutions(steps);
 			jobExecutionDao.updateJobExecution(jobExecution);
 			logger.info("update step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
 		}

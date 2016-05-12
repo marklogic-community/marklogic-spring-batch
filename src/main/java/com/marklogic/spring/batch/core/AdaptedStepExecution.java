@@ -66,6 +66,7 @@ public class AdaptedStepExecution {
 		this.setVersion(stepExec.getVersion());
 		this.setJobName(stepExec.getJobExecution().getJobInstance().getJobName());
 		this.setStartTime(stepExec.getStartTime());
+		this.setEndTime(stepExec.getEndTime());
 		this.setLastUpdated(stepExec.getLastUpdated());	
 		this.setExecutionContext(stepExec.getExecutionContext());
 	}
