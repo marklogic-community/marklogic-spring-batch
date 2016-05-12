@@ -30,7 +30,7 @@
 	</constraint>
 	<constraint name="jobExecutionId">
 		<range type="xs:unsignedLong" facet="false">
-      		<path-index xmlns:msb="http://marklogic.com/spring-batch">/msb:jobInstance/msb:jobExecution/msb:id</path-index>
+      		<path-index xmlns:msb="http://marklogic.com/spring-batch">/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id</path-index>
     	</range>
 	</constraint>
 	<constraint name="endDateTime">

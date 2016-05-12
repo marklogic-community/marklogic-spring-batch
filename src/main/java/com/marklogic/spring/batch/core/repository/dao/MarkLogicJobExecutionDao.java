@@ -27,6 +27,7 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
 
 import org.springframework.batch.core.BatchStatus;
@@ -165,9 +166,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
-		StructuredQueryDefinition querydef = qb.and(
-				qb.valueConstraint("jobExecutionId", executionId.toString())
-			);	
+		StructuredQueryDefinition querydef = qb.rangeConstraint("jobExecutionId", Operator.EQ, executionId.toString()); 
 		QueryManager queryMgr = databaseClient.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
 		MatchDocumentSummary[] summaries = results.getMatchResults();
