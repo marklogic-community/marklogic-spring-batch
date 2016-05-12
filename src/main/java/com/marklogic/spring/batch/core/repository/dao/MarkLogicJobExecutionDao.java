@@ -165,22 +165,23 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 
 	@Override
 	public JobExecution getJobExecution(Long executionId) {
+		JobExecution jobExec = null;
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
 		StructuredQueryDefinition querydef = qb.rangeConstraint("jobExecutionId", Operator.EQ, executionId.toString()); 
 		QueryManager queryMgr = databaseClient.newQueryManager();
-    	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 	
-		MatchDocumentSummary[] summaries = results.getMatchResults();
-		JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
-		MarkLogicJobInstance mji = summaries[0].getFirstSnippet(handle).get();
-		
-		JobExecution jobExec = null;
-		if (mji.getJobExecutions().size() >= 1) {
-			for (JobExecution je : mji.getJobExecutions()) {
-				if (je.getId().equals(executionId)) { 
-					jobExec = je;
-				}
-			}			
-		} 
+    	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+    	if (results.getTotalResults() > 0L) {
+    		MatchDocumentSummary[] summaries = results.getMatchResults();
+    		JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+    		MarkLogicJobInstance mji = summaries[0].getFirstSnippet(handle).get();	
+    		if (mji.getJobExecutions().size() >= 1) {
+    			for (JobExecution je : mji.getJobExecutions()) {
+    				if (je.getId().equals(executionId)) { 
+    					jobExec = je;
+    				}
+    			}			
+    		} 
+    	}
 		return jobExec;
 		
 	}
