@@ -41,7 +41,7 @@ public class MarkLogicSimpleJobRepository extends SimpleJobRepository {
 		JobExecution jobExec = stepExecution.getJobExecution();
 		
 		//SimpleJobRepository is missing this line
-		List<StepExecution> steps = new ArrayList<StepExecution>(jobExec.getStepExecutions());
+		List<StepExecution> steps = new ArrayList<>(jobExec.getStepExecutions());
 		steps.add(stepExecution);
 		jobExec.addStepExecutions(steps);
 		

@@ -25,7 +25,6 @@ import com.marklogic.client.query.CountedDistinctValue;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.ValuesDefinition;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
-import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
 public class JobRepositoryTestUtils implements InitializingBean {
 	
@@ -93,7 +92,7 @@ public class JobRepositoryTestUtils implements InitializingBean {
 	 */
 	public List<JobExecution> createJobExecutions(String jobName, String[] stepNames, int count)
 			throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobRestartException {
-		List<JobExecution> list = new ArrayList<JobExecution>();
+		List<JobExecution> list = new ArrayList<>();
 		JobParameters jobParameters = new JobParameters();
 		for (int i = 0; i < count; i++) {
 			JobExecution jobExecution = jobRepository.createJobExecution(jobName, jobParametersIncrementer
@@ -146,10 +145,10 @@ public class JobRepositoryTestUtils implements InitializingBean {
 	 */
 	public void removeJobExecutions() throws DataAccessException {
 		QueryManager queryMgr = databaseClient.newQueryManager();
-		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobExecutionId", MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobExecutionId", "spring-batch-options");
 		ValuesHandle results = queryMgr.values(valuesDef, new ValuesHandle());
 		
-		Collection<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		Collection<JobExecution> jobExecutions = new ArrayList<>();
 		CountedDistinctValue[] values = results.getValues();
 		for (int i = 0; i < values.length; i++) {
 			CountedDistinctValue value = results.getValues()[i];

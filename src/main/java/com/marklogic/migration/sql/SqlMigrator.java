@@ -165,7 +165,7 @@ public class SqlMigrator extends LoggingObject {
 
         Job job = jobBuilderFactory.get("migrationJob-" + System.currentTimeMillis()).start(step).build();
 
-        Map<String, JobParameter> parameters = new HashMap<String, JobParameter>();
+        Map<String, JobParameter> parameters = new HashMap<>();
         parameters.put("SQL", new JobParameter(sql));
         JobParameters jobParams = new JobParameters(parameters);
 

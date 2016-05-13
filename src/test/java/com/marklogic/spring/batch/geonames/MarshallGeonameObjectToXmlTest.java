@@ -21,7 +21,7 @@ public class MarshallGeonameObjectToXmlTest extends AbstractSpringBatchTest {
     public void marshallGeonameTest() throws Exception {
         Geoname geo = new Geoname();
         geo.setId("123");
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         names.add("Alpha");
         names.add("Beta");
         geo.setNames(names);

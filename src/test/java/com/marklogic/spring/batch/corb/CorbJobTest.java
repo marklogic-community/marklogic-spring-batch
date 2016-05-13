@@ -21,8 +21,8 @@ public class CorbJobTest extends AbstractSpringBatchTest {
     }
 
     private void givenACorbReaderAndWriter() {
-        reader = new MarkLogicItemReader<String>(getClient(), "/ext/corb/uris.xqy");
-        writer = new CorbWriter<String>(getClient(), "/ext/corb/process.xqy");
+        reader = new MarkLogicItemReader<>(getClient(), "/ext/corb/uris.xqy");
+        writer = new CorbWriter<>(getClient(), "/ext/corb/process.xqy");
     }
 
     private void whenTheJobIsRun() {

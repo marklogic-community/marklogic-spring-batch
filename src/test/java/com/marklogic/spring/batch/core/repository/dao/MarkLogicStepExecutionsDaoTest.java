@@ -112,7 +112,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractSpringTest {
 	@Test
 	public void testSaveAndGetExecutions() {
 
-		List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
+		List<StepExecution> stepExecutions = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
 			StepExecution se = new StepExecution("step" + i, jobExecution);
 			se.setStatus(BatchStatus.STARTED);

@@ -42,7 +42,7 @@ public class JobParametersAdapter extends XmlAdapter<AdaptedJobParameters, JobPa
 	@Override
 	public AdaptedJobParameters marshal(JobParameters jobParams) throws Exception {
 		AdaptedJobParameters adaptedJobParams = new AdaptedJobParameters();
-    	List<AdaptedJobParameters.AdaptedJobParameter> listOfParameters = new ArrayList<AdaptedJobParameters.AdaptedJobParameter>();
+    	List<AdaptedJobParameters.AdaptedJobParameter> listOfParameters = new ArrayList<>();
     	if (jobParams == null) {
     		return adaptedJobParams;
     	} else {		

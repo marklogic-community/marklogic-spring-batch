@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<msb:jobExecution xmlns:msb="http://marklogic.com/spring-batch" xmlns:ec="http://marklogic.com/spring-batch/execution-context" xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:step="http://marklogic.com/spring-batch/step-execution" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<msb:jobExecution xmlns:msb="http://marklogic.com/spring-batch" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <msb:createDateTime>2016-05-05T20:49:24.191-04:00</msb:createDateTime>
   <msb:executionContext>
     <msb:dirtyFlag>true</msb:dirtyFlag>
@@ -30,11 +30,11 @@
   <msb:stepExecutions>
     <msb:stepExecution>
       <msb:commitCount>0</msb:commitCount>
-      <ec:executionContext>
+      <msb:executionContext>
         <msb:dirtyFlag>false</msb:dirtyFlag>
         <msb:hashCode>0</msb:hashCode>
         <msb:map />
-      </ec:executionContext>
+      </msb:executionContext>
       <msb:filterCount>0</msb:filterCount>
       <msb:jobExecutionId>123</msb:jobExecutionId>
       <msb:jobInstanceId>5128016860359238732</msb:jobInstanceId>
@@ -52,11 +52,11 @@
     </msb:stepExecution>
     <msb:stepExecution>
       <msb:commitCount>0</msb:commitCount>
-      <ec:executionContext>
+      <msb:executionContext>
         <msb:dirtyFlag>false</msb:dirtyFlag>
         <msb:hashCode>0</msb:hashCode>
         <msb:map />
-      </ec:executionContext>
+      </msb:executionContext>
       <msb:filterCount>0</msb:filterCount>
       <msb:jobExecutionId>123</msb:jobExecutionId>
       <msb:jobInstanceId>5128016860359238732</msb:jobInstanceId>

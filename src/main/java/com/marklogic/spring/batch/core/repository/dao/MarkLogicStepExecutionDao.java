@@ -45,13 +45,11 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		stepExecution.setId(incrementer.nextLongValue());
 		stepExecution.incrementVersion();
 		
-		List<StepExecution> stepExecutions = new ArrayList<StepExecution>(stepExecution.getJobExecution().getStepExecutions());
+		List<StepExecution> stepExecutions = new ArrayList<>(stepExecution.getJobExecution().getStepExecutions());
 		stepExecutions.add(stepExecution);
 		jobExecution.addStepExecutions(stepExecutions);
 		jobExecutionDao.updateJobExecution(jobExecution);
 		logger.info("insert step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
-    	return;
-
 	}
 
 	@Override
@@ -65,7 +63,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
     		JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
     		Assert.notNull(jobExecution, "JobExecution must be saved already.");
         	
-        	List<StepExecution> stepExecutionList = new ArrayList<StepExecution>();
+        	List<StepExecution> stepExecutionList = new ArrayList<>();
         	
         	for (StepExecution stepExecution : stepExecutions) {
         		Assert.isTrue(stepExecution.getId() == null);
@@ -105,7 +103,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 					copy(stepExecution, se);
 				}
 			}
-			List<StepExecution> steps = new ArrayList<StepExecution>(stepExecutions);
+			List<StepExecution> steps = new ArrayList<>(stepExecutions);
 			stepExecution.getJobExecution().addStepExecutions(steps);
 			jobExecutionDao.updateJobExecution(jobExecution);
 			logger.info("update step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
@@ -119,7 +117,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		if (je == null) {
 			return null;
 		}
-		List<StepExecution> executions = new ArrayList<StepExecution>(je.getStepExecutions());
+		List<StepExecution> executions = new ArrayList<>(je.getStepExecutions());
 		
 		if (executions.isEmpty()) {
 			return null;
@@ -142,7 +140,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 	@Override
 	public void addStepExecutions(JobExecution jobExecution) {
 		Collection<StepExecution> stepExecutions = jobExecutionDao.getJobExecution(jobExecution.getId()).getStepExecutions();
-		List<StepExecution> stepExecutionList = new ArrayList<StepExecution>(stepExecutions);
+		List<StepExecution> stepExecutionList = new ArrayList<>(stepExecutions);
 		jobExecution.addStepExecutions(stepExecutionList);
 
 	}

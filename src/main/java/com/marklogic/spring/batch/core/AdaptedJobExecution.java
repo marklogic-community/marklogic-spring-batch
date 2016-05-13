@@ -26,7 +26,7 @@ import org.springframework.batch.item.ExecutionContext;
 public class AdaptedJobExecution {
 	
 	private JobParameters jobParameters;
-	private List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
+	private List<StepExecution> stepExecutions = new ArrayList<>();
 	private JobInstance jobInstance;
 	private Date createDateTime;
 	private Date startDateTime;

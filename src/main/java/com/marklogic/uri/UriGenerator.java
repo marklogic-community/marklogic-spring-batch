@@ -9,6 +9,6 @@ public interface UriGenerator {
      *            Optional ID to use in the URI; assumption is that if this is null, a UUID will be generated
      * @return
      */
-    public String generateUri(Object o, String id);
+    String generateUri(Object o, String id);
 
 }

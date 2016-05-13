@@ -1,4 +1,4 @@
-<msb:mlJobInstance xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:step="http://marklogic.com/spring-batch/step-execution" xmlns:ec="http://marklogic.com/spring-batch/execution-context" xmlns:msb="http://marklogic.com/spring-batch" xmlns:jp="http://marklogic.com/spring-batch/job-parameter">
+<msb:mlJobInstance xmlns:msb="http://marklogic.com/spring-batch">
 	<msb:jobExecutions>
 		<msb:jobExecution>
 			<msb:createDateTime>2016-05-06T01:04:26.619-04:00</msb:createDateTime>

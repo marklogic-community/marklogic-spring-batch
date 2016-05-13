@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<msb:stepExecution xmlns:msb="http://marklogic.com/spring-batch" 
- xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<msb:stepExecution xmlns:msb="http://marklogic.com/spring-batch">
   <msb:commitCount>0</msb:commitCount>
   <msb:executionContext>
     <msb:dirtyFlag>false</msb:dirtyFlag>

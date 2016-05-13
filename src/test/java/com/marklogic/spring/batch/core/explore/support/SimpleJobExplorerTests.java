@@ -33,9 +33,6 @@ public class SimpleJobExplorerTests extends AbstractSpringTest {
 
     private JobSupport job = new JobSupport("SimpleJobExplorerTestsJob");
 
-    @Autowired
-    private ExecutionContextDao ecDao;
-
     private JobExecution jobExecution;
     private JobInstance jobInstance;
     private StepExecution stepExecution;

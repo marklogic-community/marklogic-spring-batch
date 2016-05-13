@@ -15,7 +15,7 @@ import org.springframework.batch.item.ExecutionContext;
 @XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 public class AdaptedExecutionContext {
 	
-	private Map<String, Object> map = new HashMap<String, Object>();
+	private Map<String, Object> map = new HashMap<>();
 	
 	private int hashCode;
 	private boolean dirtyFlag;

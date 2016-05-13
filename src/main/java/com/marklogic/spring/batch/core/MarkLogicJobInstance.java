@@ -22,7 +22,7 @@ import com.marklogic.spring.batch.bind.JobInstanceAdapter;
 public class MarkLogicJobInstance {
 	
 	private JobInstance jobInstance;
-	private List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+	private List<JobExecution> jobExecutions = new ArrayList<>();
 	private String jobKey;
 	private Date createDateTime;
 	

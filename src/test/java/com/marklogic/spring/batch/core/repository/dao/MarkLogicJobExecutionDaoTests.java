@@ -102,7 +102,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	@Test
 	public void testFindExecutionsOrdering() {
 
-		List<JobExecution> execs = new ArrayList<JobExecution>();
+		List<JobExecution> execs = new ArrayList<>();
 
 		for (int i = 0; i < 10; i++) {
 			JobExecution exec = new JobExecution(jobInstance, jobParameters);

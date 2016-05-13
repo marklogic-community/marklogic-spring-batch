@@ -33,7 +33,6 @@ import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.ValuesHandle;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
-import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
 public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao implements JobInstanceDao {
 	
@@ -109,11 +108,11 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
         QueryManager queryMgr = databaseClient.newQueryManager();
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle());
     	
-    	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
+    	List<JobInstance> jobInstances = new ArrayList<>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		MarkLogicJobInstance jobInstance = null;
 		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<>(jaxbContext());
 			summary.getFirstSnippet(jaxbHandle);
 			jobInstance = jaxbHandle.get();
 			try {
@@ -159,14 +158,14 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
     	querydef.setCriteria("jobName: " + jobName + " AND sort:date");
     	logger.info(querydef.getCriteria());
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 
-    	List<JobInstance> jobInstances = new ArrayList<JobInstance>();
+    	List<JobInstance> jobInstances = new ArrayList<>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 		MarkLogicJobInstance mji = null;
 		if (start+count > summaries.length) {
 			return jobInstances;
 		}
 		for (int i = start; i < start+count; i++) {
-			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<>(jaxbContext());
 			summaries[i].getFirstSnippet(jaxbHandle);
 			mji = jaxbHandle.get();
 			jobInstances.add(mji.getJobInstance());
@@ -176,9 +175,9 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public List<String> getJobNames() {
-		List<String> jobNames = new ArrayList<String>();
+		List<String> jobNames = new ArrayList<>();
 		QueryManager queryMgr = databaseClient.newQueryManager();
-		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobName", MarkLogicJobRepository.SEARCH_OPTIONS_NAME);
+		ValuesDefinition valuesDef = queryMgr.newValuesDefinition("jobName", SEARCH_OPTIONS_NAME);
 		ValuesHandle results = queryMgr.values(valuesDef, new ValuesHandle());
 		for (CountedDistinctValue value : results.getValues()) {
 			jobNames.add(value.get("xs:string", String.class));
@@ -188,7 +187,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public List<JobInstance> findJobInstancesByName(String jobName, int start, int count) {
-		List<JobInstance> jobInstances = new ArrayList<JobInstance>();
+		List<JobInstance> jobInstances = new ArrayList<>();
 		QueryManager queryMgr = databaseClient.newQueryManager();
 		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
 		StructuredQueryDefinition querydef =
@@ -201,7 +200,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 		MatchDocumentSummary[] summaries = results.getMatchResults();
 
 		for (MatchDocumentSummary summary : summaries ) {
-			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<>(jaxbContext());
 			summary.getFirstSnippet(jaxbHandle);
 			MarkLogicJobInstance mji = jaxbHandle.get();
 			jobInstances.add(mji.getJobInstance());

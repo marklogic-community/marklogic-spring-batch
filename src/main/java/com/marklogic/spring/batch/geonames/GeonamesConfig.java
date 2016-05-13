@@ -71,9 +71,9 @@ public class GeonamesConfig {
    @Bean
    protected ItemReader<Geoname> geonameReader() {
 	   log.info("GEONAMES ITEM READER");
-	   FlatFileItemReader<Geoname> reader = new FlatFileItemReader<Geoname>();
+	   FlatFileItemReader<Geoname> reader = new FlatFileItemReader<>();
 	   reader.setResource(new ClassPathResource("geonames/cities15000.txt"));
-	   DefaultLineMapper<Geoname> mapper = new DefaultLineMapper<Geoname>();
+	   DefaultLineMapper<Geoname> mapper = new DefaultLineMapper<>();
 	   DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer(DelimitedLineTokenizer.DELIMITER_TAB);
 	   tokenizer.setQuoteCharacter('{');
 	   mapper.setLineTokenizer(tokenizer);

@@ -17,7 +17,7 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 
 public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingBean {
-	
+
 	@Autowired
 	protected ApplicationContext ctx;
 	
@@ -26,23 +26,11 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 	protected DataFieldMaxValueIncrementer incrementer;
 	
 	private static final Log logger = LogFactory.getLog(AbstractMarkLogicBatchMetadataDao.class);
-	
-	protected final long LOWER_RANGE = 0; 
+
+	protected final long LOWER_RANGE = 0;
     protected final long UPPER_RANGE = 9999999;
     
     public final String SEARCH_OPTIONS_NAME = "spring-batch";
-    
-	public final String JOB_EXECUTION_NAMESPACE = "http://marklogic.com/spring-batch";
-	public final String JOB_EXECUTION_NAMESPACE_PREFIX = "msb";
-	
-	public final String JOB_INSTANCE_NAMESPACE = "http://marklogic.com/spring-batch/job-instance";
-	public final String JOB_INSTANCE_NAMESPACE_PREFIX = "inst";
-	
-	public final String STEP_EXECUTION_NAMESPACE = "http://marklogic.com/spring-batch/step-execution";
-	public final String STEP_EXECUTION_NAMESPACE_PREFIX = "step";
-	
-	public final String JOB_PARAMETER_NAMESPACE = "http://marklogic.com/spring-batch/job-parameter";
-	public final String JOB_PARAMETER_NAMESPACE_PREFIX = "jp";
 	
 	public final String SPRING_BATCH_DIR = "/projects.spring.io/spring-batch/";
 	public final String SPRING_BATCH_INSTANCE_DIR = SPRING_BATCH_DIR + "instance/";
@@ -78,7 +66,7 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 		logger.info(SEARCH_OPTIONS_NAME + " options loaded");
 		QueryOptionsListHandle qolHandle = queryOptionsMgr.optionsList(new QueryOptionsListHandle());
 		Set<String> results = qolHandle.getValuesMap().keySet();
-		assert(results.contains(SEARCH_OPTIONS_NAME) == true);
+		Assert.isTrue(results.contains(SEARCH_OPTIONS_NAME));
 	}
 
 }

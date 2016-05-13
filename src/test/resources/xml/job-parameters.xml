@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<msb:jobParameters xmlns:msb="http://marklogic.com/spring-batch" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<msb:jobParameters xmlns:msb="http://marklogic.com/spring-batch">
   <msb:jobParameter identifier="true" key="id" type="LONG">2</msb:jobParameter>
   <msb:jobParameter identifier="true" key="stringTest" type="STRING">Joe Cool</msb:jobParameter>
   <msb:jobParameter identifier="false" key="start" type="DATE">2016-05-05T20:49:24-0400</msb:jobParameter>
