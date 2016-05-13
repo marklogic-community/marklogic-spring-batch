@@ -194,6 +194,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public List<JobInstance> findJobInstancesByName(String jobName, int start, int count) {
+		//TODO
     	return null;	
 	}
 
@@ -207,7 +208,12 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 				);
 		QueryManager queryMgr = databaseClient.newQueryManager();
 		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
-		return (int) results.getTotalResults();
+		int count = (int) results.getTotalResults();
+		if (count == 0) {
+			throw new NoSuchJobException(jobName + " not found");
+		} else {
+			return count;
+		}
 	}
 	
 	protected JAXBContext jaxbContext() {
