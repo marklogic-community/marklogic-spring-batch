@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.marklogic.client.query.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.DefaultJobKeyGenerator;
@@ -31,13 +32,6 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.ValuesHandle;
-import com.marklogic.client.query.CountedDistinctValue;
-import com.marklogic.client.query.MatchDocumentSummary;
-import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.StringQueryDefinition;
-import com.marklogic.client.query.StructuredQueryBuilder;
-import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.client.query.ValuesDefinition;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import com.marklogic.spring.batch.core.repository.MarkLogicJobRepository;
 
@@ -194,8 +188,25 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public List<JobInstance> findJobInstancesByName(String jobName, int start, int count) {
-		//TODO
-    	return null;	
+		List<JobInstance> jobInstances = new ArrayList<JobInstance>();
+		QueryManager queryMgr = databaseClient.newQueryManager();
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+		StructuredQueryDefinition querydef =
+				qb.and(
+						qb.valueConstraint("jobName", jobName),
+						qb.collection(COLLECTION_JOB_INSTANCE)
+				);
+		queryMgr.setPageLength((long) count);
+		SearchHandle results = queryMgr.search(querydef, new SearchHandle(), start);
+		MatchDocumentSummary[] summaries = results.getMatchResults();
+
+		for (MatchDocumentSummary summary : summaries ) {
+			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<MarkLogicJobInstance>(jaxbContext());
+			summary.getFirstSnippet(jaxbHandle);
+			MarkLogicJobInstance mji = jaxbHandle.get();
+			jobInstances.add(mji.getJobInstance());
+		}
+		return jobInstances;
 	}
 
 	@Override
