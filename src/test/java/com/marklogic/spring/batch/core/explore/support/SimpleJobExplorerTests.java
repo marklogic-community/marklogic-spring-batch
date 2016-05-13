@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import com.marklogic.junit.spring.AbstractSpringTest;
@@ -44,17 +45,17 @@ public class SimpleJobExplorerTests extends AbstractSpringTest {
     private JobExecution jobExecution;
     private JobInstance jobInstance;
     private StepExecution stepExecution;
+    private JobParametersBuilder builder = new JobParametersBuilder();
 
     @Before
     public void createJobExecution() throws Exception {
-        JobParametersBuilder builder = new JobParametersBuilder();
         builder.addString("stringKey", "stringValue").addLong("longKey", 1L).addDouble("doubleKey", 1.1).addDate(
                 "dateKey", new Date(1L));
         JobParameters jobParams = builder.toJobParameters();
-
         jobExecution = jobRepository.createJobExecution(job.getName(), jobParams);
-        StepExecution se = new StepExecution("stepTest", jobExecution);
-        jobRepository.add(se);
+        jobInstance = jobExecution.getJobInstance();
+        stepExecution = new StepExecution("stepTest", jobExecution);
+        jobRepository.add(stepExecution);
     }
 
     @Test
@@ -85,38 +86,48 @@ public class SimpleJobExplorerTests extends AbstractSpringTest {
 
     @Test
     public void testGetStepExecutionMissingJobExecution() throws Exception {
-        assertNull(jobExplorer.getStepExecution(jobExecution.getId(), 123L));
+        assertNull(jobExplorer.getStepExecution(123L, stepExecution.getId()));
     }
 
     @Test
     public void testFindRunningJobExecutions() throws Exception {
-        StepExecution stepExecution = jobExecution.createStepExecution("step");
         Set<JobExecution> je = jobExplorer.findRunningJobExecutions(job.getName());
-        assertTrue(je.size() > 0);
+        assertTrue(je.size() == 1);
 
+        jobExecution.setEndTime(new Date(6));
+        jobExecution.setStatus(BatchStatus.COMPLETED);
+        jobRepository.update(jobExecution);
+
+        je = jobExplorer.findRunningJobExecutions(job.getName());
+        assertTrue(je.size() == 0);
     }
 
     @Test
     public void testFindJobExecutions() throws Exception {
-        StepExecution stepExecution = jobExecution.createStepExecution("step");
-        when(ecDao.getExecutionContext(jobExecution)).thenReturn(null);
-        when(ecDao.getExecutionContext(stepExecution)).thenReturn(null);
-        jobExplorer.getJobExecutions(jobInstance);
+        List<JobExecution> je = jobExplorer.getJobExecutions(jobInstance);
+        assertTrue(je.size() == 1);
+        builder.addLong("test", 123L, true);
+        jobRepository.createJobExecution(jobInstance, builder.toJobParameters(), null);
+        je = jobExplorer.getJobExecutions(jobInstance);
+        assertTrue(je.size() == 2);
+
     }
 
     @Test
     public void testGetJobInstance() throws Exception {
-        jobExplorer.getJobInstance(111L);
+        assertEquals(jobInstance, jobExplorer.getJobInstance(jobInstance.getId()));
     }
 
     @Test
     public void testGetLastJobInstances() throws Exception {
+
         jobExplorer.getJobInstances("foo", 0, 1);
     }
 
     @Test
     public void testGetJobNames() throws Exception {
-        jobExplorer.getJobNames();
+        List<String> jobNames = jobExplorer.getJobNames();
+        assertTrue(jobNames.get(0).equals(job.getName()));
     }
 
     @Test
