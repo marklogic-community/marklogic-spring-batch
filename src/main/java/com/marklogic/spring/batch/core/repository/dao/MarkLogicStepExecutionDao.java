@@ -37,7 +37,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		Assert.isTrue(stepExecution.getVersion() == null);
 		
 		Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
-		JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecutionId());
+		JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecution().getId());
 		Assert.notNull(jobExecution, "JobExecution must be saved already.");
 		
 		validateStepExecution(stepExecution);
@@ -45,7 +45,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		stepExecution.setId(incrementer.nextLongValue());
 		stepExecution.incrementVersion();
 		
-		List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
+		List<StepExecution> stepExecutions = new ArrayList<StepExecution>(stepExecution.getJobExecution().getStepExecutions());
 		stepExecutions.add(stepExecution);
 		jobExecution.addStepExecutions(stepExecutions);
 		jobExecutionDao.updateJobExecution(jobExecution);
@@ -105,7 +105,8 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 					copy(stepExecution, se);
 				}
 			}
-			
+			List<StepExecution> steps = new ArrayList<StepExecution>(stepExecutions);
+			stepExecution.getJobExecution().addStepExecutions(steps);
 			jobExecutionDao.updateJobExecution(jobExecution);
 			logger.info("update step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
 		}

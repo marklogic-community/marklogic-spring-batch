@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-@XmlRootElement(name="jobParameters", namespace=MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE)
-@XmlType(namespace=MarkLogicSpringBatch.JOB_PARAMETER_NAMESPACE)
+@XmlRootElement(name="jobParameters", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 public class AdaptedJobParameters {
 
 	private List<AdaptedJobParameter> parameters;

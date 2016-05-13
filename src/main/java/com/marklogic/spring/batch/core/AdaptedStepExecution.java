@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
@@ -18,15 +17,12 @@ import org.springframework.batch.item.ExecutionContext;
 
 import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
 
-@XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
-@XmlType(namespace=MarkLogicSpringBatch.STEP_EXECUTION_NAMESPACE)
-public class AdaptedStepExecution extends Entity {
+@XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+public class AdaptedStepExecution {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	//private JobExecution jobExecution;
+	private Long id;
+	private Integer version = new Integer(0);
 	private Long jobExecutionId;
 	private Long jobInstanceId;
 	private String jobName;
@@ -54,13 +50,13 @@ public class AdaptedStepExecution extends Entity {
 	
 	public AdaptedStepExecution(StepExecution stepExec) {
 		this.setId(stepExec.getId());
+		this.setJobInstanceId(stepExec.getJobExecution().getJobInstance().getId());
 		this.setStepName(stepExec.getStepName());
 		this.setStatus(stepExec.getStatus());
 		this.setReadSkipCount(stepExec.getReadSkipCount());
 		this.setWriteSkipCount(stepExec.getWriteSkipCount());
 		this.setProcessSkipCount(stepExec.getProcessSkipCount());
 		this.setRollbackCount(stepExec.getRollbackCount());
-		//this.jobExecution = stepExec.getJobExecution();
 		this.setJobExecutionId(stepExec.getJobExecutionId());
 		this.setReadCount(stepExec.getReadCount());
 		this.setWriteCount(stepExec.getWriteCount());
@@ -68,9 +64,9 @@ public class AdaptedStepExecution extends Entity {
 		this.setVersion(stepExec.getVersion());
 		this.setExitStatus(stepExec.getExitStatus());
 		this.setVersion(stepExec.getVersion());
-		this.setJobInstanceId(stepExec.getJobExecution().getJobInstance().getId());
 		this.setJobName(stepExec.getJobExecution().getJobInstance().getJobName());
 		this.setStartTime(stepExec.getStartTime());
+		this.setEndTime(stepExec.getEndTime());
 		this.setLastUpdated(stepExec.getLastUpdated());	
 		this.setExecutionContext(stepExec.getExecutionContext());
 	}
@@ -224,14 +220,6 @@ public class AdaptedStepExecution extends Entity {
 		this.jobExecutionId = jobExecutionId;
 	}
 
-	public Long getJobInstanceId() {
-		return jobInstanceId;
-	}
-
-	public void setJobInstanceId(Long jobInstanceId) {
-		this.jobInstanceId = jobInstanceId;
-	}
-
 	public String getJobName() {
 		return jobName;
 	}
@@ -241,13 +229,37 @@ public class AdaptedStepExecution extends Entity {
 	}
 
 	@XmlJavaTypeAdapter(ExecutionContextAdapter.class)
-	@XmlElement(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
+	@XmlElement(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public ExecutionContext getExecutionContext() {
 		return executionContext;
 	}
 
 	public void setExecutionContext(ExecutionContext executionContext) {
 		this.executionContext = executionContext;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public Long getJobInstanceId() {
+		return jobInstanceId;
+	}
+
+	public void setJobInstanceId(Long jobInstanceId) {
+		this.jobInstanceId = jobInstanceId;
 	}    
     	
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jp:jobParameters xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:msb="http://marklogic.com/spring-batch" xmlns:step="http://marklogic.com/spring-batch/step-execution">
-  <jp:jobParameter identifier="true" key="stringTest" type="STRING">Joe Cool</jp:jobParameter>
-  <jp:jobParameter identifier="false" key="start" type="DATE">2016-03-10T15:22:45-0500</jp:jobParameter>
-  <jp:jobParameter identifier="false" key="longTest" type="LONG">1239</jp:jobParameter>
-  <jp:jobParameter identifier="false" key="doubleTest" type="DOUBLE">1.35</jp:jobParameter>
-</jp:jobParameters>
+<msb:jobParameters xmlns:msb="http://marklogic.com/spring-batch" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <msb:jobParameter identifier="true" key="id" type="LONG">2</msb:jobParameter>
+  <msb:jobParameter identifier="true" key="stringTest" type="STRING">Joe Cool</msb:jobParameter>
+  <msb:jobParameter identifier="false" key="start" type="DATE">2016-05-05T20:49:24-0400</msb:jobParameter>
+  <msb:jobParameter identifier="false" key="longTest" type="LONG">1239</msb:jobParameter>
+  <msb:jobParameter identifier="false" key="doubleTest" type="DOUBLE">1.35</msb:jobParameter>
+</msb:jobParameters>

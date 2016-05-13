@@ -11,8 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.batch.item.ExecutionContext;
 
-@XmlRootElement(name = "executionContext", namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
-@XmlType(namespace=MarkLogicSpringBatch.EXECUTION_CONTEXT_NAMESPACE)
+@XmlRootElement(name = "executionContext", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 public class AdaptedExecutionContext {
 	
 	private Map<String, Object> map = new HashMap<String, Object>();

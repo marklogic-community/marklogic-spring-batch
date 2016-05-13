@@ -10,6 +10,8 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 import com.marklogic.spring.batch.core.job.JobSupport;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.repository.support.SimpleJobRepository;
 
 import com.marklogic.spring.batch.core.step.StepSupport;
@@ -185,5 +187,22 @@ public class SimpleJobRepositoryIntegrationTests extends AbstractSpringTest {
 		jobExecution.addStepExecutions(Arrays.asList(stepExecution));
 		assertEquals(jobExecution, jobRepository.getLastJobExecution(job.getName(), jobParameters));
 		assertEquals(stepExecution, jobExecution.getStepExecutions().iterator().next());
+	}
+
+	@Test(expected=JobExecutionAlreadyRunningException.class)
+	public void throwJobExecutionAlreadyRunningExceptionTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+		jobRepository.createJobExecution(job.getName(), jobParameters);
+		jobRepository.createJobExecution(job.getName(), jobParameters);
+	}
+
+	@Test(expected=JobInstanceAlreadyCompleteException.class)
+	public void throwJobInstanceAlreadyCompleteExceptionTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addLong("longValue", 123L, true);
+		JobExecution jobExecution = jobRepository.createJobExecution(job.getName(), builder.toJobParameters());
+		jobExecution.setStatus(BatchStatus.COMPLETED);
+		jobExecution.setEndTime(new Date(6));
+		jobRepository.update(jobExecution);
+		jobRepository.createJobExecution(job.getName(), builder.toJobParameters());
 	}
 }
