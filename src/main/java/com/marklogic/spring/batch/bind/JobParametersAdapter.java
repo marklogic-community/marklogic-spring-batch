@@ -57,8 +57,7 @@ public class JobParametersAdapter extends XmlAdapter<AdaptedJobParameters, JobPa
 	    				param.value = jobParams.getString(entry.getKey());    				
 	    				break;
 	    			case DATE:
-	    				String formatted = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(jobParams.getDate(entry.getKey()));
-	    				param.value = formatted;
+						param.value = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(jobParams.getDate(entry.getKey()));
 	    				break;
 	    			case DOUBLE:
 	    				param.value = jobParams.getDouble(entry.getKey()).toString();

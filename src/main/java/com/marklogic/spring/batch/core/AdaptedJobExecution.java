@@ -167,10 +167,6 @@ public class AdaptedJobExecution {
 		return exitStatus.split("=|;")[1];
 	}
 
-	public void setExitCode(String exitCode) {
-		return;
-	}
-
 	@XmlJavaTypeAdapter(ExecutionContextAdapter.class)
 	@XmlElement(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 	public ExecutionContext getExecutionContext() {

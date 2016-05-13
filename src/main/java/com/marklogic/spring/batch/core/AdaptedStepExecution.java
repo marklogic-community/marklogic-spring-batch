@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
@@ -73,15 +72,6 @@ public class AdaptedStepExecution {
 	
 	public String getExitCode() {
 		return exitStatus.split("=|;")[1];
-	}
-	
-	public JobExecution getJobExecution() {
-		//return jobExecution;
-		return null;
-	}
-
-	public void setJobExecution(JobExecution jobExecution) {
-		//this.jobExecution = jobExecution;
 	}
 
 	public String getStepName() {

@@ -47,14 +47,12 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public ExecutionContextDao executionContextDao() throws Exception {
-		MarkLogicExecutionContextDao executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao(), stepExecutionDao());
-		return executionContextDao;
+		return new MarkLogicExecutionContextDao(jobExecutionDao(), stepExecutionDao());
 	}
 	
 	@Bean
 	public JobRepository jobRepository() throws Exception {
-		SimpleJobRepository jobRepository = new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
-		return jobRepository;
+		return new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 	}
 
 	@Bean

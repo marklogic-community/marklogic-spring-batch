@@ -61,13 +61,6 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		return jobInstanceDao;
 	}
 
-	/**
-	 * @return tested object ready for use
-	 */
-	protected StepExecutionDao getStepExecutionDao() {
-		return null;
-	}
-
 	@Before
 	public void onSetUp() throws Exception {
 		dao = getJobExecutionDao();

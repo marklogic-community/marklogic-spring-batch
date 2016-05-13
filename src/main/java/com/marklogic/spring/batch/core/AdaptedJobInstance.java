@@ -3,7 +3,6 @@ package com.marklogic.spring.batch.core;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 
 @XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
@@ -31,10 +30,6 @@ public class AdaptedJobInstance {
 	}
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
-	}
-	
-	public void updateJobExecution(JobExecution jobExecution) {
-		return;
 	}
 
 	public Long getId() {

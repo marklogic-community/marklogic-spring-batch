@@ -63,14 +63,12 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	
 	@Bean
 	public ExecutionContextDao executionContextDao() throws Exception {
-		MapExecutionContextDao executionContextDao = new MapExecutionContextDao();
-		return executionContextDao;
+		return new MapExecutionContextDao();
 	}
 	
 	@Bean
 	public JobRepository jobRepository() throws Exception {
-		MarkLogicSimpleJobRepository jobRepository = new MarkLogicSimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
-		return jobRepository;
+		return new MarkLogicSimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 	}
 	
 	@Bean
@@ -78,8 +76,7 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 		//CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
 		//SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
 		//sate.setConcurrencyLimit(8);
-		SyncTaskExecutor ste = new SyncTaskExecutor();
-		return ste;
+		return new SyncTaskExecutor();
 	}
 
 	@Bean
