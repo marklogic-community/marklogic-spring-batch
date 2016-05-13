@@ -79,7 +79,7 @@ public class SqlMigrator extends LoggingObject {
         dmds.setUsername(cmd.getOptionValue("jdbcUsername"));
         dmds.setPassword(cmd.getOptionValue("jdbcPassword"));
 
-        DatabaseClient client = null;
+        DatabaseClient client;
         String host = cmd.getOptionValue("host");
         Integer port = Integer.parseInt(cmd.getOptionValue("port"));
         String username = cmd.getOptionValue("username");

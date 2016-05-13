@@ -108,7 +108,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
     	
     	List<JobInstance> jobInstances = new ArrayList<>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
-		MarkLogicJobInstance jobInstance = null;
+		MarkLogicJobInstance jobInstance;
 		for (MatchDocumentSummary summary : summaries ) {
 			JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<>(jaxbContext());
 			summary.getFirstSnippet(jaxbHandle);
@@ -158,7 +158,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
     	SearchHandle results = queryMgr.search(querydef, new SearchHandle()); 
     	List<JobInstance> jobInstances = new ArrayList<>();
 		MatchDocumentSummary[] summaries = results.getMatchResults();
-		MarkLogicJobInstance mji = null;
+		MarkLogicJobInstance mji;
 		if (start+count > summaries.length) {
 			return jobInstances;
 		}
@@ -225,7 +225,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	}
 	
 	protected JAXBContext jaxbContext() {
-		JAXBContext jaxbContext = null;
+		JAXBContext jaxbContext;
 		try {
             jaxbContext = JAXBContext.newInstance(MarkLogicJobInstance.class);
         } catch (JAXBException ex) {

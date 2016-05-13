@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
 import com.marklogic.spring.batch.core.AdaptedExecutionContext;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
@@ -72,7 +73,7 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
         JobLauncherTestUtils utils = newJobLauncherTestUtils();
         utils.setJob(job);
 
-        JobExecution jobExecution = null;
+        JobExecution jobExecution;
         try {
             jobExecution = utils.launchJob();
         } catch (Exception e) {
@@ -84,7 +85,7 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
     }
     
     protected JAXBContext jaxbContext() {
-		JAXBContext jaxbContext = null;
+		JAXBContext jaxbContext;
 		try {
             jaxbContext = JAXBContext.newInstance(AdaptedJobExecution.class, AdaptedJobInstance.class, 
             		AdaptedJobParameters.class, AdaptedStepExecution.class, AdaptedExecutionContext.class, MarkLogicJobInstance.class);

@@ -63,7 +63,7 @@ public class SimpleJobExplorerTests extends AbstractSpringTest {
     @Test
     public void testGetStepExecution() throws Exception {
         StepExecution se = jobExplorer.getStepExecution(jobExecution.getId(), stepExecution.getId());
-
+        assertNotNull(se);
         assertEquals(jobInstance,
                 stepExecution.getJobExecution().getJobInstance());
 

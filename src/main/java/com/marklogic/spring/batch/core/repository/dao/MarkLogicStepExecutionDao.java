@@ -152,7 +152,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 	}
 
 	protected JAXBContext jaxbContext() {
-		JAXBContext jaxbContext = null;
+		JAXBContext jaxbContext;
 		try {
             jaxbContext = JAXBContext.newInstance(AdaptedStepExecution.class);
         } catch (JAXBException ex) {

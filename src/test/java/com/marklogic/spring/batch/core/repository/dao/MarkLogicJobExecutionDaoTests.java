@@ -40,6 +40,9 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	
 	@Autowired
 	protected JobInstanceDao jobInstanceDao;
+
+	@Autowired
+	protected StepExecutionDao stepExecutionDao;
 	
 	@Autowired
 	DatabaseClientProvider databaseClientProvider;
@@ -204,7 +207,6 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		exec.createStepExecution("step");
 		dao.saveJobExecution(exec);
 
-		StepExecutionDao stepExecutionDao = getStepExecutionDao();
 		if (stepExecutionDao != null) {
 			for (StepExecution stepExecution : exec.getStepExecutions()) {
 				stepExecutionDao.saveStepExecution(stepExecution);
@@ -241,7 +243,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		exec.createStepExecution("step");
 
 		dao.saveJobExecution(exec);
-		StepExecutionDao stepExecutionDao = getStepExecutionDao();
+
 		if (stepExecutionDao != null) {
 			for (StepExecution stepExecution : exec.getStepExecutions()) {
 				stepExecutionDao.saveStepExecution(stepExecution);
