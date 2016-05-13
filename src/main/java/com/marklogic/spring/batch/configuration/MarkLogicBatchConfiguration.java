@@ -7,6 +7,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.support.MapJobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
@@ -103,8 +104,8 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	}
 	
 	@Bean
-	public JobExplorer jobExplorer() {
-		return new MarkLogicJobExplorer(databaseClientProvider.getDatabaseClient());
+	public JobExplorer jobExplorer() throws Exception {
+		return new SimpleJobExplorer(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 	}
 
 	@Bean
