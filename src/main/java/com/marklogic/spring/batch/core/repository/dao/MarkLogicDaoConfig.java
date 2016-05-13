@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
@@ -53,6 +55,11 @@ public class MarkLogicDaoConfig {
 	public JobRepository jobRepository() throws Exception {
 		SimpleJobRepository jobRepository = new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 		return jobRepository;
+	}
+
+	@Bean
+	public JobExplorer jobExplorer() throws Exception {
+		return new SimpleJobExplorer(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 	}
 	
 }
