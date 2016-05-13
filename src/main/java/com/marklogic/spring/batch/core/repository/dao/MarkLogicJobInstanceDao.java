@@ -199,8 +199,15 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 
 	@Override
 	public int getJobInstanceCount(String jobName) throws NoSuchJobException {
-		// TODO Auto-generated method stub
-		return 0;
+		StructuredQueryBuilder qb = new StructuredQueryBuilder(SEARCH_OPTIONS_NAME);
+		StructuredQueryDefinition querydef =
+				qb.and(
+						qb.valueConstraint("jobName", jobName),
+						qb.collection(COLLECTION_JOB_INSTANCE)
+				);
+		QueryManager queryMgr = databaseClient.newQueryManager();
+		SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+		return (int) results.getTotalResults();
 	}
 	
 	protected JAXBContext jaxbContext() {

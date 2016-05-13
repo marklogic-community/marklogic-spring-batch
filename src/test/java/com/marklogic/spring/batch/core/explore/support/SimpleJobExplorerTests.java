@@ -132,7 +132,11 @@ public class SimpleJobExplorerTests extends AbstractSpringTest {
 
     @Test
     public void testGetJobInstanceCount() throws Exception {
-        assertEquals(4, jobExplorer.getJobInstanceCount("myJob"));
+        builder.addLong("long1", 123L, true);
+        jobRepository.createJobInstance(job.getName(), builder.toJobParameters());
+        builder.addLong("long1", 124L, true);
+        jobRepository.createJobInstance(job.getName(), builder.toJobParameters());
+        assertEquals(3, jobExplorer.getJobInstanceCount(job.getName()));
     }
 
     @Test(expected=NoSuchJobException.class)
