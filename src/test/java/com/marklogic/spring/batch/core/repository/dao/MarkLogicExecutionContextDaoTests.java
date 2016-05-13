@@ -221,7 +221,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 	public void testStoreInteger() {
 
 		ExecutionContext ec = new ExecutionContext();
-		ec.put("intValue", new Integer(343232));
+		ec.put("intValue", 343232);
 		stepExecution.setExecutionContext(ec);
 		contextDao.saveExecutionContext(stepExecution);
 		ExecutionContext restoredEc = contextDao.getExecutionContext(stepExecution);

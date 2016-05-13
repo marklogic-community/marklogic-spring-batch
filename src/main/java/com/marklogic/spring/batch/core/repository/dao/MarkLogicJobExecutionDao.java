@@ -185,9 +185,9 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	@Override
 	public void synchronizeStatus(JobExecution jobExecution) {
 		JobExecution je = getJobExecution(jobExecution.getId());
-		int currentVersion = je.getVersion().intValue();
+		int currentVersion = je.getVersion();
 
-		if (currentVersion != jobExecution.getVersion().intValue()) {
+		if (currentVersion != jobExecution.getVersion()) {
 			BatchStatus status = je.getStatus();
 			jobExecution.upgradeStatus(status);
 			jobExecution.setVersion(currentVersion);

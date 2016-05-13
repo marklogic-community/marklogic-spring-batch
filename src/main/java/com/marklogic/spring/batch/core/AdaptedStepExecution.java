@@ -22,7 +22,7 @@ import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
 public class AdaptedStepExecution {
 	
 	private Long id;
-	private Integer version = new Integer(0);
+	private Integer version = 0;
 	private Long jobExecutionId;
 	private Long jobInstanceId;
 	private String jobName;

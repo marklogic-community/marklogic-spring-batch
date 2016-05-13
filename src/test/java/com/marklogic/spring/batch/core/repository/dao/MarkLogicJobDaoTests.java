@@ -20,7 +20,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -46,8 +45,6 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 
 	protected Date jobExecutionStartTime = new Date(System.currentTimeMillis());
 
-	@Autowired
-	DatabaseClientProvider databaseClientProvider;
 
 	/*
 	 * Because AbstractTransactionalSpringContextTests is used, this method will

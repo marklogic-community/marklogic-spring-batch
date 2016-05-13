@@ -74,9 +74,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	        mji.setJobKey(jobKeyGenerator.generateKey(jobParameters));
 	        mji.setCreatedDateTime(new Date(System.currentTimeMillis()));
 	        marshaller.marshal(mji, doc);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (JAXBException e) {
+		} catch (ParserConfigurationException | JAXBException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();

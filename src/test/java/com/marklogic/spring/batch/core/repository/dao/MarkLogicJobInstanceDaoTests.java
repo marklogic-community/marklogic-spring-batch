@@ -162,7 +162,7 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringTest {
 		String paramKey = "myID";
 		int instanceCount = 6;
 		for (int i = 1; i <= instanceCount; i++) {
-			JobParameters params = new JobParametersBuilder().addLong(paramKey, Long.valueOf(i)).toJobParameters();
+			JobParameters params = new JobParametersBuilder().addLong(paramKey, (long) i).toJobParameters();
 			dao.createJobInstance(multiInstanceJob, params);
 		}
 

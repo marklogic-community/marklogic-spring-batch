@@ -21,8 +21,7 @@ public class DocumentItemWriter implements ItemWriter<Document> {
 	public void write(List<? extends Document> items) throws Exception {
 		DatabaseClient client = databaseClientProvider.getDatabaseClient();
 		XMLDocumentManager docMgr = client.newXMLDocumentManager();
-		for (int i = 0; i < items.size(); i++) {
-			Document doc = items.get(i);
+		for (Document doc : items) {
 			DOMHandle handle = new DOMHandle(doc);
 			docMgr.write(doc.getDocumentURI(), handle);
 		}		
