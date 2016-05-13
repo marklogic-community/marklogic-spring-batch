@@ -42,23 +42,9 @@ public class CreateJobExecutionTest extends AbstractSpringBatchTest {
 		thenVerifyAJobExecutionIsPersisted(jobExecution);
 	}
 
-	@Test(expected=JobExecutionAlreadyRunningException.class)
-	public void throwJobExecutionAlreadyRunningExceptionTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		JobInstance jobInstance = givenAJobInstance();
-		JobParameters jobParameters = JobParametersTestUtils.getJobParameters();
-		jobExecution = jobRepository.createJobExecution(jobInstance, jobParameters, null);
-		jobRepository.createJobExecution(JOB_NAME, jobParameters);
-	}
 
-	@Test(expected=JobInstanceAlreadyCompleteException.class)
-	public void throwJobInstanceAlreadyCompleteExceptionTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-		JobInstance jobInstance = givenAJobInstance();
-		JobParameters jobParameters = JobParametersTestUtils.getJobParameters();
-		jobExecution = jobRepository.createJobExecution(jobInstance, jobParameters, null);
-		jobExecution.setStatus(BatchStatus.COMPLETED);
-		jobRepository.update(jobExecution);
-		jobRepository.createJobExecution(JOB_NAME, jobParameters);
-	}
+
+
 	
 	@Test
 	public void createJobExecutionWhenJobHasFailedTest() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
