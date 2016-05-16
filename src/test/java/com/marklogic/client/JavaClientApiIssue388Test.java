@@ -1,18 +1,22 @@
 package com.marklogic.client;
 
+import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Test;
 
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import org.springframework.test.context.ContextConfiguration;
 
 /*
  * Used to test Java Client Api Issue 388
  * https://github.com/marklogic/java-client-api/issues/388
  */
 
-public class JavaClientApiIssue388Test extends AbstractSpringBatchTest {
+@ContextConfiguration(classes = {
+		com.marklogic.junit.spring.BasicTestConfig.class
+})
+public class JavaClientApiIssue388Test extends AbstractSpringTest {
 	
 	@Test
 	public void replicateIssue388Test() {
