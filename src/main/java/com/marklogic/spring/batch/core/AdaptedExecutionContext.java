@@ -75,6 +75,8 @@ public class AdaptedExecutionContext {
 			value = (Double) value;
 		} else if (Integer.class.isInstance(value)) {
 			value = (Integer) value;
+		} else if (Boolean.class.isInstance(value)) {
+			value = (Boolean) value;
 		} else {
 			value = (String)value;
 		}	
