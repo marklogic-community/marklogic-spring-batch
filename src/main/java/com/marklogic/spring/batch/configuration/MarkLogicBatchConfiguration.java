@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.configuration;
 
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.AbstractBatchConfiguration;
@@ -30,7 +31,6 @@ import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
-import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
 
 @Configuration
 @Profile("marklogic")
@@ -38,32 +38,32 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	
 	@Autowired
 	public DatabaseClientProvider databaseClientProvider;
-	
+
+	@Override
+	public JobBuilderFactory jobBuilders() throws Exception {
+		return new JobBuilderFactory(jobRepository());
+	}
+
 	@Bean
 	public JobExecutionDao jobExecutionDao() throws Exception {
-		MarkLogicJobExecutionDao dao = new MarkLogicJobExecutionDao(databaseClientProvider.getDatabaseClient());
-		dao.setIncrementer(new UriIncrementer());
-		return dao;
+		return new MarkLogicJobExecutionDao(databaseClientProvider.getDatabaseClient());
 	}
 	
 	@Bean
 	public JobInstanceDao jobInstanceDao() throws Exception {
-		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(databaseClientProvider.getDatabaseClient());
-		jobInstanceDao.setIncrementer(new UriIncrementer());
-		return jobInstanceDao;
+		return new MarkLogicJobInstanceDao(databaseClientProvider.getDatabaseClient());
 	}	
 	
 	@Bean
 	public StepExecutionDao stepExecutionDao() throws Exception {
 		MarkLogicStepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(databaseClientProvider.getDatabaseClient());
 		stepExecutionDao.setJobExecutionDao(jobExecutionDao());
-		stepExecutionDao.setIncrementer(new UriIncrementer());
 		return stepExecutionDao;
 	}
 	
 	@Bean
 	public ExecutionContextDao executionContextDao() throws Exception {
-		return new MapExecutionContextDao();
+		return new MarkLogicExecutionContextDao(jobExecutionDao(), stepExecutionDao());
 	}
 	
 	@Bean
@@ -90,12 +90,12 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	}
 	
 	@Bean
-	public JobBuilderFactory jobBuilders() throws Exception {
+	public JobBuilderFactory jobBuilderFactory() throws Exception {
 		return new JobBuilderFactory(jobRepository());
 	}
 	
 	@Bean
-	public StepBuilderFactory stepBuilders() throws Exception {
+	public StepBuilderFactory stepBuilderFactory() throws Exception {
 		return new StepBuilderFactory(jobRepository(), transactionManager());
 	}
 	
