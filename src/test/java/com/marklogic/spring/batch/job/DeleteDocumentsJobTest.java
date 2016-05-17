@@ -21,7 +21,7 @@ public class DeleteDocumentsJobTest extends AbstractSpringTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
-    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 200;
+    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 2000;
 
     @Test
     public void testJob() throws Exception {
