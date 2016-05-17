@@ -51,10 +51,10 @@ public class DeleteUrisTest extends AbstractSpringBatchTest {
      * call per URI.
      */
     private void whenAJobIsRunToDeleteAllTheUrisInTheTestCollection() {
-        launchJobWithStep(
-                stepBuilderFactory.get("testStep").<String, String> chunk(NUMBER_OF_DOCUMENTS_TO_DELETE_AT_ONE_TIME)
-                        .reader(new CollectionUrisReader(getClient(), "test")).writer(new DeleteUriWriter(getClient()))
-                        .build());
+        //launchJobWithStep(
+          //      stepBuilderFactory.get("testStep").<String, String> chunk(NUMBER_OF_DOCUMENTS_TO_DELETE_AT_ONE_TIME)
+            //            .reader(new CollectionUrisReader(getClient(), "test")).writer(new DeleteUriWriter(getClient()))
+              //          .build());
 
     }
 
