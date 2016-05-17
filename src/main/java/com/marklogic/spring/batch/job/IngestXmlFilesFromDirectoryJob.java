@@ -24,7 +24,7 @@ import java.io.IOException;
 @Configuration
 @EnableBatchProcessing
 @Import(com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class)
-public class IngestXmlFilesFromDirectory {
+public class IngestXmlFilesFromDirectoryJob {
 
     @Autowired
     private ApplicationContext ctx;
