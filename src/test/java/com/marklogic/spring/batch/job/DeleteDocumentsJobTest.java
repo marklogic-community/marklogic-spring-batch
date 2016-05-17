@@ -21,7 +21,7 @@ public class DeleteDocumentsJobTest extends AbstractSpringTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
-    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 2500;
+    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 200;
 
     @Test
     public void testJob() throws Exception {
@@ -53,4 +53,13 @@ public class DeleteDocumentsJobTest extends AbstractSpringTest {
         logger.info("Loaded documents in " + (System.currentTimeMillis() - start) + "ms");
     }
 
+    /**
+     * Use the Client API to verify that the test collection is now empty.
+     */
+    private void thenTheTestCollectionIsNowEmpty() {
+        String result = getClient().newServerEval().xquery("collection('test')").evalAs(String.class);
+        assertNull(
+                "The test collection should be empty because the job deleted all the documents we inserted into the collection",
+                result);
+    }
 }
