@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class CorbJobTest extends AbstractSpringTest {
 
     @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Test
     public void testJob() throws Exception {
