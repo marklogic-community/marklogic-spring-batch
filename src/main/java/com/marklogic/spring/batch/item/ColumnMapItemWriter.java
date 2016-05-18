@@ -36,7 +36,7 @@ public class ColumnMapItemWriter extends AbstractDocumentWriter implements ItemW
 
     // Internal state
     private XMLDocumentManager mgr;
-    private Map<Object, Map<String, Object>> recordMap = new HashMap<Object, Map<String, Object>>();
+    private Map<Object, Map<String, Object>> recordMap = new HashMap<>();
 
     public ColumnMapItemWriter(DatabaseClient client, String rootElementName) {
         this.mgr = client.newXMLDocumentManager();

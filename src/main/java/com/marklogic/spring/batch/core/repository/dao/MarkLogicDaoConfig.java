@@ -1,10 +1,11 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.batch.core.repository.dao.MapExecutionContextDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.core.repository.support.SimpleJobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +24,18 @@ public class MarkLogicDaoConfig {
 	public DatabaseClientProvider databaseClientProvider;
 	
 	@Bean
+	public JobInstanceDao jobInstanceDao() throws Exception {
+		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(databaseClientProvider.getDatabaseClient());
+		jobInstanceDao.setIncrementer(new UriIncrementer());
+		return jobInstanceDao;
+	}
+	
+	@Bean
 	public JobExecutionDao jobExecutionDao() throws Exception {
 		MarkLogicJobExecutionDao dao = new MarkLogicJobExecutionDao(databaseClientProvider.getDatabaseClient());
 		dao.setIncrementer(new UriIncrementer());
 		return dao;
 	}
-	
-	@Bean
-	public JobInstanceDao jobInstanceDao() throws Exception {
-		MarkLogicJobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(databaseClientProvider.getDatabaseClient());
-		jobInstanceDao.setIncrementer(new UriIncrementer());
-		jobInstanceDao.setJobExecutionDao(jobExecutionDao());
-		return jobInstanceDao;
-	}	
 	
 	@Bean
 	public StepExecutionDao stepExecutionDao() throws Exception {
@@ -47,14 +47,17 @@ public class MarkLogicDaoConfig {
 	
 	@Bean
 	public ExecutionContextDao executionContextDao() throws Exception {
-		MapExecutionContextDao executionContextDao = new MapExecutionContextDao();
-		return executionContextDao;
+		return new MarkLogicExecutionContextDao(jobExecutionDao(), stepExecutionDao());
 	}
 	
 	@Bean
 	public JobRepository jobRepository() throws Exception {
-		SimpleJobRepository jobRepository = new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
-		return jobRepository;
+		return new SimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
+	}
+
+	@Bean
+	public JobExplorer jobExplorer() throws Exception {
+		return new SimpleJobExplorer(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
 	}
 	
 }

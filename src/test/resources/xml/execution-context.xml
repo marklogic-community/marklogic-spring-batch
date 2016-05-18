@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msb:executionContext xmlns:msb="http://marklogic.com/spring-batch" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<msb:dirtyFlag>true</msb:dirtyFlag>
+	<msb:hashCode>683181905</msb:hashCode>
+	<msb:map>
+		<entry>
+			<key>testInteger</key>
+			<value xsi:type="xs:int">123</value>
+		</entry>
+		<entry>
+			<key>testDouble</key>
+			<value xsi:type="xs:double">123.0</value>
+		</entry>
+		<entry>
+			<key>testName</key>
+			<value xsi:type="xs:string">testValue</value>
+		</entry>
+		<entry>
+			<key>testLong</key>
+			<value xsi:type="xs:long">123</value>
+		</entry>
+	</msb:map>
+</msb:executionContext>

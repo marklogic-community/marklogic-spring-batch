@@ -3,9 +3,6 @@ package com.marklogic.spring.batch.item;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -26,7 +23,7 @@ public class CollectionUrisReader extends LoggingObject implements ItemReader<St
     }
 
     @Override
-    public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public String read() throws Exception {
         return resultIterator.hasNext() ? resultIterator.next().getAs(String.class) : null;
     }
 

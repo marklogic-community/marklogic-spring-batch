@@ -18,18 +18,23 @@
 		"range-value-positions": false,
 		"invalid-values": "reject"
   	}, {
-		"scalar-type": "unsignedLong",
-		"namespace-uri": "http://marklogic.com/spring-batch/job-instance",
-		"localname": "id",
-		"collation": "",
-		"range-value-positions": false,
-		"invalid-values": "reject"
-  	}, {
   		"scalar-type": "string",
-		"namespace-uri": "http://marklogic.com/spring-batch/job-instance",
+		"namespace-uri": "http://marklogic.com/spring-batch",
 		"localname": "jobName",
 		"collation": "http://marklogic.com/collation/codepoint",
 		"range-value-positions": false,
 		"invalid-values": "reject"
-  	}]
+  	}
+  ],
+  "path-namespace": [{
+		"prefix": "msb",
+		"namespace-uri": "http://marklogic.com/spring-batch"
+	}],
+  "range-path-index": [{
+		"scalar-type": "unsignedLong",
+		"collation": "",
+		"path-expression": "/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id",
+		"range-value-positions": false,
+		"invalid-values": "reject"
+	}]
 }

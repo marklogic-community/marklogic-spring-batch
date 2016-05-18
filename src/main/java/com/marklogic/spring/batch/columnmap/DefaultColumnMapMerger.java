@@ -20,7 +20,7 @@ public class DefaultColumnMapMerger implements ColumnMapMerger {
                 if (newValue != null && !newValue.equals(existingValue)) {
                     // If they're not equal, assume we should construct a List (if we don't have it already) and add
                     // the new value
-                    List<Object> list = null;
+                    List<Object> list;
                     if (existingValue instanceof List) {
                         list = (List<Object>) existingValue;
                     } else {

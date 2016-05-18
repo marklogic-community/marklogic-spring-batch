@@ -5,9 +5,6 @@ import java.util.Date;
 
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.batch.item.support.AbstractItemStreamItemReader;
 
 import com.marklogic.client.DatabaseClient;
@@ -34,7 +31,7 @@ public class MarkLogicItemReader<T> extends AbstractItemStreamItemReader<T> {
 
     @Override
     @SuppressWarnings({ "unchecked" })
-    public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public T read() throws Exception {
         T result = null;
         if (resultIterator.hasNext()) {
             EvalResult item = resultIterator.next();

@@ -79,7 +79,7 @@ public class SqlMigrator extends LoggingObject {
         dmds.setUsername(cmd.getOptionValue("jdbcUsername"));
         dmds.setPassword(cmd.getOptionValue("jdbcPassword"));
 
-        DatabaseClient client = null;
+        DatabaseClient client;
         String host = cmd.getOptionValue("host");
         Integer port = Integer.parseInt(cmd.getOptionValue("port"));
         String username = cmd.getOptionValue("username");
@@ -165,7 +165,7 @@ public class SqlMigrator extends LoggingObject {
 
         Job job = jobBuilderFactory.get("migrationJob-" + System.currentTimeMillis()).start(step).build();
 
-        Map<String, JobParameter> parameters = new HashMap<String, JobParameter>();
+        Map<String, JobParameter> parameters = new HashMap<>();
         parameters.put("SQL", new JobParameter(sql));
         JobParameters jobParams = new JobParameters(parameters);
 

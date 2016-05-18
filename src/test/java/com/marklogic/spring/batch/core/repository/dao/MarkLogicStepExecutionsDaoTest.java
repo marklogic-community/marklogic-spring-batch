@@ -18,16 +18,13 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 import com.marklogic.spring.batch.core.step.StepSupport;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.marklogic.junit.spring.AbstractSpringTest;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { 
+@ContextConfiguration(classes = {
 		com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, 
 		com.marklogic.junit.spring.BasicTestConfig.class })
 public class MarkLogicStepExecutionsDaoTest extends AbstractSpringTest {
@@ -112,7 +109,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractSpringTest {
 	@Test
 	public void testSaveAndGetExecutions() {
 
-		List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
+		List<StepExecution> stepExecutions = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
 			StepExecution se = new StepExecution("step" + i, jobExecution);
 			se.setStatus(BatchStatus.STARTED);

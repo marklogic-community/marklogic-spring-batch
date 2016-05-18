@@ -14,10 +14,12 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 	@Override
 	public StepExecution unmarshal(AdaptedStepExecution v) throws Exception {
 		JobExecution je = new JobExecution(v.getJobExecutionId());
-		je.setJobInstance(new JobInstance(v.getJobInstanceId(), v.getJobName()));
+		JobInstance ji = new JobInstance(v.getJobInstanceId(), v.getJobName());
+		je.setJobInstance(ji);
 		StepExecution step = new StepExecution(v.getStepName(), je);
 		step.setId(v.getId());
 		step.setStartTime(v.getStartTime());
+		step.setEndTime(v.getEndTime());
 		step.setReadSkipCount(v.getReadSkipCount());
 		step.setWriteSkipCount(v.getWriteSkipCount());
 		step.setProcessSkipCount(v.getProcessSkipCount());
@@ -29,6 +31,7 @@ public class StepExecutionAdapter extends XmlAdapter<AdaptedStepExecution, StepE
 		step.setLastUpdated(v.getLastUpdated());
 		step.setVersion(v.getVersion());
 		step.setStatus(v.getStatus());
+		step.setExecutionContext(v.getExecutionContext());
 		return step;
 	}
 

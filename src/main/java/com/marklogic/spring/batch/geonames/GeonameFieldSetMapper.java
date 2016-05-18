@@ -16,7 +16,7 @@ public class GeonameFieldSetMapper implements FieldSetMapper<Geoname>{
 	public Geoname mapFieldSet(FieldSet fieldSet) throws BindException {
 		Geoname geo = new Geoname();
 		geo.setId(fieldSet.readString(0));
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		
 		//name
 		names.add(fieldSet.readString(1));

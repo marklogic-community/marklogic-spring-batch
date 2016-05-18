@@ -1,24 +1,32 @@
-package com.marklogic.spring.batch;
-
-import org.junit.Test;
+package com.marklogic.spring.batch.job;
 
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.spring.batch.item.CollectionUrisReader;
-import com.marklogic.spring.batch.item.DeleteUriWriter;
+import com.marklogic.junit.spring.AbstractSpringTest;
+import org.junit.Test;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
-public class DeleteUrisTest extends AbstractSpringBatchTest {
+@ContextConfiguration(classes = {
+        com.marklogic.junit.spring.BasicTestConfig.class,
+        com.marklogic.spring.batch.job.DeleteDocumentsJob.class,
+        com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class
+})
+public class DeleteDocumentsJobTest extends AbstractSpringTest {
 
-    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 2500;
-    private final static int NUMBER_OF_DOCUMENTS_TO_DELETE_AT_ONE_TIME = 100;
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
+
+    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 2000;
 
     @Test
-    public void test() {
+    public void testJob() throws Exception {
         givenSomeDocumentsInTheTestCollection();
-        whenAJobIsRunToDeleteAllTheUrisInTheTestCollection();
-        thenTheTestCollectionIsNowEmpty();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
     }
 
     /**
@@ -43,19 +51,6 @@ public class DeleteUrisTest extends AbstractSpringBatchTest {
             }
         }
         logger.info("Loaded documents in " + (System.currentTimeMillis() - start) + "ms");
-    }
-
-    /**
-     * Launch a job with a step that uses CollectionUrisReader to read all the URIs from the "test" collection, and then
-     * uses DeleteUriWriter to delete every URI that is read. The URIs are chunked together to avoid making a delete
-     * call per URI.
-     */
-    private void whenAJobIsRunToDeleteAllTheUrisInTheTestCollection() {
-        launchJobWithStep(
-                stepBuilderFactory.get("testStep").<String, String> chunk(NUMBER_OF_DOCUMENTS_TO_DELETE_AT_ONE_TIME)
-                        .reader(new CollectionUrisReader(getClient(), "test")).writer(new DeleteUriWriter(getClient()))
-                        .build());
-
     }
 
     /**

@@ -9,5 +9,5 @@ import java.util.Map;
  */
 public interface ColumnMapSerializer {
 
-    public String serializeColumnMap(Map<String, Object> columnMap, String rootLocalName, String rootNamespaceUri);
+    String serializeColumnMap(Map<String, Object> columnMap, String rootLocalName, String rootNamespaceUri);
 }

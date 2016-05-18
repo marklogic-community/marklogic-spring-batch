@@ -1,31 +1,28 @@
 package com.marklogic.spring.batch.core;
 
-import java.util.Date;
-
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.springframework.batch.core.Entity;
+import org.springframework.batch.core.JobInstance;
 
-@XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
-@XmlType(namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
-public class AdaptedJobInstance extends Entity {
+@XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+public class AdaptedJobInstance {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String jobName;
 	private Long id;
-	private String jobParametersKey;
-	private Date createDateTime;
+	private Integer version = 0;
+	private String jobName;
 	
 	public AdaptedJobInstance() { }
 	
-	public AdaptedJobInstance(Long id, String jobName) {
-		this.id = id;
-		this.jobName = jobName;
+	public AdaptedJobInstance(JobInstance jobInstance) {
+		this.id = jobInstance.getId();
+		if (jobInstance.getVersion() == null) {
+			jobInstance.setVersion(0);
+		} else {
+			this.setVersion(jobInstance.getVersion());
+		}
+		this.jobName = jobInstance.getJobName();
 	}
 	
 	public String getJobName() {
@@ -34,29 +31,21 @@ public class AdaptedJobInstance extends Entity {
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
 	}
-	
-	@XmlElement(name = "id", namespace=MarkLogicSpringBatch.JOB_INSTANCE_NAMESPACE)
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getJobParametersKey() {
-		return jobParametersKey;
+	public Integer getVersion() {
+		return version;
 	}
 
-	public void setJobParametersKey(String jobParametersKey) {
-		this.jobParametersKey = jobParametersKey;
-	}
-
-	public Date getCreateDateTime() {
-		return createDateTime;
-	}
-
-	public void setCreateDateTime(Date createDateTime) {
-		this.createDateTime = createDateTime;
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 }

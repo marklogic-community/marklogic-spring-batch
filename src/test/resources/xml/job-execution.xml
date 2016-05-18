@@ -1,59 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<msb:jobExecution xmlns:msb="http://marklogic.com/spring-batch" xmlns:inst="http://marklogic.com/spring-batch/job-instance" xmlns:jp="http://marklogic.com/spring-batch/job-parameter" xmlns:step="http://marklogic.com/spring-batch/step-execution">
-  <msb:createDateTime>2016-03-10T15:44:34.917-05:00</msb:createDateTime>
+<msb:jobExecution xmlns:msb="http://marklogic.com/spring-batch" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <msb:createDateTime>2016-05-05T20:49:24.191-04:00</msb:createDateTime>
+  <msb:executionContext>
+    <msb:dirtyFlag>true</msb:dirtyFlag>
+    <msb:hashCode>42204610</msb:hashCode>
+    <msb:map>
+      <entry>
+        <key>testName</key>
+        <value xsi:type="xs:string">testValue</value>
+      </entry>
+    </msb:map>
+  </msb:executionContext>
+  <msb:exitCode>UNKNOWN</msb:exitCode>
   <msb:exitStatus>exitCode=UNKNOWN;exitDescription=</msb:exitStatus>
-  <msb:id>5128016860359238732</msb:id>
-  <inst:jobInstance>
-    <inst:id>5128016860359238732</inst:id>
-    <inst:jobName>sampleJob</inst:jobName>
-  </inst:jobInstance>
-  <jp:jobParameters>
-    <jp:jobParameter identifier="true" key="stringTest" type="STRING">Joe Cool</jp:jobParameter>
-    <jp:jobParameter identifier="false" key="start" type="DATE">2016-03-10T15:44:34-0500</jp:jobParameter>
-    <jp:jobParameter identifier="false" key="longTest" type="LONG">1239</jp:jobParameter>
-    <jp:jobParameter identifier="false" key="doubleTest" type="DOUBLE">1.35</jp:jobParameter>
-  </jp:jobParameters>
+  <msb:id>123</msb:id>
+  <msb:jobInstance>
+    <msb:id>5128016860359238732</msb:id>
+    <msb:jobName>sampleJob</msb:jobName>
+    <msb:version>0</msb:version>
+  </msb:jobInstance>
+  <msb:jobParameters>
+    <msb:jobParameter identifier="true" key="id" type="LONG">1</msb:jobParameter>
+    <msb:jobParameter identifier="true" key="stringTest" type="STRING">Joe Cool</msb:jobParameter>
+    <msb:jobParameter identifier="false" key="start" type="DATE">2016-05-05T20:49:24-0400</msb:jobParameter>
+    <msb:jobParameter identifier="false" key="longTest" type="LONG">1239</msb:jobParameter>
+    <msb:jobParameter identifier="false" key="doubleTest" type="DOUBLE">1.35</msb:jobParameter>
+  </msb:jobParameters>
   <msb:status>STARTING</msb:status>
-  <step:stepExecutions>
-		<step:stepExecution>
-			<id>141541634458653241</id>
-			<step:commitCount>0</step:commitCount>
-			<step:filterCount>0</step:filterCount>
-			<step:jobExecutionId>874520070930268575</step:jobExecutionId>
-			<step:jobInstanceId>1791948404679980561</step:jobInstanceId>
-			<step:jobName>job</step:jobName>
-			<step:lastUpdated>2016-05-02T21:06:14.445-04:00</step:lastUpdated>
-			<step:processSkipCount>0</step:processSkipCount>
-			<step:readCount>0</step:readCount>
-			<step:readSkipCount>7</step:readSkipCount>
-			<step:rollbackCount>3</step:rollbackCount>
-			<step:startTime>2016-05-02T21:06:14.445-04:00</step:startTime>
-			<step:status>STARTED</step:status>
-			<step:stepName>foo</step:stepName>
-			<step:terminateOnly>false</step:terminateOnly>
-			<step:writeCount>0</step:writeCount>
-			<step:writeSkipCount>5</step:writeSkipCount>
-		</step:stepExecution>
-		<step:stepExecution>
-			<id>141541634458653242</id>
-			<step:commitCount>0</step:commitCount>
-			<step:jobExecutionId>874520070930268575</step:jobExecutionId>
-			<step:jobInstanceId>1791948404679980561</step:jobInstanceId>
-			<step:jobName>job</step:jobName>
-			<step:filterCount>0</step:filterCount>
-			<step:jobExecutionId>4122538659149153443</step:jobExecutionId>
-			<step:lastUpdated>2016-05-02T21:06:14.445-04:00</step:lastUpdated>
-			<step:processSkipCount>0</step:processSkipCount>
-			<step:readCount>0</step:readCount>
-			<step:readSkipCount>7</step:readSkipCount>
-			<step:rollbackCount>3</step:rollbackCount>
-			<step:startTime>2016-05-02T21:06:14.445-04:00</step:startTime>
-			<step:status>STARTED</step:status>
-			<step:stepName>foo2</step:stepName>
-			<step:terminateOnly>false</step:terminateOnly>
-			<step:writeCount>0</step:writeCount>
-			<step:writeSkipCount>5</step:writeSkipCount>
-		</step:stepExecution>
-	</step:stepExecutions>
-  <msb:uri>/projects.spring.io/spring-batch/5128016860359238732.xml</msb:uri>
+  <msb:stepExecutions>
+    <msb:stepExecution>
+      <msb:commitCount>0</msb:commitCount>
+      <msb:executionContext>
+        <msb:dirtyFlag>false</msb:dirtyFlag>
+        <msb:hashCode>0</msb:hashCode>
+        <msb:map />
+      </msb:executionContext>
+      <msb:filterCount>0</msb:filterCount>
+      <msb:jobExecutionId>123</msb:jobExecutionId>
+      <msb:jobInstanceId>5128016860359238732</msb:jobInstanceId>
+      <msb:jobName>sampleJob</msb:jobName>
+      <msb:processSkipCount>0</msb:processSkipCount>
+      <msb:readCount>0</msb:readCount>
+      <msb:readSkipCount>0</msb:readSkipCount>
+      <msb:rollbackCount>0</msb:rollbackCount>
+      <msb:startTime>2016-05-05T20:49:24.191-04:00</msb:startTime>
+      <msb:status>STARTING</msb:status>
+      <msb:stepName>sampleStep1</msb:stepName>
+      <msb:terminateOnly>false</msb:terminateOnly>
+      <msb:writeCount>0</msb:writeCount>
+      <msb:writeSkipCount>0</msb:writeSkipCount>
+    </msb:stepExecution>
+    <msb:stepExecution>
+      <msb:commitCount>0</msb:commitCount>
+      <msb:executionContext>
+        <msb:dirtyFlag>false</msb:dirtyFlag>
+        <msb:hashCode>0</msb:hashCode>
+        <msb:map />
+      </msb:executionContext>
+      <msb:filterCount>0</msb:filterCount>
+      <msb:jobExecutionId>123</msb:jobExecutionId>
+      <msb:jobInstanceId>5128016860359238732</msb:jobInstanceId>
+      <msb:jobName>sampleJob</msb:jobName>
+      <msb:processSkipCount>0</msb:processSkipCount>
+      <msb:readCount>0</msb:readCount>
+      <msb:readSkipCount>0</msb:readSkipCount>
+      <msb:rollbackCount>0</msb:rollbackCount>
+      <msb:startTime>2016-05-05T20:49:24.191-04:00</msb:startTime>
+      <msb:status>STARTING</msb:status>
+      <msb:stepName>sampleStep2</msb:stepName>
+      <msb:terminateOnly>false</msb:terminateOnly>
+      <msb:writeCount>0</msb:writeCount>
+      <msb:writeSkipCount>0</msb:writeSkipCount>
+    </msb:stepExecution>
+  </msb:stepExecutions>
+  <msb:version>0</msb:version>
 </msb:jobExecution>

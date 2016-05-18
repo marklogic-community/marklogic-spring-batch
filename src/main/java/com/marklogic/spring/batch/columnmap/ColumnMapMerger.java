@@ -10,5 +10,5 @@ import java.util.Map;
  */
 public interface ColumnMapMerger {
 
-    public void mergeColumnMaps(Map<String, Object> targetColumnMap, Map<String, Object> sourceColumnMap);
+    void mergeColumnMaps(Map<String, Object> targetColumnMap, Map<String, Object> sourceColumnMap);
 }
