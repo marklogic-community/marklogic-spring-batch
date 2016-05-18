@@ -23,6 +23,7 @@ public class DocumentItemWriter implements ItemWriter<Document> {
 		XMLDocumentManager docMgr = client.newXMLDocumentManager();
 		for (Document doc : items) {
 			DOMHandle handle = new DOMHandle(doc);
+			doc.setDocumentURI("test.xml");
 			docMgr.write(doc.getDocumentURI(), handle);
 		}		
 	}

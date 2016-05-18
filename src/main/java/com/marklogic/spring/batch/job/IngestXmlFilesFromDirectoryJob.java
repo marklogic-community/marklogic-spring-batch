@@ -4,7 +4,9 @@ import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.adapter.ItemProcessorAdapter;
 import org.springframework.batch.item.file.ResourcesItemReader;
+import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
@@ -19,6 +21,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 @Configuration
@@ -39,7 +45,7 @@ public class IngestXmlFilesFromDirectoryJob {
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
-        return jobBuilders.get("myJob").start(step1).build();
+        return jobBuilders.get("ingestXmlFilesFromDirectoryJob").start(step1).build();
     }
 
     @Bean
@@ -62,7 +68,15 @@ public class IngestXmlFilesFromDirectoryJob {
 
     @Bean
     public ItemProcessor<Resource, Document> processor() {
-        return null;
+        return new ItemProcessor<Resource, Document>() {
+            @Override
+            public Document process(Resource item) throws Exception {
+                Source source = new StreamSource(item.getFile());
+                DOMResult result = new DOMResult();
+                TransformerFactory.newInstance().newTransformer().transform(source, result);
+                return (Document) result.getNode();
+            }
+        };
     }
 
     @Bean
@@ -72,7 +86,7 @@ public class IngestXmlFilesFromDirectoryJob {
 
     private void loadResources() {
         try {
-            resources = ctx.getResources("file:E:\\world-bank\\marklogic-spring-batch\\src\\test\\resources\\data\\*.xml");
+            resources = ctx.getResources("file:E:\\world-bank\\marklogic-spring-batch\\src\\test\\resources\\data\\seasme.xml");
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -1,0 +1,10 @@
+<monsters>
+    <monster>
+        <name>Grover</name>
+        <color>blue</color>
+    </monster>
+    <monster>
+        <name>Elmo</name>
+        <color>red</color>
+    </monster>
+</monsters>
