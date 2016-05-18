@@ -27,9 +27,7 @@ import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 @ActiveProfiles("default")
 @ContextConfiguration(classes = { 
-		com.marklogic.junit.spring.BasicTestConfig.class, 
-		com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class,
-		com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class,
+		com.marklogic.junit.spring.BasicTestConfig.class,
 		com.marklogic.spring.batch.configuration.DefaultBatchConfiguration.class })
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 

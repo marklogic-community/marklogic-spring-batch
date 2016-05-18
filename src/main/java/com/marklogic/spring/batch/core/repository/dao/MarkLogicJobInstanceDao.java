@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.marklogic.client.query.*;
+import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.DefaultJobKeyGenerator;
@@ -42,6 +43,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
 	
 	public MarkLogicJobInstanceDao(DatabaseClient databaseClient) {
 		this.databaseClient = databaseClient;
+		this.incrementer = new UriIncrementer();
 	}
 
 	@Override

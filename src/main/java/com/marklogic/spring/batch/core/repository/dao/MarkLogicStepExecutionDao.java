@@ -8,6 +8,7 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
@@ -29,6 +30,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 	
 	public MarkLogicStepExecutionDao(DatabaseClient databaseClient) {
 		this.databaseClient = databaseClient;
+		this.incrementer = new UriIncrementer();
 	}
 
 	@Override

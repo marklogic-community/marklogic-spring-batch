@@ -26,8 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.marklogic.junit.spring.AbstractSpringTest;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { 
+@ContextConfiguration(classes = {
 		com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, 
 		com.marklogic.junit.spring.BasicTestConfig.class })
 public class MarkLogicStepExecutionsDaoTest extends AbstractSpringTest {

@@ -17,9 +17,10 @@ repositories {
 
 
 dependencies {
-  compile "org.springframework.batch:spring-batch-core:3.0.6.RELEASE"
-  compile "org.springframework:spring-core:4.2.1.RELEASE"
-  compile "org.springframework:spring-jdbc:4.2.1.RELEASE"
+  compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+  compile "org.springframework:spring-core:4.2.6.RELEASE"
+  compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
+  compile "org.springframework:spring-oxm:4.2.6.RELEASE"
   compile("com.marklogic:ml-javaclient-util:2.5") {
   	exclude group: 'com.marklogic.java-client', module: 'client-api-java'
   }

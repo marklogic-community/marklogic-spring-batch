@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.core.repository;
 
+import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -9,9 +10,12 @@ import org.springframework.test.context.ActiveProfiles;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import org.springframework.test.context.ContextConfiguration;
 
-@ActiveProfiles(profiles = "marklogic", inheritProfiles = false)
-public class GetSpringBatchOptionsResourceTest extends AbstractSpringBatchTest {
+@ContextConfiguration(classes = {
+		com.marklogic.junit.spring.BasicTestConfig.class
+})
+public class GetSpringBatchOptionsResourceTest extends AbstractSpringTest {
 	
 	@Autowired
 	ApplicationContext ctx;
