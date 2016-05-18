@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.job;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.item.CollectionUrisReader;
 import com.marklogic.spring.batch.item.DeleteUriWriter;

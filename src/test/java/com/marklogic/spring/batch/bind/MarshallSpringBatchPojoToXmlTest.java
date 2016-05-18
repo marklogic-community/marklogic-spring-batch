@@ -3,7 +3,6 @@ package com.marklogic.spring.batch.bind;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;
 
@@ -20,12 +19,10 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobExecutionTestUtils;
 import com.marklogic.spring.batch.JobParametersTestUtils;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;

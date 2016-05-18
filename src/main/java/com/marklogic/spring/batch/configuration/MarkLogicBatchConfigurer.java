@@ -82,8 +82,8 @@ public class MarkLogicBatchConfigurer implements BatchConfigurer, InitializingBe
                 jobExplorerFactory.afterPropertiesSet();
                 this.jobExplorer = jobExplorerFactory.getObject();
             } else {
-                this.jobRepository = new MarkLogicSimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());;
-                this.jobExplorer = new SimpleJobExplorer(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());;
+                this.jobRepository = new MarkLogicSimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
+                this.jobExplorer = new SimpleJobExplorer(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
             }
             this.jobLauncher = createJobLauncher();
         } catch (Exception e) {

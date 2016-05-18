@@ -91,7 +91,7 @@ public class JobRepositoryTestUtils implements InitializingBean {
 	 * @throws org.springframework.batch.core.repository.JobRestartException 
 	 */
 	public List<JobExecution> createJobExecutions(String jobName, String[] stepNames, int count)
-			throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobRestartException {
+			throws JobExecutionAlreadyRunningException, JobInstanceAlreadyCompleteException, JobRestartException {
 		List<JobExecution> list = new ArrayList<>();
 		JobParameters jobParameters = new JobParameters();
 		for (int i = 0; i < count; i++) {

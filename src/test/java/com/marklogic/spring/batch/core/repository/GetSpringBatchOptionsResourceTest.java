@@ -5,11 +5,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {

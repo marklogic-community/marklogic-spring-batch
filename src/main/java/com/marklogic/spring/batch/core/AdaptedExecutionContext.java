@@ -68,17 +68,17 @@ public class AdaptedExecutionContext {
 	private Object getValue(Object value) {
 	
 		if (String.class.isInstance(value)) {
-			value = (String) value;
+			value = value;
 		} else if (Long.class.isInstance(value)) {
-			value = (Long) value;
+			value = value;
 		} else if (Double.class.isInstance(value)) {
-			value = (Double) value;
+			value = value;
 		} else if (Integer.class.isInstance(value)) {
-			value = (Integer) value;
+			value = value;
 		} else if (Boolean.class.isInstance(value)) {
-			value = (Boolean) value;
+			value = value;
 		} else {
-			value = (String)value;
+			value = value;
 		}	
 		return value;
 	}

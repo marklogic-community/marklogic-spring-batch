@@ -17,10 +17,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.Resource;
-import org.w3c.dom.Document;
-
-import java.io.IOException;
 
 @Configuration
 @EnableBatchProcessing

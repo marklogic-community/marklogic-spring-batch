@@ -17,7 +17,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
 
 @ContextConfiguration(classes = {
         com.marklogic.junit.spring.BasicTestConfig.class
