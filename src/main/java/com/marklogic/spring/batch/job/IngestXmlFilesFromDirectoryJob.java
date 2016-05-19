@@ -9,6 +9,8 @@ import org.springframework.batch.item.file.ResourcesItemReader;
 import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.core.Job;
@@ -28,9 +30,13 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 @Configuration
+@PropertySource("classpath:/job/ingestXmlFilesFromDirectory.properties")
 @EnableBatchProcessing
 @Import(com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class)
 public class IngestXmlFilesFromDirectoryJob {
+
+    @Autowired
+    Environment env;
 
     @Autowired
     private ApplicationContext ctx;
@@ -86,7 +92,7 @@ public class IngestXmlFilesFromDirectoryJob {
 
     private void loadResources() {
         try {
-            resources = ctx.getResources("file:E:\\world-bank\\marklogic-spring-batch\\src\\test\\resources\\data\\seasme.xml");
+            resources = ctx.getResources(env.getProperty("input_file_path"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
