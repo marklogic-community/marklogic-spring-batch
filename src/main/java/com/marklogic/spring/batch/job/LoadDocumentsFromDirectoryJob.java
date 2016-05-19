@@ -88,7 +88,7 @@ public class LoadDocumentsFromDirectoryJob {
                 Document doc = (Document)  result.getNode();
                 XPathFactory factory = XPathFactory.newInstance();
                 XPath xpath = factory.newXPath();
-                String expression = "/monster/name/text()";
+                String expression = env.getProperty("uri_id");
                 Node node = (Node) xpath.evaluate(expression, doc, XPathConstants.NODE);
                 doc.setDocumentURI("/" + node.getTextContent());
                 return doc;

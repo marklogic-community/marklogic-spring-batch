@@ -45,6 +45,7 @@ public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
         protected void customizeContext(GenericApplicationContext context) {
             MockPropertySource source = new MockPropertySource()
                     .withProperty("input_file_path", "data/grover.xml");
+            source.withProperty("uri_id", "/monster/name" );
             context.getEnvironment().getPropertySources().addFirst(source);
         }
     }
