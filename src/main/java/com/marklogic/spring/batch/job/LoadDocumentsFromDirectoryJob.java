@@ -30,7 +30,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 @Configuration
-@PropertySource("classpath:/job/ingestXmlFilesFromDirectory.properties")
+@PropertySource("classpath:job.properties")
 @EnableBatchProcessing
 @Import(com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class)
 public class LoadDocumentsFromDirectoryJob {
