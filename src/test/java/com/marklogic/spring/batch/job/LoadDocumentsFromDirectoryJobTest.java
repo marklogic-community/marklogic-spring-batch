@@ -36,7 +36,7 @@ public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         ClientTestHelper client = new ClientTestHelper();
         client.setDatabaseClientProvider(getClientProvider());
-        Fragment frag = client.parseUri("test.xml");
+        Fragment frag = client.parseUri("/Grover");
         frag.assertElementExists("/monster/name[text() = 'Grover']");
     }
 

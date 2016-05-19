@@ -22,11 +22,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 
 @Configuration
@@ -51,7 +55,7 @@ public class LoadDocumentsFromDirectoryJob {
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
-        return jobBuilders.get("ingestXmlFilesFromDirectoryJob").start(step1).build();
+        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(step1).build();
     }
 
     @Bean
@@ -72,6 +76,7 @@ public class LoadDocumentsFromDirectoryJob {
         return itemReader;
     }
 
+
     @Bean
     public ItemProcessor<Resource, Document> processor() {
         return new ItemProcessor<Resource, Document>() {
@@ -80,8 +85,16 @@ public class LoadDocumentsFromDirectoryJob {
                 Source source = new StreamSource(item.getFile());
                 DOMResult result = new DOMResult();
                 TransformerFactory.newInstance().newTransformer().transform(source, result);
-                return (Document) result.getNode();
+                Document doc = (Document)  result.getNode();
+                XPathFactory factory = XPathFactory.newInstance();
+                XPath xpath = factory.newXPath();
+                String expression = "/monster/name/text()";
+                Node node = (Node) xpath.evaluate(expression, doc, XPathConstants.NODE);
+                doc.setDocumentURI("/" + node.getTextContent());
+                return doc;
             }
+
+            ;
         };
     }
 
