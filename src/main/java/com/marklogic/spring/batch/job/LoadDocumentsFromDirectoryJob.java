@@ -4,9 +4,7 @@ import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.adapter.ItemProcessorAdapter;
 import org.springframework.batch.item.file.ResourcesItemReader;
-import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
@@ -32,6 +30,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Configuration
 @PropertySource("classpath:job.properties")
@@ -71,8 +70,20 @@ public class LoadDocumentsFromDirectoryJob {
     @Bean
     public ItemReader<Resource> reader() {
         ResourcesItemReader itemReader = new ResourcesItemReader();
-        loadResources();
-        itemReader.setResources(resources);
+        ArrayList<Resource> resourceList = new ArrayList<Resource>();
+        try {
+            resources = ctx.getResources(env.getProperty("input_file_path"));
+            String inputFilePattern = env.getProperty("input_file_pattern");
+            for ( int i = 0; i < resources.length; i++ ) {
+                if (resources[i].getFilename().matches(inputFilePattern)) {
+                    resourceList.add(resources[i]);
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        itemReader.setResources(resourceList.toArray(new Resource[resourceList.size()]));
         return itemReader;
     }
 
@@ -102,15 +113,6 @@ public class LoadDocumentsFromDirectoryJob {
     public ItemWriter<Document> writer() {
         return new DocumentItemWriter();
     }
-
-    private void loadResources() {
-        try {
-            resources = ctx.getResources(env.getProperty("input_file_path"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
 
 }
 
