@@ -9,10 +9,10 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {
         com.marklogic.junit.spring.BasicTestConfig.class,
-        com.marklogic.spring.batch.job.IngestXmlFilesFromDirectoryJob.class,
+        com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJob.class,
         com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class
 })
-public class IngestXmlFilesFromDirectoryTest extends AbstractSpringTest {
+public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
