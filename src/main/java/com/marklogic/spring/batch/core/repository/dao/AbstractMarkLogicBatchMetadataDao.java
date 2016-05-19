@@ -16,7 +16,7 @@ import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 
-public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingBean {
+public abstract class AbstractMarkLogicBatchMetadataDao {
 
 	@Autowired
 	protected ApplicationContext ctx;
@@ -53,20 +53,6 @@ public abstract class AbstractMarkLogicBatchMetadataDao implements InitializingB
 
 	public void setIncrementer(DataFieldMaxValueIncrementer incrementer) {
 		this.incrementer = incrementer;
-	}	
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(databaseClient);
-		
-		QueryOptionsManager queryOptionsMgr = databaseClient.newServerConfigManager().newQueryOptionsManager();
-		Resource options = ctx.getResource("classpath:/options/spring-batch-options.xml");
-		InputStreamHandle handle = new InputStreamHandle(options.getInputStream());
-		queryOptionsMgr.writeOptions(SEARCH_OPTIONS_NAME, handle);
-		logger.info(SEARCH_OPTIONS_NAME + " options loaded");
-		QueryOptionsListHandle qolHandle = queryOptionsMgr.optionsList(new QueryOptionsListHandle());
-		Set<String> results = qolHandle.getValuesMap().keySet();
-		Assert.isTrue(results.contains(SEARCH_OPTIONS_NAME));
 	}
 
 }
