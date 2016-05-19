@@ -4,9 +4,13 @@ import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.adapter.ItemProcessorAdapter;
 import org.springframework.batch.item.file.ResourcesItemReader;
+import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.core.Job;
@@ -18,13 +22,25 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 
 @Configuration
+@PropertySource("classpath:job.properties")
 @EnableBatchProcessing
 @Import(com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class)
-public class IngestXmlFilesFromDirectoryJob {
+public class LoadDocumentsFromDirectoryJob {
+
+    @Autowired
+    Environment env;
 
     @Autowired
     private ApplicationContext ctx;
@@ -39,7 +55,7 @@ public class IngestXmlFilesFromDirectoryJob {
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
-        return jobBuilders.get("myJob").start(step1).build();
+        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(step1).build();
     }
 
     @Bean
@@ -60,9 +76,26 @@ public class IngestXmlFilesFromDirectoryJob {
         return itemReader;
     }
 
+
     @Bean
     public ItemProcessor<Resource, Document> processor() {
-        return null;
+        return new ItemProcessor<Resource, Document>() {
+            @Override
+            public Document process(Resource item) throws Exception {
+                Source source = new StreamSource(item.getFile());
+                DOMResult result = new DOMResult();
+                TransformerFactory.newInstance().newTransformer().transform(source, result);
+                Document doc = (Document)  result.getNode();
+                XPathFactory factory = XPathFactory.newInstance();
+                XPath xpath = factory.newXPath();
+                String expression = env.getProperty("uri_id");
+                Node node = (Node) xpath.evaluate(expression, doc, XPathConstants.NODE);
+                doc.setDocumentURI("/" + node.getTextContent());
+                return doc;
+            }
+
+            ;
+        };
     }
 
     @Bean
@@ -72,7 +105,7 @@ public class IngestXmlFilesFromDirectoryJob {
 
     private void loadResources() {
         try {
-            resources = ctx.getResources("file:E:\\world-bank\\marklogic-spring-batch\\src\\test\\resources\\data\\*.xml");
+            resources = ctx.getResources(env.getProperty("input_file_path"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
