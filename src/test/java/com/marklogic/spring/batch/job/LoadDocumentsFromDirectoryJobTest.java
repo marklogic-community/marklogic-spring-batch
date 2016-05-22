@@ -1,9 +1,5 @@
 package com.marklogic.spring.batch.job;
 
-import com.marklogic.client.ResourceNotFoundException;
-import com.marklogic.junit.ClientTestHelper;
-import com.marklogic.junit.Fragment;
-import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.JobLauncherTestUtils;
@@ -14,49 +10,41 @@ import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import com.marklogic.junit.ClientTestHelper;
+import com.marklogic.junit.spring.AbstractSpringTest;
+
 @ContextConfiguration(classes = {
-        com.marklogic.junit.spring.BasicTestConfig.class,
-        com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJob.class,
-        com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class
-    } , loader = com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class
-)
+		com.marklogic.junit.spring.BasicTestConfig.class,
+		com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJob.class,
+		com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class }, loader = com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class)
 public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
 
-    @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
+	@Autowired
+	private JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
 
-    @Autowired
-    private ApplicationContext context;
+	@Autowired
+	private ApplicationContext context;
 
-    @Test
-    public void loadManyFilesTest() throws Exception {
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-        ClientTestHelper client = new ClientTestHelper();
-        client.setDatabaseClientProvider(getClientProvider());
-        Fragment frag = client.parseUri("/Grover");
-        frag.assertElementExists("/monster/name[text() = 'Grover']");
-        frag = client.parseUri("/Elmo");
-        frag.assertElementExists("/monster/name[text() = 'Elmo']");
-        try {
-            client.parseUri("/BigBird");
-        } catch (ResourceNotFoundException ex) {
-            assertNotNull(ex);
-        }
+	@Test
+	public void loadManyFilesTest() throws Exception {
+		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+		ClientTestHelper client = new ClientTestHelper();
+		client.setDatabaseClientProvider(getClientProvider());
 
-    }
+	}
 
-    public static class CustomAnnotationConfigContextLoader extends AnnotationConfigContextLoader {
+	public static class CustomAnnotationConfigContextLoader extends
+			AnnotationConfigContextLoader {
 
-        MockPropertySource source;
+		MockPropertySource source;
 
-        @Override
-        protected void customizeContext(GenericApplicationContext context) {
-            source = new MockPropertySource();
-            source.withProperty("input_file_path", "data/*.xml");
-            source.withProperty("input_file_pattern", "(elmo|grover).xml" );
-            source.withProperty("uri_id", "/monster/name" );
-            context.getEnvironment().getPropertySources().addFirst(source);
-        }
-    }
+		@Override
+		protected void customizeContext(GenericApplicationContext context) {
+			source = new MockPropertySource();
+			source.withProperty("input_file_path", "data/*.json");
+			source.withProperty("input_file_pattern", "(elmo|grover).json");
+			context.getEnvironment().getPropertySources().addFirst(source);
+		}
+	}
 
 }
