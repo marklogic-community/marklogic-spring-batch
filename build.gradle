@@ -56,12 +56,9 @@ publishing {
   publications {
     mainJava(MavenPublication) {
       from components.java
-      artifactId "data-migrator"
-    }
-    sourcesJava(MavenPublication) {
-      from components.java
-      artifactId "data-migrator-sources"
-      artifact sourcesJar
+      groupId "com.marklogic"
+      artifactId "marklogic-spring-batch"
+      version "0.2"
     }
   }
 }
