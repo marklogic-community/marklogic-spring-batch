@@ -39,6 +39,7 @@ import com.marklogic.uri.DefaultUriGenerator;
 @Import(com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class)
 public class LoadDocumentsFromDirectoryJob {
 
+    public static final String URI = "uri";
     private final Log logger = LogFactory.getLog(LoadDocumentsFromDirectoryJob.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -101,7 +102,7 @@ public class LoadDocumentsFromDirectoryJob {
             public ObjectNode process(Resource item) throws Exception {
                 ObjectNode objectNode = MAPPER.readValue(item.getFile(),
                         ObjectNode.class);
-                objectNode.put("uri", new DefaultUriGenerator().generateUri(item.getFile(), ""));
+                objectNode.put(URI, new DefaultUriGenerator().generateUri(item.getFile(), ""));
                 return objectNode;
             }
         };
@@ -117,8 +118,8 @@ public class LoadDocumentsFromDirectoryJob {
                 JSONDocumentManager jsonDocumentManager = client
                         .newJSONDocumentManager();
                 items.forEach(item -> {
-                    String uri = item.get("uri").textValue();
-                    item.remove("uri");
+                    String uri = item.get(URI).textValue();
+                    item.remove(URI);
                     jsonDocumentManager.write(uri, new JacksonHandle(item));
                 });
             }
