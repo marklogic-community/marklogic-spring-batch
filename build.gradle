@@ -47,6 +47,12 @@ dependencies {
 
 sourceSets.test.resources.srcDir 'src/test/java'
 
+ext {
+  mlAppConfig {
+      modulePaths = ["src/main/ml-modules", "src/test/ml-modules"]
+  }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
   classifier 'sources' 
   from sourceSets.main.allJava
