@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.job;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.item.ItemProcessor;
@@ -53,19 +54,39 @@ public class LoadDocumentsFromDirectoryJob {
     private Resource[] resources;
 
     @Bean
-    public Job job(@Qualifier("step1") Step step1) {
-        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(step1).build();
+    public Job job(@Qualifier("stepXML") Step stepXML, @Qualifier("stepJSON") Step stepJSON) {
+
+        String documentType = env.getProperty("document_type");
+        if("JSON".equalsIgnoreCase(documentType)){
+            return jobBuilders.get("loadDocumentsFromDirectoryJob").start(stepJSON).build();
+        }
+
+        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(stepXML).build();
     }
 
     @Bean
-    protected Step step1(ItemReader<Resource> reader, ItemProcessor<Resource, Document> processor, ItemWriter<Document> writer) {
-        return stepBuilders.get("step1")
+    protected Step stepXML(ItemReader<Resource> reader, ItemProcessor<Resource, Document> processor, ItemWriter<Document> writer) {
+
+        return stepBuilders.get("stepXML")
                 .<Resource, Document> chunk(10)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
     }
+
+
+    @Bean
+    protected Step stepJSON(ItemReader<Resource> reader, ItemProcessor<Resource, ObjectNode> processor, ItemWriter<ObjectNode> writer) {
+
+        return stepBuilders.get("stepJSON")
+                .<Resource, ObjectNode> chunk(10)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .build();
+    }
+
 
     @Bean
     public ItemReader<Resource> reader() {

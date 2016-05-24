@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by sanjuthomas on 5/24/16.
  */
-public class JsonObjectNodeWriter implements ItemWriter<ObjectNode> {
+public class JsonItemWriter implements ItemWriter<ObjectNode> {
 
     private static final String URI = "uri";
 
