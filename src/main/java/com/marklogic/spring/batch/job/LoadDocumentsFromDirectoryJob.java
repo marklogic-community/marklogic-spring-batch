@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.job;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import com.marklogic.spring.batch.item.JsonItemProcessor;
 import com.marklogic.spring.batch.item.JsonItemWriter;
@@ -49,6 +50,9 @@ public class LoadDocumentsFromDirectoryJob {
 
     @Autowired
     private StepBuilderFactory stepBuilders;
+
+    @Autowired
+    private DatabaseClientProvider databaseClientProvider;
 
     private Resource[] resources;
 
@@ -148,7 +152,7 @@ public class LoadDocumentsFromDirectoryJob {
     @Conditional(value = JsonDocumentTypeCondition.class)
     @Bean
     public ItemWriter<ObjectNode> jsonWriter() {
-        return new JsonItemWriter();
+        return new JsonItemWriter(databaseClientProvider.getDatabaseClient());
     }
 
 }

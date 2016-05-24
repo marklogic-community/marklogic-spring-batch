@@ -17,15 +17,17 @@ import java.util.List;
  */
 public class JsonItemWriter implements ItemWriter<ObjectNode> {
 
+    private DatabaseClient databaseClient;
+
     private UriGenerator uriGenerator = new DefaultUriGenerator();
 
-    @Autowired
-    private DatabaseClientProvider databaseClientProvider;
+    public JsonItemWriter(DatabaseClient databaseClient){
+        this.databaseClient = databaseClient;
+    }
 
     @Override
     public void write(List<? extends ObjectNode> items) throws Exception {
-        DatabaseClient client = databaseClientProvider.getDatabaseClient();
-        JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
+        JSONDocumentManager jsonDocumentManager = databaseClient.newJSONDocumentManager();
         items.forEach(item -> {
             jsonDocumentManager.write(uriGenerator.generate(), new JacksonHandle(item));
         });
