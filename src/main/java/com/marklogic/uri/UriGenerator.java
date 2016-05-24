@@ -11,4 +11,6 @@ public interface UriGenerator {
      */
     String generateUri(Object o, String id);
 
+    String generate();
+
 }

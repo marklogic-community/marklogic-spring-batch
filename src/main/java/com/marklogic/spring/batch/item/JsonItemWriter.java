@@ -5,6 +5,8 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.uri.DefaultUriGenerator;
+import com.marklogic.uri.UriGenerator;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,6 +16,8 @@ import java.util.List;
  * Created by sanjuthomas on 5/24/16.
  */
 public class JsonItemWriter implements ItemWriter<ObjectNode> {
+
+    private UriGenerator uriGenerator = new DefaultUriGenerator();
 
     private static final String URI = "uri";
 
@@ -25,9 +29,7 @@ public class JsonItemWriter implements ItemWriter<ObjectNode> {
         DatabaseClient client = databaseClientProvider.getDatabaseClient();
         JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
         items.forEach(item -> {
-            String uri = item.get(URI).textValue();
-            item.remove(URI);
-            jsonDocumentManager.write(uri, new JacksonHandle(item));
+            jsonDocumentManager.write(uriGenerator.generate(), new JacksonHandle(item));
         });
     }
 }

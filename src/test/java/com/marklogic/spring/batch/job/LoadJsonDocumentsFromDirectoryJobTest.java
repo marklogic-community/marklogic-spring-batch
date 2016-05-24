@@ -17,10 +17,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 @ContextConfiguration(classes = {
         com.marklogic.junit.spring.BasicTestConfig.class,
         LoadDocumentsFromDirectoryJob.class,
-        com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class,
-        com.marklogic.spring.batch.item.JsonItemWriter.class,
-        com.marklogic.spring.batch.item.JsonItemProcessor.class
-    } , loader = LoadJsonDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class
+        com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class
+}, loader = LoadJsonDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class
 )
 public class LoadJsonDocumentsFromDirectoryJobTest extends AbstractSpringTest {
 
@@ -33,7 +31,7 @@ public class LoadJsonDocumentsFromDirectoryJobTest extends AbstractSpringTest {
     @Test
     public void loadManyFilesTest() throws Exception {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-        assertEquals("COMPLETED" , jobExecution.getStatus().name());
+        assertEquals("COMPLETED", jobExecution.getStatus().name());
 
     }
 
@@ -45,7 +43,7 @@ public class LoadJsonDocumentsFromDirectoryJobTest extends AbstractSpringTest {
         protected void customizeContext(GenericApplicationContext context) {
             source = new MockPropertySource();
             source.withProperty("input_file_path", "data/*.json");
-            source.withProperty("input_file_pattern", "(elmo|grover).json" );
+            source.withProperty("input_file_pattern", "(elmo|grover).json");
             source.withProperty("document_type", "json");
 
             context.getEnvironment().getPropertySources().addFirst(source);

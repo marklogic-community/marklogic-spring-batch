@@ -17,8 +17,6 @@ public class JsonItemProcessor implements ItemProcessor<Resource, ObjectNode> {
 
     @Override
     public ObjectNode process(Resource item) throws Exception {
-        ObjectNode objectNode = MAPPER.readValue(item.getFile(), ObjectNode.class);
-        objectNode.put(URI, new DefaultUriGenerator().generateUri(item.getFile(), ""));
-        return objectNode;
+        return MAPPER.readValue(item.getFile(), ObjectNode.class);
     }
 }

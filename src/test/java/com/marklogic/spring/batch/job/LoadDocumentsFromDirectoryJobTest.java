@@ -20,7 +20,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
         com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class,
         com.marklogic.spring.batch.item.JsonItemWriter.class,
         com.marklogic.spring.batch.item.JsonItemProcessor.class
-    } , loader = com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class
+}, loader = com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class
 )
 public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
 
@@ -55,8 +55,9 @@ public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
         protected void customizeContext(GenericApplicationContext context) {
             source = new MockPropertySource();
             source.withProperty("input_file_path", "data/*.xml");
-            source.withProperty("input_file_pattern", "(elmo|grover).xml" );
-            source.withProperty("uri_id", "/monster/name" );
+            source.withProperty("input_file_pattern", "(elmo|grover).xml");
+            source.withProperty("uri_id", "/monster/name");
+            source.withProperty("document_type", "xml");
             context.getEnvironment().getPropertySources().addFirst(source);
         }
     }

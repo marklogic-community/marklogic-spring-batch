@@ -2,13 +2,14 @@ package com.marklogic.spring.batch.job;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
+import com.marklogic.spring.batch.item.JsonItemProcessor;
+import com.marklogic.spring.batch.item.JsonItemWriter;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.ResourcesItemReader;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.batch.item.ItemReader;
@@ -18,8 +19,6 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -53,40 +52,45 @@ public class LoadDocumentsFromDirectoryJob {
 
     private Resource[] resources;
 
+    @Conditional(value = XmlDocumentTypeCondition.class)
     @Bean
-    public Job job(@Qualifier("stepXML") Step stepXML, @Qualifier("stepJSON") Step stepJSON) {
+    public Job xmlJob(@Qualifier("xmlStep") Step xmlStep) {
 
-        String documentType = env.getProperty("document_type");
-        if("JSON".equalsIgnoreCase(documentType)){
-            return jobBuilders.get("loadDocumentsFromDirectoryJob").start(stepJSON).build();
-        }
-
-        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(stepXML).build();
+        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(xmlStep).build();
     }
 
-    @Bean
-    protected Step stepXML(ItemReader<Resource> reader, ItemProcessor<Resource, Document> processor, ItemWriter<Document> writer) {
 
-        return stepBuilders.get("stepXML")
-                .<Resource, Document> chunk(10)
+    @Conditional(value = JsonDocumentTypeCondition.class)
+    @Bean
+    public Job jsonJob(@Qualifier("jsonStep") Step jsonStep) {
+
+        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(jsonStep).build();
+    }
+
+
+    @Conditional(value = XmlDocumentTypeCondition.class)
+    @Bean
+    protected Step xmlStep(ItemReader<Resource> reader, ItemProcessor<Resource, Document> processor, ItemWriter<Document> writer) {
+
+        return stepBuilders.get("xmlStep")
+                .<Resource, Document>chunk(10)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
     }
 
-
+    @Conditional(value = JsonDocumentTypeCondition.class)
     @Bean
-    protected Step stepJSON(ItemReader<Resource> reader, ItemProcessor<Resource, ObjectNode> processor, ItemWriter<ObjectNode> writer) {
+    protected Step jsonStep(ItemReader<Resource> reader, ItemProcessor<Resource, ObjectNode> processor, ItemWriter<ObjectNode> writer) {
 
-        return stepBuilders.get("stepJSON")
-                .<Resource, ObjectNode> chunk(10)
+        return stepBuilders.get("jsonStep")
+                .<Resource, ObjectNode>chunk(10)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
     }
-
 
     @Bean
     public ItemReader<Resource> reader() {
@@ -95,7 +99,7 @@ public class LoadDocumentsFromDirectoryJob {
         try {
             resources = ctx.getResources(env.getProperty("input_file_path"));
             String inputFilePattern = env.getProperty("input_file_pattern");
-            for ( int i = 0; i < resources.length; i++ ) {
+            for (int i = 0; i < resources.length; i++) {
                 if (resources[i].getFilename().matches(inputFilePattern)) {
                     resourceList.add(resources[i]);
                 }
@@ -109,15 +113,16 @@ public class LoadDocumentsFromDirectoryJob {
     }
 
 
+    @Conditional(value = XmlDocumentTypeCondition.class)
     @Bean
-    public ItemProcessor<Resource, Document> processor() {
+    public ItemProcessor<Resource, Document> xmlProcessor() {
         return new ItemProcessor<Resource, Document>() {
             @Override
             public Document process(Resource item) throws Exception {
                 Source source = new StreamSource(item.getFile());
                 DOMResult result = new DOMResult();
                 TransformerFactory.newInstance().newTransformer().transform(source, result);
-                Document doc = (Document)  result.getNode();
+                Document doc = (Document) result.getNode();
                 XPathFactory factory = XPathFactory.newInstance();
                 XPath xpath = factory.newXPath();
                 String expression = env.getProperty("uri_id");
@@ -125,14 +130,25 @@ public class LoadDocumentsFromDirectoryJob {
                 doc.setDocumentURI("/" + node.getTextContent());
                 return doc;
             }
-
-            ;
         };
     }
 
+    @Conditional(value = XmlDocumentTypeCondition.class)
     @Bean
-    public ItemWriter<Document> writer() {
+    public ItemWriter<Document> xmlWriter() {
         return new DocumentItemWriter();
+    }
+
+    @Conditional(value = JsonDocumentTypeCondition.class)
+    @Bean
+    public ItemProcessor<Resource, ObjectNode> jsonProcessor() {
+        return new JsonItemProcessor();
+    }
+
+    @Conditional(value = JsonDocumentTypeCondition.class)
+    @Bean
+    public ItemWriter<ObjectNode> jsonWriter() {
+        return new JsonItemWriter();
     }
 
 }
