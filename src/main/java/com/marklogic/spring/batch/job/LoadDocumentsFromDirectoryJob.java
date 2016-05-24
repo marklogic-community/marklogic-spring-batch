@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -24,7 +25,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
@@ -39,89 +39,90 @@ import com.marklogic.uri.DefaultUriGenerator;
 @Import(com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class)
 public class LoadDocumentsFromDirectoryJob {
 
-	private static final ObjectMapper MAPPER = new ObjectMapper();
+    private final Log logger = LogFactory.getLog(LoadDocumentsFromDirectoryJob.class);
 
-	@Autowired
-	Environment env;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-	@Autowired
-	private ApplicationContext ctx;
+    @Autowired
+    Environment env;
 
-	@Autowired
-	private JobBuilderFactory jobBuilders;
+    @Autowired
+    private ApplicationContext ctx;
 
-	@Autowired
-	private StepBuilderFactory stepBuilders;
+    @Autowired
+    private JobBuilderFactory jobBuilders;
 
-	@Autowired
-	private DatabaseClientProvider databaseClientProvider;
+    @Autowired
+    private StepBuilderFactory stepBuilders;
 
-	private Resource[] resources;
+    @Autowired
+    private DatabaseClientProvider databaseClientProvider;
 
-	@Bean
-	public Job job(@Qualifier("step1") Step step1) {
-		return jobBuilders.get("loadDocumentsFromDirectoryJob").start(step1)
-				.build();
-	}
+    private Resource[] resources;
 
-	@Bean
-	protected Step step1(ItemReader<Resource> reader,
-			ItemProcessor<Resource, JsonNode> processor,
-			ItemWriter<JsonNode> writer) {
-		return stepBuilders.get("step1").<Resource, JsonNode> chunk(10)
-				.reader(reader).processor(processor).writer(writer).build();
-	}
+    @Bean
+    public Job job(@Qualifier("step1") Step step1) {
+        return jobBuilders.get("loadDocumentsFromDirectoryJob").start(step1)
+                .build();
+    }
 
-	@Bean
-	public ItemReader<Resource> reader() {
-		ResourcesItemReader itemReader = new ResourcesItemReader();
-		ArrayList<Resource> resourceList = new ArrayList<Resource>();
-		try {
-			resources = ctx.getResources(env.getProperty("input_file_path"));
-			String inputFilePattern = env.getProperty("input_file_pattern");
-			for (int i = 0; i < resources.length; i++) {
-				if (resources[i].getFilename().matches(inputFilePattern)) {
-					resourceList.add(resources[i]);
-				}
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+    @Bean
+    protected Step step1(ItemReader<Resource> reader,
+                         ItemProcessor<Resource, ObjectNode> processor,
+                         ItemWriter<ObjectNode> writer) {
+        return stepBuilders.get("step1").<Resource, ObjectNode>chunk(10)
+                .reader(reader).processor(processor).writer(writer).build();
+    }
 
-		itemReader.setResources(resourceList.toArray(new Resource[resourceList
-				.size()]));
-		return itemReader;
-	}
+    @Bean
+    public ItemReader<Resource> reader() {
+        ResourcesItemReader itemReader = new ResourcesItemReader();
+        ArrayList<Resource> resourceList = new ArrayList<Resource>();
+        try {
+            resources = ctx.getResources(env.getProperty("input_file_path"));
+            String inputFilePattern = env.getProperty("input_file_pattern");
+            for (int i = 0; i < resources.length; i++) {
+                if (resources[i].getFilename().matches(inputFilePattern)) {
+                    resourceList.add(resources[i]);
+                }
+            }
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
 
-	@Bean
-	public ItemProcessor<Resource, JsonNode> processor() {
-		return new ItemProcessor<Resource, JsonNode>() {
-			@Override
-			public JsonNode process(Resource item) throws Exception {
-				ObjectNode objectNode = MAPPER.convertValue(item.getFile(),
-						ObjectNode.class);
-				objectNode.put("uri", new DefaultUriGenerator().generateUri(
-						item.getFile(), StringUtils.EMPTY));
-				return MAPPER.readTree(objectNode.toString());
-			}
-		};
-	}
+        itemReader.setResources(resourceList.toArray(new Resource[resourceList.size()]));
+        return itemReader;
+    }
 
-	@Bean
-	public ItemWriter<JsonNode> writer() {
-		return new ItemWriter<JsonNode>() {
-			@Override
-			public void write(List<? extends JsonNode> items) throws Exception {
-				DatabaseClient client = databaseClientProvider
-						.getDatabaseClient();
-				JSONDocumentManager jsonDocumentManager = client
-						.newJSONDocumentManager();
-				items.forEach(item -> {
-					jsonDocumentManager.write(item.get("uri").textValue(),
-							new JacksonHandle(item));
-				});
-			}
-		};
-	}
+    @Bean
+    public ItemProcessor<Resource, ObjectNode> processor() {
+        return new ItemProcessor<Resource, ObjectNode>() {
+            @Override
+            public ObjectNode process(Resource item) throws Exception {
+                ObjectNode objectNode = MAPPER.readValue(item.getFile(),
+                        ObjectNode.class);
+                objectNode.put("uri", new DefaultUriGenerator().generateUri(item.getFile(), ""));
+                return objectNode;
+            }
+        };
+    }
+
+    @Bean
+    public ItemWriter<ObjectNode> writer() {
+        return new ItemWriter<ObjectNode>() {
+            @Override
+            public void write(List<? extends ObjectNode> items) throws Exception {
+                DatabaseClient client = databaseClientProvider
+                        .getDatabaseClient();
+                JSONDocumentManager jsonDocumentManager = client
+                        .newJSONDocumentManager();
+                items.forEach(item -> {
+                    String uri = item.get("uri").textValue();
+                    item.remove("uri");
+                    jsonDocumentManager.write(uri, new JacksonHandle(item));
+                });
+            }
+        };
+    }
 
 }

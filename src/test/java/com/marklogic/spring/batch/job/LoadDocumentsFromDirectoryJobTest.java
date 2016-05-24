@@ -13,6 +13,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
+
 @ContextConfiguration(classes = {
 		com.marklogic.junit.spring.BasicTestConfig.class,
 		com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJob.class,
@@ -20,17 +21,16 @@ import com.marklogic.junit.spring.AbstractSpringTest;
 public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
 
 	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
+	private JobLauncherTestUtils jobLauncherTestUtils;
 
 	@Autowired
 	private ApplicationContext context;
 
 	@Test
 	public void loadManyFilesTest() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-		ClientTestHelper client = new ClientTestHelper();
-		client.setDatabaseClientProvider(getClientProvider());
 
+		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+		assertEquals(org.springframework.batch.core.BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 
 	public static class CustomAnnotationConfigContextLoader extends
