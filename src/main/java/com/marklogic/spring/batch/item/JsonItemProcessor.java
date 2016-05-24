@@ -11,8 +11,6 @@ import org.springframework.core.io.Resource;
  */
 public class JsonItemProcessor implements ItemProcessor<Resource, ObjectNode> {
 
-    private static final String URI = "uri";
-
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override

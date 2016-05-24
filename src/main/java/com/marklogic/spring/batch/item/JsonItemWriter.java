@@ -19,8 +19,6 @@ public class JsonItemWriter implements ItemWriter<ObjectNode> {
 
     private UriGenerator uriGenerator = new DefaultUriGenerator();
 
-    private static final String URI = "uri";
-
     @Autowired
     private DatabaseClientProvider databaseClientProvider;
 
