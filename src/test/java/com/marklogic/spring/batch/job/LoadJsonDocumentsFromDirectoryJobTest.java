@@ -16,11 +16,11 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 @ContextConfiguration(classes = {
         com.marklogic.junit.spring.BasicTestConfig.class,
-        com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJob.class,
+        LoadDocumentsFromDirectoryJob.class,
         com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class
-}, loader = com.marklogic.spring.batch.job.LoadDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class
+}, loader = LoadJsonDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class
 )
-public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
+public class LoadJsonDocumentsFromDirectoryJobTest extends AbstractSpringTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils = new JobLauncherTestUtils();
@@ -31,17 +31,7 @@ public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
     @Test
     public void loadManyFilesTest() throws Exception {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
-        ClientTestHelper client = new ClientTestHelper();
-        client.setDatabaseClientProvider(getClientProvider());
-        Fragment frag = client.parseUri("/Grover");
-        frag.assertElementExists("/monster/name[text() = 'Grover']");
-        frag = client.parseUri("/Elmo");
-        frag.assertElementExists("/monster/name[text() = 'Elmo']");
-        try {
-            client.parseUri("/BigBird");
-        } catch (ResourceNotFoundException ex) {
-            assertNotNull(ex);
-        }
+        assertEquals("COMPLETED", jobExecution.getStatus().name());
 
     }
 
@@ -52,10 +42,10 @@ public class LoadDocumentsFromDirectoryJobTest extends AbstractSpringTest {
         @Override
         protected void customizeContext(GenericApplicationContext context) {
             source = new MockPropertySource();
-            source.withProperty("input_file_path", "data/*.xml");
-            source.withProperty("input_file_pattern", "(elmo|grover).xml");
-            source.withProperty("uri_id", "/monster/name");
-            source.withProperty("document_type", "xml");
+            source.withProperty("input_file_path", "data/*.json");
+            source.withProperty("input_file_pattern", "(elmo|grover).json");
+            source.withProperty("document_type", "json");
+
             context.getEnvironment().getPropertySources().addFirst(source);
         }
     }
