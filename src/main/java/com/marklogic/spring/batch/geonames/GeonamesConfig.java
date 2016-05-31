@@ -24,6 +24,8 @@ import com.marklogic.spring.batch.item.DocumentItemWriter;
 
 import org.geonames.Geoname;
 
+import java.util.List;
+
 @Configuration
 public class GeonamesConfig {
 	
@@ -61,11 +63,16 @@ public class GeonamesConfig {
 	   log.info("ITEM PROCESSOR");
 	   return new GeonamesItemProcessor();
    }
-   
+
    @Bean
    protected ItemWriter<Document> writer() {
 	   log.info("ITEM WRITER");
-	   return new DocumentItemWriter();
+	   return new ItemWriter<Document>() {
+           @Override
+           public void write(List<? extends Document> items) throws Exception {
+
+           }
+       };
    }
    
    @Bean

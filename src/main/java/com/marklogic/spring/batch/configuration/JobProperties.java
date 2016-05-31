@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobProperties {
 
-    public DatabaseClientConfig getTargetDatabaseClientConfiguration() {
-        return targetDatabaseClientConfiguration;
-    }
-
-    DatabaseClientConfig targetDatabaseClientConfiguration;
+    private DatabaseClientConfig targetDatabaseClientConfig;
+    private final String host;
+    private final int port;
+    private final String username;
+    private final String password;
 
     @Autowired
     public JobProperties(
@@ -20,7 +20,32 @@ public class JobProperties {
             @Value("${marklogic.port:8200}") int port,
             @Value("${marklogic.username:admin}") String username,
             @Value("${marklogic.password:admin}") String password) {
-        targetDatabaseClientConfiguration = new DatabaseClientConfig(host, port, username, password);
+        this.host = host;
+        this.port = port;
+        this.username = username;
+        this.password = password;
+        targetDatabaseClientConfig = new DatabaseClientConfig(host, port, username, password);
+    }
+
+    public DatabaseClientConfig getTargetDatabaseClientConfiguration() {
+
+        return targetDatabaseClientConfig;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
 }

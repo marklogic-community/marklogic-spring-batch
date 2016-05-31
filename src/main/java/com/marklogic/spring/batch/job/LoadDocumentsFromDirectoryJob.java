@@ -1,7 +1,12 @@
 package com.marklogic.spring.batch.job;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.spring.SimpleDatabaseClientProvider;
+import com.marklogic.spring.batch.configuration.JobProperties;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import com.marklogic.spring.batch.item.JsonItemProcessor;
 import com.marklogic.spring.batch.item.JsonItemWriter;
@@ -50,6 +55,9 @@ public class LoadDocumentsFromDirectoryJob {
 
     @Autowired
     private StepBuilderFactory stepBuilders;
+
+    @Autowired
+    JobProperties jobProperties;
 
     @Autowired
     private DatabaseClientProvider databaseClientProvider;
@@ -140,13 +148,18 @@ public class LoadDocumentsFromDirectoryJob {
     @Conditional(value = XmlDocumentTypeCondition.class)
     @Bean
     public ItemWriter<Document> xmlWriter() {
-        return new DocumentItemWriter();
+        return new DocumentItemWriter(databaseClient());
     }
 
     @Conditional(value = JsonDocumentTypeCondition.class)
     @Bean
     public ItemProcessor<Resource, ObjectNode> jsonProcessor() {
         return new JsonItemProcessor();
+    }
+
+    @Bean
+    public DatabaseClient databaseClient() {
+        return DatabaseClientFactory.newClient(jobProperties.getHost(), jobProperties.getPort(), jobProperties.getUsername(), jobProperties.getPassword(), DatabaseClientFactory.Authentication.DIGEST);
     }
 
     @Conditional(value = JsonDocumentTypeCondition.class)
