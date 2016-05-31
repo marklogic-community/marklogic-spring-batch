@@ -35,10 +35,9 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
     }
 
     /**
-     * So what we need to do is, given an ID, we need to see if there's already a Map for that ID. If there is, we need
-     * to merge the data from the new item into the existing item.
+     * So what we need to do is, extract the triple from the map and use
+     * writeRecords to insert the triple into the graph
      * 
-     * When we get a column label like address/street, we need to tokenize it...
      */
     @Override
     public void write(List<? extends Map<String, Object>> items) throws Exception {
@@ -50,8 +49,15 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
             logger.debug("KEY [" + idKey + "]");
             writeRecords((Triple)id, graph);
         }
+        logger.info("Triple inserted count [" + this.getTripleCount() + "]");
     }
 
+    /**
+     * Uses the graph that was created to add the triple and either merges or adds based on the 
+     * availability of the graph node
+     * @param rdfTriple
+     * @param graph
+     */
     private void writeRecords(Triple rdfTriple, Graph graph) {
     	// Add triple to the graph
     	graph.add(rdfTriple);
@@ -68,6 +74,10 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
         }
     }
 
+    /** 
+     * Make sure the graph node and MarkLogic data set graphs are initialized when the
+     * context is opened
+     */
     @Override
     public void open(ExecutionContext executionContext) {
         if (graphNode == null) {
@@ -89,8 +99,27 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
             logger.debug("Closing Writer, and writing remaining records");
         }
         //writeRecords(null, null);
-    }	
+    }
     
+    /**
+     * Returns the triple count for the graph that was inserted into MarkLogic
+     * @return
+     */
+    public int getTripleCount()
+    {
+    	int tripleCount = 0;
+    	if (dsg.containsGraph(graphNode))
+    	{
+    		tripleCount = dsg.getGraph(graphNode).size();
+    	}
+    	return tripleCount;
+    }
+    
+    /**
+     * Retrieve the MarkLogic data set graph using the graph factory for the client
+     * @param client
+     * @return MarkLogicDatasetGraph
+     */
     private MarkLogicDatasetGraph getMarkLogicDatasetGraph(DatabaseClient client)
     {
         MarkLogicDatasetGraph dataSetGraph = MarkLogicDatasetGraphFactory
@@ -98,6 +127,9 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
         return dataSetGraph;
     }
     
+    /**
+     * Clears the triples data in MarkLogic
+     */
     protected void clearTripleData()
     {
     	dsg.clear();

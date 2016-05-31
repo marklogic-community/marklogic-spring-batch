@@ -17,13 +17,7 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
 public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemReader<T> implements InitializingBean{
 	private static Log log = LogFactory.getLog(RdfTripleItemReader.class);
 	public static final int VALUE_NOT_SET = -1;
-	
-	private int fetchSize = VALUE_NOT_SET;
 
-	private int maxRows = VALUE_NOT_SET;
-
-	private int queryTimeout = VALUE_NOT_SET;
-	
 	private boolean initialized = false;	
 	
 	private String fileName;
@@ -102,7 +96,7 @@ public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemRe
 				return null;
 			}
 			int currentRow = getCurrentItemCount();
-			log.info("Current Row [" + currentRow + "]");
+			log.debug("Current Row [" + currentRow + "]");
 			@SuppressWarnings("unchecked")
 			T item = (T) mapTripleRow(tripleIterator.next(), currentRow);
 			return item;

@@ -3,8 +3,6 @@ package com.marklogic.migration.rdf;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -23,7 +21,6 @@ import org.springframework.batch.core.repository.support.MapJobRepositoryFactory
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
-import org.springframework.jdbc.core.RowMapper;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -31,12 +28,10 @@ import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.spring.batch.item.RdfTripleItemReader;
 import com.marklogic.spring.batch.item.RdfTripleItemWriter;
 
-public class RdfMigrator<Triple> {
+public class RdfMigrator {
 
 	private static Log log = LogFactory.getLog(RdfMigrator.class);
-    private DataSource dataSource;
     private DatabaseClient databaseClient;
-    private RowMapper<Map<String, Object>> rowMapper;
     private ItemProcessor<Map<String, Object>, Map<String, Object>> itemProcessor;
 
     private JobBuilderFactory jobBuilderFactory;
