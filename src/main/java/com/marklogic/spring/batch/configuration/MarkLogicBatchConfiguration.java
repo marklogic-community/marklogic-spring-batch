@@ -16,7 +16,10 @@ import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -31,12 +34,19 @@ import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
 import java.util.Collection;
 
 @Configuration
+@PropertySource("classpath:job.properties")
+@ComponentScan( { "com.marklogic.spring.batch.configuration" } )
 public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	
 	@Autowired
 	private DatabaseClientProvider databaseClientProvider;
 
     private BatchConfigurer configurer;
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyPlaceHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
     @Override
     @Bean
