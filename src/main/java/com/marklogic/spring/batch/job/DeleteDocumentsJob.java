@@ -30,6 +30,7 @@ public class DeleteDocumentsJob {
     private StepBuilderFactory stepBuilders;
 
     @Autowired
+    @Qualifier("target")
     private DatabaseClientProvider databaseClientProvider;
 
     public DeleteDocumentsJob() {
