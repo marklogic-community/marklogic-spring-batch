@@ -20,11 +20,13 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
+import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
 import com.marklogic.spring.batch.item.RdfTripleItemReader;
 import com.marklogic.spring.batch.item.RdfTripleItemWriter;
 
@@ -93,6 +95,7 @@ public class RdfMigrator {
      */
     public RdfMigrator() {
         initializeDefaultSpringBatchComponents();
+        this.itemProcessor = new PassThroughItemProcessor<Map<String, Object>>();
     }
 
     public RdfMigrator(DatabaseClient databaseClient) {
@@ -139,7 +142,8 @@ public class RdfMigrator {
         }
 
         TaskletStep step = stepBuilderFactory.get("migrationStep-" + System.currentTimeMillis())
-                .<Map<String, Object>, Map<String, Object>> chunk(chunkSize).reader(reader).writer(writer).build();
+                .<Map<String, Object>, Map<String, Object>> chunk(chunkSize).reader(reader).processor(itemProcessor)
+                .writer(writer).build();
 
         Job job = jobBuilderFactory.get("migrationJob-" + System.currentTimeMillis()).start(step).build();
 
@@ -183,7 +187,7 @@ public class RdfMigrator {
     }
 
     public void setItemProcessor(ItemProcessor<Map<String, Object>, Map<String, Object>> itemProcessor) {
-        this.itemProcessor = null;
+        this.itemProcessor = itemProcessor;
     }
     
 }

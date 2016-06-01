@@ -5,6 +5,7 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.item.support.PassThroughItemProcessor;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
@@ -27,14 +28,15 @@ public class ReadAndWriteTripleTest extends AbstractSpringBatchTest {
     private RdfTripleItemReader<Map<String, Object>> reader;
 	private RdfTripleItemWriter rdfWriter;
 	private DatabaseClient client;
+	private PassThroughItemProcessor<Map<String, Object>> processor;
 
     @Before
     public void setup() {
     	reader = new RdfTripleItemReader<Map<String, Object>>();
     	reader.setFileName("triple/test1.ttl");	
-    	//reader.setFileName("triple/tigers.ttl");
 		client = getClient();
-		rdfWriter = new RdfTripleItemWriter(client, "myTestGraph");		
+		rdfWriter = new RdfTripleItemWriter(client, "myTestGraph");	
+		processor = new PassThroughItemProcessor<Map<String, Object>>();
     }
 
     @Test
@@ -50,7 +52,7 @@ public class ReadAndWriteTripleTest extends AbstractSpringBatchTest {
     }
     private void readAndWriteTriples() {	
         launchJobWithStep(stepBuilderFactory.get("testStep").<Map<String, Object>, Map<String, Object>> chunk(1)
-                .reader(reader).writer(rdfWriter).build());
+                .reader(reader).processor(processor).writer(rdfWriter).build());
     }
 
 }
