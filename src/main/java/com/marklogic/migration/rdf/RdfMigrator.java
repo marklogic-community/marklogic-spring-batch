@@ -123,7 +123,7 @@ public class RdfMigrator {
      * @param fileName
      *            the fileName to execute
      * @param rootLocalName
-     *            the local name for the root element in the XML document that's inserted into MarkLogic
+     *            the local name for the graph or collection that's inserted into MarkLogic
      * @param collections
      *            optional array of collections to add each document to
      */

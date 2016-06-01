@@ -17,6 +17,16 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraph;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraphFactory;
 
+/**
+ * As part of the spring batch process we need an item reader and item writer
+ * This class encapsulates and overrides the required methods for the item writer to process the data that 
+ * has been read from the item reader into a graph of the triple using jena libraries. This graph is inserted 
+ * into MarkLogic using the MarkLogicDatSetGraph by using the client API. The triples are inserted into MarkLogic
+ * based on the chunk size as part of the batch process.  
+ * 
+ * @author viyengar
+ *
+ */
 public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemWriter<Map<String, Object>>, ItemStream {
 	
     // Configurable

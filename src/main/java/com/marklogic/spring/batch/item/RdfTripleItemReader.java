@@ -14,6 +14,14 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
+/**
+ * As part of the spring batch process we need an item reader and item writer
+ * This class encapsulates and overrides the required methods for the item reader to process the data that 
+ * has been read from the file into a map of the triple with a key identified by the row number.
+ * @author viyengar
+ *
+ * @param <T> A map with a key and a triple object
+ */
 public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemReader<T> implements InitializingBean{
 	private static Log log = LogFactory.getLog(RdfTripleItemReader.class);
 	public static final int VALUE_NOT_SET = -1;
@@ -51,7 +59,7 @@ public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemRe
 	}	
 	
 	/**
-	 * Uses RDFDataMgr to parse triples. 
+	 * Uses RDFDataMgr to parse triples by constructing the CollectorStreamTriples as the input stream 
 	 */
 	@SuppressWarnings("unchecked")
 	private void parseTriples() {
@@ -78,13 +86,22 @@ public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemRe
 		initialized = false;		
 	}
 
+	/**
+	 * Once the stream is open for read, calls parseTriples to extract the triples and stuff the triples
+	 * into tripleIterator. 
+	 */
 	@Override
 	protected void doOpen() throws Exception {
 		Assert.state(!initialized, "Stream is already initialized.  Close before re-opening.");
 		parseTriples();
 		initialized = true;
 	}
-
+	
+	/**
+	 * Once the reader is open, the method iterates through and extracts the triple that has been read
+	 * into a map to process the item as part of the batch process. The size of the iterator depends
+	 * on the chunk size of the spring batch
+	 */
 	@Override
 	protected T doRead() throws Exception {
 		if (tripleIterator == null) {
@@ -107,6 +124,12 @@ public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemRe
 		}
 	}	
 
+	/**
+	 * Constructs the map for triple based on the triple and the rowNum
+	 * @param tripleRow
+	 * @param rowNum
+	 * @return the map with a key and the triple data
+	 */
 	private Map<String, Object> mapTripleRow(T tripleRow, int rowNum)  {
 		Map<String, Object> mapOfTriples = new LinkedCaseInsensitiveMap<Object>(1);
 		String key = "triple-" + rowNum;

@@ -19,6 +19,7 @@ import com.marklogic.spring.batch.item.RdfTripleItemWriter;
  * <li>Read triple rows using RDFTripleItemReader</li>
  * <li>Writes triples into MarkLogic using RDFTripleItemWriter</li>
  * <li>Uses chunk size of one (1) for batching reads and writes</li>
+ * <li>Checks and asserts the triple data has been inserted into MarkLogic</li> 
  * </ol>
  */
 public class ReadAndWriteTripleTest extends AbstractSpringBatchTest {
