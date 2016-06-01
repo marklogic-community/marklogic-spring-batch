@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.configuration;
 
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.spring.batch.configuration.JobProperties;
@@ -20,7 +20,7 @@ public class JobPropertiesTest extends AbstractSpringTest {
         assertNotNull(props);
 
         //assertEquals("localhost", props.getTargetDatabaseClientConfiguration().getHost());
-        assertEquals(8200, props.getTargetDatabaseClientConfiguration().getPort());
+        assertEquals(8201, props.getTargetDatabaseClientConfiguration().getPort());
         assertEquals("spring-batch-admin", props.getTargetDatabaseClientConfiguration().getUsername());
         assertEquals("password", props.getTargetDatabaseClientConfiguration().getPassword());
     }
