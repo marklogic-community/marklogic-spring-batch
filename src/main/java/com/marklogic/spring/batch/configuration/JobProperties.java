@@ -2,13 +2,14 @@ package com.marklogic.spring.batch.configuration;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JobProperties {
 
-    private DatabaseClientConfig targetDatabaseClientConfig;
+    private DatabaseClientConfig databaseClientConfig;
     private final String host;
     private final int port;
     private final String username;
@@ -24,12 +25,11 @@ public class JobProperties {
         this.port = port;
         this.username = username;
         this.password = password;
-        targetDatabaseClientConfig = new DatabaseClientConfig(host, port, username, password);
+        databaseClientConfig = new DatabaseClientConfig(host, port, username, password);
     }
 
-    public DatabaseClientConfig getTargetDatabaseClientConfiguration() {
-
-        return targetDatabaseClientConfig;
+    public DatabaseClientConfig getDatabaseClientConfig() {
+        return databaseClientConfig;
     }
 
     public String getHost() {
