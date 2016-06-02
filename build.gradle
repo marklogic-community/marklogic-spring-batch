@@ -6,8 +6,8 @@ plugins {
   id "com.jfrog.bintray" version "1.5"
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
   jcenter()
@@ -66,6 +66,12 @@ dependencies {
 
 sourceSets.test.resources.srcDir 'src/test/java'
 
+ext {
+  mlAppConfig {
+      modulePaths = ["src/main/ml-modules", "src/test/ml-modules"]
+  }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
   classifier 'sources' 
   from sourceSets.main.allJava
@@ -75,12 +81,9 @@ publishing {
   publications {
     mainJava(MavenPublication) {
       from components.java
-      artifactId "data-migrator"
-    }
-    sourcesJava(MavenPublication) {
-      from components.java
-      artifactId "data-migrator-sources"
-      artifact sourcesJar
+      groupId "com.marklogic"
+      artifactId "marklogic-spring-batch"
+      version "0.2"
     }
   }
 }
