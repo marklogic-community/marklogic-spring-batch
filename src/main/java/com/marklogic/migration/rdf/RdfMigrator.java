@@ -26,7 +26,6 @@ import org.springframework.batch.support.transaction.ResourcelessTransactionMana
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
-import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
 import com.marklogic.spring.batch.item.RdfTripleItemReader;
 import com.marklogic.spring.batch.item.RdfTripleItemWriter;
 
