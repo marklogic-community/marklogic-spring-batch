@@ -57,12 +57,6 @@ publishing {
             version extensionsVersion
             from components.java
         }
-        jobs(MavenPublication) {
-            groupId group
-            artifactId jobsArtifact
-            version jobsVersion
-            from components.java
-        }
     }
 }
  
