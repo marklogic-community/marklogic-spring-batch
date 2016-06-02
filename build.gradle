@@ -62,28 +62,25 @@ publishing {
     publications {
         extensions(MavenPublication) {
             groupId group
-            artifactId artifact
-            version version
+            artifactId extensionsArtifact
+            version extensionsVersion
             from components.java
         }
     }
 }
  
-if (project.hasProperty("myBintrayUser")) {
-  bintray {
-    user = myBintrayUser
-    key = myBintrayKey
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
     publications = ['extensions']
     pkg {
-      repo = 'maven'
-      name = artifact
-      licenses = ['Apache-2.0']
-      vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
-      version {
-          name = version
-          released = new Date()
-          vcsTag = "v0.2.4-alpha"
-      }
+        repo = 'maven'
+        name = extensionsArtifact
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
+        version {
+            name = extensionsVersion
+            released = new Date()
+        }
     }
-  }
 }
