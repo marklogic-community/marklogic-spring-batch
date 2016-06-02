@@ -50,10 +50,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 publishing {
     publications {
-        extensions(MavenPublication) {
+        core(MavenPublication) {
             groupId group
-            artifactId extensionsArtifact
-            version extensionsVersion
+            artifactId coreArtifact
+            version coreVersion
             from components.java
         }
     }
@@ -62,14 +62,14 @@ publishing {
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-    publications = ['extensions', 'jobs']
+    publications = ['core']
     pkg {
         repo = 'maven'
-        name = extensionsArtifact
+        name = coreArtifact
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
         version {
-            name = extensionsVersion
+            name = coreVersion
             released = new Date()
         }
     }
