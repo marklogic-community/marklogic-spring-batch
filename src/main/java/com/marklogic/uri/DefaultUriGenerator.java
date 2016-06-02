@@ -3,6 +3,7 @@ package com.marklogic.uri;
 import java.io.File;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.helper.LoggingObject;
 
 public class DefaultUriGenerator extends LoggingObject implements UriGenerator {
@@ -37,6 +38,7 @@ public class DefaultUriGenerator extends LoggingObject implements UriGenerator {
         if (o instanceof File) {
             return ((File) o).getAbsolutePath();
         }
+
         if (o instanceof String) {
             String rootDir = getRootDirectory(o);
             String path = "/" + rootDir + "/";
@@ -77,6 +79,11 @@ public class DefaultUriGenerator extends LoggingObject implements UriGenerator {
 
     public void setSuffix(String suffix) {
         this.suffix = suffix;
+    }
+
+    @Override
+    public String generate(){
+        return UUID.randomUUID().toString();
     }
 
 }
