@@ -1,86 +1,17 @@
-plugins {
-  id "com.marklogic.ml-gradle" version "2.1.0" 
-  id "maven-publish"
-  id "java"
-  id "eclipse"
-  id "com.jfrog.bintray" version "1.6"
-}
+allprojects {
+    apply plugin: "java"
+    apply plugin: "eclipse"
+    apply plugin: "idea"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-  jcenter()
-  maven { url "http://repo.spring.io/milestone" }
-  maven { url "http://developer.marklogic.com/maven2/" }
-}
-
-
-dependencies {
-  compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-  compile "org.springframework:spring-core:4.2.6.RELEASE"
-  compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
-  compile "org.springframework:spring-oxm:4.2.6.RELEASE"
-  compile("com.marklogic:ml-javaclient-util:2.5") {
-  	exclude group: 'com.marklogic.java-client', module: 'client-api-java'
-  }
-  compile "commons-cli:commons-cli:1.3.1"
-  compile fileTree(include: ['*.jar'], dir: 'lib')
-  
-  testCompile "org.springframework.batch:spring-batch-test:3.0.6.RELEASE"
-  testCompile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
-
-  testCompile "junit:junit"
-  testCompile "com.marklogic:ml-junit:2.5"
-
-  testCompile "com.jayway.restassured:rest-assured:2.3.1"
-  testCompile "org.springframework.batch:spring-batch-test"
-  
-  // For testing SQL readers
-  testCompile "org.springframework:spring-jdbc:4.2.0.RC3"
-  testCompile "org.hsqldb:hsqldb:2.3.3"
-  
-  // For tests that write objects as XML
-  testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
-  testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1" 
-}
-
-sourceSets.test.resources.srcDir 'src/test/java'
-
-ext {
-  mlAppConfig {
-      modulePaths = ["src/main/ml-modules", "src/test/ml-modules"]
-  }
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier 'sources' 
-  from sourceSets.main.allJava
-}
-
-publishing {
-    publications {
-        extensions(MavenPublication) {
-            groupId group
-            artifactId extensionsArtifact
-            version extensionsVersion
-            from components.java
-        }
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "http://developer.marklogic.com/maven2/" }
     }
-}
- 
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['extensions']
-    pkg {
-        repo = 'maven'
-        name = extensionsArtifact
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
-        version {
-            name = extensionsVersion
-            released = new Date()
-        }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.13'
     }
+
 }

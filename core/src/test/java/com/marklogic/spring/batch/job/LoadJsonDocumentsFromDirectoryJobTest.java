@@ -1,8 +1,5 @@
 package com.marklogic.spring.batch.job;
 
-import com.marklogic.client.ResourceNotFoundException;
-import com.marklogic.junit.ClientTestHelper;
-import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
