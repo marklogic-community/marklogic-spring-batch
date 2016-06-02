@@ -5,21 +5,21 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import com.marklogic.spring.batch.item.JsonItemProcessor;
 import com.marklogic.spring.batch.item.JsonItemWriter;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.ResourcesItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -52,7 +52,8 @@ public class LoadDocumentsFromDirectoryJob {
     private StepBuilderFactory stepBuilders;
 
     @Autowired
-    private DatabaseClientProvider databaseClientProvider;
+    @Qualifier("target")
+    private DatabaseClientProvider jobDatabaseClientProvider;
 
     private Resource[] resources;
 
@@ -140,7 +141,7 @@ public class LoadDocumentsFromDirectoryJob {
     @Conditional(value = XmlDocumentTypeCondition.class)
     @Bean
     public ItemWriter<Document> xmlWriter() {
-        return new DocumentItemWriter();
+        return new DocumentItemWriter(jobDatabaseClientProvider.getDatabaseClient());
     }
 
     @Conditional(value = JsonDocumentTypeCondition.class)
@@ -152,7 +153,7 @@ public class LoadDocumentsFromDirectoryJob {
     @Conditional(value = JsonDocumentTypeCondition.class)
     @Bean
     public ItemWriter<ObjectNode> jsonWriter() {
-        return new JsonItemWriter(databaseClientProvider.getDatabaseClient());
+        return new JsonItemWriter(jobDatabaseClientProvider.getDatabaseClient());
     }
 
 }

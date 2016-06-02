@@ -1,5 +1,8 @@
 package com.marklogic.spring.batch.configuration;
 
+
+import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.spring.batch.bind.*;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
 import org.springframework.batch.core.configuration.annotation.AbstractBatchConfiguration;
@@ -15,14 +18,14 @@ import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
@@ -31,12 +34,24 @@ import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
 import java.util.Collection;
 
 @Configuration
+@PropertySource("classpath:job.properties")
+@ComponentScan( { "com.marklogic.spring.batch.configuration" } )
 public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
-	
+
 	@Autowired
 	private DatabaseClientProvider databaseClientProvider;
 
     private BatchConfigurer configurer;
+
+    @Bean(name = "target")
+    public DatabaseClientProvider jobDatabaseClientProvider(JobProperties jobProperties) {
+        return new SimpleDatabaseClientProvider(jobProperties.getDatabaseClientConfig());
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyPlaceHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
     @Override
     @Bean

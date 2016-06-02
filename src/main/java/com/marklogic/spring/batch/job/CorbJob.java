@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Import;
 public class CorbJob {
 
     @Autowired
+    @Qualifier("target")
     DatabaseClientProvider databaseClientProvider;
 
     @Autowired

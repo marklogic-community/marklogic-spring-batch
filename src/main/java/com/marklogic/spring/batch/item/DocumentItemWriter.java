@@ -14,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class DocumentItemWriter implements ItemWriter<Document> {
 
-	@Autowired
-	private DatabaseClientProvider databaseClientProvider;
+	private DatabaseClient client;
+
+	public DocumentItemWriter(DatabaseClient databaseClient) {
+		this.client = databaseClient;
+	}
 	
 	@Override
 	public void write(List<? extends Document> items) throws Exception {
-		DatabaseClient client = databaseClientProvider.getDatabaseClient();
 		XMLDocumentManager docMgr = client.newXMLDocumentManager();
 		for (Document doc : items) {
 			DOMHandle handle = new DOMHandle(doc);
