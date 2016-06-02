@@ -1,0 +1,76 @@
+plugins {
+    id "com.marklogic.ml-gradle" version "2.1.0"
+    id "com.jfrog.bintray" version "1.6"
+    id "maven-publish"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'lib')
+    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+    compile "org.springframework:spring-core:4.2.6.RELEASE"
+    compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
+    compile "org.springframework:spring-oxm:4.2.6.RELEASE"
+    compile("com.marklogic:ml-javaclient-util:2.5") {
+  	  exclude group: 'com.marklogic.java-client', module: 'client-api-java'
+    }
+    compile "commons-cli:commons-cli:1.3.1"
+
+    testCompile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
+
+    testCompile "junit:junit"
+    testCompile "com.marklogic:ml-junit:2.6.0"
+
+    testCompile "com.jayway.restassured:rest-assured:2.3.1"
+    testCompile "org.springframework.batch:spring-batch-test:3.+"
+  
+    // For testing SQL readers
+    testCompile "org.springframework:spring-jdbc:4.2.0.RC3"
+    testCompile "org.hsqldb:hsqldb:2.3.3"
+  
+    // For tests that write objects as XML
+    testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
+    testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
+}
+
+sourceSets.test.resources.srcDir 'src/test/java'
+
+ext {
+  mlAppConfig {
+      modulePaths = ["src/main/ml-modules", "src/test/ml-modules"]
+  }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier 'sources' 
+  from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        core(MavenPublication) {
+            groupId group
+            artifactId coreArtifact
+            version coreVersion
+            from components.java
+        }
+    }
+}
+ 
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['core']
+    pkg {
+        repo = 'maven'
+        name = coreArtifact
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
+        version {
+            name = coreVersion
+            released = new Date()
+        }
+    }
+}

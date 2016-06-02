@@ -1,0 +1,44 @@
+plugins {
+    id "com.jfrog.bintray" version "1.6"
+    id "maven-publish"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'lib')
+    compile "com.marklogic:marklogic-spring-batch:0.+"
+
+    testCompile "com.marklogic:ml-junit:2.6.0"
+    testCompile "org.springframework.batch:spring-batch-test:3.+"
+}
+
+sourceSets.test.resources.srcDir 'src/test/java'
+
+publishing {
+    publications {
+        jobs(MavenPublication) {
+            groupId group
+            artifactId jobsArtifact
+            version jobsVersion
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['jobs']
+    pkg {
+        repo = 'maven'
+        name = jobsArtifact
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
+        version {
+            name = jobsVersion
+            released = new Date()
+        }
+    }
+}

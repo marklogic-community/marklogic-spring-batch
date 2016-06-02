@@ -1,6 +1,10 @@
 package com.marklogic.spring.batch.job;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ResourceNotFoundException;
+import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
@@ -33,6 +37,12 @@ public class LoadJsonDocumentsFromDirectoryJobTest extends AbstractSpringTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertEquals("COMPLETED", jobExecution.getStatus().name());
 
+        DatabaseClient client = getClientProvider().getDatabaseClient();
+        JSONDocumentManager jsonMgr = client.newJSONDocumentManager();
+        QueryManager queryMgr = client.newQueryManager();
+        StringQueryDefinition qd = queryMgr.newStringDefinition();
+        qd.setCriteria("Elmo OR Grover");
+        assertEquals(2, jsonMgr.search(qd, 0).getTotalSize());
     }
 
     public static class CustomAnnotationConfigContextLoader extends AnnotationConfigContextLoader {
