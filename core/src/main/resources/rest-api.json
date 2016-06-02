@@ -1,0 +1,12 @@
+{
+  "rest-api": {
+    "name": "spring-batch",
+    "group": "Default",
+    "database": "spring-batch-content",
+    "modules-database": "spring-batch-modules",
+    "port": "8200",
+    "xdbc-enabled": true,
+    "forests-per-host": 1,
+    "error-format": "json"
+  }
+}
