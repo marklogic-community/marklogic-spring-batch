@@ -21,7 +21,7 @@ public class DeployMarkLogicJobRepository {
     private ApplicationContext ctx;
 
     public static void main(String[] args) {
-
+        new DeployMarkLogicJobRepository().createRestApi();
     }
 
     public void createRestApi() {
@@ -29,7 +29,6 @@ public class DeployMarkLogicJobRepository {
         ManageClient client = new ManageClient(config);
         RestApiManager mgr = new RestApiManager(client);
         String apiJson = readFile();
-        logger.info(apiJson);
         mgr.createRestApi(readFile());
     }
 

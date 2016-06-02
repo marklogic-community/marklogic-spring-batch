@@ -65,9 +65,10 @@ ext {
   }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier 'sources' 
-  from sourceSets.main.allJava
+task deployMarkLogicJobRepository(type: JavaExec) {
+    classpath = files('build/libs/core.jar')
+    classpath += sourceSets.main.runtimeClasspath
+    main = "com.marklogic.spring.batch.deploy.DeployMarkLogicJobRepository"
 }
 
 publishing {
