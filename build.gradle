@@ -15,3 +15,9 @@ allprojects {
     }
 
 }
+
+project(':jobs') {
+    dependencies {
+        compile project(':core')
+    }
+}
