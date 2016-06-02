@@ -3,7 +3,7 @@ plugins {
   id "maven-publish"
   id "java"
   id "eclipse"
-  id "com.jfrog.bintray" version "1.5"
+  id "com.jfrog.bintray" version "1.6"
 }
 
 sourceCompatibility = 1.8
@@ -59,29 +59,30 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 publishing {
-  publications {
-    mainJava(MavenPublication) {
-      from components.java
-      groupId "com.marklogic"
-      artifactId "marklogic-spring-batch"
-      version "0.2"
+    publications {
+        extensions(MavenPublication) {
+            groupId group
+            artifactId artifact
+            version version
+            from components.java
+        }
     }
-  }
 }
  
 if (project.hasProperty("myBintrayUser")) {
   bintray {
     user = myBintrayUser
     key = myBintrayKey
-    publications = ['mainJava', 'sourcesJava']
+    publications = ['extensions']
     pkg {
       repo = 'maven'
-      name = "data-migrator"
+      name = artifact
       licenses = ['Apache-2.0']
       vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
       version {
-        name = "0.1"
-        released = new Date()
+          name = version
+          released = new Date()
+          vcsTag = "v0.2.4-alpha"
       }
     }
   }
