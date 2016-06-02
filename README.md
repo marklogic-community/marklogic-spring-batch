@@ -22,6 +22,7 @@ Out of the box, Spring Batch requires a relational database to persist the metad
 1. Run the following command
 
 ````
+cd core
 ./gradlew mlDeploy
 ````
 
@@ -30,8 +31,9 @@ To confirm your environment setup, run the following command to run the unit tes
 
 1. Run integration and unit tests
 ````
+cd ..
 ./gradlew test
 ````
 
-1. The test report can be reviewed at build/reports/tests/index.html.  If you get failures please contact @sastafford. 
+1. The test reports can be reviewed at core/build/reports/tests/index.html and jobs/build/reports/tests/index.html.  If you get failures please contact @sastafford. 
  
