@@ -1,26 +1,9 @@
 package com.marklogic.spring.batch.core.repository;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.ConfigDir;
-import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
-import com.marklogic.mgmt.admin.AdminConfig;
-import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.api.API;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.api.restapi.RestApi;
-
-import com.marklogic.mgmt.databases.DatabaseManager;
-import com.marklogic.mgmt.restapis.RestApiManager;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
@@ -28,8 +11,6 @@ import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.core.repository.support.SimpleJobRepository;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 public class MarkLogicSimpleJobRepository extends SimpleJobRepository {

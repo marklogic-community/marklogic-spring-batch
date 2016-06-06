@@ -7,8 +7,6 @@ import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsComm
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.AbstractAppDeployer;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.admin.AdminManager;
 
 import java.util.ArrayList;
 import java.util.List;

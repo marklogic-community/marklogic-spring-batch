@@ -1,7 +1,5 @@
 package com.marklogic.spring.batch.core.repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.mgmt.ManageClient;
@@ -10,7 +8,6 @@ import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
 import java.io.IOException;
 
 public class MarkLogicSimpleJobRepositoryConfig {
