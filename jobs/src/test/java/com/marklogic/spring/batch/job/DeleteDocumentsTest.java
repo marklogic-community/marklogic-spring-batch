@@ -4,29 +4,26 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.junit.Fragment;
 import org.junit.Test;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {
-        com.marklogic.junit.spring.BasicTestConfig.class,
-        com.marklogic.spring.batch.job.DeleteDocumentsJob.class,
-        com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class
-})
-public class DeleteDocumentsJobTest extends AbstractSpringTest {
+public class DeleteDocumentsTest extends AbstractJobTest {
 
-    @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils;
+    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 200;
 
-    private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 2000;
-
+    /**
+     * Note that since this uses a Config class that only has one Job defined in it, there's no need
+     * to specify the name of a job.
+     * <p>
+     * Now enabling the ML JobRepo as well. We expect the document created by it to still exist since our
+     * "Delete" job deletes documents in a different collection.
+     */
     @Test
-    public void testJob() throws Exception {
+    public void testJob() {
         givenSomeDocumentsInTheTestCollection();
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+        runJobWithMarkLogicJobRepository(DeleteDocumentsConfig.class, "--collections", "test");
+        thenTheTestCollectionIsNowEmpty();
+        andTheJobInstanceDocumentExists();
     }
 
     /**
@@ -61,5 +58,11 @@ public class DeleteDocumentsJobTest extends AbstractSpringTest {
         assertNull(
                 "The test collection should be empty because the job deleted all the documents we inserted into the collection",
                 result);
+    }
+
+    private void andTheJobInstanceDocumentExists() {
+        String result = getClient().newServerEval().xquery("collection('http://marklogic.com/spring-batch/job-instance')").evalAs(String.class);
+        Fragment f = parse(result);
+        f.assertElementValue("/msb:mlJobInstance/msb:jobInstance/msb:jobName", "deleteDocumentsJob");
     }
 }
