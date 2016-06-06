@@ -8,6 +8,7 @@ allprojects {
         jcenter()
         maven { url "http://repo.spring.io/milestone" }
         maven { url "http://developer.marklogic.com/maven2/" }
+        maven { url "https://dl.bintray.com/sastafford/maven/" }
     }
 
     task wrapper(type: Wrapper) {
