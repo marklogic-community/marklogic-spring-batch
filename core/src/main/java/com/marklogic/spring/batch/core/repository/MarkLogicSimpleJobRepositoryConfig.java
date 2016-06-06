@@ -32,7 +32,7 @@ public class MarkLogicSimpleJobRepositoryConfig {
     private AdminManager adminManager;
 
 
-    public MarkLogicSimpleJobRepositoryConfig(String host, int port, String username, String password) {
+    public MarkLogicSimpleJobRepositoryConfig(String host, int port, String adminUsername, String adminPassword) {
 
         appConfig = new AppConfig();
         try {
@@ -42,10 +42,10 @@ public class MarkLogicSimpleJobRepositoryConfig {
         }
         appConfig.setName("spring-batch");
 
-        ManageConfig manageConfig = new ManageConfig(host, 8002, username, password);
+        ManageConfig manageConfig = new ManageConfig(host, 8002, adminUsername, adminPassword);
         manageClient = new ManageClient(manageConfig);
 
-        AdminConfig adminConfig = new AdminConfig(host, 8001, username, password);
+        AdminConfig adminConfig = new AdminConfig(host, 8001, adminUsername, adminPassword);
         adminManager = new AdminManager(adminConfig);
     }
 
