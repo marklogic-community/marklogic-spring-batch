@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
  * Created by sstafford on 6/5/2016.
  */
 public class MarkLogicSimpleJobRepositoryConfigTest {
-
+/*
     @Test
     public void test() {
         MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig();
@@ -17,4 +17,5 @@ public class MarkLogicSimpleJobRepositoryConfigTest {
         assertEquals("spring-batch", node.get("name").textValue());
         assertEquals("spring-batch-content", node.get("database").textValue());
     }
+    */
 }

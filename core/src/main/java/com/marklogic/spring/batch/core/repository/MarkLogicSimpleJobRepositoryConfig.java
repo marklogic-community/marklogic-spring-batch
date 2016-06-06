@@ -2,44 +2,36 @@ package com.marklogic.spring.batch.core.repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.ConfigDir;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.admin.AdminManager;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by sstafford on 6/5/2016.
- */
 public class MarkLogicSimpleJobRepositoryConfig {
 
-    JsonNode contentDatabase;
-    JsonNode restApiConfig;
+    AppConfig appConfig;
+    ManageConfig manageConfig;
+    ManageClient manageClient;
+    AdminManager adminManager;
 
-    public JsonNode getContentDatabase() {
-        return contentDatabase;
+
+    public MarkLogicSimpleJobRepositoryConfig(String host, int port, String username, String password) {
+
+        appConfig = new AppConfig();
+        appConfig.setConfigDir(new ConfigDir(new File("resources/ml-config")));
+        appConfig.setName("spring-batch");
+
+        manageConfig = new ManageConfig(host, 8002, username, password);
+        manageClient = new ManageClient(manageConfig);
+
+        AdminConfig adminConfig = new AdminConfig(host, 8001, username, password);
+        adminManager = new AdminManager(adminConfig);
     }
 
-    public JsonNode getRestApiConfig() {
-        return restApiConfig;
-    }
-
-
-    public MarkLogicSimpleJobRepositoryConfig() {
-        readConfig();
-    }
-
-    public void readConfig() {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            ClassPathResource db = new ClassPathResource("ml-config/databases/content-database.json");
-            contentDatabase = objectMapper.readValue(db.getFile(), JsonNode.class);
-
-            db = new ClassPathResource("ml-config/rest-api.json");
-            restApiConfig = objectMapper.readValue(db.getFile(), JsonNode.class);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-    }
 }
