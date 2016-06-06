@@ -3,6 +3,9 @@ package com.marklogic.spring.batch.core.repository;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.AbstractAppDeployer;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -19,7 +22,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends AbstractAppDeployer
     private MarkLogicSimpleJobRepositoryConfig config;
 
     public MarkLogicSimpleJobRepositoryAppDeployer(MarkLogicSimpleJobRepositoryConfig config) {
-        super(config.manageClient, config.adminManager);
+        super(config.getManageClient(), config.getAdminManager());
         this.config = config;
     }
 
@@ -32,6 +35,15 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends AbstractAppDeployer
 
         DeployDatabaseCommand dbCommand = new DeployDatabaseCommand("content-database.json");
         commands.add(dbCommand);
+
+        DeployRolesCommand rolesCommand = new DeployRolesCommand();
+        commands.add(rolesCommand);
+
+        DeployUsersCommand usersCommand = new DeployUsersCommand();
+        commands.add(usersCommand);
+
+        DeployProtectedCollectionsCommand protectedCollectionsCommand = new DeployProtectedCollectionsCommand();
+        commands.add(protectedCollectionsCommand);
 
         return commands;
     }

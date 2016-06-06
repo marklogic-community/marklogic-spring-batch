@@ -15,19 +15,34 @@ import java.io.IOException;
 
 public class MarkLogicSimpleJobRepositoryConfig {
 
-    AppConfig appConfig;
-    ManageConfig manageConfig;
-    ManageClient manageClient;
-    AdminManager adminManager;
+    public AppConfig getAppConfig() {
+        return appConfig;
+    }
+
+    public ManageClient getManageClient() {
+        return manageClient;
+    }
+
+    public AdminManager getAdminManager() {
+        return adminManager;
+    }
+
+    private AppConfig appConfig;
+    private ManageClient manageClient;
+    private AdminManager adminManager;
 
 
     public MarkLogicSimpleJobRepositoryConfig(String host, int port, String username, String password) {
 
         appConfig = new AppConfig();
-        appConfig.setConfigDir(new ConfigDir(new File("resources/ml-config")));
+        try {
+            appConfig.setConfigDir(new ConfigDir(new ClassPathResource("ml-config").getFile()));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         appConfig.setName("spring-batch");
 
-        manageConfig = new ManageConfig(host, 8002, username, password);
+        ManageConfig manageConfig = new ManageConfig(host, 8002, username, password);
         manageClient = new ManageClient(manageConfig);
 
         AdminConfig adminConfig = new AdminConfig(host, 8001, username, password);
