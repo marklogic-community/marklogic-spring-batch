@@ -63,6 +63,12 @@ dependencies {
 
 sourceSets.test.resources.srcDir 'src/test/java'
 
+task deployMarkLogicJobRepository(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepositoryMain'
+    args = ["--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlAdminUsername, "--jrPassword", mlAdminPassword]
+}
+
 ext {
   mlAppConfig {
       modulePaths = ["src/main/ml-modules", "src/test/ml-modules"]
