@@ -1,4 +1,4 @@
 {
-  "server-name": "%%NAME%%",
+  "server-name": "spring-batch",
   "authentication": "digestbasic"
 }

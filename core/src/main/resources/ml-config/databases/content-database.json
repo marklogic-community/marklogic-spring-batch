@@ -1,5 +1,5 @@
 {
-  "database-name": "spring-batch",
+  "database-name": "spring-batch-content",
   "maintain-last-modified": true,
   "uri-lexicon": true,
   "collection-lexicon": true, 
