@@ -2,6 +2,7 @@ package com.marklogic.spring.batch.core.repository;
 
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
+import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand;
 import com.marklogic.appdeployer.impl.AbstractAppDeployer;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -25,8 +26,13 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends AbstractAppDeployer
     @Override
     protected List<Command> getCommands() {
         List<Command> commands = new ArrayList<Command>();
+
+        DeployRestApiServersCommand restApiCommand = new DeployRestApiServersCommand("rest-api.json");
+        commands.add(restApiCommand);
+
         DeployDatabaseCommand dbCommand = new DeployDatabaseCommand("content-database.json");
         commands.add(dbCommand);
+
         return commands;
     }
 }
