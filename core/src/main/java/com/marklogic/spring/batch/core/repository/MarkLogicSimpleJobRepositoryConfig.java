@@ -12,11 +12,17 @@ import java.io.IOException;
  */
 public class MarkLogicSimpleJobRepositoryConfig {
 
+    JsonNode contentDatabase;
+    JsonNode restApiConfig;
+
     public JsonNode getContentDatabase() {
         return contentDatabase;
     }
 
-    JsonNode contentDatabase;
+    public JsonNode getRestApiConfig() {
+        return restApiConfig;
+    }
+
 
     public MarkLogicSimpleJobRepositoryConfig() {
         readConfig();
@@ -24,11 +30,15 @@ public class MarkLogicSimpleJobRepositoryConfig {
 
     public void readConfig() {
         ObjectMapper objectMapper = new ObjectMapper();
-        Resource db = new ClassPathResource("ml-config/databases/content-database.json");
-        try {
-            contentDatabase = objectMapper.readValue(db.getFile(), JsonNode.class);
-        } catch (IOException ex) {
 
+        try {
+            ClassPathResource db = new ClassPathResource("ml-config/databases/content-database.json");
+            contentDatabase = objectMapper.readValue(db.getFile(), JsonNode.class);
+
+            db = new ClassPathResource("ml-config/rest-api.json");
+            restApiConfig = objectMapper.readValue(db.getFile(), JsonNode.class);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
     }

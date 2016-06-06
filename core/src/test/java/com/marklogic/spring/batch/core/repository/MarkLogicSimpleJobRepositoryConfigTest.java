@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.core.repository;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,6 +13,8 @@ public class MarkLogicSimpleJobRepositoryConfigTest {
     @Test
     public void test() {
         MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig();
-        assertEquals("spring-batch", config.getContentDatabase().get("database-name").textValue());
+        JsonNode node = config.getRestApiConfig().get("rest-api");
+        assertEquals("spring-batch", node.get("name").textValue());
+        assertEquals("spring-batch-content", node.get("database").textValue());
     }
 }
