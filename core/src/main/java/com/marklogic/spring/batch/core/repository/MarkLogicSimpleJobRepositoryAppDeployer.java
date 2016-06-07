@@ -35,8 +35,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
     protected List<Command> getCommands() {
         List<Command> commands = new ArrayList<Command>();
 
-        DeployRolesCommand rolesCommand = new DeployRolesCommand();
-        commands.add(rolesCommand);
+
 
         DeployUsersCommand usersCommand = new DeployUsersCommand();
         commands.add(usersCommand);
@@ -57,6 +56,8 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
             RoleManager roleMgr = new RoleManager(config.getManageClient());
             roleMgr.save(role);
         }
+
+        config.getProtectedCollection().save();
     }
 
     public void undeploy(String host, int port) {
@@ -64,6 +65,8 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
             RoleManager roleMgr = new RoleManager(config.getManageClient());
             roleMgr.delete(role);
         }
+
+        config.getProtectedCollection().delete();
 
         config.getRestApi(port).delete();
     }

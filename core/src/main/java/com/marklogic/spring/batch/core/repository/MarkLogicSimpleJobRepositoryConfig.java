@@ -4,6 +4,8 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.restapi.RestApi;
+import com.marklogic.mgmt.api.security.Permission;
+import com.marklogic.mgmt.api.security.ProtectedCollection;
 import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.RolePrivilege;
 
@@ -45,6 +47,20 @@ public class MarkLogicSimpleJobRepositoryConfig {
     public MarkLogicSimpleJobRepositoryConfig(ManageClient manageClient) {
         this.manageClient = manageClient;
         this.api = new API(manageClient);
+    }
+
+    public ProtectedCollection getProtectedCollection() {
+        ProtectedCollection coll = api.protectedCollection("spring-batch");
+        Permission restAdminRead = new Permission();
+        restAdminRead.setRoleName("rest-admin");
+        restAdminRead.setCapability("read");
+
+        Permission restAdminUpdate = new Permission();
+        restAdminUpdate.setRoleName("rest-admin");
+        restAdminUpdate.setCapability("update");
+        coll.addPermission(restAdminRead);
+        coll.addPermission(restAdminUpdate);
+        return coll;
     }
 
     public List<String> getRoles() {

@@ -39,8 +39,14 @@ public class DeployMarkLogicJobRepositoryTest {
         deployer = new MarkLogicSimpleJobRepositoryAppDeployer(config);
         deployer.undeploy(databaseClient.getHost(), port);
 
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         apiMgr = new RestApiManager(manageClient);
         Assert.assertFalse(apiMgr.restApiServerExists("spring-batch"));
+        Assert.assertFalse(config.getProtectedCollection().exists());
         roleMgr = new RoleManager(manageClient);
     }
 
@@ -59,5 +65,7 @@ public class DeployMarkLogicJobRepositoryTest {
         Assert.assertTrue(roleMgr.exists("spring-batch-reader"));
         Assert.assertTrue(roleMgr.exists("spring-batch-admin"));
         Assert.assertTrue(roleMgr.exists("spring-batch-test"));
+
+        Assert.assertTrue(config.getProtectedCollection().exists());
     }
 }
