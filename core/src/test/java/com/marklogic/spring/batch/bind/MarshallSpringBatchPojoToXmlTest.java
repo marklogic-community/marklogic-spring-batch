@@ -30,7 +30,7 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 @ContextConfiguration(classes = {
-        com.marklogic.junit.spring.BasicTestConfig.class,
+        com.marklogic.client.spring.BasicConfig.class,
         com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class
 })
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringTest {

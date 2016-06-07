@@ -28,7 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 
 @ContextConfiguration(classes = {
-		com.marklogic.junit.spring.BasicTestConfig.class,
+		com.marklogic.client.spring.BasicConfig.class,
 		com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class
 })
 public class UnmarshallSpringBatchPojoTest extends AbstractSpringTest {
