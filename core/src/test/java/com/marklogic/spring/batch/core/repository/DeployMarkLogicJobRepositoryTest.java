@@ -6,6 +6,7 @@ import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.api.security.Role;
+import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.restapis.RestApiManager;
 import com.marklogic.mgmt.security.RoleManager;
 import org.junit.Assert;
@@ -48,15 +49,18 @@ public class DeployMarkLogicJobRepositoryTest {
         Assert.assertFalse(apiMgr.restApiServerExists("spring-batch"));
         Assert.assertFalse(config.getProtectedCollection().exists());
         roleMgr = new RoleManager(manageClient);
-    }
-
-    @Test
-    public void deployMarkLogicJobRepositoryTest() {
 
         Assert.assertFalse(roleMgr.exists("spring-batch-reader"));
         Assert.assertFalse(roleMgr.exists("spring-batch-admin"));
         Assert.assertFalse(roleMgr.exists("spring-batch-test"));
+        
+        for (User user : config.getUsers()) {
+            Assert.assertFalse(user.exists());
+        }
+    }
 
+    @Test
+    public void deployMarkLogicJobRepositoryTest() {
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
         int port = databaseClient.getPort();
         deployer.deploy(databaseClient.getHost(), port);
@@ -67,5 +71,9 @@ public class DeployMarkLogicJobRepositoryTest {
         Assert.assertTrue(roleMgr.exists("spring-batch-test"));
 
         Assert.assertTrue(config.getProtectedCollection().exists());
+
+        for (User user : config.getUsers()) {
+            Assert.assertTrue(user.exists());
+        }
     }
 }

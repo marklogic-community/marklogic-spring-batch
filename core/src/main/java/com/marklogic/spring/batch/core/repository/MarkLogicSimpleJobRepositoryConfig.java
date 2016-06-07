@@ -4,10 +4,7 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.restapi.RestApi;
-import com.marklogic.mgmt.api.security.Permission;
-import com.marklogic.mgmt.api.security.ProtectedCollection;
-import com.marklogic.mgmt.api.security.Role;
-import com.marklogic.mgmt.api.security.RolePrivilege;
+import com.marklogic.mgmt.api.security.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +60,7 @@ public class MarkLogicSimpleJobRepositoryConfig {
         return coll;
     }
 
+    //Lazy - just using the JSON strings instead of building the Role objects
     public List<String> getRoles() {
         List roles = new ArrayList<String>();
 
@@ -77,6 +75,29 @@ public class MarkLogicSimpleJobRepositoryConfig {
         roles.add(springBatchTestRole);
 
         return roles;
+    }
+
+    public List<User> getUsers() {
+        User springBatchAdmin = api.user("spring-batch-admin");
+        springBatchAdmin.setDescription("Admin user for Spring Batch application");
+        springBatchAdmin.setPassword("password");
+        springBatchAdmin.addRole("spring-batch-admin");
+
+        User springBatchTest = api.user("spring-batch-test");
+        springBatchTest.setDescription("Test user for Spring Batch application - delete this user for deployments");
+        springBatchTest.setPassword("password");
+        springBatchTest.addRole("spring-batch-test");
+
+        User springBatchUser = api.user("spring-batch-user");
+        springBatchUser.setDescription("Sample user for Spring Batch application");
+        springBatchUser.setPassword("password");
+        springBatchUser.addRole("spring-batch-reader");
+
+        List<User> users = new ArrayList<User>();
+        users.add(springBatchAdmin);
+        users.add(springBatchTest);
+        users.add(springBatchUser);
+        return users;
     }
 
 }

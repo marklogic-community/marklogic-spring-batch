@@ -11,6 +11,7 @@ import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.restapi.RestApi;
 import com.marklogic.mgmt.api.security.Role;
+import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.mgmt.restapis.RestApiManager;
 import com.marklogic.mgmt.security.RoleManager;
@@ -32,20 +33,6 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
         this.config = config;
     }
 
-    protected List<Command> getCommands() {
-        List<Command> commands = new ArrayList<Command>();
-
-
-
-        DeployUsersCommand usersCommand = new DeployUsersCommand();
-        commands.add(usersCommand);
-
-        DeployProtectedCollectionsCommand protectedCollectionsCommand = new DeployProtectedCollectionsCommand();
-        commands.add(protectedCollectionsCommand);
-
-        return commands;
-    }
-
     public void deploy(String host, int port) {
         config.getRestApi(port).save();
 
@@ -57,10 +44,18 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
             roleMgr.save(role);
         }
 
+        for (User user : config.getUsers()) {
+            user.save();
+        }
+
         config.getProtectedCollection().save();
     }
 
     public void undeploy(String host, int port) {
+        for (User user : config.getUsers()) {
+            user.delete();
+        }
+
         for (String role : config.getRoles()) {
             RoleManager roleMgr = new RoleManager(config.getManageClient());
             roleMgr.delete(role);
