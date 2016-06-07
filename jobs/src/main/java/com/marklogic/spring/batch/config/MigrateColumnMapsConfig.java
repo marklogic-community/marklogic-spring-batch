@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.config;
 
-import com.marklogic.spring.batch.Main;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
 import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
@@ -27,11 +26,7 @@ import java.util.Map;
  * Configuration for a simple approach for migrating rows to documents via Spring JDBC ColumnMaps.
  */
 @Configuration
-public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer{
-
-    public static void main(String[] args) throws Exception {
-        Main.main(new String[]{"--help", "--config", "com.marklogic.spring.batch.config.MigrateColumnMapsConfig"});
-    }
+public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer {
 
     @Autowired
     private Environment env;
