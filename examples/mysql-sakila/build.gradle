@@ -1,0 +1,65 @@
+plugins {
+    id "com.marklogic.ml-gradle" version "2.2.0"
+    id "java"
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    compile "com.marklogic:marklogic-spring-batch:DEV"
+    runtime "com.marklogic:marklogic-spring-batch-jobs:DEV"
+    runtime "mysql:mysql-connector-java:5.1.6"
+}
+
+ext {
+    actorsSql = "SELECT * FROM actor"
+    filmsWithActorsSql =
+        "SELECT film.*, film_text.description as filmText, category.name as category, language.name as language, \n" +
+        "actor.actor_id as \\\"actor/id\\\", actor.first_name as \\\"actor/firstName\\\", actor.last_name as \\\"actor/lastName\\\"\n" +
+        "FROM film LEFT JOIN film_category ON film.film_id = film_category.film_id \n" +
+        "LEFT JOIN category ON film_category.category_id = category.category_id \n" +
+        "LEFT JOIN film_actor ON film.film_id = film_actor.film_id \n" +
+        "LEFT JOIN actor ON film_actor.actor_id = actor.actor_id  \n" +
+        "LEFT JOIN film_text ON film.film_id = film_text.film_id \n" +
+        "LEFT JOIN language ON film.language_id = language.language_id \n" +
+        "ORDER BY film.film_id"
+}
+
+task migrateActors(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+        "--config", "com.marklogic.spring.batch.config.MigrateColumnMapsConfig",
+        "--host", mlHost,
+        "--port", mlRestPort,
+        "--username", mlUsername,
+        "--password", mlPassword,
+        "--jdbcDriver", "com.mysql.jdbc.Driver",
+        "--jdbcUrl", "jdbc:mysql://localhost:3306/sakila",
+        "--jdbcUsername", "root",
+        "--jdbcPassword", "admin",
+        "--sql", actorsSql,
+        "--rootLocalName", "actor"
+    ]
+}
+
+task migrateFilmsWithActors(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+        "--config", "com.marklogic.spring.batch.config.MigrateColumnMapsConfig",
+        "--host", mlHost,
+        "--port", mlRestPort,
+        "--username", mlUsername,
+        "--password", mlPassword,
+        "--jdbcDriver", "com.mysql.jdbc.Driver",
+        "--jdbcUrl", "jdbc:mysql://localhost:3306/sakila",
+        "--jdbcUsername", "root",
+        "--jdbcPassword", "admin",
+        "--sql", filmsWithActorsSql,
+        "--rootLocalName", "actor"
+    ]
+}

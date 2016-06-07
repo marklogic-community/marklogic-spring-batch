@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.sql.user;
+package com.marklogic.spring.batch.config.sql.user;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +47,7 @@ public class UserWriter extends AbstractDocumentWriter implements ItemWriter<Use
      */
     @Override
     public void write(List<? extends User> items) throws Exception {
-        logger.info("Checking for users to write, size of list: " + items.size());
+        logger.debug("Checking for users to write, size of list: " + items.size());
         Set<Integer> userIdsToIgnore = new HashSet<>();
         for (User user : items) {
             int id = user.getId();
@@ -72,7 +72,7 @@ public class UserWriter extends AbstractDocumentWriter implements ItemWriter<Use
                 try {
                     String xml = xmlMapper.writeValueAsString(user);
                     String uri = generateUri(xml, id + "");
-                    logger.info("Adding user to the set of documents to write: " + id);
+                    logger.debug("Adding user to the set of documents to write: " + id);
                     set.add(uri, buildMetadata(), new StringHandle(xml));
                     keysToRemove.add(id);
                 } catch (JsonProcessingException ex) {
