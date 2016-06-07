@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.mgmt.ManageClient;
@@ -64,6 +65,8 @@ public class DeployMarkLogicJobRepositoryTest {
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
         int port = databaseClient.getPort();
         deployer.deploy(databaseClient.getHost(), port);
+
+        //Validate the deployment
         Assert.assertTrue(apiMgr.restApiServerExists("spring-batch"));
 
         Assert.assertTrue(roleMgr.exists("spring-batch-reader"));
@@ -75,5 +78,14 @@ public class DeployMarkLogicJobRepositoryTest {
         for (User user : config.getUsers()) {
             Assert.assertTrue(user.exists());
         }
+
+        ServerConfigurationManager serverConfigMgr = databaseClient.newServerConfigManager();
+        serverConfigMgr.readConfiguration();
+        Assert.assertTrue(serverConfigMgr.getQueryValidation());
+        Assert.assertFalse(serverConfigMgr.getDefaultDocumentReadTransformAll());
+        Assert.assertEquals(ServerConfigurationManager.UpdatePolicy.VERSION_OPTIONAL, serverConfigMgr.getUpdatePolicy());
+        Assert.assertTrue(serverConfigMgr.getQueryOptionValidation());
+
+        databaseClient.release();
     }
 }

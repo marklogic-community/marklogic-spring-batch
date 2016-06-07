@@ -100,4 +100,84 @@ public class MarkLogicSimpleJobRepositoryConfig {
         return users;
     }
 
+    public String getSpringBatchOptions() {
+        return "<options xmlns=\"http://marklogic.com/appservices/search\">\n" +
+                "    <constraint name=\"jobInstance\">\n" +
+                "        <element-query name=\"jobInstance\" ns=\"http://marklogic.com/spring-batch\" />\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"jobInstanceId\">\n" +
+                "        <value>\n" +
+                "            <element name=\"id\" ns=\"http://marklogic.com/spring-batch\" />\n" +
+                "        </value>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"jobName\">\n" +
+                "        <value>\n" +
+                "            <element name=\"jobName\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
+                "        </value>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"jobKey\">\n" +
+                "        <value>\n" +
+                "            <element name=\"jobKey\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
+                "        </value>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"jobParameter\">\n" +
+                "        <value>\n" +
+                "            <element name=\"jobParameter\" ns=\"http://marklogic.com/spring-batch/job-parameter\" />  \n" +
+                "        </value>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"status\">\n" +
+                "        <value>\n" +
+                "            <element name=\"status\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
+                "        </value>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"jobExecutionId\">\n" +
+                "        <range type=\"xs:unsignedLong\" facet=\"false\">\n" +
+                "              <path-index xmlns:msb=\"http://marklogic.com/spring-batch\">/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id</path-index>\n" +
+                "        </range>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"endDateTime\">\n" +
+                "        <container>\n" +
+                "            <element name=\"endDateTime\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
+                "        </container>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"type\">\n" +
+                "        <collection prefix=\"http://marklogic.com/spring-batch/\" facet=\"false\" />\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"jobExecution-createDateTime\">\n" +
+                "        <range>\n" +
+                "            <element ns=\"http://marklogic.com/spring-batch\" name=\"createDateTime\"/>\n" +
+                "        </range>\n" +
+                "    </constraint>\n" +
+                "    <constraint name=\"jobInstance-createDateTime\">\n" +
+                "        <range>\n" +
+                "            <element ns=\"http://marklogic.com/spring-batch\" name=\"createDateTime\"/>\n" +
+                "        </range>\n" +
+                "    </constraint>\n" +
+                "    <values name=\"jobExecutionId\">\n" +
+                "        <range type=\"xs:unsignedLong\">\n" +
+                "              <element ns=\"http://marklogic.com/spring-batch\" name=\"id\" />\n" +
+                "        </range>\n" +
+                "      </values>\n" +
+                "    <values name=\"jobInstanceId\">\n" +
+                "        <range type=\"xs:unsignedLong\">\n" +
+                "              <element ns=\"http://marklogic.com/spring-batch\" name=\"id\" />\n" +
+                "        </range>\n" +
+                "      </values>\n" +
+                "      <values name=\"jobName\">\n" +
+                "        <range type=\"xs:string\">\n" +
+                "              <element ns=\"http://marklogic.com/spring-batch\" name=\"jobName\" />\n" +
+                "        </range>\n" +
+                "      </values>\n" +
+                "    <operator name=\"sort\">\n" +
+                "           <state name=\"date\">\n" +
+                "              <sort-order direction=\"descending\" type=\"xs:dateTime\">\n" +
+                "                 <element ns=\"http://marklogic.com/spring-batch\" name=\"createDateTime\"/>\n" +
+                "              </sort-order>\n" +
+                "        </state>\n" +
+                "     </operator>\n" +
+                "    <transform-results apply=\"raw\" />\n" +
+                "</options>";
+
+    }
+
 }
