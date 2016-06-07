@@ -10,6 +10,7 @@ import com.marklogic.appdeployer.impl.AbstractAppDeployer;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.restapi.RestApi;
+import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.mgmt.restapis.RestApiManager;
 import com.sun.javafx.binding.Logging;
@@ -50,11 +51,16 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
 
         DatabaseManager dbMgr = new DatabaseManager(config.getManageClient());
         dbMgr.save(config.getDatabase());
+
+        for (Role role : config.getRoles()) {
+            role.save();
+        }
     }
 
     public void undeploy(String host, int port) {
-        DatabaseManager dbMgr = new DatabaseManager(config.getManageClient());
-        dbMgr.deleteByName(config.getName());
+        for (Role role : config.getRoles()) {
+            role.delete();
+        }
 
         config.getRestApi(port).delete();
     }

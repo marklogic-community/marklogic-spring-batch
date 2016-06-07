@@ -5,6 +5,7 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.restapis.RestApiManager;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +25,7 @@ public class DeployMarkLogicJobRepositoryTest {
 
     @Autowired
     DatabaseClientProvider databaseClientProvider;
-    
+
     @Before
     public void undeployApplication() {
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
@@ -37,6 +38,10 @@ public class DeployMarkLogicJobRepositoryTest {
 
         apiMgr = new RestApiManager(manageClient);
         Assert.assertFalse(apiMgr.restApiServerExists("spring-batch"));
+        for (Role role : config.getRoles()) {
+            Assert.assertFalse(role.exists());
+        }
+
     }
 
     @Test
@@ -45,5 +50,9 @@ public class DeployMarkLogicJobRepositoryTest {
         int port = databaseClient.getPort();
         deployer.deploy(databaseClient.getHost(), port);
         Assert.assertTrue(apiMgr.restApiServerExists("spring-batch"));
+
+        for (Role role : config.getRoles()) {
+            Assert.assertTrue(role.exists());
+        }
     }
 }
