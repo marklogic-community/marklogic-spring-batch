@@ -2,7 +2,7 @@ package com.marklogic.spring.batch.job;
 
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import com.marklogic.junit.spring.BasicTestConfig;
+import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.spring.batch.Main;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
@@ -18,11 +18,11 @@ import java.util.List;
  * Base class for any marklogic-spring-batch test that needs to run a job. Uses the Main program
  * to collect command line arguments and run a job.
  */
-@ContextConfiguration(classes = {BasicTestConfig.class})
+@ContextConfiguration(classes = { BasicConfig.class })
 public abstract class AbstractJobTest extends AbstractSpringTest {
 
     @Autowired
-    private BasicTestConfig testConfig;
+    private BasicConfig testConfig;
 
     @Override
     protected NamespaceProvider getNamespaceProvider() {
@@ -59,7 +59,7 @@ public abstract class AbstractJobTest extends AbstractSpringTest {
         args.add(arg(Options.HOST));
         args.add(testConfig.getMlHost());
         args.add(arg(Options.PORT));
-        args.add(testConfig.getMlTestRestPort().toString());
+        args.add(testConfig.getMlRestPort().toString());
         args.add(arg(Options.USERNAME));
         args.add(testConfig.getMlUsername());
         args.add(arg(Options.PASSWORD));
@@ -68,7 +68,7 @@ public abstract class AbstractJobTest extends AbstractSpringTest {
             args.add(arg(Options.JOB_REPOSITORY_HOST));
             args.add(testConfig.getMlHost());
             args.add(arg(Options.JOB_REPOSITORY_PORT));
-            args.add(testConfig.getMlTestRestPort().toString());
+            args.add(testConfig.getMlRestPort().toString());
             args.add(arg(Options.JOB_REPOSITORY_USERNAME));
             args.add(testConfig.getMlUsername());
             args.add(arg(Options.JOB_REPOSITORY_PASSWORD));
