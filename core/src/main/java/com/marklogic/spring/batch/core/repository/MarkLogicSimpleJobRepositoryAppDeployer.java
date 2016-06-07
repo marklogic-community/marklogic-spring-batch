@@ -13,6 +13,7 @@ import com.marklogic.mgmt.api.restapi.RestApi;
 import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.mgmt.restapis.RestApiManager;
+import com.marklogic.mgmt.security.RoleManager;
 import com.sun.javafx.binding.Logging;
 import org.springframework.http.HttpMethod;
 
@@ -52,14 +53,16 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
         DatabaseManager dbMgr = new DatabaseManager(config.getManageClient());
         dbMgr.save(config.getDatabase());
 
-        for (Role role : config.getRoles()) {
-            role.save();
+        for (String role : config.getRoles()) {
+            RoleManager roleMgr = new RoleManager(config.getManageClient());
+            roleMgr.save(role);
         }
     }
 
     public void undeploy(String host, int port) {
-        for (Role role : config.getRoles()) {
-            role.delete();
+        for (String role : config.getRoles()) {
+            RoleManager roleMgr = new RoleManager(config.getManageClient());
+            roleMgr.delete(role);
         }
 
         config.getRestApi(port).delete();
