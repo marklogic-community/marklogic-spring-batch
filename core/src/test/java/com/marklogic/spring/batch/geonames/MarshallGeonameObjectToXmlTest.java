@@ -19,7 +19,7 @@ import org.w3c.dom.Document;
 import com.marklogic.junit.Fragment;
 
 @ContextConfiguration(classes = {
-        com.marklogic.junit.spring.BasicTestConfig.class
+        com.marklogic.client.spring.BasicConfig.class
 })
 public class MarshallGeonameObjectToXmlTest extends AbstractSpringTest {
 

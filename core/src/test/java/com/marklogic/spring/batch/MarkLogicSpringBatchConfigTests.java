@@ -15,7 +15,7 @@ import com.marklogic.client.admin.ServerConfigurationManager.UpdatePolicy;
 import com.marklogic.client.helper.DatabaseClientProvider;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { com.marklogic.junit.spring.BasicTestConfig.class })
+@ContextConfiguration(classes = { com.marklogic.client.spring.BasicConfig.class })
 public class MarkLogicSpringBatchConfigTests extends Assert {
 	
 	@Autowired

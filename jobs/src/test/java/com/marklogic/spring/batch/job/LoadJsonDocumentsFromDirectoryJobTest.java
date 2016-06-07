@@ -19,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 @ContextConfiguration(classes = {
-        com.marklogic.junit.spring.BasicTestConfig.class,
+        com.marklogic.client.spring.BasicConfig.class,
         LoadDocumentsFromDirectoryJob.class,
         com.marklogic.spring.batch.test.MarkLogicSpringBatchTestConfig.class
 }, loader = LoadJsonDocumentsFromDirectoryJobTest.CustomAnnotationConfigContextLoader.class

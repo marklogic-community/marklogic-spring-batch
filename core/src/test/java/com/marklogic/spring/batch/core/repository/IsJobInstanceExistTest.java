@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {
-		com.marklogic.junit.spring.BasicTestConfig.class,
+		com.marklogic.client.spring.BasicConfig.class,
 		com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class
 })
 public class IsJobInstanceExistTest extends AbstractSpringTest {
