@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, com.marklogic.junit.spring.BasicTestConfig.class })
+@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, com.marklogic.client.spring.BasicConfig.class })
 public class MarkLogicJobInstanceDaoTests extends AbstractSpringTest {
 
 	private static final long DATE = 777;
