@@ -25,8 +25,8 @@ import org.springframework.test.context.ContextConfiguration;
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @ContextConfiguration(classes = {
-		com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, 
-		com.marklogic.junit.spring.BasicTestConfig.class })
+		com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class,
+		com.marklogic.client.spring.BasicConfig.class })
 public class MarkLogicStepExecutionsDaoTest extends AbstractSpringTest {
 	
 	@Autowired

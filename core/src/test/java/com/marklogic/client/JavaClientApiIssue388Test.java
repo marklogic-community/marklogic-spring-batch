@@ -1,5 +1,6 @@
 package com.marklogic.client;
 
+import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Test;
 
@@ -13,9 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
  * https://github.com/marklogic/java-client-api/issues/388
  */
 
-@ContextConfiguration(classes = {
-		com.marklogic.junit.spring.BasicTestConfig.class
-})
+@ContextConfiguration(classes = { BasicConfig.class } )
 public class JavaClientApiIssue388Test extends AbstractSpringTest {
 	
 	@Test

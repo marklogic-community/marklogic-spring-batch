@@ -13,7 +13,7 @@ import com.marklogic.spring.batch.JobParametersTestUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {
-		com.marklogic.junit.spring.BasicTestConfig.class,
+		com.marklogic.client.spring.BasicConfig.class,
 		com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class
 })
 public class GetJobInstancesTest extends AbstractSpringTest {

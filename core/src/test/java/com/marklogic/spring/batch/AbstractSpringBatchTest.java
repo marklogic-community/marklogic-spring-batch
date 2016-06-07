@@ -17,7 +17,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
 import com.marklogic.spring.batch.core.AdaptedExecutionContext;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
@@ -26,8 +25,8 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 @ActiveProfiles("default")
-@ContextConfiguration(classes = { 
-		com.marklogic.junit.spring.BasicTestConfig.class,
+@ContextConfiguration(classes = {
+        com.marklogic.client.spring.BasicConfig.class,
 		com.marklogic.spring.batch.configuration.DefaultBatchConfiguration.class })
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 
