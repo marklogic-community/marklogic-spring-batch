@@ -5,6 +5,8 @@ package com.marklogic.spring.batch;
  */
 public interface Options {
 
+    String HELP = "help";
+
     String HOST = "host";
     String PORT = "port";
     String USERNAME = "username";
@@ -17,4 +19,10 @@ public interface Options {
 
     String CONFIG = "config";
     String JOB = "job";
+    String CHUNK_SIZE = "chunk";
+
+    String JDBC_DRIVER = "jdbcDriver";
+    String JDBC_URL = "jdbcUrl";
+    String JDBC_USERNAME = "jdbcUsername";
+    String JDBC_PASSWORD = "jdbcPassword";
 }

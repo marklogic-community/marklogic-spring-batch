@@ -1,8 +1,10 @@
 package com.marklogic.spring.batch.job;
 
 import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
 import com.marklogic.spring.batch.corb.CorbWriter;
 import com.marklogic.spring.batch.item.MarkLogicItemReader;
+import joptsimple.OptionParser;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -13,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class CorbConfig extends AbstractMarkLogicBatchConfig {
+public class CorbConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer {
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
@@ -33,4 +35,9 @@ public class CorbConfig extends AbstractMarkLogicBatchConfig {
                 .build();
     }
 
+    @Override
+    public void configureOptionParser(OptionParser parser) {
+        parser.accepts("urisModule", "Path of the URIs module").withRequiredArg();
+        parser.accepts("transformModue", "Path of the transform module").withRequiredArg();
+    }
 }
