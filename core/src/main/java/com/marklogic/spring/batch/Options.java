@@ -17,4 +17,7 @@ public interface Options {
 
     String CONFIG = "config";
     String JOB = "job";
+
+    String DEPLOY = "deploy";
+    String UNDEPLOY = "undeploy";
 }

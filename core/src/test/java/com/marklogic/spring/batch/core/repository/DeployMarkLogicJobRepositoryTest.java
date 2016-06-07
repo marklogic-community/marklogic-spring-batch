@@ -53,7 +53,7 @@ public class DeployMarkLogicJobRepositoryTest {
         Assert.assertFalse(roleMgr.exists("spring-batch-reader"));
         Assert.assertFalse(roleMgr.exists("spring-batch-admin"));
         Assert.assertFalse(roleMgr.exists("spring-batch-test"));
-        
+
         for (User user : config.getUsers()) {
             Assert.assertFalse(user.exists());
         }

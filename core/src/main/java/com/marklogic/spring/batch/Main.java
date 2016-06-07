@@ -1,6 +1,10 @@
 package com.marklogic.spring.batch;
 
 import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryAppDeployer;
+import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryConfig;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.springframework.batch.core.Job;
@@ -30,8 +34,42 @@ public class Main extends LoggingObject {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        new Main().runJob(args);
+        Main main = new Main();
+        if (args[0].equals(Options.DEPLOY)) {
+            main.deployMarkLogicJobRepository(args);
+        } else if (args[0].equals(Options.UNDEPLOY)) {
+            main.undeployMarkLogicJobRepository(args);
+        } else {
+            main.runJob(args);
+        }
+    }
 
+    public void deployMarkLogicJobRepository(String[] args) {
+        OptionParser parser = buildOptionParser();
+        OptionSet options = parser.parse(args);
+        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
+        ManageConfig manageConfig = new ManageConfig(
+                host, 8002,
+                options.valueOf(Options.JOB_REPOSITORY_USERNAME).toString(),
+                options.valueOf(Options.JOB_REPOSITORY_PASSWORD).toString());
+        ManageClient manageClient = new ManageClient(manageConfig);
+        MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
+        MarkLogicSimpleJobRepositoryAppDeployer deployer = new MarkLogicSimpleJobRepositoryAppDeployer(config);
+        deployer.deploy(host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
+    }
+
+    public void undeployMarkLogicJobRepository(String[] args) {
+        OptionParser parser = buildOptionParser();
+        OptionSet options = parser.parse(args);
+        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
+        ManageConfig manageConfig = new ManageConfig(
+                host, 8002,
+                options.valueOf(Options.JOB_REPOSITORY_USERNAME).toString(),
+                options.valueOf(Options.JOB_REPOSITORY_PASSWORD).toString());
+        ManageClient manageClient = new ManageClient(manageConfig);
+        MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
+        MarkLogicSimpleJobRepositoryAppDeployer deployer = new MarkLogicSimpleJobRepositoryAppDeployer(config);
+        deployer.undeploy(host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
     }
 
     /**
@@ -73,6 +111,9 @@ public class Main extends LoggingObject {
         parser.accepts(Options.JOB_REPOSITORY_PORT, "Port number of the App Server for the JobRepository. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8000);
         parser.accepts(Options.JOB_REPOSITORY_USERNAME, "The MarkLogic user to authenticate as against JobRepository App Server").withRequiredArg().defaultsTo("admin");
         parser.accepts(Options.JOB_REPOSITORY_PASSWORD, "The password for the JobRepository MarkLogic user").withRequiredArg();
+
+        parser.accepts(Options.DEPLOY, "Include this parameter to deploy a MarkLogicJobRepository.  Requires the jrHost, jrPort, jrUsername, and jrPassword parameters");
+        parser.accepts(Options.UNDEPLOY, "Include this parameter to undeploy a MarkLogicJobRepository.  Requires the jrHost, jrPort, jrUsername, and jrPassword parameters");
 
         parser.allowsUnrecognizedOptions();
         return parser;
