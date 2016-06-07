@@ -7,6 +7,13 @@ import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsComm
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.AbstractAppDeployer;
+import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.restapi.RestApi;
+import com.marklogic.mgmt.databases.DatabaseManager;
+import com.marklogic.mgmt.restapis.RestApiManager;
+import com.sun.javafx.binding.Logging;
+import org.springframework.http.HttpMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,25 +21,17 @@ import java.util.List;
 /**
  * Created by sstafford on 6/6/2016.
  */
-public class MarkLogicSimpleJobRepositoryAppDeployer extends AbstractAppDeployer {
+public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
 
     private List<Command> commands;
     private MarkLogicSimpleJobRepositoryConfig config;
 
     public MarkLogicSimpleJobRepositoryAppDeployer(MarkLogicSimpleJobRepositoryConfig config) {
-        super(config.getManageClient(), config.getAdminManager());
         this.config = config;
     }
 
-    @Override
     protected List<Command> getCommands() {
         List<Command> commands = new ArrayList<Command>();
-
-        DeployRestApiServersCommand restApiCommand = new DeployRestApiServersCommand("rest-api.json");
-        commands.add(restApiCommand);
-
-        DeployDatabaseCommand dbCommand = new DeployDatabaseCommand("content-database.json");
-        commands.add(dbCommand);
 
         DeployRolesCommand rolesCommand = new DeployRolesCommand();
         commands.add(rolesCommand);
@@ -44,5 +43,19 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends AbstractAppDeployer
         commands.add(protectedCollectionsCommand);
 
         return commands;
+    }
+
+    public void deploy(String host, int port) {
+        config.getRestApi(port).save();
+
+        DatabaseManager dbMgr = new DatabaseManager(config.getManageClient());
+        dbMgr.save(config.getDatabase());
+    }
+
+    public void undeploy(String host, int port) {
+        DatabaseManager dbMgr = new DatabaseManager(config.getManageClient());
+        dbMgr.deleteByName(config.getName());
+
+        config.getRestApi(port).delete();
     }
 }
