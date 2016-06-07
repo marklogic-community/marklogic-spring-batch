@@ -2,6 +2,7 @@ plugins {
     id "com.marklogic.ml-gradle" version "2.1.0"
     id "com.jfrog.bintray" version "1.6"
     id "maven-publish"
+    id "application"
 }
 
 sourceCompatibility = 1.8
@@ -74,6 +75,8 @@ ext {
       modulePaths = ["src/main/ml-modules", "src/test/ml-modules"]
   }
 }
+
+mainClassName = "com.marklogic.spring.batch.Main"
 
 publishing {
     publications {
