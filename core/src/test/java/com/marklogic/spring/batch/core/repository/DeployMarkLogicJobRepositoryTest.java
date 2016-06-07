@@ -85,7 +85,6 @@ public class DeployMarkLogicJobRepositoryTest {
         Assert.assertFalse(serverConfigMgr.getDefaultDocumentReadTransformAll());
         Assert.assertEquals(ServerConfigurationManager.UpdatePolicy.VERSION_OPTIONAL, serverConfigMgr.getUpdatePolicy());
         Assert.assertTrue(serverConfigMgr.getQueryOptionValidation());
-
-        databaseClient.release();
+        
     }
 }
