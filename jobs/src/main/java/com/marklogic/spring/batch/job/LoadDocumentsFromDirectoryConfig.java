@@ -37,7 +37,7 @@ import java.util.ArrayList;
 @PropertySource("classpath:job.properties")
 @EnableBatchProcessing
 @Import(com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class)
-public class LoadDocumentsFromDirectoryJob {
+public class LoadDocumentsFromDirectoryConfig {
 
     @Autowired
     Environment env;
