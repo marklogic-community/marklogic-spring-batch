@@ -1,8 +1,10 @@
 package com.marklogic.spring.batch.job;
 
 import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.CollectionUrisReader;
 import com.marklogic.spring.batch.item.DeleteUriWriter;
+import joptsimple.OptionParser;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -19,7 +21,12 @@ import org.springframework.context.annotation.Configuration;
  * at the step scope.
  */
 @Configuration
-public class DeleteDocumentsConfig extends AbstractMarkLogicBatchConfig {
+public class DeleteDocumentsConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer {
+
+    @Override
+    public void configureOptionParser(OptionParser parser) {
+        parser.accepts("collections", "Comma-separated list of collections containing documents to delete").withRequiredArg();
+    }
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
@@ -28,9 +35,9 @@ public class DeleteDocumentsConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
     @JobScope
-    protected Step step1(ItemReader<String> reader, ItemWriter<String> writer, @Value("#{jobParameters['chunkSize'] ?: 100}") Integer chunkSize) {
+    protected Step step1(ItemReader<String> reader, ItemWriter<String> writer) {
         return stepBuilderFactory.get("step1")
-                .<String, String>chunk(chunkSize)
+                .<String, String>chunk(getChunkSize())
                 .reader(reader)
                 .writer(writer)
                 .build();
@@ -46,4 +53,5 @@ public class DeleteDocumentsConfig extends AbstractMarkLogicBatchConfig {
     public ItemWriter<String> writer() {
         return new DeleteUriWriter(getDatabaseClient());
     }
+
 }

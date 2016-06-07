@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.rdf;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.item.ReaderNotOpenException;
 
 import com.marklogic.migration.rdf.RdfMigrator;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;

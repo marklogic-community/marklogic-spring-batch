@@ -1,17 +1,15 @@
-package com.marklogic.spring.batch.sql;
+package com.marklogic.spring.batch.config.sql;
 
-import java.util.Map;
-
+import com.marklogic.spring.batch.config.MigrateColumnMapsConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
-import com.marklogic.spring.batch.item.ColumnMapItemWriter;
+import org.springframework.context.annotation.Configuration;
+
+import javax.sql.DataSource;
 
 /**
  * Handling data as a column map is perfect for a POC-style project where it's far more important to quickly get data
@@ -28,24 +26,15 @@ import com.marklogic.spring.batch.item.ColumnMapItemWriter;
  */
 public class ReadAndWriteColumnMapsTest extends AbstractHsqlTest {
 
-    private JdbcCursorItemReader<Map<String, Object>> reader;
-
     @Before
     public void setup() {
         createDb("db/create-users-db.sql", "db/insert-user-with-addresses.sql");
-
-        reader = new JdbcCursorItemReader<>();
-        reader.setDataSource(db);
-        reader.setRowMapper(new ColumnMapRowMapper());
     }
 
     @Test
     public void writeUserWithNestedAddresses() {
-        reader.setSql(
-                "SELECT users.*, addresses.street as \"address/street\", addresses.city as \"address/city\", addresses.zipCode as \"address/zipCode\" "
-                        + "FROM users INNER JOIN addresses ON users.id = addresses.userId ORDER BY users.id");
-
-        readAndWriteUsers();
+        readAndWriteUsers("SELECT users.*, addresses.street as \"address/street\", addresses.city as \"address/city\", addresses.zipCode as \"address/zipCode\" "
+                + "FROM users INNER JOIN addresses ON users.id = addresses.userId ORDER BY users.id");
 
         Fragment f = loadUserFromMarkLogic();
         f.assertElementValue("/user/ID", "1");
@@ -61,10 +50,8 @@ public class ReadAndWriteColumnMapsTest extends AbstractHsqlTest {
      */
     @Test
     public void writeUsersWithFlatAddresses() {
-        reader.setSql("SELECT users.*, addresses.street, addresses.city, addresses.zipCode FROM users "
+        readAndWriteUsers("SELECT users.*, addresses.street, addresses.city, addresses.zipCode FROM users "
                 + "INNER JOIN addresses ON users.id = addresses.userId ORDER BY users.id");
-
-        readAndWriteUsers();
 
         Fragment f = loadUserFromMarkLogic();
         f.assertElementValue("/user/ID", "1");
@@ -76,16 +63,26 @@ public class ReadAndWriteColumnMapsTest extends AbstractHsqlTest {
         f.assertElementValue("/user/ZIPCODE[2]", "22207");
     }
 
-    private void readAndWriteUsers() {
-        ColumnMapItemWriter w = new ColumnMapItemWriter(getClient(), "user");
-        PathAwareColumnMapProcessor p = new PathAwareColumnMapProcessor();
-        launchJobWithStep(stepBuilderFactory.get("testStep").<Map<String, Object>, Map<String, Object>> chunk(1)
-                .reader(reader).processor(p).writer(w).build());
+    private void readAndWriteUsers(String sql) {
+        runJob(ReadAndWriteColumnMapsTestConfig.class, "--sql", sql, "--rootLocalName", "user");
     }
 
     private Fragment loadUserFromMarkLogic() {
         XMLDocumentManager mgr = getClient().newXMLDocumentManager();
         String xml = mgr.read("/user/1.xml", new StringHandle()).get();
         return parse(xml);
+    }
+
+    /**
+     * With our embedded HSQL database, there's not a way that I know of for building a JDBC connection string for it.
+     * So we override this method in the config class that we're testing to inject our own data source.
+     *
+     */
+    @Configuration
+    public static class ReadAndWriteColumnMapsTestConfig extends MigrateColumnMapsConfig {
+        @Override
+        protected DataSource buildDataSource() {
+            return embeddedDatabase;
+        }
     }
 }
