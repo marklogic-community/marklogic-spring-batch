@@ -1,6 +1,9 @@
 package com.marklogic.spring.batch.job;
 
 import com.marklogic.client.ResourceNotFoundException;
+import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import org.junit.Test;
@@ -37,6 +40,14 @@ public class LoadDocumentsFromDirectoryJobTest extends AbstractJobTest {
                 LoadJsonDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "data/*.json",
                 "--input_file_pattern", "(elmo|grover).json");
+        thenTwoJsonFilesExistInDatabase();
     }
 
+    private void thenTwoJsonFilesExistInDatabase() {
+        QueryManager queryMgr = getClient().newQueryManager();
+        StringQueryDefinition qDef = queryMgr.newStringDefinition("spring-batch");
+        qDef.setCriteria("Elmo OR Grover");
+        SearchHandle results = queryMgr.search(qDef, new SearchHandle());
+        assertEquals(2, results.getTotalResults());
+    }
 }
