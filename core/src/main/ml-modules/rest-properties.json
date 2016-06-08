@@ -1,7 +1,0 @@
-{
-  "debug": "true",
-  "validate-queries": "true",
-  "document-transform-all": "false",
-  "update-policy": "VERSION_OPTIONAL",
-  "validate-options": "true"
-}
