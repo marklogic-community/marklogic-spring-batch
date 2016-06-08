@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.sql.user;
+package com.marklogic.spring.batch.config.sql.user;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

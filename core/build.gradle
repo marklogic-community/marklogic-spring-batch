@@ -10,9 +10,13 @@ targetCompatibility = 1.8
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
     compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-    compile "org.springframework:spring-core:4.2.6.RELEASE"
+
+    // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
     compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
+
+    // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
     compile "org.springframework:spring-oxm:4.2.6.RELEASE"
+
     compile("com.marklogic:ml-javaclient-util:2.5") {
   	  exclude group: 'com.marklogic.java-client', module: 'client-api-java'
     }
@@ -52,13 +56,6 @@ dependencies {
     testCompile "com.jayway.restassured:rest-assured:2.3.1"
     testCompile "org.springframework.batch:spring-batch-test:3.+"
   
-    // For testing SQL readers
-    testCompile "org.springframework:spring-jdbc:4.2.0.RC3"
-    testCompile "org.hsqldb:hsqldb:2.3.3"
-  
-    // For tests that write objects as XML
-    testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
-    testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
 }
 
 sourceSets.test.resources.srcDir 'src/test/java'

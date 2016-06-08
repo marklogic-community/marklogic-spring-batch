@@ -2,6 +2,8 @@ package com.marklogic.spring.batch.configuration;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.spring.batch.Options;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 
 /**
  * Abstract class for a Spring Batch Configuration class that depends on a MarkLogic DatabaseClient.
@@ -18,7 +21,7 @@ import org.springframework.context.annotation.Bean;
  * a StepBuilderFactory, and a DatabaseClient.
  */
 @EnableBatchProcessing
-public abstract class AbstractMarkLogicBatchConfig implements ApplicationContextAware {
+public abstract class AbstractMarkLogicBatchConfig extends LoggingObject implements ApplicationContextAware {
 
     protected ApplicationContext ctx;
 
@@ -34,6 +37,9 @@ public abstract class AbstractMarkLogicBatchConfig implements ApplicationContext
      */
     @Autowired
     protected DatabaseClientProvider databaseClientProvider;
+
+    @Autowired
+    private Environment env;
 
     /**
      * Convenience method for retrieving the "main" DatabaseClient instance.
@@ -52,5 +58,10 @@ public abstract class AbstractMarkLogicBatchConfig implements ApplicationContext
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;
+    }
+
+    public Integer getChunkSize() {
+        String val = env.getProperty(Options.CHUNK_SIZE);
+        return val != null ? Integer.parseInt(val) : 10;
     }
 }

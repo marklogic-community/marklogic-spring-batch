@@ -1,9 +1,4 @@
-package com.marklogic.spring.batch.sql.user;
-
-import org.junit.Test;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
+package com.marklogic.spring.batch.config.sql;
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -11,7 +6,20 @@ import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentCollections;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentPermissions;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.spring.batch.sql.AbstractHsqlTest;
+import com.marklogic.spring.batch.config.sql.AbstractHsqlTest;
+import com.marklogic.spring.batch.config.sql.user.User;
+import com.marklogic.spring.batch.config.sql.user.UserRowMapper;
+import com.marklogic.spring.batch.config.sql.user.UserWriter;
+import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 
 /**
  * This test is an example of reading from a SQL database and writing to MarkLogic via a JDBC reader, a custom Java
@@ -21,57 +29,22 @@ import com.marklogic.spring.batch.sql.AbstractHsqlTest;
  */
 public class ReadUsersFromHsqlUsingUserWriterTest extends AbstractHsqlTest {
 
-    private final static int TABLE_ROW_CHUNK_SIZE = 10;
-
-    private ItemReader<User> reader;
-    private ItemWriter<User> writer;
+    @Before
+    public void setup() {
+        createDb("db/create-users-db.sql", "db/insert-hundred-users.sql");
+    }
 
     @Test
     public void withNoMetadata() {
-        givenAnHsqlDatabaseWithSomeUsersInIt();
-        givenAReaderToReadUsersFromTheHsqlDatabase();
-        givenAnXmlWriterWithNoMetadata();
-        whenTheJobIsRun();
+        runJob(ReadUsersFromHsqlConfig.class);
         thenMarkLogicNowHasUserDocuments();
     }
 
     @Test
     public void withCollectionsAndPermissions() {
-        givenAnHsqlDatabaseWithSomeUsersInIt();
-        givenAReaderToReadUsersFromTheHsqlDatabase();
-        givenAnXmlWriterWithCollectionsAndPermissions();
-        whenTheJobIsRun();
+        runJob(ReadUsersFromHsqlConfig.class, "--collections", "test1,test2", "--permissions", "temporal-admin,read,manage-admin,update");
         thenMarkLogicNowHasUserDocuments();
         thenMarkLogicNowHasUserDocumentsWithMetadata();
-    }
-
-    private void givenAnHsqlDatabaseWithSomeUsersInIt() {
-        createDb("db/create-users-db.sql", "db/insert-hundred-users.sql");
-    }
-
-    private void givenAReaderToReadUsersFromTheHsqlDatabase() {
-        JdbcCursorItemReader<User> r = new JdbcCursorItemReader<>();
-        r.setDataSource(db);
-        r.setSql(
-                "SELECT users.*, comments.comment FROM users LEFT JOIN comments ON users.id = comments.userId ORDER BY users.id");
-        r.setRowMapper(new UserRowMapper());
-        this.reader = r;
-    }
-
-    private void givenAnXmlWriterWithNoMetadata() {
-        this.writer = new UserWriter(getClient());
-    }
-
-    private void givenAnXmlWriterWithCollectionsAndPermissions() {
-        UserWriter w = new UserWriter(getClient());
-        w.setCollections("test1", "test2");
-        w.setPermissions("temporal-admin,read,manage-admin,update");
-        this.writer = w;
-    }
-
-    private void whenTheJobIsRun() {
-        launchJobWithStep(stepBuilderFactory.get("testStep").<User, User> chunk(TABLE_ROW_CHUNK_SIZE)
-                .reader(this.reader).writer(this.writer).build());
     }
 
     private void thenMarkLogicNowHasUserDocuments() {
@@ -97,5 +70,35 @@ public class ReadUsersFromHsqlUsingUserWriterTest extends AbstractHsqlTest {
         assertEquals(Capability.UPDATE, perms.get("rest-writer").iterator().next());
         assertEquals(Capability.READ, perms.get("temporal-admin").iterator().next());
         assertEquals(Capability.UPDATE, perms.get("manage-admin").iterator().next());
+    }
+
+    public static class ReadUsersFromHsqlConfig extends AbstractMarkLogicBatchConfig {
+
+        @Bean
+        public Job job(@Qualifier("step1") Step step1) {
+            return jobBuilderFactory.get("readUsersJob").start(step1).build();
+        }
+
+        @Bean
+        @JobScope
+        protected Step step1(
+                @Value("#{jobParameters['collections']}") String[] collections,
+                @Value("#{jobParameters['permissions']}") String permissions) {
+
+            JdbcCursorItemReader<User> r = new JdbcCursorItemReader<>();
+            r.setDataSource(embeddedDatabase);
+            r.setSql("SELECT users.*, comments.comment FROM users LEFT JOIN comments ON users.id = comments.userId ORDER BY users.id");
+            r.setRowMapper(new UserRowMapper());
+
+            UserWriter w = new UserWriter(getDatabaseClient());
+            w.setCollections(collections);
+            w.setPermissions(permissions);
+
+            return stepBuilderFactory.get("step1")
+                    .<User, User>chunk(getChunkSize())
+                    .reader(r)
+                    .writer(w)
+                    .build();
+        }
     }
 }

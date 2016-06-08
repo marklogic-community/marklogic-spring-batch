@@ -5,6 +5,7 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryAppDeployer;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryConfig;
+import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.springframework.batch.core.Job;
@@ -17,6 +18,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.JOptCommandLinePropertySource;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -81,14 +84,38 @@ public class Main extends LoggingObject {
     public JobExecution runJob(String[] args) throws Exception {
         OptionParser parser = buildOptionParser();
         OptionSet options = parser.parse(args);
-        ConfigurableApplicationContext ctx = buildApplicationContext(options);
-        JobParameters params = buildJobParameters(options);
-        JobLauncher launcher = getJobLauncher(ctx);
-        Job job = getJobToExecute(ctx, options);
-        try {
-            return launcher.run(job, params);
-        } finally {
-            ctx.close();
+        if (options.has(Options.HELP)) {
+            printHelp(parser, options, args);
+            return null;
+        } else {
+            ConfigurableApplicationContext ctx = buildApplicationContext(options);
+            JobParameters params = buildJobParameters(options);
+            JobLauncher launcher = getJobLauncher(ctx);
+            Job job = getJobToExecute(ctx, options);
+            try {
+                return launcher.run(job, params);
+            } finally {
+                ctx.close();
+            }
+        }
+    }
+
+    protected void printHelp(OptionParser parser, OptionSet options, String[] args) throws IOException {
+        System.out.println("General options:");
+        parser.printHelpOn(System.out);
+        if (options.has(Options.CONFIG)) {
+            String config = (String) options.valueOf(Options.CONFIG);
+            try {
+                Object o = Class.forName(config).newInstance();
+                if (o instanceof OptionParserConfigurer) {
+                    parser = new OptionParser();
+                    ((OptionParserConfigurer)o).configureOptionParser(parser);
+                    System.out.println("\nOptions specific to configuration class: " + config);
+                    parser.printHelpOn(System.out);
+                }
+            } catch (Exception ex) {
+                // Ignore, don't try to print options for the config class if we can't create it
+            }
         }
     }
 
@@ -100,12 +127,14 @@ public class Main extends LoggingObject {
      */
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
+        parser.acceptsAll(Arrays.asList("h", Options.HELP), "Show help").forHelp();
         parser.accepts(Options.HOST, "Hostname of the destination MarkLogic Server").withRequiredArg().defaultsTo("localhost");
         parser.accepts(Options.PORT, "Port number of the destination MarkLogic Server. There should be an XDBC App Server on this port. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8000);
         parser.accepts(Options.USERNAME, "The MarkLogic user to authenticate as against the given host and port").withRequiredArg().defaultsTo("admin");
         parser.accepts(Options.PASSWORD, "The password for the MarkLogic user").withRequiredArg();
-        parser.accepts(Options.CONFIG, "The fully qualified classname of the Spring Configuration class to register").withRequiredArg();
+        parser.accepts(Options.CONFIG, "The fully qualified classname of the Spring Configuration class to register").withRequiredArg().required();
         parser.accepts(Options.JOB, "The name of the Spring Batch Job bean to run").withRequiredArg();
+        parser.accepts(Options.CHUNK_SIZE, "The Spring Batch chunk size").withRequiredArg();
 
         parser.accepts(Options.JOB_REPOSITORY_HOST, "Hostname of the MarkLogic Server for the JobRepository").withRequiredArg();
         parser.accepts(Options.JOB_REPOSITORY_PORT, "Port number of the App Server for the JobRepository. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8000);
@@ -114,6 +143,11 @@ public class Main extends LoggingObject {
 
         parser.accepts(Options.DEPLOY, "Include this parameter to deploy a MarkLogicJobRepository.  Requires the jrHost, jrPort, jrUsername, and jrPassword parameters");
         parser.accepts(Options.UNDEPLOY, "Include this parameter to undeploy a MarkLogicJobRepository.  Requires the jrHost, jrPort, jrUsername, and jrPassword parameters");
+
+        parser.accepts(Options.JDBC_DRIVER, "Driver class name for connecting to a relational database").withRequiredArg();
+        parser.accepts(Options.JDBC_URL, "URL for connecting to a relational database").withRequiredArg();
+        parser.accepts(Options.JDBC_USERNAME, "User for connecting to a relational database").withRequiredArg();
+        parser.accepts(Options.JDBC_PASSWORD, "Password for connecting to a relational database").withRequiredArg();
 
         parser.allowsUnrecognizedOptions();
         return parser;
