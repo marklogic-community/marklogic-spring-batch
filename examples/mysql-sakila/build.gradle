@@ -64,3 +64,17 @@ task migrateFilmsWithActors(type: JavaExec) {
         "--rootLocalName", "actor"
     ]
 }
+
+task createSampleDocuments(type: JavaExec) {
+    description = "Example of using a custom Config class under src/main/java"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+            "--config", "org.example.SampleConfig",
+            "--host", mlHost,
+            "--port", mlRestPort,
+            "--username", mlUsername,
+            "--password", mlPassword,
+            "--count", "100"
+    ]
+}
