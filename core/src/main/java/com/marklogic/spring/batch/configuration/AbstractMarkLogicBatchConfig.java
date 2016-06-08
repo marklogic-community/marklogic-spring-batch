@@ -6,7 +6,10 @@ import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -15,7 +18,9 @@ import org.springframework.context.annotation.Bean;
  * a StepBuilderFactory, and a DatabaseClient.
  */
 @EnableBatchProcessing
-public abstract class AbstractMarkLogicBatchConfig {
+public abstract class AbstractMarkLogicBatchConfig implements ApplicationContextAware {
+
+    protected ApplicationContext ctx;
 
     @Autowired
     protected JobBuilderFactory jobBuilderFactory;
@@ -42,5 +47,10 @@ public abstract class AbstractMarkLogicBatchConfig {
     @Bean
     public BatchConfigurer jobRepositoryConfigurer() {
         return new JobRepositoryConfigurer();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.ctx = applicationContext;
     }
 }
