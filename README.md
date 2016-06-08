@@ -1,7 +1,102 @@
-# Overview
-The vision of the MarkLogic Spring Batch (MSB) project is to provide the **BEST** solution for building batch processing jobs for the MarkLogic platform.  There are two main objectives of the MarkLogic Spring Batch project.  The first goal is to provide enhancements to the base [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) framework that makes it easier to create batch processing programs using MarkLogic.  The second goal is to create a library of Spring Batch processing jobs that can be used on other projects, extended into more complex batch processing jobs, and used as a learning tool for developers.  
-  
-An objective for this project is to provide comprehensive testing for each enhancement to Spring Batch and for every batch processing job in the library.  Once your development environment is set up, you can use Gradle to execute the test suite and confirm operational readiness. 
+# MarkLogic Spring Batch
+
+The vision of the MarkLogic Spring Batch (MSB) project is to provide the **BEST** solution for building batch processing jobs for the MarkLogic platform.  There are three goals of the MarkLogic Spring Batch project.  The first is to enhancements the core [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) framework that makes it easy to create batch processing programs using MarkLogic.  The second goal is to create a library of batch processing jobs that are commonly executed.  The third goal is to provide examples for writing custom batch processing programs that utilize MarkLogic.     
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+### Prerequisities
+
+What things you need to install the software and how to install them
+
+* [MarkLogic 8+](http://developer.marklogic.com/products)
+* [Java Development Kit 1.8+](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* Optional: [Gradle 2.+](http://gradle.org/gradle-download/)
+
+### Background Info
+* [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/)
+* [Spring Framework](https://projects.spring.io/spring-framework/)
+* [Gradle](http://gradle.org/) and the [MarkLogic Gradle Plugin](http://developer.marklogic.com/code/ml-gradle)
+* [MarkLogic Java Client API](http://developer.marklogic.com/products/java)
+* [MarkLogic Java Client Util](https://github.com/rjrudin/ml-javaclient-util)
+* [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
+* [MarkLogic App Deployer](https://github.com/rjrudin/ml-app-deployer)
+
+### Installing
+
+Stay what the step will be
+
+```
+Give the example
+```
+
+And repeat
+
+```
+until finished
+```
+
+End with an example of getting some data out of the system or using it for a little demo
+
+## Running the tests
+
+Explain how to run the automated tests for this system
+
+### Break down into end to end tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+### And coding style tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+## Deployment
+
+Add additional notes about how to deploy this on a live system
+
+## Built With
+
+* Dropwizard - Bla bla bla
+* Maven - Maybe
+* Atom - ergaerga
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+
+## Authors
+
+* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+
+See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* Hat tip to anyone who's code was used
+* Inspiration
+* etc
+
+
+
+-----
+
 
 # Installation
 
