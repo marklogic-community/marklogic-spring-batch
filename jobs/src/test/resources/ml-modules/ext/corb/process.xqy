@@ -2,4 +2,4 @@ xquery version "1.0-ml";
 
 declare variable $URI as xs:string external;
 
-fn:concat("PROCESS: ", $URI)
+xdmp:document-insert($URI, <goodbye>It worked</goodbye>)

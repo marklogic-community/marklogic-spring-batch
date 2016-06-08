@@ -1,3 +1,3 @@
 xquery version "1.0-ml";
 
-cts:uris()
+cts:uris("", (), cts:collection-query("spring-batch"))
