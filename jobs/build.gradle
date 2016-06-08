@@ -1,6 +1,7 @@
 plugins {
     id "com.jfrog.bintray" version "1.6"
     id "maven-publish"
+    id "application"
 }
 
 sourceCompatibility = 1.8
@@ -15,6 +16,8 @@ dependencies {
 }
 
 sourceSets.test.resources.srcDir 'src/test/java'
+
+mainClassName = "com.marklogic.spring.batch.Main"
 
 publishing {
     publications {
