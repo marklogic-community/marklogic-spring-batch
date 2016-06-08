@@ -1,5 +1,4 @@
 plugins {
-    id "com.marklogic.ml-gradle" version "2.1.0"
     id "com.jfrog.bintray" version "1.6"
     id "maven-publish"
     id "application"
@@ -66,14 +65,14 @@ sourceSets.test.resources.srcDir 'src/test/java'
 
 task deployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepositoryMain'
-    args = ["--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlAdminUsername, "--jrPassword", mlAdminPassword]
+    main = 'com.marklogic.spring.batch.Main'
+    args = ["deployJobRepo", "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlAdminUsername, "--jrPassword", mlAdminPassword]
 }
 
-ext {
-  mlAppConfig {
-      modulePaths = ["src/main/ml-modules", "src/test/ml-modules"]
-  }
+task undeployMarkLogicJobRepository(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.marklogic.spring.batch.Main'
+    args = ["undeployJobRepo", "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlAdminUsername, "--jrPassword", mlAdminPassword]
 }
 
 mainClassName = "com.marklogic.spring.batch.Main"
