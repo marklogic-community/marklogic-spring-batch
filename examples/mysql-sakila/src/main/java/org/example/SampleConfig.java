@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 
 /**
  * Simple example of a custom configuration. Uses a reader that generates sample XML documents, and then
- * uses a writer that depends on Document instances. 
+ * uses a writer that depends on Document instances.
  */
 @Configuration
 public class SampleConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer {
