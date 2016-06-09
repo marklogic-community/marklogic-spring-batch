@@ -6,7 +6,6 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.restapis.RestApiManager;
 import com.marklogic.mgmt.security.RoleManager;

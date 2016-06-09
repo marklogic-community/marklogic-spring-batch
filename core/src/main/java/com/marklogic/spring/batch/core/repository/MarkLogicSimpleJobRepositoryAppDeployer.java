@@ -2,33 +2,15 @@ package com.marklogic.spring.batch.core.repository;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
-import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand;
-import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
-import com.marklogic.appdeployer.impl.AbstractAppDeployer;
 import com.marklogic.client.*;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
-import com.marklogic.client.admin.config.support.QueryOptionsConfiguration;
 import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.io.marker.QueryOptionsListReadHandle;
-import com.marklogic.client.io.marker.QueryOptionsReadHandle;
-import com.marklogic.client.io.marker.QueryOptionsWriteHandle;
-import com.marklogic.mgmt.api.API;
-import com.marklogic.mgmt.api.restapi.RestApi;
-import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.databases.DatabaseManager;
-import com.marklogic.mgmt.restapis.RestApiManager;
 import com.marklogic.mgmt.security.RoleManager;
-import com.sun.javafx.binding.Logging;
-import org.springframework.http.HttpMethod;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
