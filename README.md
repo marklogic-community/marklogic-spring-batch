@@ -1,6 +1,15 @@
 # MarkLogic Spring Batch
 
-The vision of the MarkLogic Spring Batch (MSB) project is to provide the **BEST** solution for building batch processing jobs for the MarkLogic platform.  There are three goals of the MarkLogic Spring Batch project.  The first is to enhancements the core [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) framework that makes it easy to create batch processing programs using MarkLogic.  The second goal is to create a library of batch processing jobs that are commonly executed.  The third goal is to provide examples for writing custom batch processing programs that utilize MarkLogic.     
+The vision of the MarkLogic Spring Batch (MSB) project is to provide the **BEST** solution for building batch processing jobs for the MarkLogic platform.  There are three goals of the MarkLogic Spring Batch project.  
+
+* To enhance the core [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) framework that makes it easy to create batch processing programs using MarkLogic.  
+* To create a library of common batch processing jobs that are executed against a MarkLogic database.  
+* To provide examples for writing custom batch processing programs that utilize MarkLogic.
+     
+The projects is broken down into three components.  
+* ./core - Contains all enhancements on the Spring Batch framework including the MarkLogic Job Repository, the Main class for the jobs utility, and any custom ItemReaders/Writers/Processors/Tasklets
+* ./jobs - Common library of Spring Batch JobConfigurations
+* ./examples - Starter templates for creating your own batch processing jobs (i.e. migrating from a RDBMS)
 
 ## Getting Started
 
@@ -32,16 +41,30 @@ If either of these assumptions is not true then review the following gradle.prop
 * [./core/gradle.properties]()
 * [./jobs/gradle.properties]()
 
-_NOTE: There is an open issue to address the multiple gradle.properties issues_
+_NOTE: There is an [open issue](https://github.com/sastafford/marklogic-spring-batch/issues/69) to address the multiple gradle.properties issues_
 
 ### Installing
 
 Create the MarkLogic Job Repository application.  The appserver and database that is created will also serve as the target database for all testing. 
 
+Assuming gradle is installed and on your machine.
 ```
 gradle deployMarkLogicJobRepository
 ```
 
+Assuming you are on a Unix terminal and gradle is not installed
+```
+./gradlew deployMarkLogicJobRepository
+```
+ 
+Assuming you are on a Windows terminal and gradle is not installed
+```
+gradlew.bat deployMarkLogicRepository
+```
+
+_For all gradle commands in this README, assuming that gradle is installed_
+
+After this command finishes, an application server, content database, and modules database will be created on your MarkLogic instance.
 
 ## Running the tests
 
@@ -74,6 +97,7 @@ Give an example
 
 ## Deployment
 
+### Jobs
 To deploy the MarkLogic Jobs utility, execute the following gradle command
 
 ```
@@ -82,11 +106,21 @@ gradle :jobs:distZip
 
 This will create the distribution archive file under ./jobs/build/distribution/jobs.zip
 
-## Built With
+### MarkLogic Spring Batch Libraries
+To deploy the marklogic-spring-batch core and jobs library to your local maven repository, first, increment the relevant version number in the gradle.properties file.
 
-* Dropwizard - Bla bla bla
-* Maven - Maybe
-* Atom - ergaerga
+Publish artifacts to local maven repository
+
+```
+gradle publishToMavenLocal
+```
+
+Publish to bintray (authoritative personnel only)
+
+```
+gradle bintrayUpload
+```
+
 
 ## Contributing
 
@@ -98,56 +132,11 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Scott A. Stafford** - [sastafford](https://github.com/sastafford)
+* **Rob Rudin** - [rjrudin](https://github.com/rjrudin)
+* **Venu Iyengar** - [venuiyengar](https://github.com/iyengar)
+* **Sanju Thomas** - [sanjuthomas](https://github.com/sanjuthomas)
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
-
-
-
------
-
-
-# Installation
-
-## Prerequisites
-* [MarkLogic 8+](http://developer.marklogic.com/products)
-* Java Development Kit 1.8
-* Background understanding of the following technology
-    * [Gradle](http://gradle.org/) and the [MarkLogic Gradle Plugin](http://developer.marklogic.com/code/ml-gradle)
-    * [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/)
-    * [MarkLogic Java Client API](http://developer.marklogic.com/products/java)
-    * [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
-
-
-## Deploy the MarkLogic [JobRepository](http://docs.spring.io/spring-batch/trunk/reference/html/domain.html#domainJobRepository)
-Out of the box, Spring Batch requires a relational database to persist the metadata asssociated with running a Spring Batch job.  The MarkLogic Spring Batch project provides a JobRepository that uses MarkLogic to persist this data.  These steps help with creating a JobRepository database and a test database for the sample jobs.  
-
-1. Review the connection properties listed in [gradle.properties](https://github.com/sastafford/marklogic-spring-batch/blob/master/gradle.properties).
-1. Run the following command
-
-````
-cd core
-./gradlew mlDeploy
-````
-
-## Execute Tests
-To confirm your environment setup, run the following command to run the unit test suite.  If all tests pass then everything is setup correctly.  
-
-1. Run integration and unit tests
-````
-cd ..
-./gradlew test
-````
-
-1. The test reports can be reviewed at core/build/reports/tests/index.html and jobs/build/reports/tests/index.html.  If you get failures please contact @sastafford. 
- 
