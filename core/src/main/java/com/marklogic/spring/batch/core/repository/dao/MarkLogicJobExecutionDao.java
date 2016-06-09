@@ -9,8 +9,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
@@ -34,9 +32,7 @@ import org.springframework.batch.core.BatchStatus;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao implements JobExecutionDao {
-	
-	private static final Log logger = LogFactory.getLog(MarkLogicJobExecutionDao.class);
-	
+
 	public MarkLogicJobExecutionDao() {
 	}
 	
@@ -63,7 +59,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
         DocumentMetadataHandle jobInstanceMetadata = new DocumentMetadataHandle();
         jobInstanceMetadata.getCollections().add(COLLECTION_JOB_INSTANCE);
 		xmlDocMgr.write(desc, jobInstanceMetadata, handle);
-		logger.info("insert JobExecution:" + uri + "," + desc.getVersion());         
+		logger.info("insert JobExecution:" + uri + "," + desc.getVersion());
 	}
 	
 	/**

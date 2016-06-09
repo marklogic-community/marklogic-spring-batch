@@ -2,8 +2,6 @@ package com.marklogic.spring.batch.core.repository.dao;
 
 import java.util.Collection;
 
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
@@ -13,9 +11,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.util.Assert;
 
 public class MarkLogicExecutionContextDao implements ExecutionContextDao {
-	
-	//private static final Log logger = LogFactory.getLog(MarkLogicExecutionContextDao.class);
-	
+
 	private JobExecutionDao jobExecutionDao;
 	private StepExecutionDao stepExecutionDao;
 	
