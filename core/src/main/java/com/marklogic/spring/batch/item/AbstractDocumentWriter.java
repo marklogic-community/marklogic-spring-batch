@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.item;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemStreamSupport;
 
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -11,6 +13,8 @@ import com.marklogic.uri.UriGenerator;
  * Base class for writing documents. Should be able to support both the Client API and XCC.
  */
 public abstract class AbstractDocumentWriter extends ItemStreamSupport {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private UriGenerator uriGenerator = new DefaultUriGenerator();
 
