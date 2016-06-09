@@ -41,12 +41,18 @@ Each contributor should be knowledgeable and proficient at the following project
 ## How can I contribute?
 
 ### Development Environment
-It is recommended that an IDE is used for making one's life easier.  This is a heavy Java project where you will need to run individual unit tests.  Most people choose to use Eclipse.  
+It is recommended that an IDE is used for making one's life easier.  This is a heavy Java project where you will need to run individual unit tests.  The recommended Java IDE is [IntelliJ]() and [Eclipse]() is also supported.  
 
+#### IntelliJ
+````
+./gradlew idea
+````
+
+#### Eclipse
 If you have cloned this project and wish to set up an Eclipse project, please execute the following command to set up all the necessary Eclipse project metadata files.
 
 ````
-gradlew eclipse
+./gradlew eclipse
 ````
 
 ### Test Driven Development

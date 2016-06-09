@@ -23,25 +23,38 @@ What things you need to install the software and how to install them
 * [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
 * [MarkLogic App Deployer](https://github.com/rjrudin/ml-app-deployer)
 
+### Assumptions
+* The MarkLogic host is **localhost**
+* Port **8200** is available for use and no other applications are listening on that port
+
+If either of these assumptions is not true then review the following gradle.properties files and change appropriately.
+* [./gradle.properties]()
+* [./core/gradle.properties]()
+* [./jobs/gradle.properties]()
+
+_NOTE: There is an open issue to address the multiple gradle.properties issues_
+
 ### Installing
 
-Stay what the step will be
+Create the MarkLogic Job Repository application.  The appserver and database that is created will also serve as the target database for all testing. 
 
 ```
-Give the example
+gradle deployMarkLogicJobRepository
 ```
 
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+To verify that everything works, run through all the tests.
+
+```
+gradle test
+```
+
+Tests can be verified in the following two reports
+
+* Core Library: ./core/build/reports/tests/index.html
+* Jobs Library: ./jobs/build/reports/tests/index.html
 
 ### Break down into end to end tests
 
@@ -61,7 +74,13 @@ Give an example
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+To deploy the MarkLogic Jobs utility, execute the following gradle command
+
+```
+gradle :jobs:distZip
+```
+
+This will create the distribution archive file under ./jobs/build/distribution/jobs.zip
 
 ## Built With
 
