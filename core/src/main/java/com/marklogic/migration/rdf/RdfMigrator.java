@@ -3,12 +3,11 @@ package com.marklogic.migration.rdf;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.marklogic.client.helper.LoggingObject;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
@@ -29,9 +28,8 @@ import com.marklogic.client.DatabaseClientFactory.Authentication;
 import com.marklogic.spring.batch.item.RdfTripleItemReader;
 import com.marklogic.spring.batch.item.RdfTripleItemWriter;
 
-public class RdfMigrator {
+public class RdfMigrator extends LoggingObject {
 
-	private static Log log = LogFactory.getLog(RdfMigrator.class);
     private DatabaseClient databaseClient;
     private ItemProcessor<Map<String, Object>, Map<String, Object>> itemProcessor;
 
@@ -64,7 +62,6 @@ public class RdfMigrator {
 
         DatabaseClient client;
         String host = cmd.getOptionValue("host");
-        log.info("Host Name [" + host + "]");
         Integer port = Integer.parseInt(cmd.getOptionValue("port"));
         String username = cmd.getOptionValue("username");
         String password = cmd.getOptionValue("password");

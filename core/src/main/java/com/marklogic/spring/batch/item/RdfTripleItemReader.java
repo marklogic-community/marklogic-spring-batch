@@ -3,8 +3,8 @@ package com.marklogic.spring.batch.item;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.lang.CollectorStreamTriples;
 import org.springframework.batch.item.ReaderNotOpenException;
@@ -22,8 +22,10 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
  *
  * @param <T> A map with a key and a triple object
  */
-public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemReader<T> implements InitializingBean{
-	private static Log log = LogFactory.getLog(RdfTripleItemReader.class);
+public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemReader<T> implements InitializingBean {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+
 	public static final int VALUE_NOT_SET = -1;
 
 	private boolean initialized = false;	
@@ -52,7 +54,7 @@ public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemRe
 	 * Public setter for the file name for injection purposes.
 	 * Specify the full path for the filename with valid separators
 	 * 
-	 * @param dataSource
+	 * @param fileName
 	 */
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
@@ -70,13 +72,13 @@ public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemRe
 			inputStream = new CollectorStreamTriples();
 			Assert.state(inputStream != null, "inputStream must not be null");
 			RDFDataMgr.parse(inputStream, fileName);
-			log.info("Number of Triples [" + inputStream.getCollected().size() + "]");
+			logger.info("Number of Triples [" + inputStream.getCollected().size() + "]");
 			tripleIterator = (Iterator<T>) inputStream.getCollected().iterator();
 			Assert.state(tripleIterator != null, "tripleIterator must not be null. Something went wrong");
 		}
 		catch (Exception e) {
 			close();
-			log.info("Caught exception[" + e.getMessage() + "]");
+			logger.info("Caught exception[" + e.getMessage() + "]");
 		}
 
 	}	
@@ -113,13 +115,13 @@ public class RdfTripleItemReader<T> extends AbstractItemCountingItemStreamItemRe
 				return null;
 			}
 			int currentRow = getCurrentItemCount();
-			log.debug("Current Row [" + currentRow + "]");
+			logger.debug("Current Row [" + currentRow + "]");
 			@SuppressWarnings("unchecked")
 			T item = (T) mapTripleRow(tripleIterator.next(), currentRow);
 			return item;
 		}
 		catch (Exception e) {
-			log.info("Caught exception[" + e.getMessage() + "]");
+			logger.info("Caught exception[" + e.getMessage() + "]");
 			throw new Exception("Attempt to process next row failed", e);
 		}
 	}	

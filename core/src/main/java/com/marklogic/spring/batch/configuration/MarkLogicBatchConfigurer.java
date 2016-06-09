@@ -1,13 +1,12 @@
 package com.marklogic.spring.batch.configuration;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.configuration.BatchConfigurationException;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -27,9 +26,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Component
-public class MarkLogicBatchConfigurer implements BatchConfigurer, InitializingBean {
+public class MarkLogicBatchConfigurer extends LoggingObject implements BatchConfigurer, InitializingBean {
 
-    private static final Log logger = LogFactory.getLog(MarkLogicBatchConfigurer.class);
 
     private DatabaseClient databaseClient;
     private PlatformTransactionManager transactionManager;

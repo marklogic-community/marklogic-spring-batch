@@ -1,22 +1,13 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
+import com.marklogic.client.helper.LoggingObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
-import org.springframework.util.Assert;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.admin.QueryOptionsManager;
-import com.marklogic.client.io.InputStreamHandle;
-import com.marklogic.client.io.QueryOptionsListHandle;
 
-public abstract class AbstractMarkLogicBatchMetadataDao {
+public abstract class AbstractMarkLogicBatchMetadataDao extends LoggingObject {
 
 	@Autowired
 	protected ApplicationContext ctx;
@@ -24,8 +15,6 @@ public abstract class AbstractMarkLogicBatchMetadataDao {
 	protected DatabaseClient databaseClient;
 	
 	protected DataFieldMaxValueIncrementer incrementer;
-	
-	private static final Log logger = LogFactory.getLog(AbstractMarkLogicBatchMetadataDao.class);
 
 	protected final long LOWER_RANGE = 0;
     protected final long UPPER_RANGE = 9999999;

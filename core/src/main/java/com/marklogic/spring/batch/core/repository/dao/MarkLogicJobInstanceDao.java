@@ -13,8 +13,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.marklogic.client.query.*;
 import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.DefaultJobKeyGenerator;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -36,8 +34,6 @@ import com.marklogic.client.io.ValuesHandle;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao implements JobInstanceDao {
-	
-	private static final Log logger = LogFactory.getLog(MarkLogicJobInstanceDao.class);
 	
 	private JobKeyGenerator<JobParameters> jobKeyGenerator = new DefaultJobKeyGenerator();
 	
