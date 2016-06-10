@@ -3,6 +3,8 @@ package com.marklogic.spring.batch;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.marklogic.client.spring.BasicConfig;
+import com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -25,7 +27,7 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 @ActiveProfiles("default")
-@ContextConfiguration(classes = {com.marklogic.client.spring.BasicConfig.class })
+@ContextConfiguration(classes = {BasicConfig.class, MarkLogicBatchConfiguration.class})
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 
     @Autowired
