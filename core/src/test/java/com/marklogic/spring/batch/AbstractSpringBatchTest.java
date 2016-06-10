@@ -25,9 +25,7 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
 @ActiveProfiles("default")
-@ContextConfiguration(classes = {
-        com.marklogic.client.spring.BasicConfig.class,
-		com.marklogic.spring.batch.configuration.DefaultBatchConfiguration.class })
+@ContextConfiguration(classes = {com.marklogic.client.spring.BasicConfig.class })
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 
     @Autowired

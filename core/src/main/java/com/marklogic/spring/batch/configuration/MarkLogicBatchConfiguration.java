@@ -34,7 +34,6 @@ import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
 import java.util.Collection;
 
 @Configuration
-@PropertySource("classpath:job.properties")
 @ComponentScan( { "com.marklogic.spring.batch.configuration" } )
 public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 
@@ -42,11 +41,6 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 	private DatabaseClientProvider databaseClientProvider;
 
     private BatchConfigurer configurer;
-
-    @Bean(name = "target")
-    public DatabaseClientProvider jobDatabaseClientProvider(JobProperties jobProperties) {
-        return new SimpleDatabaseClientProvider(jobProperties.getDatabaseClientConfig());
-    }
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyPlaceHolderConfigurer() {
