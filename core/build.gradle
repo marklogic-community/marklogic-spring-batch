@@ -17,10 +17,6 @@ if (System.getProperty("user.dir").endsWith("jobs")) {
     project.ext.smartModulePaths = ["src/test/ml-modules"]
 }
 
-println System.getProperty("user.dir")
-println getRootDir().getName()
-println project.ext.smartModulePaths
-
 ext {
     mlAppConfig {
         modulePaths = smartModulePaths
