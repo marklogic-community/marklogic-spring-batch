@@ -1,14 +1,14 @@
 package com.marklogic.spring.batch.bind;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.dom.DOMResult;
-
+import com.marklogic.junit.Fragment;
 import com.marklogic.junit.NamespaceProvider;
-import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.JobExecutionTestUtils;
+import com.marklogic.spring.batch.JobParametersTestUtils;
 import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
+import com.marklogic.spring.batch.core.AdaptedJobParameters;
+import com.marklogic.spring.batch.core.AdaptedStepExecution;
+import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import org.jdom2.input.DOMBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,21 +19,14 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 
-import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.JobExecutionTestUtils;
-import com.marklogic.spring.batch.JobParametersTestUtils;
-import com.marklogic.spring.batch.core.AdaptedJobParameters;
-import com.marklogic.spring.batch.core.AdaptedStepExecution;
-import com.marklogic.spring.batch.core.MarkLogicJobInstance;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMResult;
+import java.util.Date;
+import java.util.List;
 
-@ContextConfiguration(classes = {
-        com.marklogic.client.spring.BasicConfig.class,
-        com.marklogic.spring.batch.configuration.MarkLogicBatchConfiguration.class
-})
-public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringTest {
+public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 
     Document doc;
     DOMResult result;

@@ -1,12 +1,14 @@
-package com.marklogic.spring.batch.configuration;
+package com.marklogic.spring.batch;
 
 
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.spring.batch.bind.*;
+import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
 import org.springframework.batch.core.configuration.annotation.AbstractBatchConfiguration;
-import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -18,35 +20,25 @@ import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
-import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
-import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
-import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
-
-import java.util.Collection;
-
+/**
+ * TODO Should be able to remove this in favor of testing jobs in the jobs project, and thus
+ * extending AbstractJobTest.
+ */
 @Configuration
-@PropertySource("classpath:job.properties")
-@ComponentScan( { "com.marklogic.spring.batch.configuration" } )
+@ComponentScan({"com.marklogic.spring.batch.configuration"})
 public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
 
-	@Autowired
-	private DatabaseClientProvider databaseClientProvider;
-
-    private BatchConfigurer configurer;
-
-    @Bean(name = "target")
-    public DatabaseClientProvider jobDatabaseClientProvider(JobProperties jobProperties) {
-        return new SimpleDatabaseClientProvider(jobProperties.getDatabaseClientConfig());
-    }
+    @Autowired
+    private DatabaseClientProvider databaseClientProvider;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyPlaceHolderConfigurer() {
@@ -81,21 +73,11 @@ public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
         return new ResourcelessTransactionManager();
     }
 
-	private TaskExecutor taskExecutor() {
-		//CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
-		//SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
-		//sate.setConcurrencyLimit(8);
-		return new SyncTaskExecutor();
-	}
-
-    @Override
-    protected BatchConfigurer getConfigurer(Collection<BatchConfigurer> configurers) throws Exception {
-        if (this.configurer != null) {
-            return this.configurer;
-        }
-        MarkLogicBatchConfigurer configurer = new MarkLogicBatchConfigurer(databaseClientProvider.getDatabaseClient());
-        this.configurer = configurer;
-        return this.configurer;
+    private TaskExecutor taskExecutor() {
+        //CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
+        //SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
+        //sate.setConcurrencyLimit(8);
+        return new SyncTaskExecutor();
     }
 
     @Bean

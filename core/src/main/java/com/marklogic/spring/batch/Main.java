@@ -50,6 +50,7 @@ public class Main extends LoggingObject {
     public void deployMarkLogicJobRepository(String[] args) {
         OptionParser parser = buildOptionParser();
         OptionSet options = parser.parse(args);
+        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
         String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
         ManageConfig manageConfig = new ManageConfig(
                 host, 8002,
@@ -58,12 +59,13 @@ public class Main extends LoggingObject {
         ManageClient manageClient = new ManageClient(manageConfig);
         MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
         MarkLogicSimpleJobRepositoryAppDeployer deployer = new MarkLogicSimpleJobRepositoryAppDeployer(config);
-        deployer.deploy(host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
+        deployer.deploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
     }
 
     public void undeployMarkLogicJobRepository(String[] args) {
         OptionParser parser = buildOptionParser();
         OptionSet options = parser.parse(args);
+        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
         String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
         ManageConfig manageConfig = new ManageConfig(
                 host, 8002,
@@ -72,7 +74,7 @@ public class Main extends LoggingObject {
         ManageClient manageClient = new ManageClient(manageConfig);
         MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
         MarkLogicSimpleJobRepositoryAppDeployer deployer = new MarkLogicSimpleJobRepositoryAppDeployer(config);
-        deployer.undeploy(host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
+        deployer.undeploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
     }
 
     /**
@@ -136,6 +138,7 @@ public class Main extends LoggingObject {
         parser.accepts(Options.JOB, "The name of the Spring Batch Job bean to run").withRequiredArg();
         parser.accepts(Options.CHUNK_SIZE, "The Spring Batch chunk size").withRequiredArg();
 
+        parser.accepts(Options.JOB_REPOSITORY_NAME, "Name of the REST API server for the MarkLogic JobRepository").withRequiredArg();
         parser.accepts(Options.JOB_REPOSITORY_HOST, "Hostname of the MarkLogic Server for the JobRepository").withRequiredArg();
         parser.accepts(Options.JOB_REPOSITORY_PORT, "Port number of the App Server for the JobRepository. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8000);
         parser.accepts(Options.JOB_REPOSITORY_USERNAME, "The MarkLogic user to authenticate as against JobRepository App Server").withRequiredArg().defaultsTo("admin");

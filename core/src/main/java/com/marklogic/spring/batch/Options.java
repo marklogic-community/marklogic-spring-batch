@@ -12,6 +12,7 @@ public interface Options {
     String USERNAME = "username";
     String PASSWORD = "password";
 
+    String JOB_REPOSITORY_NAME = "jrName";
     String JOB_REPOSITORY_HOST = "jrHost";
     String JOB_REPOSITORY_PORT = "jrPort";
     String JOB_REPOSITORY_USERNAME = "jrUsername";
