@@ -1,8 +1,9 @@
 package com.marklogic.spring.batch.job;
 
+import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import com.marklogic.client.spring.BasicConfig;
+import com.marklogic.spring.batch.JobTestConfig;
 import com.marklogic.spring.batch.Main;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
@@ -18,7 +19,7 @@ import java.util.List;
  * Base class for any marklogic-spring-batch test that needs to run a job. Uses the Main program
  * to collect command line arguments and run a job.
  */
-@ContextConfiguration(classes = { BasicConfig.class })
+@ContextConfiguration(classes = {JobTestConfig.class})
 public abstract class AbstractJobTest extends AbstractSpringTest {
 
     @Autowired

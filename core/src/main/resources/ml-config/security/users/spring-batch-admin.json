@@ -1,6 +1,0 @@
-{
-  "user-name": "spring-batch-admin",
-  "description": "Admin user for Spring Batch application",
-  "password": "password",
-  "role": ["spring-batch-admin"]
-}
