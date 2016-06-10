@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.configuration;
+package com.marklogic.spring.batch;
 
 
 import com.marklogic.client.helper.DatabaseClientProvider;
@@ -29,6 +29,10 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
+/**
+ * TODO Should be able to remove this in favor of testing jobs in the jobs project, and thus
+ * extending AbstractJobTest.
+ */
 @Configuration
 @ComponentScan({"com.marklogic.spring.batch.configuration"})
 public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
