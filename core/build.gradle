@@ -8,9 +8,22 @@ plugins {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+
+if (System.getProperty("user.dir").endsWith("jobs")) {
+    project.ext.smartModulePaths = ["../core/src/test/ml-modules"]
+} else if (System.getProperty("user.dir").endsWith("marklogic-spring-batch")) {
+    project.ext.smartModulePaths = ["core/src/test/ml-modules"]
+} else {
+    project.ext.smartModulePaths = ["src/test/ml-modules"]
+}
+
+println System.getProperty("user.dir")
+println getRootDir().getName()
+println project.ext.smartModulePaths
+
 ext {
     mlAppConfig {
-        modulePaths = ["src/test/ml-modules"]
+        modulePaths = smartModulePaths
         createTriggersDatabase = false
     }
 }
