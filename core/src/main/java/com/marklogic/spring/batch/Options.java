@@ -11,12 +11,16 @@ public interface Options {
     String PORT = "port";
     String USERNAME = "username";
     String PASSWORD = "password";
+    String DATABASE = "database";
+    String AUTHENTICATION = "auth";
 
     String JOB_REPOSITORY_NAME = "jrName";
     String JOB_REPOSITORY_HOST = "jrHost";
     String JOB_REPOSITORY_PORT = "jrPort";
     String JOB_REPOSITORY_USERNAME = "jrUsername";
     String JOB_REPOSITORY_PASSWORD = "jrPassword";
+    String JOB_REPOSITORY_DATABASE = "jrDatabase";
+    String JOB_REPOSITORY_AUTHENTICATION = "jrAuth";
 
     String CONFIG = "config";
     String JOB = "job";
