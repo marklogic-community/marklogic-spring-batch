@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch;
 
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.helper.LoggingObject;
@@ -36,6 +37,17 @@ public class MainConfig extends LoggingObject {
                 env.getProperty(Options.USERNAME),
                 env.getProperty(Options.PASSWORD)
         );
+
+        String db = env.getProperty(Options.DATABASE);
+        if (db != null) {
+            config.setDatabase(db);
+        }
+
+        String auth = env.getProperty(Options.AUTHENTICATION);
+        if (auth != null) {
+            config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(auth));
+        }
+
         logger.info("Connecting to MarkLogic via: " + config);
         return new BatchDatabaseClientProvider(config);
     }
@@ -57,6 +69,17 @@ public class MainConfig extends LoggingObject {
                 selectProperty(Options.JOB_REPOSITORY_USERNAME, Options.USERNAME),
                 selectProperty(Options.JOB_REPOSITORY_PASSWORD, Options.PASSWORD)
         );
+
+        String db = env.getProperty(Options.JOB_REPOSITORY_DATABASE);
+        if (db != null) {
+            config.setDatabase(db);
+        }
+
+        String auth = env.getProperty(Options.JOB_REPOSITORY_AUTHENTICATION);
+        if (auth != null) {
+            config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(auth));
+        }
+
         logger.info("Connecting to MarkLogic JobRepository via: " + config);
         return new BatchDatabaseClientProvider(config);
     }
