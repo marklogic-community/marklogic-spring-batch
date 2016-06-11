@@ -46,4 +46,8 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
     public void setPermissions(String permissions) {
         this.permissions = permissions;
     }
+
+    protected UriGenerator getUriGenerator() {
+        return uriGenerator;
+    }
 }
