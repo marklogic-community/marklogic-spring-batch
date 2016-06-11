@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.core.repository;
 
 import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.restapi.RestApi;
 import com.marklogic.mgmt.api.security.*;

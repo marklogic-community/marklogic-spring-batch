@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.document.JSONDocumentManager;
-import com.marklogic.client.io.Format;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
@@ -16,13 +14,11 @@ import org.springframework.batch.item.ItemWriter;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.columnmap.ColumnMapMerger;
 import com.marklogic.spring.batch.columnmap.ColumnMapSerializer;
 import com.marklogic.spring.batch.columnmap.DefaultColumnMapMerger;
 import com.marklogic.spring.batch.columnmap.DefaultStaxColumnMapSerializer;
-import sun.net.www.content.text.Generic;
 
 /**
  * Features this can provide:

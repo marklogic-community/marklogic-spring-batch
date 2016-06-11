@@ -4,7 +4,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
 import com.marklogic.junit.Fragment;
 import org.junit.Test;
 

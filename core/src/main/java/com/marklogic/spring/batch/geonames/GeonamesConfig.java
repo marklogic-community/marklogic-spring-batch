@@ -18,8 +18,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.TaskExecutor;
 import org.w3c.dom.Document;
 
-import com.marklogic.spring.batch.item.DocumentItemWriter;
-
 import org.geonames.Geoname;
 
 import java.util.List;
