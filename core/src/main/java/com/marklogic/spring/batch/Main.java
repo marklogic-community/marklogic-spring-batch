@@ -134,7 +134,10 @@ public class Main extends LoggingObject {
         parser.accepts(Options.PORT, "Port number of the destination MarkLogic Server. There should be an XDBC App Server on this port. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8000);
         parser.accepts(Options.USERNAME, "The MarkLogic user to authenticate as against the given host and port").withRequiredArg().defaultsTo("admin");
         parser.accepts(Options.PASSWORD, "The password for the MarkLogic user").withRequiredArg();
-        parser.accepts(Options.CONFIG, "The fully qualified classname of the Spring Configuration class to register").withRequiredArg().required();
+        parser.accepts(Options.DATABASE, "The name of the destination database. Default: The database associated with the destination App Server identified by -host and -port.").withRequiredArg();
+        parser.accepts(Options.AUTHENTICATION, "The authentication to use for the app server on the given port").withRequiredArg();
+
+        parser.accepts(Options.CONFIG, "The fully qualified classname of the Spring Configuration class to register").withRequiredArg();
         parser.accepts(Options.JOB, "The name of the Spring Batch Job bean to run").withRequiredArg();
         parser.accepts(Options.CHUNK_SIZE, "The Spring Batch chunk size").withRequiredArg();
 
@@ -143,6 +146,8 @@ public class Main extends LoggingObject {
         parser.accepts(Options.JOB_REPOSITORY_PORT, "Port number of the App Server for the JobRepository. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8000);
         parser.accepts(Options.JOB_REPOSITORY_USERNAME, "The MarkLogic user to authenticate as against JobRepository App Server").withRequiredArg().defaultsTo("admin");
         parser.accepts(Options.JOB_REPOSITORY_PASSWORD, "The password for the JobRepository MarkLogic user").withRequiredArg();
+        parser.accepts(Options.JOB_REPOSITORY_DATABASE, "The name of the JobRepository database. Default: The database associated with the destination App Server identified by -jrHost and -jrPort.").withRequiredArg();
+        parser.accepts(Options.JOB_REPOSITORY_AUTHENTICATION, "The authentication to use for the app server on the given JobRepository port").withRequiredArg();
 
         parser.accepts(Options.DEPLOY, "Include this parameter to deploy a MarkLogicJobRepository.  Requires the jrHost, jrPort, jrUsername, and jrPassword parameters");
         parser.accepts(Options.UNDEPLOY, "Include this parameter to undeploy a MarkLogicJobRepository.  Requires the jrHost, jrPort, jrUsername, and jrPassword parameters");
@@ -191,10 +196,12 @@ public class Main extends LoggingObject {
         JOptCommandLinePropertySource ps = new JOptCommandLinePropertySource(options);
         String configClass = ps.getProperty(Options.CONFIG);
 
-        try {
-            ctx.register(Class.forName(configClass));
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to register configuration for class: " + configClass, e);
+        if (configClass != null) {
+            try {
+                ctx.register(Class.forName(configClass));
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to register configuration for class: " + configClass, e);
+            }
         }
 
         addOptionsToEnvironment(ctx, ps);
