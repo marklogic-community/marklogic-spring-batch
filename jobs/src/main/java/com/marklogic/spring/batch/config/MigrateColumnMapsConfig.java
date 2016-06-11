@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.spring.batch.Options;
+import com.marklogic.spring.batch.columnmap.JsonColumnMapSerializer;
 import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
 import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
@@ -34,6 +35,7 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
     @Override
     public void configureOptionParser(OptionParser parser) {
         parser.accepts("sql", "The SQL query for selecting rows to migrate").withRequiredArg();
+        parser.accepts("format", "The format of the documents written to MarkLogic - either xml or json").withRequiredArg().defaultsTo("xml");
         parser.accepts("rootLocalName", "Name of the root element in each document written to MarkLogic").withRequiredArg();
         parser.accepts("collections", "Comma-separated list of collections to add each document to").withRequiredArg();
     }
@@ -47,6 +49,7 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
     @JobScope
     public Step step1(
             @Value("#{jobParameters['sql']}") String sql,
+            @Value("#{jobParameters['format']}") String format,
             @Value("#{jobParameters['rootLocalName']}") String rootLocalName,
             @Value("#{jobParameters['collections']}") String[] collections) {
 
@@ -62,6 +65,9 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
             writer.setCollections(rootLocalName);
         } else {
             writer.setCollections(collections);
+        }
+        if ("json".equals(format)) {
+            writer.setColumnMapSerializer(new JsonColumnMapSerializer());
         }
 
         return stepBuilderFactory.get("step1")

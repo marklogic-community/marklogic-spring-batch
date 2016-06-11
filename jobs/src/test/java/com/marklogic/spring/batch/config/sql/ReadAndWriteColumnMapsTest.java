@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.config.sql;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.spring.batch.config.MigrateColumnMapsConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +45,20 @@ public class ReadAndWriteColumnMapsTest extends AbstractHsqlTest {
         f.assertElementExists("/user/address[2]/street[. = '456 Main St']");
     }
 
+    @Test
+    public void writeUserWithNestedAddressesAsJson() throws Exception {
+        String sql = "SELECT users.*, addresses.street as \"address/street\", addresses.city as \"address/city\", addresses.zipCode as \"address/zipCode\" "
+                + "FROM users INNER JOIN addresses ON users.id = addresses.userId ORDER BY users.id";
+        runJob(ReadAndWriteColumnMapsTestConfig.class, "--sql", sql, "--rootLocalName", "user", "--format", "json");
+
+        String content = getClient().newServerEval().xquery("collection('user')").evalAs(String.class);
+        JsonNode node = new ObjectMapper().readTree(content);
+        assertEquals(1, node.get("ID").asInt());
+        assertEquals("user1", node.get("NAME").asText());
+        assertEquals("123 Main St", node.get("address").get(0).get("street").asText());
+        assertEquals("456 Main St", node.get("address").get(1).get("street").asText());
+    }
+
     /**
      * When we don't assign a label with a "/" in it to each address column, then the address values will just be
      * flattened onto the user document. This is most likely not something anyone ever wants, but this test case is
@@ -76,7 +92,6 @@ public class ReadAndWriteColumnMapsTest extends AbstractHsqlTest {
     /**
      * With our embedded HSQL database, there's not a way that I know of for building a JDBC connection string for it.
      * So we override this method in the config class that we're testing to inject our own data source.
-     *
      */
     @Configuration
     public static class ReadAndWriteColumnMapsTestConfig extends MigrateColumnMapsConfig {
