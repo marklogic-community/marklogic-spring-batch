@@ -13,7 +13,7 @@ The vision of the MarkLogic Spring Batch (MSB) project is to provide the **BEST*
 Many MarkLogic users often have custom batch processing jobs they want to execute but do not have a repeatable framework to use.  For example, a program must extract data from a relational database, transform the data, load it directly into MarkLogic, and must do all this without human intervention.  Sometimes this often gets coded up as mulitiple programs.  Or, let's say you want to request data from another system's REST API and load that data into MarkLogic.  More often than not, custom batch processing jobs can lead to an effort that ends up being more work that initially anticipated.  What happens in the event of invalid data or can you restart a job at the last successful execution.  MarkLogic Spring Batch builds on top of the proven Spring Batch framework and enhances it with several additional features.
 
 ## Features
-* Ability to execute any job from a command line interface via the [Jobs]() program
+* Ability to execute any job from a command line interface via the [Jobs]() utility.
 * Perform common tasks related to a MarkLogic Batch Processing job via custom ItemReader, ItemProcesor, ItemWriter, and tasklet classes (i.e. Writing documents to MarkLogic)
 * Execute one of many generic MarkLogic batch processing jobs for importing, transforming, and exporting data in a MarkLogic database
 * Persist the metadata of any JobExecution with a MarkLogic [JobRepository](http://docs.spring.io/spring-batch/trunk/reference/html/domain.html#domainJobRepository)
@@ -22,7 +22,7 @@ Many MarkLogic users often have custom batch processing jobs they want to execut
 
 # How do I build a custom MarkLogic batch processing job? 
 
-Refer to the [Wiki]() or the [FAQ]() for questions that you may come across.  
+Refer to the [Wiki](https://github.com/sastafford/marklogic-spring-batch/wiki) or the [FAQ](https://github.com/sastafford/marklogic-spring-batch/wiki/Frequently-Asked-Questions) for questions that you may come across.  
 
 OK, you need to build a custom MarkLogic batch processing job. The first step is to create a build.gradle file and it needs to refer to the MarkLogic Spring Batch Jar files.  The following code snippet will get you started.    
 
@@ -44,7 +44,7 @@ dependencies {
 }
 ```
 
-The next step is to create your Spring Batch [job configuration](http://docs.spring.io/spring-batch/reference/html/configureJob.html).  The procedure for putting together job configuration follows the standard Spring Batch way of creating jobs.  But we have provided [several examples of custom Spring Batch processing jobs for MarkLogic](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples).   
+The next step is to create your Spring Batch [job configuration](http://docs.spring.io/spring-batch/reference/html/configureJob.html).  The goal is to assemble the step, steps, or tasklets needed to execute a Job.  The procedure for putting together job configuration follows the standard Spring Batch way of creating jobs.  Each step requires an ItemReader, ItemProcessor, and ItemWriter.  Spring Batch offers many out of the box classes for these ItemReader/Processor/Writers and they should be leveraged first before reinventing the wheel.  MarkLogic Spring Batch offers custom ItemReader/Processor/Writer and tasklets that can also be used.  But we have provided [several examples of custom Spring Batch processing jobs for MarkLogic](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples).   
 
 The recommended next step is to write a job test.  **TBD**  
 
