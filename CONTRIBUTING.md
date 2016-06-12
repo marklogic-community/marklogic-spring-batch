@@ -1,80 +1,113 @@
-# Contribution Guidelines
+# What should I know before I get started?
 
-Thank you for choosing to contribute to the MarkLogic Spring Batch (MSB) project.  
-
-### Table of Contents
-[What should I know before I get started?](#what-should-i-know-before-i-get-started)
-  * [Vision Statement](#vision-statement)
-  * [Roadmap](#roadmap)
-  * [Background Information](#background-information)
-
-[How Can I Contribute?](#how-can-i-contribute)
-  * [Development Environment](#development-environment)
-  * [Test Driven Development](#test-driven-development)
-  * [Asking Questions](#asking-questions)
-  * [Reporting Bugs](#reporting-bugs)
-  * [Pull Requests](#pull-requests)
-
-[Styleguides](#styleguides)
-  * [Git Commit Messages](#git-commit-messages)
-  * [Java Coding Guidelines](#java-coding-guidelines)
-
-## What should I know before I get started?
-
-### Vision Statement
 Please read our [Vision Statement](https://github.com/sastafford/marklogic-spring-batch/wiki).  The reason for each task should ultimately come back to this statement. 
 
-### Roadmap
-Our [roadmap](https://github.com/sastafford/marklogic-spring-batch/wiki/Roadmap) is the 10k foot view of where we're going. 
-
-### Background Information 
 Each contributor should be knowledgeable and proficient at the following projects and technologies. 
 * [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/)
-* [MarkLogic Java Client API](http://docs.marklogic.com/guide/java)
-* [MarkLogic JUnit Helper Library](https://github.com/rjrudin/ml-junit)
-* [Gradle](http://www.gradle.org)
-  * [MarkLogic Plug-In](https://github.com/rjrudin/ml-gradle)
+* [Spring Framework](https://projects.spring.io/spring-framework/)
+* [Gradle](http://gradle.org/) 
   * [Java Plugin](https://docs.gradle.org/current/userguide/java_plugin.html)
+  * [MarkLogic Gradle Plugin](http://developer.marklogic.com/code/ml-gradle)
+* [MarkLogic Java Client API](http://developer.marklogic.com/products/java)
+* [MarkLogic Java Client Util](https://github.com/rjrudin/ml-javaclient-util)
+* [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
+* [MarkLogic App Deployer](https://github.com/rjrudin/ml-app-deployer)
 * [Git](http://git-scm.com/doc)
-  * [Using the Fork-and-Branch Git Workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)
 
-## How can I contribute?
+# How should I set up my development environment? 
 
-### Development Environment
-It is recommended that an IDE is used for making one's life easier.  This is a heavy Java project where you will need to run individual unit tests.  The recommended Java IDE is [IntelliJ]() and [Eclipse]() is also supported.  
+## What software do I need?
 
-#### IntelliJ
-````
+* [MarkLogic 8+](http://developer.marklogic.com/products)
+* [Java Development Kit 1.8+](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* Recommended: [Gradle 2.+](http://gradle.org/gradle-download/)
+
+You will need to first install MarkLogic if you haven't already.  It is recommended to use a virtual machine or remote server to run MarkLogic to partition our resources (MarkLogic likes to use a lot of memory).  
+
+## What code baseline should I use?
+We use a [fork-and-Branch Git workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/).  The dev branch contains the latest and greatest code, while master represents the latest published version.  **Always branch from DEV**.
+  
+Review the [jobs/gradle.properties](https://github.com/sastafford/marklogic-spring-batch/blob/master/core/gradle.properties) file to make sure that your host, port, username, and password are correct for your environment.  Do not check your local version of gradle.properties.  
+
+## Should I use an IDE? 
+
+Yes, it is recommended to use a Java friendly IDE to make one's life easier.  Of course, you can use a simple text editor if that is your preference.  The lead authors have a recent preference for [IntelliJ](https://www.jetbrains.com/idea/).  We also use Gradle for our swiss army knife of building, testing, deploying, etc.  One of the cool features of Gradle is the ability to create the project files for two popular IDE's, IntelliJ and Eclipse.    
+
+```
 ./gradlew idea
-````
+```
 
-#### Eclipse
-If you have cloned this project and wish to set up an Eclipse project, please execute the following command to set up all the necessary Eclipse project metadata files.
-
-````
+```
 ./gradlew eclipse
-````
+```
 
-### Test Driven Development
-The success of this project is based on the tests that exercise the code.  Every issue that is worked should be accompanied by one or more tests that test the primary use cases and several edge cases.  Code that is submitted without any accompanied tests will not be accepted.  Before submitting a pull request, run the test suite and confirm 100% test passing with the following gradle command.  
+The gradlew (or gradlew.bat on Windows) command is a Java program called the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) which allows you to run a gradle command without installing Gradle on your machine.  If you plan to contribute (or do any type of Java development) it would be worth while to go ahead and install Gradle on your dev machine.  
 
-````
+## How do I verify things are set up correctly?  
+Once you have cloned the project locally execute the test cases.  Gradle will handle downloading any dependencies that you need for this effort.  
+
+```
+gradlew test
+```
+
+It is our policy that the dev branch tests always are 100% passing.  If all tests run to completion and 100% passing then you are ready to start coding.    
+
+# What should I work on?
+
+If you are new to the project the best way to contribute is to add a Job to the job library.  Choose of the [job issues](https://github.com/sastafford/marklogic-spring-batch/labels/job) to get started on an assignment.  If you have an example of a unique batch processing job then it would be a good idea to add it to the examples project.    
+
+# What is the structure for the project?
+
+There are three sub-projects for MarkLogic Spring Batch.  Most contributions will be in the examples and jobs projects where the core work would be for those intimately familiar with the Spring Batch code baseline.  
+
+* [examples](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) are the recipes for creating your own batch processing jobs (i.e. migrating from a RDBMS).  Developers should use these as templates and guidelines for writing their own MarkLogic batch processing jobs. 
+* [jobs](https://github.com/sastafford/marklogic-spring-batch/tree/master/jobs) are a library of common MarkLogic batch processing jobs to import, export, and transform.  
+* [core](https://github.com/sastafford/marklogic-spring-batch/tree/master/core) contains all enhancements on the Spring Batch framework.  This includes the jobs utility, the MarkLogic Job Repository, and any custom ItemReaders/Processors/Writers and tasklets.  
+
+# How do I test? 
+
+The quality of this project is based on the tests that exercise the code.  Every issue worked should be accompanied by one or more tests that test the primary use case and several edge cases.  Code that is submitted without any accompanied tests will not be accepted.  Before submitting a pull request, run the test suite and confirm 100% test passing with the following gradle command.  
+
+```
 ./gradlew test
-````
-Please review the [CorbJobTest](src/test/java/com/marklogic/spring/batch/corb/CorbJobTest.java) for an example of a proper test.  
+```
 
-### Asking Questions
-Please open an Issue and label it as a Question.  Please don't use email.  This is the best way to ask once and answer for all.  If you are a MarkLogic employee, I recommend that you subscribe to the java-sig email newsgroup.  
+# How do I deploy the MarkLogic Spring Batch artifacts?
 
-### Reporting Bugs
+## MarkLogic Spring Batch Libraries
+To deploy the marklogic-spring-batch core and jobs library to your local maven repository, first, increment the relevant version number in the gradle.properties file.
+
+It is advised to first publish artifacts to the local maven repository and run local tests before publishing out to [bintray](https://bintray.com/)
+
+```
+gradle publishToMavenLocal
+```
+
+Once you have verified your version then run the following command to publish to bintray (authoritative personnel only)
+
+```
+gradle bintrayUpload
+```
+
+## Jobs Utility
+To deploy the MarkLogic Jobs utility, execute the following gradle command
+
+```
+gradle :jobs:distZip
+```
+
+This will create the distribution archive file under ./jobs/build/distribution/jobs.zip.  This can then be uploaded to the distribution website.  
+
+# What is the best way to ask a question?  
+Open an issue and label it as a Question.  Please don't use email.  This is the best way to ask once and answer for all.  If you are a MarkLogic employee, I recommend that you subscribe to the java-sig email newsgroup.  
+
+# How do I report bugs?  
 Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). Create an issue, label it as a bug.
 
-### Pull Requests
+# How do I submit my changes?  
 Once you are assigned an issue, please utilize pull requests to submit your changes.  Each pull request will be reviewed before being merged into the master branch.  
 
-## Styleguides
-
-### Git Commit Messages
+# What should I put in my Git commit messages?
 [Seven rules of a great git commit message](http://chris.beams.io/posts/git-commit/)
 
 1. Separate subject from body with a blank line
@@ -85,7 +118,3 @@ Once you are assigned an issue, please utilize pull requests to submit your chan
 1. Wrap the body at 72 characters
 1. Use the body to explain what and why vs. how
 
-### Java Coding Guidelines
- * No Warnings
- * Use Javadocs
- * Each package should have a package-info.java

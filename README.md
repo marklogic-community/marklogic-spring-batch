@@ -9,16 +9,10 @@ The vision of the MarkLogic Spring Batch (MSB) project is to provide the **BEST*
 * To enhance the core [Spring Batch](http://docs.spring.io/spring-batch/apidocs/) framework that makes it easy to create batch processing programs using MarkLogic.  This represents the fusion of the MarkLogic Java Client API and the Spring Batch core libraries.  
 * To create a library of common batch processing jobs that are executed against a MarkLogic database.  
 
-The sub-projects are broken down into according to each goal.
-
-* [examples](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) - Starter templates for creating your own batch processing jobs (i.e. migrating from a RDBMS)
-* [jobs] - A library of common MarkLogic batch processing jobs implemented as Spring Batch [Jobs](http://docs.spring.io/spring-batch/trunk/reference/html/domain.html#domainJob)
-* [core] - Contains all enhancements on the Spring Batch framework
-
 # Why use MarkLogic Spring Batch?
 Many MarkLogic users often have custom batch processing jobs they want to execute but do not have a repeatable framework to use.  For example, a program must extract data from a relational database, transform the data, load it directly into MarkLogic, and must do all this without human intervention.  Sometimes this often gets coded up as mulitiple programs.  Or, let's say you want to request data from another system's REST API and load that data into MarkLogic.  More often than not, custom batch processing jobs can lead to an effort that ends up being more work that initially anticipated.  What happens in the event of invalid data or can you restart a job at the last successful execution.  MarkLogic Spring Batch builds on top of the proven Spring Batch framework and enhances it with several additional features.
 
-# Features
+## Features
 * Ability to execute any job from a command line interface via the [Jobs]() program
 * Perform common tasks related to a MarkLogic Batch Processing job via custom ItemReader, ItemProcesor, ItemWriter, and tasklet classes (i.e. Writing documents to MarkLogic)
 * Execute one of many generic MarkLogic batch processing jobs for importing, transforming, and exporting data in a MarkLogic database
@@ -26,132 +20,74 @@ Many MarkLogic users often have custom batch processing jobs they want to execut
 * Mitigate the risk of the Spring Batch learning curve by providing several examples of creating your own custom batch processing job
 * Leverage _all_ the features of Spring Batch in all your batch processing jobs 
 
-# Getting Started
+# How do I build a custom MarkLogic batch processing job? 
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Refer to the [Wiki]() or the [FAQ]() for questions that you may come across.  
 
-## Prerequisities
-
-What things you need to install the software and how to install them
-
-* [MarkLogic 8+](http://developer.marklogic.com/products)
-* [Java Development Kit 1.8+](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* Optional: [Gradle 2.+](http://gradle.org/gradle-download/)
-
-### Background Info
-* [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/)
-* [Spring Framework](https://projects.spring.io/spring-framework/)
-* [Gradle](http://gradle.org/) and the [MarkLogic Gradle Plugin](http://developer.marklogic.com/code/ml-gradle)
-* [MarkLogic Java Client API](http://developer.marklogic.com/products/java)
-* [MarkLogic Java Client Util](https://github.com/rjrudin/ml-javaclient-util)
-* [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
-* [MarkLogic App Deployer](https://github.com/rjrudin/ml-app-deployer)
-
-### Assumptions
-* The MarkLogic host is **localhost**
-* Port **8200** is available for use and no other applications are listening on that port
-
-If either of these assumptions is not true then review the following gradle.properties files and change appropriately.
-* [./gradle.properties]()
-* [./core/gradle.properties]()
-* [./jobs/gradle.properties]()
-
-_NOTE: There is an [open issue](https://github.com/sastafford/marklogic-spring-batch/issues/69) to address the multiple gradle.properties issues_
-
-### Installing
-
-Create the MarkLogic Job Repository application.  The appserver and database that is created will also serve as the target database for all testing. 
-
-Assuming gradle is installed and on your machine.
-```
-gradle deployMarkLogicJobRepository
-```
-
-Assuming you are on a Unix terminal and gradle is not installed
-```
-./gradlew deployMarkLogicJobRepository
-```
- 
-Assuming you are on a Windows terminal and gradle is not installed
-```
-gradlew.bat deployMarkLogicRepository
-```
-
-_For all gradle commands in this README, assuming that gradle is installed_
-
-After this command finishes, an application server, content database, and modules database will be created on your MarkLogic instance.
-
-## Running the tests
-
-To verify that everything works, run through all the tests.
+OK, you need to build a custom MarkLogic batch processing job. The first step is to create a build.gradle file and it needs to refer to the MarkLogic Spring Batch Jar files.  The following code snippet will get you started.    
 
 ```
-gradle test
+plugins {
+    id "com.marklogic.ml-gradle" version "2.+"
+    id "java"
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+    maven {url "https://dl.bintray.com/sastafford/maven/"}
+}
+
+dependencies {
+    compile "com.marklogic:marklogic-spring-batch:0.+"
+    runtime "com.marklogic:marklogic-spring-batch-jobs:0.+"
+}
 ```
 
-Tests can be verified in the following two reports
+The next step is to create your Spring Batch [job configuration](http://docs.spring.io/spring-batch/reference/html/configureJob.html).  The procedure for putting together job configuration follows the standard Spring Batch way of creating jobs.  But we have provided [several examples of custom Spring Batch processing jobs for MarkLogic](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples).   
 
-* Core Library: ./core/build/reports/tests/index.html
-* Jobs Library: ./jobs/build/reports/tests/index.html
+The recommended next step is to write a job test.  **TBD**  
 
-### Break down into end to end tests
-
-Explain what these tests test and why
+Once your JobConfig is written and verified then the final step is to execute your program via the Jobs utility.  The Jobs utility (jobs.zip) can be downloaded from the [MSB releases page](https://github.com/sastafford/marklogic-spring-batch/releases).  Unzip the jobs.zip file onto your machine and then execute the scripts under the bin/ directory.     
 
 ```
-Give an example
+./jobs --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
 ```
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-### Jobs
-To deploy the MarkLogic Jobs utility, execute the following gradle command
+# How can I use the MarkLogic Job Repository?
+If you want to use a MarkLogic Job Repository then you first need to install a new application onto your MarkLogic database.  A MarkLogic Job Repository can be installed via the jobs utility.  
 
 ```
-gradle :jobs:distZip
+./jobs deployMarkLogicJobRepository --jrHost localhost --jrPort 8011 --jrUsername admin --jrPassword admin
 ```
 
-This will create the distribution archive file under ./jobs/build/distribution/jobs.zip
-
-### MarkLogic Spring Batch Libraries
-To deploy the marklogic-spring-batch core and jobs library to your local maven repository, first, increment the relevant version number in the gradle.properties file.
-
-Publish artifacts to local maven repository
+If you ever need to undeploy the JobRepository then you can issue the following command.
 
 ```
-gradle publishToMavenLocal
+./jobs undeployMarkLogicJobRepository --jrHost localhost --jrPort 8011 --jrUsername admin --jrPassword admin
 ```
 
-Publish to bintray (authoritative personnel only)
+Now when you execute your job, then add the additional parameters for the MarkLogic Job Repository.  All JobExecution metadata is now logged to the MarkLogic JobRepository.  
 
 ```
-gradle bintrayUpload
+./jobs --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc --jrHost localhost --jrPort 8011 --jrUsername admin --jrPassword admin
 ```
 
+# How can I contribute to the project?
 
-## Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute code to this project and the process for submitting pull requests to us.
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
+# What does each version represent? 
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
-## Authors
+# Who are the masterminds behind this project?
 
 * **Scott A. Stafford** - [sastafford](https://github.com/sastafford)
 * **Rob Rudin** - [rjrudin](https://github.com/rjrudin)
 * **Venu Iyengar** - [venuiyengar](https://github.com/iyengar)
 * **Sanju Thomas** - [sanjuthomas](https://github.com/sanjuthomas)
 
-## License
+# What license does MarkLogic Spring Batch use?
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+See the [LICENSE.md](LICENSE.md) file for details
