@@ -48,7 +48,7 @@ The next step is to create your Spring Batch [job configuration](http://docs.spr
 
 The recommended next step is to write a job test.  **TBD**  
 
-Once your JobConfig is written and verified then the final step is to execute your program via the Jobs utility.  The Jobs utility (jobs.zip) can be downloaded from the [MSB releases page](https://github.com/sastafford/marklogic-spring-batch/releases).  Unzip the jobs.zip file onto your machine and then execute the scripts under the bin/ directory.     
+Once your JobConfig is written and verified then the final step is to execute your program via the [Jobs utility](https://github.com/sastafford/marklogic-spring-batch/wiki/Jobs-Utility).  The Jobs utility (jobs.zip) can be downloaded from the [MSB releases page](https://github.com/sastafford/marklogic-spring-batch/releases).  Unzip the jobs.zip file onto your machine and then execute the scripts under the bin/ directory.     
 
 ```
 ./jobs --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
