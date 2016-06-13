@@ -118,6 +118,7 @@ bintray {
         version {
             name = coreVersion
             released = new Date()
+            vcsTag = coreVersion
         }
     }
 }
