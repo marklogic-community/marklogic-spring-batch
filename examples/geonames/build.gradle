@@ -1,0 +1,15 @@
+plugins {
+    id "com.marklogic.ml-gradle" version "2.2.0"
+    id "java"
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven {url "https://dl.bintray.com/sastafford/maven/"}
+}
+
+dependencies {
+    compile "com.marklogic:marklogic-spring-batch:0.3.0"
+    runtime "com.marklogic:marklogic-spring-batch-jobs:0.3.0"
+}
