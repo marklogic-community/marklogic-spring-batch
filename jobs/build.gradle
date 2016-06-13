@@ -25,6 +25,13 @@ sourceSets.test.resources.srcDir 'src/test/java'
 
 mainClassName = "com.marklogic.spring.batch.Main"
 
+task testJar(type: Jar, dependsOn: testClasses) {
+    baseName = "marklogic-spring-batch-jobs-test"
+    includes = ["com/marklogic/spring/batch/JobTestConfig.java", "com/marklogic/spring/batch/SpringBatchNamespaceProvider.java",
+                "com/marklogic/spring/batch/test/", "com/marklogic/spring/batch/job/AbstractJobTest.java"]
+    from sourceSets.test.allJava
+}
+
 publishing {
     publications {
         jobs(MavenPublication) {
