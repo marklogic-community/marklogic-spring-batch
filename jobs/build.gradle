@@ -40,6 +40,12 @@ publishing {
             version jobsVersion
             from components.java
         }
+        jobsTest(MavenPublication) {
+            groupId group
+            artifactId jobsArtifact + "-test"
+            version jobsVersion
+            artifact testJar
+        }
     }
 }
 
