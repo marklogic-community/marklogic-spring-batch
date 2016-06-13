@@ -2,10 +2,27 @@ plugins {
     id "com.jfrog.bintray" version "1.6"
     id "maven-publish"
     id "application"
+    id "com.marklogic.ml-gradle" version "2.2.0"
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+
+if (System.getProperty("user.dir").endsWith("jobs")) {
+    project.ext.smartModulePaths = ["../core/src/test/ml-modules"]
+} else if (System.getProperty("user.dir").endsWith("marklogic-spring-batch")) {
+    project.ext.smartModulePaths = ["core/src/test/ml-modules"]
+} else {
+    project.ext.smartModulePaths = ["src/test/ml-modules"]
+}
+
+ext {
+    mlAppConfig {
+        modulePaths = smartModulePaths
+        createTriggersDatabase = false
+    }
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
@@ -63,14 +80,18 @@ sourceSets.test.resources.srcDir 'src/test/java'
 task deployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
-    args = ["deployJobRepo", "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlAdminUsername, "--jrPassword", mlAdminPassword]
+    args = ["deployJobRepo", "--jrName", mlJobRepositoryName, "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlManageUsername, "--jrPassword", mlManagePassword, "--config", "null"]
 }
 
 task undeployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
-    args = ["undeployJobRepo", "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlAdminUsername, "--jrPassword", mlAdminPassword]
+    args = ["undeployJobRepo", "--jrName", mlJobRepositoryName, "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlManageUsername, "--jrPassword", mlManagePassword, "--config", "null"]
 }
+
+// Setup the Job Repo in our test application so it's available for use by tests.
+mlPostDeploy.dependsOn deployMarkLogicJobRepository
+mlUndeploy.dependsOn undeployMarkLogicJobRepository
 
 mainClassName = "com.marklogic.spring.batch.Main"
 
@@ -97,6 +118,7 @@ bintray {
         version {
             name = coreVersion
             released = new Date()
+            vcsTag = coreVersion
         }
     }
 }

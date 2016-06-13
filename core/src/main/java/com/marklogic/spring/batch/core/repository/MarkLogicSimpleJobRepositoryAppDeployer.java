@@ -2,33 +2,16 @@ package com.marklogic.spring.batch.core.repository;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
-import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand;
-import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
-import com.marklogic.appdeployer.impl.AbstractAppDeployer;
 import com.marklogic.client.*;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
-import com.marklogic.client.admin.config.support.QueryOptionsConfiguration;
 import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.io.marker.QueryOptionsListReadHandle;
-import com.marklogic.client.io.marker.QueryOptionsReadHandle;
-import com.marklogic.client.io.marker.QueryOptionsWriteHandle;
-import com.marklogic.mgmt.api.API;
-import com.marklogic.mgmt.api.restapi.RestApi;
-import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.databases.DatabaseManager;
 import com.marklogic.mgmt.restapis.RestApiManager;
 import com.marklogic.mgmt.security.RoleManager;
-import com.sun.javafx.binding.Logging;
-import org.springframework.http.HttpMethod;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,12 +26,12 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
         this.config = config;
     }
 
-    public void deploy(String host, int port) {
-        config.getRestApi(port).save();
-
-        DatabaseManager dbMgr = new DatabaseManager(config.getManageClient());
-        dbMgr.save(config.getDatabase());
-
+    /**
+     * @param name The name of the JobRepository; affects the name of the REST API server and the content database
+     * @param host
+     * @param port
+     */
+    public void deploy(String name, String host, int port) {
         for (String role : config.getRoles()) {
             RoleManager roleMgr = new RoleManager(config.getManageClient());
             roleMgr.save(role);
@@ -59,6 +42,16 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
         }
 
         config.getProtectedCollection().save();
+
+        if (new RestApiManager(config.getManageClient()).restApiServerExists(name)) {
+            logger.debug("REST API server with name " + name + " already exists, not creating");
+        } else {
+            config.getRestApi(name, port).save();
+        }
+
+        // Update the database; it's assumed to have the same name as the one created via the REST API call
+        DatabaseManager dbMgr = new DatabaseManager(config.getManageClient());
+        dbMgr.save(config.getDatabase(name));
 
         AppConfig appConfig = new AppConfig();
         appConfig.setHost(host);
@@ -82,7 +75,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
         client.release();
     }
 
-    public void undeploy(String host, int port) {
+    public void undeploy(String name, String host, int port) {
         for (User user : config.getUsers()) {
             user.delete();
         }
@@ -94,6 +87,6 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
 
         config.getProtectedCollection().delete();
 
-        config.getRestApi(port).delete();
+        config.getRestApi(name, port).delete(true, true);
     }
 }

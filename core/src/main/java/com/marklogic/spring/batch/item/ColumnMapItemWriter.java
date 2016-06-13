@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.marklogic.client.document.GenericDocumentManager;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
@@ -13,7 +14,6 @@ import org.springframework.batch.item.ItemWriter;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.columnmap.ColumnMapMerger;
 import com.marklogic.spring.batch.columnmap.ColumnMapSerializer;
@@ -35,11 +35,11 @@ public class ColumnMapItemWriter extends AbstractDocumentWriter implements ItemW
     private String rootElementName;
 
     // Internal state
-    private XMLDocumentManager mgr;
+    private GenericDocumentManager mgr;
     private Map<Object, Map<String, Object>> recordMap = new HashMap<>();
 
     public ColumnMapItemWriter(DatabaseClient client, String rootElementName) {
-        this.mgr = client.newXMLDocumentManager();
+        this.mgr = client.newDocumentManager();
         this.rootElementName = rootElementName;
     }
 
@@ -77,11 +77,11 @@ public class ColumnMapItemWriter extends AbstractDocumentWriter implements ItemW
                     if (logger.isDebugEnabled()) {
                         logger.debug("Writing record: " + columnMap);
                     }
-                    String xml = columnMapSerializer.serializeColumnMap(columnMap, this.rootElementName, null);
-                    String uri = generateUri(this.rootElementName, id.toString());
-                    set.add(uri, buildMetadata(), new StringHandle(xml));
+                    String content = columnMapSerializer.serializeColumnMap(columnMap, this.rootElementName, null);
+                    String uri = generateUri(content, id);
+                    set.add(uri, buildMetadata(), new StringHandle(content));
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Writing URI: " + uri + "; xml: " + xml);
+                        logger.debug("Writing URI: " + uri + "; content: " + content);
                     }
                     idsToRemove.add(id);
                 } catch (Exception ex) {
@@ -104,6 +104,26 @@ public class ColumnMapItemWriter extends AbstractDocumentWriter implements ItemW
             }
         }
         recordIds.removeAll(idsToRemove);
+    }
+
+    /**
+     * Does some hacking to determine if we need a json or xml suffix.
+     *
+     * TODO UriGenerator needs more support; it needs to be smart enough to determine the suffix
+     * itself.
+     *
+     * @param content
+     * @param id
+     * @return
+     */
+    protected String generateUri(String content, Object id) {
+        String uri = "/" + this.rootElementName + "/" + id;
+        if (content.startsWith("{")) {
+            return uri += ".json";
+        } else if (content.startsWith("<")) {
+            return uri += ".xml";
+        }
+        return uri;
     }
 
     @Override

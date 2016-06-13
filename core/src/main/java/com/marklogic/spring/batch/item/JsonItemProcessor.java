@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.uri.DefaultUriGenerator;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.core.io.Resource;
 

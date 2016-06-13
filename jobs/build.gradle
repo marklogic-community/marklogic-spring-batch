@@ -48,6 +48,7 @@ bintray {
         version {
             name = jobsVersion
             released = new Date()
+            vcsTag = jobsVersion
         }
     }
 }
