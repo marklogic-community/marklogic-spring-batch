@@ -9,7 +9,7 @@ targetCompatibility = 1.8
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
-
+    compile "com.marklogic:marklogic-spring-batch:0.4.0"
     testCompile "com.marklogic:ml-junit:2.6.0"
     testCompile "org.springframework.batch:spring-batch-test:3.+"
 
@@ -27,9 +27,16 @@ mainClassName = "com.marklogic.spring.batch.Main"
 
 task testJar(type: Jar, dependsOn: testClasses) {
     baseName = "marklogic-spring-batch-jobs-test"
-    includes = ["com/marklogic/spring/batch/JobTestConfig.java", "com/marklogic/spring/batch/SpringBatchNamespaceProvider.java",
-                "com/marklogic/spring/batch/test/", "com/marklogic/spring/batch/job/AbstractJobTest.java"]
+    includes = ["com/marklogic/spring/batch/JobTestConfig.java",
+                "com/marklogic/spring/batch/SpringBatchNamespaceProvider.java",
+                "com/marklogic/spring/batch/test/",
+                "com/marklogic/spring/batch/job/AbstractJobTest.java"]
     from sourceSets.test.allJava
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 publishing {
@@ -40,7 +47,13 @@ publishing {
             version jobsVersion
             from components.java
         }
-        jobsTest(MavenPublication) {
+        sourcesJava(MavenPublication) {
+            groupId group
+            artifactId jobsArtifact + "-sources"
+            version jobsVersion
+            artifact sourcesJar
+        }
+        testJava(MavenPublication) {
             groupId group
             artifactId jobsArtifact + "-test"
             version jobsVersion
@@ -52,7 +65,7 @@ publishing {
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-    publications = ['jobs']
+    publications = ['jobs','sourcesJava', 'testJava']
     pkg {
         repo = 'maven'
         name = jobsArtifact
