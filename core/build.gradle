@@ -89,6 +89,11 @@ task undeployMarkLogicJobRepository(type: JavaExec) {
     args = ["undeployJobRepo", "--jrName", mlJobRepositoryName, "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlManageUsername, "--jrPassword", mlManagePassword, "--config", "null"]
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
 // Setup the Job Repo in our test application so it's available for use by tests.
 mlPostDeploy.dependsOn deployMarkLogicJobRepository
 mlUndeploy.dependsOn undeployMarkLogicJobRepository
@@ -103,13 +108,19 @@ publishing {
             version coreVersion
             from components.java
         }
+        sourcesJava(MavenPublication) {
+            groupId group
+            artifactId coreArtifact + "-sources"
+            version coreVersion
+            artifact sourcesJar
+        }
     }
 }
- 
+
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-    publications = ['core']
+    publications = ['core', 'sourcesJava']
     pkg {
         repo = 'maven'
         name = coreArtifact
