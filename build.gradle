@@ -24,3 +24,9 @@ project(':jobs') {
         compile project(':test')
     }
 }
+
+project(':test') {
+    dependencies {
+        compile project(':core')
+    }
+}

@@ -4,8 +4,9 @@ plugins {
 }
 
 dependencies {
+    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+    compile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
     compile "com.marklogic:ml-junit:2.6.0"
-    compile "org.springframework.batch:spring-batch-test:3.+"
 }
 
 
@@ -17,6 +18,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 jar {
-    baseName = "marklogic-spring-batch"
+    baseName = "marklogic-spring-batch-test"
     version = testVersion
 }
