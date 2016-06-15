@@ -9,6 +9,7 @@ targetCompatibility = 1.8
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
+	runtime "org.postgresql:postgresql:9.4.1208.jre7"
 
     testCompile "com.marklogic:ml-junit:2.6.0"
     testCompile "org.springframework.batch:spring-batch-test:3.+"
