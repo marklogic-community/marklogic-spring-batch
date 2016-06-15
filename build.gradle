@@ -21,5 +21,6 @@ allprojects {
 project(':jobs') {
     dependencies {
         compile project(':core')
+        compile project(':test')
     }
 }
