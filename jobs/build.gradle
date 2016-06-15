@@ -26,7 +26,7 @@ sourceSets.test.resources.srcDir 'src/test/java'
 mainClassName = "com.marklogic.spring.batch.Main"
 
 task testJar(type: Jar, dependsOn: testClasses) {
-    baseName = "marklogic-spring-batch-jobs-test"
+    classifier = "test"
     includes = ["com/marklogic/spring/batch/JobTestConfig.java",
                 "com/marklogic/spring/batch/SpringBatchNamespaceProvider.java",
                 "com/marklogic/spring/batch/test/",
@@ -49,13 +49,13 @@ publishing {
         }
         sourcesJava(MavenPublication) {
             groupId group
-            artifactId jobsArtifact + "-sources"
+            artifactId jobsArtifact
             version jobsVersion
             artifact sourcesJar
         }
         testJava(MavenPublication) {
             groupId group
-            artifactId jobsArtifact + "-test"
+            artifactId jobsArtifact
             version jobsVersion
             artifact testJar
         }

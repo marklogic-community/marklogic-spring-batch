@@ -110,7 +110,7 @@ publishing {
         }
         sourcesJava(MavenPublication) {
             groupId group
-            artifactId coreArtifact + "-sources"
+            artifactId coreArtifact
             version coreVersion
             artifact sourcesJar
         }
