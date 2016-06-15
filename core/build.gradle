@@ -98,7 +98,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
     baseName = "marklogic-spring-batch"
-    version = jobsVersion
+    version = coreVersion
 }
 
 // Setup the Job Repo in our test application so it's available for use by tests.
