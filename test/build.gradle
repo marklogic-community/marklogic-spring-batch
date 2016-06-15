@@ -1,0 +1,57 @@
+plugins {
+    id "com.jfrog.bintray" version "1.6"
+    id "maven-publish"
+}
+
+dependencies {
+    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+    compile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
+    compile "com.marklogic:ml-junit:2.6.0"
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = "marklogic-spring-batch-test"
+    version = testVersion
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = "marklogic-spring-batch-test"
+    version = testVersion
+}
+
+jar.dependsOn sourcesJar
+
+publishing {
+    publications {
+        test(MavenPublication) {
+            groupId group
+            artifactId testArtifact
+            version testVersion
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['test']
+    filesSpec {
+        from 'build/libs'
+        into 'com/marklogic/marklogic-spring-batch-test/' + testVersion
+    }
+    pkg {
+        repo = 'maven'
+        name = testArtifact
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
+        version {
+            name = testVersion
+            released = new Date()
+            vcsTag = testVersion
+        }
+    }
+}
