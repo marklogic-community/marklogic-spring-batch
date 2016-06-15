@@ -36,8 +36,6 @@ jar {
     version = jobsVersion
 }
 
-jar.dependsOn sourcesJar
-
 publishing {
     publications {
         jobs(MavenPublication) {
@@ -45,18 +43,15 @@ publishing {
             artifactId jobsArtifact
             version jobsVersion
             from components.java
+            artifact sourcesJar
         }
     }
 }
 
 bintray {
-    user =  project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
     publications = ['jobs']
-    filesSpec {
-        from 'build/libs'
-        into 'com/marklogic/marklogic-spring-batch-jobs/' + jobsVersion
-    }
     pkg {
         repo = 'maven'
         name = jobsArtifact

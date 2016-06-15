@@ -101,8 +101,6 @@ jar {
     version = coreVersion
 }
 
-jar.dependsOn sourcesJar
-
 // Setup the Job Repo in our test application so it's available for use by tests.
 mlPostDeploy.dependsOn deployMarkLogicJobRepository
 mlUndeploy.dependsOn undeployMarkLogicJobRepository
@@ -116,18 +114,15 @@ publishing {
             artifactId coreArtifact
             version coreVersion
             from components.java
+            artifact sourcesJar
         }
     }
 }
 
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
     publications = ['core']
-    filesSpec {
-        from 'build/libs'
-        into 'com/marklogic/marklogic-spring-batch/' + coreVersion
-    }
     pkg {
         repo = 'maven'
         name = coreArtifact
