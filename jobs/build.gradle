@@ -36,6 +36,8 @@ jar {
     version = jobsVersion
 }
 
+jar.dependsOn sourcesJar
+
 publishing {
     publications {
         jobs(MavenPublication) {

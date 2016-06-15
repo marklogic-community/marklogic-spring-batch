@@ -22,6 +22,8 @@ jar {
     version = testVersion
 }
 
+jar.dependsOn sourcesJar
+
 publishing {
     publications {
         test(MavenPublication) {

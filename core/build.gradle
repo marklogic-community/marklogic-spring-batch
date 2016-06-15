@@ -101,6 +101,8 @@ jar {
     version = coreVersion
 }
 
+jar.dependsOn sourcesJar
+
 // Setup the Job Repo in our test application so it's available for use by tests.
 mlPostDeploy.dependsOn deployMarkLogicJobRepository
 mlUndeploy.dependsOn undeployMarkLogicJobRepository
