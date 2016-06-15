@@ -6,6 +6,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
+import com.marklogic.spring.batch.test.AbstractJobTest;
 import org.junit.Test;
 
 public class LoadDocumentsFromDirectoryJobTest extends AbstractJobTest {

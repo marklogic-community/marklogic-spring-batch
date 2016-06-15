@@ -3,9 +3,9 @@ package com.marklogic.spring.batch;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryAppDeployer;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryConfig;
-import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.springframework.batch.core.Job;
@@ -18,9 +18,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.JOptCommandLinePropertySource;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Main program for running marklogic-spring-batch. Mimicking mlcp args where possible.
@@ -111,7 +115,7 @@ public class Main extends LoggingObject {
                 Object o = Class.forName(config).newInstance();
                 if (o instanceof OptionParserConfigurer) {
                     parser = new OptionParser();
-                    ((OptionParserConfigurer)o).configureOptionParser(parser);
+                    ((OptionParserConfigurer) o).configureOptionParser(parser);
                     System.out.println("\nOptions specific to configuration class: " + config);
                     parser.printHelpOn(System.out);
                 }
@@ -157,8 +161,42 @@ public class Main extends LoggingObject {
         parser.accepts(Options.JDBC_USERNAME, "User for connecting to a relational database").withRequiredArg();
         parser.accepts(Options.JDBC_PASSWORD, "Password for connecting to a relational database").withRequiredArg();
 
+        parser.accepts(Options.OPTIONS_FILE, "Path to a Java-style properties file that defines additional options").withRequiredArg();
+
         parser.allowsUnrecognizedOptions();
         return parser;
+    }
+
+    /**
+     * Parse the args and return an OptionSet. Includes support for reading options from a file.
+     *
+     * @param parser
+     * @param args
+     * @return
+     */
+    protected OptionSet parseOptions(OptionParser parser, String... args) {
+        OptionSet options = parser.parse(args);
+        if (options.has(Options.OPTIONS_FILE)) {
+            String path = options.valueOf(Options.OPTIONS_FILE).toString();
+            Properties props = new Properties();
+            try {
+                props.load(new FileReader(new File(path)));
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to read options from properties file: " + path + "; cause: " + e.getMessage(), e);
+            }
+
+            List<String> list = new ArrayList<>();
+            for (String arg : args) {
+                list.add(arg);
+            }
+            for (String key : props.stringPropertyNames()) {
+                list.add(key);
+                list.add(props.getProperty(key));
+            }
+            return parser.parse(list.toArray(new String[]{}));
+        } else {
+            return options;
+        }
     }
 
     /**

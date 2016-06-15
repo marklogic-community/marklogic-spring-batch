@@ -89,6 +89,18 @@ task undeployMarkLogicJobRepository(type: JavaExec) {
     args = ["undeployJobRepo", "--jrName", mlJobRepositoryName, "--jrHost", mlHost, "--jrPort", mlRestPort, "--jrUsername", mlManageUsername, "--jrPassword", mlManagePassword, "--config", "null"]
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = "marklogic-spring-batch"
+    version = coreVersion
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = "marklogic-spring-batch"
+    version = coreVersion
+}
+
 // Setup the Job Repo in our test application so it's available for use by tests.
 mlPostDeploy.dependsOn deployMarkLogicJobRepository
 mlUndeploy.dependsOn undeployMarkLogicJobRepository
@@ -102,13 +114,14 @@ publishing {
             artifactId coreArtifact
             version coreVersion
             from components.java
+            artifact sourcesJar
         }
     }
 }
- 
+
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
     publications = ['core']
     pkg {
         repo = 'maven'
