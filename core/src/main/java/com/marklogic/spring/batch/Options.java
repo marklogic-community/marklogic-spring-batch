@@ -6,6 +6,7 @@ package com.marklogic.spring.batch;
 public interface Options {
 
     String HELP = "help";
+    String OPTIONS_FILE = "optionsFile";
 
     String HOST = "host";
     String PORT = "port";
