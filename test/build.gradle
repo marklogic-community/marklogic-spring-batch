@@ -21,3 +21,35 @@ jar {
     baseName = "marklogic-spring-batch-test"
     version = testVersion
 }
+
+publishing {
+    publications {
+        test(MavenPublication) {
+            groupId group
+            artifactId testArtifact
+            version testVersion
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['test']
+    filesSpec {
+        from 'build/libs'
+        into 'com/marklogic/marklogic-spring-batch-test/' + testVersion
+    }
+    pkg {
+        repo = 'maven'
+        name = testArtifact
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
+        version {
+            name = testVersion
+            released = new Date()
+            vcsTag = testVersion
+        }
+    }
+}
