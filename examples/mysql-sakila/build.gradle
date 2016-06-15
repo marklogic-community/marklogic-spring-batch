@@ -10,9 +10,10 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch:0.3.1"
-    runtime "com.marklogic:marklogic-spring-batch-jobs:0.3.1"
+    compile "com.marklogic:marklogic-spring-batch:0.4.1"
+    runtime "com.marklogic:marklogic-spring-batch-jobs:0.4.1"
     runtime "mysql:mysql-connector-java:5.1.6"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.4.1"
 }
 
 ext {
