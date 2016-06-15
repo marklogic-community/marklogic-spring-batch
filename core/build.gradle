@@ -90,8 +90,15 @@ task undeployMarkLogicJobRepository(type: JavaExec) {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = "marklogic-spring-batch"
+    version = coreVersion
     classifier = 'sources'
     from sourceSets.main.allSource
+}
+
+jar {
+    baseName = "marklogic-spring-batch"
+    version = jobsVersion
 }
 
 // Setup the Job Repo in our test application so it's available for use by tests.
@@ -108,19 +115,17 @@ publishing {
             version coreVersion
             from components.java
         }
-        sourcesJava(MavenPublication) {
-            groupId group
-            artifactId coreArtifact
-            version coreVersion
-            artifact sourcesJar
-        }
     }
 }
 
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-    publications = ['core', 'sourcesJava']
+    publications = ['core']
+    filesSpec {
+        from 'build/libs'
+        into 'com/marklogic/marklogic-spring-batch/' + coreVersion
+    }
     pkg {
         repo = 'maven'
         name = coreArtifact

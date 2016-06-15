@@ -17,13 +17,9 @@ allprojects {
 
 }
 
-// Unfortunately, because I have to publish two jars from core and jobs to successfully publish to jCenter it is breaking
-// my project dependency.  This is a known gradle limitation.
-// https://issues.gradle.org/browse/GRADLE-2966
-/*
+
 project(':jobs') {
     dependencies {
         compile project(':core')
     }
 }
-*/
