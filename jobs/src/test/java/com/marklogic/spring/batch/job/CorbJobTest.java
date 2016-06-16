@@ -14,8 +14,8 @@ public class CorbJobTest extends AbstractJobTest {
     public void runCorbJobTest() {
         givenATestDocument();
         runJobWithMarkLogicJobRepository(CorbConfig.class,
-                "--urisModule", "/ext/corb/uris.xqy",
-                "--transformModule", "/ext/corb/process.xqy");
+                "--uris_module", "/ext/corb/uris.xqy",
+                "--transform_module", "/ext/corb/process.xqy");
         thenVerifyCorbWorked();
     }
 

@@ -33,7 +33,7 @@ public class LoadJsonDocumentsFromDirectoryConfig extends AbstractMarkLogicBatch
     @Bean
     @JobScope
     protected Step jsonStep(ItemReader<Resource> reader, ItemProcessor<Resource, ObjectNode> processor,
-                            ItemWriter<ObjectNode> writer, @Value("#{jobParameters['chunkSize'] ?: 100}") Integer chunkSize) {
+                            ItemWriter<ObjectNode> writer, @Value("#{jobParameters['chunk'] ?: 100}") Integer chunkSize) {
 
         return stepBuilderFactory.get("jsonStep")
                 .<Resource, ObjectNode>chunk(chunkSize)
