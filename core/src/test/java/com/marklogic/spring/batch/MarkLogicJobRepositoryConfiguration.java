@@ -21,83 +21,28 @@ import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.task.SyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * TODO Should be able to remove this in favor of testing jobs in the jobs project, and thus
- * extending AbstractJobTest.
+ * Tests that need to exercise the MarkLogic implementation of a JobRepository should include this
+ * in their Spring configuration.
  */
 @Configuration
-@ComponentScan({"com.marklogic.spring.batch.configuration"})
-public class MarkLogicBatchConfiguration extends AbstractBatchConfiguration {
+public class MarkLogicJobRepositoryConfiguration {
 
     @Autowired
     private DatabaseClientProvider databaseClientProvider;
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyPlaceHolderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    @Override
-    @Bean
     public JobRepository jobRepository() throws Exception {
         return new MarkLogicSimpleJobRepository(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
     }
 
-    @Override
-    @Bean
-    public JobLauncher jobLauncher() throws Exception {
-        SimpleJobLauncher launcher = new SimpleJobLauncher();
-        launcher.setJobRepository(jobRepository());
-        launcher.setTaskExecutor(taskExecutor());
-        return launcher;
-    }
-
-    @Override
     @Bean
     public JobExplorer jobExplorer() throws Exception {
         return new SimpleJobExplorer(jobInstanceDao(), jobExecutionDao(), stepExecutionDao(), executionContextDao());
-    }
-
-    @Override
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-
-        return new ResourcelessTransactionManager();
-    }
-
-    private TaskExecutor taskExecutor() {
-        //CustomizableThreadFactory tf = new CustomizableThreadFactory("geoname-threads");
-        //SimpleAsyncTaskExecutor sate =  new SimpleAsyncTaskExecutor(tf);
-        //sate.setConcurrencyLimit(8);
-        return new SyncTaskExecutor();
-    }
-
-    @Bean
-    public Jaxb2Marshaller jaxb2Marshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(
-                com.marklogic.spring.batch.core.AdaptedJobExecution.class,
-                com.marklogic.spring.batch.core.AdaptedJobInstance.class,
-                com.marklogic.spring.batch.core.AdaptedJobParameters.class,
-                com.marklogic.spring.batch.core.AdaptedStepExecution.class,
-                com.marklogic.spring.batch.core.AdaptedExecutionContext.class,
-                com.marklogic.spring.batch.core.MarkLogicJobInstance.class);
-        marshaller.setAdapters(
-                new ExecutionContextAdapter(),
-                new JobExecutionAdapter(),
-                new JobInstanceAdapter(),
-                new JobParametersAdapter(),
-                new StepExecutionAdapter());
-        //marshaller.setMarshallerProperties(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        return marshaller;
     }
 
     private JobExecutionDao jobExecutionDao() throws Exception {

@@ -14,10 +14,26 @@ allprojects {
     task wrapper(type: Wrapper) {
         gradleVersion = '2.13'
     }
-
 }
 
+subprojects {
+    apply plugin: "checkstyle"
+
+    checkstyle {
+        configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+        toolVersion = '6.19'
+    }
+}
+
+
 project(':jobs') {
+    dependencies {
+        compile project(':core')
+        compile project(':test')
+    }
+}
+
+project(':test') {
     dependencies {
         compile project(':core')
     }

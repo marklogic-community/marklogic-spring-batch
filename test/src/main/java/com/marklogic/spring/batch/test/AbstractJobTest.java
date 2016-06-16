@@ -1,12 +1,10 @@
-package com.marklogic.spring.batch.job;
+package com.marklogic.spring.batch.test;
 
 import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import com.marklogic.spring.batch.JobTestConfig;
 import com.marklogic.spring.batch.Main;
 import com.marklogic.spring.batch.Options;
-import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.annotation.Autowired;
