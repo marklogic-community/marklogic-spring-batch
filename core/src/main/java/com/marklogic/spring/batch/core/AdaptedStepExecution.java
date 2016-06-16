@@ -1,23 +1,22 @@
 package com.marklogic.spring.batch.core;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
-import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-@XmlRootElement(name = "stepExecution", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
-@XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlRootElement(name = "stepExecution", namespace = MarkLogicSpringBatch.JOB_NAMESPACE)
+@XmlType(namespace = MarkLogicSpringBatch.JOB_NAMESPACE)
 public class AdaptedStepExecution {
 	
 	private Long id;
@@ -219,7 +218,7 @@ public class AdaptedStepExecution {
 	}
 
 	@XmlJavaTypeAdapter(ExecutionContextAdapter.class)
-	@XmlElement(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
+	@XmlElement(namespace = MarkLogicSpringBatch.JOB_NAMESPACE)
 	public ExecutionContext getExecutionContext() {
 		return executionContext;
 	}
