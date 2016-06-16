@@ -8,6 +8,7 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch:0.4.0"
-    runtime "com.marklogic:marklogic-spring-batch-jobs:0.4.0"
+    compile "com.marklogic:marklogic-spring-batch:0.4.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.4.1"
+    runtime "com.marklogic:marklogic-spring-batch-jobs:0.4.1"
 }
