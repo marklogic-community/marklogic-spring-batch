@@ -30,16 +30,16 @@ import com.marklogic.semantics.jena.MarkLogicDatasetGraphFactory;
 public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemWriter<Map<String, Object>>, ItemStream {
 	
     // Configurable
-    private String rootElementName;
+    private String graphName;
     private Node graphNode;
     private MarkLogicDatasetGraph dsg;
     private DatabaseClient client;
 
-    public RdfTripleItemWriter(DatabaseClient client, String rootElementName) {
+    public RdfTripleItemWriter(DatabaseClient client, String graphName) {
         this.client = client;
     	this.dsg = getMarkLogicDatasetGraph(client);
-        this.rootElementName = rootElementName;
-        graphNode = NodeFactory.createURI(rootElementName);
+        this.graphName = graphName;
+        graphNode = NodeFactory.createURI(graphName);
         // Clear the triples- temporary
         dsg.clear();
     }
@@ -91,7 +91,7 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
     @Override
     public void open(ExecutionContext executionContext) {
         if (graphNode == null) {
-            graphNode = NodeFactory.createURI(rootElementName);
+            graphNode = NodeFactory.createURI(graphName);
         }
 
         if (this.dsg == null) {
