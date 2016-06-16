@@ -1,11 +1,9 @@
 package com.marklogic.spring.batch.bind;
 
+import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.NamespaceProvider;
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
-import com.marklogic.spring.batch.JobExecutionTestUtils;
-import com.marklogic.spring.batch.JobParametersTestUtils;
-import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
+import com.marklogic.spring.batch.*;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
@@ -19,6 +17,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,13 +25,14 @@ import javax.xml.transform.dom.DOMResult;
 import java.util.Date;
 import java.util.List;
 
+@ContextConfiguration(classes = {JaxbConfiguration.class})
 public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
 
-    Document doc;
-    DOMResult result;
+    private Document doc;
+    private DOMResult result;
 
     @Autowired
-    Jaxb2Marshaller jaxb2Marshaller;
+    private Jaxb2Marshaller jaxb2Marshaller;
 
     @Before
     public void setup() throws Exception {

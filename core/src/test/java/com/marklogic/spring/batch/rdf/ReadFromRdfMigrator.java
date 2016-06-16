@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.rdf;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.marklogic.migration.rdf.RdfMigrator;
@@ -9,6 +10,7 @@ import com.marklogic.spring.batch.AbstractSpringBatchTest;
 /**
  * RdfMigrator end-to-end test
  */
+@Ignore("Being refactored")
 public class ReadFromRdfMigrator extends AbstractSpringBatchTest {
 
     private RdfMigrator rdfMigrator;
