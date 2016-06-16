@@ -9,7 +9,6 @@ targetCompatibility = 1.8
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
-
     testCompile "com.marklogic:ml-junit:2.6.0"
     testCompile "org.springframework.batch:spring-batch-test:3.+"
 
@@ -25,6 +24,18 @@ sourceSets.test.resources.srcDir 'src/test/java'
 
 mainClassName = "com.marklogic.spring.batch.Main"
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = "marklogic-spring-batch-jobs"
+    version = jobsVersion
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = "marklogic-spring-batch-jobs"
+    version = jobsVersion
+}
+
 publishing {
     publications {
         jobs(MavenPublication) {
@@ -32,13 +43,14 @@ publishing {
             artifactId jobsArtifact
             version jobsVersion
             from components.java
+            artifact sourcesJar
         }
     }
 }
 
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
     publications = ['jobs']
     pkg {
         repo = 'maven'
@@ -48,6 +60,7 @@ bintray {
         version {
             name = jobsVersion
             released = new Date()
+            vcsTag = jobsVersion
         }
     }
 }

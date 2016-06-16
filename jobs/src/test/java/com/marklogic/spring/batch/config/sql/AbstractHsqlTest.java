@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.config.sql;
 
-import com.marklogic.spring.batch.job.AbstractJobTest;
+import com.marklogic.spring.batch.test.AbstractJobTest;
 import org.junit.After;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;

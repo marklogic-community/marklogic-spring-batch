@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch;
+package com.marklogic.spring.batch.test;
 
 import com.marklogic.junit.MarkLogicNamespaceProvider;
 import com.marklogic.spring.batch.core.MarkLogicSpringBatch;

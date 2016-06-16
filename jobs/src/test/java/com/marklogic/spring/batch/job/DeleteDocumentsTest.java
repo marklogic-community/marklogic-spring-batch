@@ -5,6 +5,7 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
+import com.marklogic.spring.batch.test.AbstractJobTest;
 import org.junit.Test;
 
 public class DeleteDocumentsTest extends AbstractJobTest {

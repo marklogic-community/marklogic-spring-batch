@@ -25,7 +25,15 @@ subprojects {
     }
 }
 
+
 project(':jobs') {
+    dependencies {
+        compile project(':core')
+        compile project(':test')
+    }
+}
+
+project(':test') {
     dependencies {
         compile project(':core')
     }
