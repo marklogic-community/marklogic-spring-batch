@@ -49,7 +49,7 @@ public class ReadAndWriteColumnMapsTest extends AbstractHsqlTest {
     public void writeUserWithNestedAddressesAsJson() throws Exception {
         String sql = "SELECT users.*, addresses.street as \"address/street\", addresses.city as \"address/city\", addresses.zipCode as \"address/zipCode\" "
                 + "FROM users INNER JOIN addresses ON users.id = addresses.userId ORDER BY users.id";
-        runJob(ReadAndWriteColumnMapsTestConfig.class, "--sql", sql, "--rootLocalName", "user", "--format", "json");
+        runJob(ReadAndWriteColumnMapsTestConfig.class, "--sql", sql, "--root_local_name", "user", "--format", "json");
 
         String content = getClient().newServerEval().xquery("collection('user')").evalAs(String.class);
         JsonNode node = new ObjectMapper().readTree(content);
@@ -80,7 +80,7 @@ public class ReadAndWriteColumnMapsTest extends AbstractHsqlTest {
     }
 
     private void readAndWriteUsers(String sql) {
-        runJob(ReadAndWriteColumnMapsTestConfig.class, "--sql", sql, "--rootLocalName", "user");
+        runJob(ReadAndWriteColumnMapsTestConfig.class, "--sql", sql, "--root_local_name", "user");
     }
 
     private Fragment loadUserFromMarkLogic() {
