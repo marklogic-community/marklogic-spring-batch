@@ -47,17 +47,16 @@ public class LoadImagesFromDirectoryConfig extends AbstractMarkLogicBatchConfig 
     @Bean
     @StepScope
     public ItemReader<Resource> reader(
-            @Value("#{jobParameters['input_file_path']}") String inputFilePath,
-            @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern)
+            @Value("#{jobParameters['input_file_path']}") String inputFilePath)
     {
+        logger.info("READER");
         ResourcesItemReader itemReader = new ResourcesItemReader();
         ArrayList<Resource> resourceList = new ArrayList<Resource>();
         try {
             Resource[] resources = ctx.getResources(inputFilePath);
             for (int i = 0; i < resources.length; i++) {
-                if (resources[i].getFilename().matches(inputFilePattern)) {
-                    resourceList.add(resources[i]);
-                }
+                logger.info(resources[i].getFilename());
+                resourceList.add(resources[i]);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

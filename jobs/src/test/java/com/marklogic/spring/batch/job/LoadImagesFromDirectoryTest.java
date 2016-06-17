@@ -10,9 +10,9 @@ import org.junit.Test;
 public class LoadImagesFromDirectoryTest extends AbstractJobsJobTest {
 
     @Test
-    public void runCorbJobTest() {
+    public void importBinariesTest() {
         runJob(LoadImagesFromDirectoryConfig.class,
-                "--input_file_path", "c:\\temp\\images\\",
-                "--input_file_pattern", "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)");
+                "--input_file_path", "binary/*.docx");
+
     }
 }
