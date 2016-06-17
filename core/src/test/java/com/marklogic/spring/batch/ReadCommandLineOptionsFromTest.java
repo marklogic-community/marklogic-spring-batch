@@ -13,7 +13,7 @@ public class ReadCommandLineOptionsFromTest extends AbstractSpringBatchTest {
         String[] args = new String[]{
                 "--job", "test",
                 "--custom", "value",
-                "--optionsFile", "src/test/resources/options/sample-options.properties"};
+                "--options_file", "src/test/resources/options/sample-options.properties"};
 
         Main main = new Main();
         OptionSet options = main.parseOptions(main.buildOptionParser(), args);
@@ -30,7 +30,7 @@ public class ReadCommandLineOptionsFromTest extends AbstractSpringBatchTest {
     @Test
     public void readFromMissingFile() {
         String[] args = new String[]{
-                "--optionsFile", "src/test/resources/options/doesnt-exist.properties"};
+                "--options_file", "src/test/resources/options/doesnt-exist.properties"};
 
         Main main = new Main();
         OptionParser parser = main.buildOptionParser();
