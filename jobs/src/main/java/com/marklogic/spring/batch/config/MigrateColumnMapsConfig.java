@@ -50,7 +50,7 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
     public Step step1(
             @Value("#{jobParameters['sql']}") String sql,
             @Value("#{jobParameters['format']}") String format,
-            @Value("#{jobParameters['rootLocalName']}") String rootLocalName,
+            @Value("#{jobParameters['root_local_name']}") String rootLocalName,
             @Value("#{jobParameters['collections']}") String[] collections) {
 
         DataSource dataSource = buildDataSource();
