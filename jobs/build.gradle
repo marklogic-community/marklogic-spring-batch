@@ -9,6 +9,7 @@ targetCompatibility = 1.8
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
+    compile "org.apache.tika:tika-parsers:1.13"
     testCompile "com.marklogic:ml-junit:2.6.0"
     testCompile "org.springframework.batch:spring-batch-test:3.+"
 
