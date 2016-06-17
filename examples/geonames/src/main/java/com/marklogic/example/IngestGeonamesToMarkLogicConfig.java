@@ -7,6 +7,7 @@ import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.geonames.Geoname;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -14,12 +15,15 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
 
-import java.util.List;
 
 @Configuration
 public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfig {
@@ -30,20 +34,22 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
     }
 
     @Bean
-    protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor, ItemWriter<Document> writer) {
+    @JobScope
+    protected Step step1(ItemReader<Geoname> reader, ItemProcessor<Geoname, Document> processor,
+    ItemWriter<Document> writer, @Value("#{jobParameters['chunk'] ?: 100}") Integer chunkSize) {
         return stepBuilderFactory.get("step1")
-                .<Geoname, Document> chunk(10)
+                .<Geoname, Document> chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
-                //.taskExecutor(taskExecutor)
+                .taskExecutor(taskExecutor())
                 .build();
     }
 
     @Bean
     protected ItemReader<Geoname> geonameReader() {
         FlatFileItemReader<Geoname> reader = new FlatFileItemReader<>();
-        reader.setResource(new ClassPathResource("cities15000.txt"));
+        reader.setResource(new ClassPathResource("cities_us_east.txt"));
         DefaultLineMapper<Geoname> mapper = new DefaultLineMapper<>();
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer(DelimitedLineTokenizer.DELIMITER_TAB);
         tokenizer.setQuoteCharacter('{');
@@ -61,5 +67,13 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
     @Bean
     protected ItemWriter<Document> writer() {
         return new DocumentItemWriter(getDatabaseClient());
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setMaxPoolSize(4);
+        taskExecutor.afterPropertiesSet();
+        return taskExecutor;
     }
 }
