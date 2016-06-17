@@ -4,11 +4,11 @@ plugins {
 
 repositories {
     jcenter()
-    maven {url "https://dl.bintray.com/sastafford/maven/"}
+    mavenLocal()
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch:0.4.1"
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.4.1"
-    runtime "com.marklogic:marklogic-spring-batch-jobs:0.4.1"
+    compile "com.marklogic:marklogic-spring-batch:0.4.2"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.4.2"
+    runtime "com.marklogic:marklogic-spring-batch-jobs:0.4.2"
 }
