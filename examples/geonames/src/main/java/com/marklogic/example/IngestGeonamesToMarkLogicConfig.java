@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
@@ -69,11 +70,9 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
         return new DocumentItemWriter(getDatabaseClient());
     }
 
-    @Bean
     public TaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setMaxPoolSize(4);
-        taskExecutor.afterPropertiesSet();
+        SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
+        taskExecutor.setConcurrencyLimit(2);
         return taskExecutor;
     }
 }
