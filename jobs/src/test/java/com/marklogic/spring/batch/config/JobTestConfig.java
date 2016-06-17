@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.test;
+package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.spring.BasicConfig;
 import org.springframework.context.annotation.Configuration;

@@ -6,7 +6,7 @@ import com.marklogic.spring.batch.config.sql.ReadAndWriteColumnMapsTest;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import org.junit.Test;
 
-public class ImportRdfFromFileTest extends AbstractJobTest {
+public class ImportRdfFromFileTest extends AbstractJobsJobTest {
 
     @Test
     public void test() {
