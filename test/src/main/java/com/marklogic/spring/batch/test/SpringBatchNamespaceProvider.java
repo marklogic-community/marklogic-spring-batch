@@ -7,14 +7,13 @@ import org.jdom2.Namespace;
 import java.util.List;
 
 /**
- * Had to duplicate this under jobs because it wasn't found under core.
+ * Registers commonly used namespaces for marklogic-spring-batch tests.
  */
 public class SpringBatchNamespaceProvider extends MarkLogicNamespaceProvider {
 	
 	@Override
     protected List<Namespace> buildListOfNamespaces() {
         List<Namespace> list = super.buildListOfNamespaces();
-        list.add(Namespace.getNamespace("geo", "http://geonames.org"));
         list.add(Namespace.getNamespace(MarkLogicSpringBatch.JOB_NAMESPACE_PREFIX, MarkLogicSpringBatch.JOB_NAMESPACE));
         list.add(Namespace.getNamespace("xs", "http://www.w3.org/2001/XMLSchema"));  
         list.add(Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance"));  

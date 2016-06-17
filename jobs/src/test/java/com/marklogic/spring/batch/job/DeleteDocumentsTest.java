@@ -5,10 +5,10 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.test.AbstractJobTest;
+import com.marklogic.spring.batch.config.AbstractJobsJobTest;
 import org.junit.Test;
 
-public class DeleteDocumentsTest extends AbstractJobTest {
+public class DeleteDocumentsTest extends AbstractJobsJobTest {
 
     private final static int NUMBER_OF_DOCUMENTS_TO_CREATE = 200;
 

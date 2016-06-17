@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.MarkLogicJobRepositoryConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobParameters;
@@ -10,7 +11,9 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
+@ContextConfiguration(classes = {MarkLogicJobRepositoryConfiguration.class})
 public class IsJobInstanceExistTest extends AbstractSpringBatchTest {
 
     private final String jobName = "job";

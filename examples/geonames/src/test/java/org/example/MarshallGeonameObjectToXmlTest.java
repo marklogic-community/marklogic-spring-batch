@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.geonames;
+package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
+import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
 import org.geonames.Geoname;
 import org.jdom2.input.DOMBuilder;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import com.marklogic.junit.Fragment;
 public class MarshallGeonameObjectToXmlTest extends AbstractSpringTest {
 
     protected NamespaceProvider getNamespaceProvider() {
-        return new SpringBatchNamespaceProvider();
+        return new GeonamesNamespaceProvider();
     }
 
     @Test
