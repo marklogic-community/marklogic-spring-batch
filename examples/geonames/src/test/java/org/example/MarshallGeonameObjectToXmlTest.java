@@ -24,7 +24,7 @@ import com.marklogic.junit.Fragment;
 public class MarshallGeonameObjectToXmlTest extends AbstractSpringTest {
 
     protected NamespaceProvider getNamespaceProvider() {
-        return new SpringBatchNamespaceProvider();
+        return new GeonamesNamespaceProvider();
     }
 
     @Test
