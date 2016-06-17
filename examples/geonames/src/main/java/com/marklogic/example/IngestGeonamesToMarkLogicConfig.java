@@ -3,6 +3,7 @@ package com.marklogic.example;
 import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
 import com.marklogic.example.geonames.GeonameFieldSetMapper;
 import com.marklogic.example.geonames.GeonamesItemProcessor;
+import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.geonames.Geoname;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -59,11 +60,6 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
 
     @Bean
     protected ItemWriter<Document> writer() {
-        return new ItemWriter<Document>() {
-            @Override
-            public void write(List<? extends Document> items) throws Exception {
-
-            }
-        };
+        return new DocumentItemWriter(getDatabaseClient());
     }
 }
