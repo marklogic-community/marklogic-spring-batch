@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.config.sql;
 
+import com.marklogic.spring.batch.config.AbstractJobsJobTest;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import org.junit.After;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -9,7 +10,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 /**
  * Provides some support for tests that need to stand up an embedded HSQL database.
  */
-public abstract class AbstractHsqlTest extends AbstractJobTest {
+public abstract class AbstractHsqlTest extends AbstractJobsJobTest {
 
     protected static EmbeddedDatabase embeddedDatabase;
 
