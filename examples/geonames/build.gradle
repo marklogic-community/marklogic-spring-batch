@@ -1,0 +1,14 @@
+plugins {
+    id "java"
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    compile "com.marklogic:marklogic-spring-batch:0.4.2"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.4.2"
+    runtime "com.marklogic:marklogic-spring-batch-jobs:0.4.2"
+}
