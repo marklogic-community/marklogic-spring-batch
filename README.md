@@ -76,12 +76,12 @@ task migrateActors(type: JavaExec) {
         "--port", mlRestPort,
         "--username", mlUsername,
         "--password", mlPassword,
-        "--jdbcDriver", "com.mysql.jdbc.Driver",
-        "--jdbcUrl", "jdbc:mysql://localhost:3306/sakila",
-        "--jdbcUsername", "root",
-        "--jdbcPassword", "admin",
+        "--jdbc_driver", "com.mysql.jdbc.Driver",
+        "--jdbc_url", "jdbc:mysql://localhost:3306/sakila",
+        "--jdbc_username", "root",
+        "--jdbc_password", "admin",
         "--sql", actorsSql,
-        "--rootLocalName", "actor"
+        "--root_local_name", "actor"
     ]
 }
 ``` 
@@ -95,19 +95,19 @@ gradle migrateActors
 If you want to use a MarkLogic Job Repository then you first need to install a new application onto your MarkLogic database.  A MarkLogic Job Repository can be installed via the jobs utility.  
 
 ```
-./jobs deployMarkLogicJobRepository --jrHost localhost --jrPort 8011 --jrUsername admin --jrPassword admin
+./jobs deployMarkLogicJobRepository --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
 ```
 
 If you ever need to undeploy the JobRepository then you can issue the following command.
 
 ```
-./jobs undeployMarkLogicJobRepository --jrHost localhost --jrPort 8011 --jrUsername admin --jrPassword admin
+./jobs undeployMarkLogicJobRepository --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
 ```
 
 Now when you execute your job, then add the additional parameters for the MarkLogic Job Repository.  All JobExecution metadata is now logged to the MarkLogic JobRepository.  
 
 ```
-./jobs --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc --jrHost localhost --jrPort 8011 --jrUsername admin --jrPassword admin
+./jobs --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --custom_param1 xyz --customParamX abc --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
 ```
 
 # How can I contribute to the project?

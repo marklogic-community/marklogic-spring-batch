@@ -25,8 +25,8 @@ public class CorbConfig extends AbstractMarkLogicBatchConfig implements OptionPa
     @Bean
     @JobScope
     protected Step step1(
-            @Value("#{jobParameters['urisModule']}") String urisModule,
-            @Value("#{jobParameters['transformModule']}") String transformModule) {
+            @Value("#{jobParameters['uris_module']}") String urisModule,
+            @Value("#{jobParameters['transform_module']}") String transformModule) {
         return stepBuilderFactory.get("step1")
                 .<String, String>chunk(10)
                 .reader(new MarkLogicItemReader<>(getDatabaseClient(), urisModule))
@@ -37,7 +37,7 @@ public class CorbConfig extends AbstractMarkLogicBatchConfig implements OptionPa
 
     @Override
     public void configureOptionParser(OptionParser parser) {
-        parser.accepts("urisModule", "Path of the URIs module").withRequiredArg();
-        parser.accepts("transformModue", "Path of the transform module").withRequiredArg();
+        parser.accepts("uris_module", "Path of the URIs module").withRequiredArg();
+        parser.accepts("transform_module", "Path of the transform module").withRequiredArg();
     }
 }

@@ -37,7 +37,7 @@ public class LoadXmlDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchC
     @Bean
     @JobScope
     protected Step xmlStep(ItemReader<Resource> reader, ItemProcessor<Resource, Document> processor,
-                           ItemWriter<Document> writer, @Value("#{jobParameters['chunkSize'] ?: 100}") Integer chunkSize) {
+                           ItemWriter<Document> writer, @Value("#{jobParameters['chunk'] ?: 100}") Integer chunkSize) {
 
         return stepBuilderFactory.get("xmlStep")
                 .<Resource, Document>chunk(chunkSize)

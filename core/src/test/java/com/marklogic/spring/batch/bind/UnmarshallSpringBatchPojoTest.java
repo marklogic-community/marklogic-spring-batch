@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.bind;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.MarkLogicJobRepositoryConfiguration;
 import com.marklogic.spring.batch.core.*;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.dom.DOMSource;
@@ -19,12 +21,15 @@ import javax.xml.transform.stream.StreamSource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+@ContextConfiguration(classes = {JaxbConfiguration.class})
 public class UnmarshallSpringBatchPojoTest extends AbstractSpringBatchTest {
 
-    Document doc;
-    DOMSource source;
+    private Document doc;
+    private DOMSource source;
+
     @Autowired
-    Jaxb2Marshaller jaxb2Marshaller;
+    private Jaxb2Marshaller jaxb2Marshaller;
+
     @Autowired
     private ApplicationContext ctx;
 

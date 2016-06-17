@@ -3,8 +3,9 @@ package com.marklogic.spring.batch.core.repository;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.restapi.RestApi;
-import com.marklogic.mgmt.api.security.*;
-
+import com.marklogic.mgmt.api.security.Permission;
+import com.marklogic.mgmt.api.security.ProtectedCollection;
+import com.marklogic.mgmt.api.security.User;
 import java.util.ArrayList;
 import java.util.List;
 
