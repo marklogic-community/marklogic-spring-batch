@@ -18,7 +18,7 @@ import java.util.List;
  * Base class for any marklogic-spring-batch test that needs to run a job. Uses the Main program
  * to collect command line arguments and run a job.
  * <p>
- * Key note - this does not specify a particular Spring configuration class - you are free to use
+ * Key note - this does not specify a particular Spring config class - you are free to use
  * any Spring class that you want. But the buildArgsForConfig method assumes that it can find either
  * an instance of com.marklogic.client.spring.BasicConfig or com.marklogic.junit.spring.BasicTestConfig
  * so that it knows what ML connection arguments to construct. If you don't use either of those,
