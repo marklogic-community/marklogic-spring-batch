@@ -1,7 +1,7 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.job;
 
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
-import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
+import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.CollectionUrisReader;
 import com.marklogic.spring.batch.item.DeleteUriWriter;
 import joptsimple.OptionParser;

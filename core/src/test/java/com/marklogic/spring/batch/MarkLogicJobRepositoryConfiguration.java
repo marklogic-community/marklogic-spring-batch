@@ -27,7 +27,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Tests that need to exercise the MarkLogic implementation of a JobRepository should include this
- * in their Spring config.
+ * in their Spring configuration.
  */
 @Configuration
 public class MarkLogicJobRepositoryConfiguration {

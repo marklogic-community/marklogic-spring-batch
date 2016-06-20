@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.job;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
@@ -6,7 +6,6 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.config.AbstractJobsJobTest;
-import com.marklogic.spring.batch.config.CorbConfig;
 import org.junit.Test;
 
 public class CorbJobTest extends AbstractJobsJobTest {

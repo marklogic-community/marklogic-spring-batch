@@ -1,7 +1,7 @@
 package org.example;
 
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
-import com.marklogic.spring.batch.config.OptionParserConfigurer;
+import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import joptsimple.OptionParser;
 import org.springframework.batch.core.Job;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.w3c.dom.Document;
 
 /**
- * Simple example of a custom config. Uses a reader that generates sample XML documents, and then
+ * Simple example of a custom configuration. Uses a reader that generates sample XML documents, and then
  * uses a writer that depends on Document instances.
  */
 @Configuration

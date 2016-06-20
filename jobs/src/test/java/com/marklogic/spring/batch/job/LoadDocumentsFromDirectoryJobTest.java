@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.job;
 
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.io.SearchHandle;
@@ -7,8 +7,6 @@ import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.config.AbstractJobsJobTest;
-import com.marklogic.spring.batch.config.LoadJsonDocumentsFromDirectoryConfig;
-import com.marklogic.spring.batch.config.LoadXmlDocumentsFromDirectoryConfig;
 import org.junit.Test;
 
 public class LoadDocumentsFromDirectoryJobTest extends AbstractJobsJobTest {

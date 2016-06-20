@@ -4,8 +4,8 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.spring.batch.config.support.BatchDatabaseClientProvider;
-import com.marklogic.spring.batch.config.support.MarkLogicJobRepositoryCondition;
+import com.marklogic.spring.batch.configuration.BatchDatabaseClientProvider;
+import com.marklogic.spring.batch.configuration.MarkLogicJobRepositoryCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 /**
- * Spring config class used by the Main program. The environment properties that this references
+ * Spring configuration class used by the Main program. The environment properties that this references
  * should all be based on constants defined in the Options class, which defines all of the recognized
  * command line options.
  */

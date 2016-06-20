@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.config.support;
+package com.marklogic.spring.batch.configuration;
 
 import joptsimple.OptionParser;
 

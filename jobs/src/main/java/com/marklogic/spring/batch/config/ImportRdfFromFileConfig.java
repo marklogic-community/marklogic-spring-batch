@@ -1,5 +1,7 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
+import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.item.RdfTripleItemReader;
 import com.marklogic.spring.batch.item.RdfTripleItemWriter;
 import org.springframework.batch.core.Job;

@@ -1,6 +1,6 @@
 package com.marklogic.example;
 
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
 import com.marklogic.example.geonames.GeonameFieldSetMapper;
 import com.marklogic.example.geonames.GeonamesItemProcessor;
 import com.marklogic.spring.batch.item.DocumentItemWriter;

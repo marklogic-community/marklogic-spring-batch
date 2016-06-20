@@ -26,10 +26,10 @@ public class MarkLogicSpringBatchConfigTests extends Assert {
 		
 		DatabaseClient client = databaseClientProvider.getDatabaseClient();
 
-		// create server config manager
+		// create server configuration manager
 		ServerConfigurationManager configMgr = client.newServerConfigManager();
 
-		// read the server config from the database
+		// read the server configuration from the database
 		configMgr.readConfiguration();
 
 		assertEquals(UpdatePolicy.VERSION_OPTIONAL, configMgr.getUpdatePolicy());
