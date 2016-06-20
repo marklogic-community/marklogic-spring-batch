@@ -4,7 +4,6 @@ import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.jpeg.JpegParser;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -28,7 +27,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-public class LoadImagesFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
+/**
+ * Created by sstafford on 6/17/2016.
+ */
+public class LoadDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
     public Job job(@Qualifier("step1") Step step1) {
@@ -77,9 +79,9 @@ public class LoadImagesFromDirectoryConfig extends AbstractMarkLogicBatchConfig 
                 logger.info("Processing images");
                 ContentHandler handler = new ToXMLContentHandler();
 
-                JpegParser parser = new JpegParser();
+                AutoDetectParser parser = new AutoDetectParser();
                 Metadata metadata = new Metadata();
-                parser.parse(item.getInputStream(), handler, metadata, null);
+                parser.parse(item.getInputStream(), handler, metadata);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document document = builder.parse(new InputSource(new StringReader(handler.toString())));
