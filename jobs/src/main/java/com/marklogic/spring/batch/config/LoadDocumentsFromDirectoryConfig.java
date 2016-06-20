@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.config;
 
-import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;

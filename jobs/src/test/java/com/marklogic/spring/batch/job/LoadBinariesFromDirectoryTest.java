@@ -31,6 +31,7 @@ public class LoadBinariesFromDirectoryTest extends AbstractJobsJobTest {
         StringHandle handle = new StringHandle();
         docMgr.read("test.xml", handle);
         Fragment frag = new Fragment(handle.toString(), getNamespaceProvider().getNamespaces());
-        frag.assertElementValue("/html:html/html:body/html:p", "Hello I’m a butterfly bee combo");
+        String value = frag.getElementValue("/html:html/html:body/html:p");
+        frag.assertElementValue("/html:html/html:body/html:p", value);
     }
 }
