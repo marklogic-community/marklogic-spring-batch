@@ -1,9 +1,10 @@
-package com.marklogic.spring.batch.configuration;
+package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.spring.batch.Options;
+import com.marklogic.spring.batch.config.support.JobRepositoryConfigurer;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -17,7 +18,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * Abstract class for a Spring Batch Configuration class that depends on a MarkLogic DatabaseClient.
- * The assumption is most MarkLogic Spring Batch configuration classes will need at least a JobBuilderFactory,
+ * The assumption is most MarkLogic Spring Batch config classes will need at least a JobBuilderFactory,
  * a StepBuilderFactory, and a DatabaseClient.
  */
 @EnableBatchProcessing

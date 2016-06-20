@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.configuration;
+package com.marklogic.spring.batch.config.support;
 
 import com.marklogic.spring.batch.Options;
 import org.springframework.context.annotation.Condition;

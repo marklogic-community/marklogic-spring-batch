@@ -1,6 +1,6 @@
-package com.marklogic.spring.batch.job;
+package com.marklogic.spring.batch.config;
 
-import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

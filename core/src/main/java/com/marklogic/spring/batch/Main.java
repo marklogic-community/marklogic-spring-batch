@@ -3,7 +3,7 @@ package com.marklogic.spring.batch;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.spring.batch.configuration.OptionParserConfigurer;
+import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryAppDeployer;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryConfig;
 import joptsimple.OptionParser;
@@ -116,7 +116,7 @@ public class Main extends LoggingObject {
                 if (o instanceof OptionParserConfigurer) {
                     parser = new OptionParser();
                     ((OptionParserConfigurer) o).configureOptionParser(parser);
-                    System.out.println("\nOptions specific to configuration class: " + config);
+                    System.out.println("\nOptions specific to config class: " + config);
                     parser.printHelpOn(System.out);
                 }
             } catch (Exception ex) {
@@ -215,7 +215,7 @@ public class Main extends LoggingObject {
     }
 
     /**
-     * Register any default Spring configuration classes.
+     * Register any default Spring config classes.
      *
      * @param ctx
      */
@@ -238,7 +238,7 @@ public class Main extends LoggingObject {
             try {
                 ctx.register(Class.forName(configClass));
             } catch (Exception e) {
-                throw new RuntimeException("Unable to register configuration for class: " + configClass, e);
+                throw new RuntimeException("Unable to register config for class: " + configClass, e);
             }
         }
 
