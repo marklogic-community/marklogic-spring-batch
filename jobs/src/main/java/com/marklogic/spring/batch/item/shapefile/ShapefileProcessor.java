@@ -11,33 +11,20 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 
+/**
+ * Depends on an instance of OgreProxy for extracting GeoJSON from the given File, which is assumed to be a
+ * valid shapefile.
+ */
 public class ShapefileProcessor extends LoggingObject implements ItemProcessor<File, ShapefileAndJson> {
 
-    private String url = "http://ogre.adc4gis.com/convert";
-    private HttpClient httpClient;
+    private OgreProxy ogreProxy;
 
-    /**
-     * Using HttpClient, had trouble getting this to work with Spring's RestTemplate.
-     *
-     * @param item
-     * @return
-     * @throws Exception
-     */
     @Override
     public ShapefileAndJson process(File item) throws Exception {
-        if (httpClient == null) {
-            httpClient = HttpClientBuilder.create().build();
-        }
-        HttpPost post = new HttpPost(url);
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addBinaryBody("upload", item);
-        post.setEntity(builder.build());
-        HttpResponse response = httpClient.execute(post);
-        String json = new String(FileCopyUtils.copyToByteArray(response.getEntity().getContent()));
-        return new ShapefileAndJson(item, json);
+        return new ShapefileAndJson(item, ogreProxy.extractGeoJson(item));
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setOgreProxy(OgreProxy ogreProxy) {
+        this.ogreProxy = ogreProxy;
     }
 }

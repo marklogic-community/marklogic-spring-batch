@@ -30,7 +30,9 @@ public class ImportShapefilesConfig extends AbstractMarkLogicBatchConfig {
 
         ShapefileProcessor processor = new ShapefileProcessor();
         if (ogreUrl != null) {
-            processor.setUrl(ogreUrl);
+            processor.setOgreProxy(new HttpClientOgreProxy(ogreUrl));
+        } else {
+            processor.setOgreProxy(new HttpClientOgreProxy());
         }
 
         ShapefileAndJsonWriter writer = new ShapefileAndJsonWriter(getDatabaseClient());

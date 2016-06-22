@@ -1,31 +1,30 @@
 package com.marklogic.spring.batch.config;
 
-import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.spring.batch.item.DirectoryReader;
 import com.marklogic.spring.batch.item.shapefile.ImportShapefilesConfig;
-import com.marklogic.spring.batch.item.shapefile.ShapefileAndJson;
-import com.marklogic.spring.batch.item.shapefile.ShapefileAndJsonWriter;
-import com.marklogic.spring.batch.item.shapefile.ShapefileProcessor;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.util.FileCopyUtils;
-
-import java.io.File;
-import java.util.List;
 
 public class ImportShapefilesTest extends AbstractJobsJobTest {
+
+    private final static String MOCK_OGRE_RESPONSE = "{\n" +
+            "  \"type\": \"FeatureCollection\",\n" +
+            "  \"features\": [\n" +
+            "    {\n" +
+            "      \"type\": \"Feature\",\n" +
+            "      \"properties\": {\n" +
+            "        \"category\": \"Government and Public Services\",\n" +
+            "        \"name\": \"College:Arab Academy for Science and Technologe and Maritime Transport\",\n" +
+            "        \"ntype\": \"College\"\n" +
+            "      },\n" +
+            "      \"geometry\": {\n" +
+            "        \"type\": \"Point\",\n" +
+            "        \"coordinates\": [\n" +
+            "          3982629.6882999986,\n" +
+            "          4236277.941399999\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
 
     @Test
     public void test() {
