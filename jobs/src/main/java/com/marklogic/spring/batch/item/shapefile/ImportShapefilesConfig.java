@@ -14,6 +14,10 @@ import org.springframework.context.annotation.Bean;
 import java.awt.*;
 import java.io.File;
 
+/**
+ * This is fairly minimal so far. Possible improvements - allow for separate collections and permissions for the
+ * shapefile ZIP and JSON files; provide support for command-line ogr2ogr; allow for customization of the URIs.
+ */
 public class ImportShapefilesConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
