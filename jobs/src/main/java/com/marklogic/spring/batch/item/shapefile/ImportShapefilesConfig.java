@@ -1,14 +1,17 @@
 package com.marklogic.spring.batch.item.shapefile;
 
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.item.CollectionUrisReader;
 import com.marklogic.spring.batch.item.DirectoryReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
+import java.awt.*;
 import java.io.File;
 
 public class ImportShapefilesConfig extends AbstractMarkLogicBatchConfig {
@@ -28,13 +31,6 @@ public class ImportShapefilesConfig extends AbstractMarkLogicBatchConfig {
 
         DirectoryReader reader = new DirectoryReader(new File(inputFilePath));
 
-        ShapefileProcessor processor = new ShapefileProcessor();
-        if (ogreUrl != null) {
-            processor.setOgreProxy(new HttpClientOgreProxy(ogreUrl));
-        } else {
-            processor.setOgreProxy(new HttpClientOgreProxy());
-        }
-
         ShapefileAndJsonWriter writer = new ShapefileAndJsonWriter(getDatabaseClient());
         writer.setPermissions(permissions);
         writer.setCollections(collections);
@@ -42,8 +38,19 @@ public class ImportShapefilesConfig extends AbstractMarkLogicBatchConfig {
         return stepBuilderFactory.get("step1")
                 .<File, ShapefileAndJson>chunk(getChunkSize())
                 .reader(reader)
-                .processor(processor)
+                .processor(shapefileProcessor(ogreUrl))
                 .writer(writer)
                 .build();
+    }
+
+    /**
+     * Protected so that it can be overridden by a subclass, specifically for testing purposes.
+     *
+     * @param ogreUrl
+     * @return
+     */
+    protected ShapefileProcessor shapefileProcessor(String ogreUrl) {
+        OgreProxy proxy = ogreUrl != null ? new HttpClientOgreProxy(ogreUrl) : new HttpClientOgreProxy();
+        return new ShapefileProcessor(proxy);
     }
 }

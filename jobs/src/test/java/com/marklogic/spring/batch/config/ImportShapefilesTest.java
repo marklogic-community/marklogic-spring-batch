@@ -1,7 +1,14 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.spring.batch.item.shapefile.ImportShapefilesConfig;
+import com.marklogic.spring.batch.item.shapefile.OgreProxy;
+import com.marklogic.spring.batch.item.shapefile.ShapefileProcessor;
 import org.junit.Test;
+import org.springframework.context.annotation.Configuration;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ImportShapefilesTest extends AbstractJobsJobTest {
 
@@ -26,10 +33,35 @@ public class ImportShapefilesTest extends AbstractJobsJobTest {
             "  ]\n" +
             "}";
 
+    /**
+     * Verifies that the appropriate documents are created in the specified collection.
+     */
     @Test
     public void test() {
-        runJob(ImportShapefilesConfig.class,
-                "--input_file_path", "build/shapefiles");
+        runJob(TestImportShapefilesConfig.class,
+                "--input_file_path", "src/test/resources/shapefiles",
+                "--output_collections", "shapefiles");
+
+        ClientTestHelper h = newHelper(ClientTestHelper.class);
+        h.assertInCollections("/shapefile/Colleges of Syria.zip", "shapefiles");
+        h.assertInCollections("/shapefile/Colleges of Syria.zip.json", "shapefiles");
+    }
+
+    /**
+     * Allows us to test everything but the connection to the OGRE web service.
+     */
+    @Configuration
+    public static class TestImportShapefilesConfig extends ImportShapefilesConfig {
+        @Override
+        protected ShapefileProcessor shapefileProcessor(String ogreUrl) {
+            OgreProxy testProxy = new OgreProxy() {
+                @Override
+                public String extractGeoJson(File file) throws IOException {
+                    return MOCK_OGRE_RESPONSE;
+                }
+            };
+            return new ShapefileProcessor(testProxy);
+        }
     }
 
 }

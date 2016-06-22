@@ -19,12 +19,12 @@ public class ShapefileProcessor extends LoggingObject implements ItemProcessor<F
 
     private OgreProxy ogreProxy;
 
+    public ShapefileProcessor(OgreProxy ogreProxy) {
+        this.ogreProxy = ogreProxy;
+    }
+
     @Override
     public ShapefileAndJson process(File item) throws Exception {
         return new ShapefileAndJson(item, ogreProxy.extractGeoJson(item));
-    }
-
-    public void setOgreProxy(OgreProxy ogreProxy) {
-        this.ogreProxy = ogreProxy;
     }
 }

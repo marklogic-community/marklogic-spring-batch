@@ -28,8 +28,6 @@ public class ShapefileAndJsonWriter extends AbstractDocumentWriter implements It
             DocumentDescriptor bd = binaryMgr.newDescriptor("/shapefile/" + item.file.getName());
             binarySet.add(bd, buildMetadata(), new FileHandle(item.file));
 
-            logger.info(item.json);
-
             DocumentDescriptor jd = jsonMgr.newDescriptor("/shapefile/" + item.file.getName() + ".json");
             jsonSet.add(jd, buildMetadata(), new StringHandle(item.json).withFormat(Format.JSON));
         }
