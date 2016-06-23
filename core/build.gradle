@@ -78,13 +78,13 @@ sourceSets.test.resources.srcDir 'src/test/java'
 task deployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
-    args = ["--deploy_job_repo", "--jrName", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
+    args = ["--deploy_job_repo", "--jr_name", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
 }
 
 task undeployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
-    args = ["--undepoy_job_repo", "--jrName", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
+    args = ["--undeploy_job_repo", "--jr_name", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

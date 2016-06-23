@@ -42,9 +42,9 @@ public class Main extends LoggingObject {
      */
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        if (args[0].equals(Options.DEPLOY)) {
+        if (("--" + Options.DEPLOY).equals(args[0])) {
             main.deployMarkLogicJobRepository(args);
-        } else if (args[0].equals(Options.UNDEPLOY)) {
+        } else if (("--" + Options.UNDEPLOY).equals(args[0])) {
             main.undeployMarkLogicJobRepository(args);
         } else {
             main.runJob(args);
