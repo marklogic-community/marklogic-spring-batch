@@ -9,7 +9,13 @@ targetCompatibility = 1.8
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
+
+    // For loading images
     compile "org.apache.tika:tika-parsers:1.13"
+
+    // For shapefiles
+    compile "org.apache.httpcomponents:httpmime:4.5.2"
+
     testCompile "com.marklogic:ml-junit:2.6.0"
     testCompile "org.springframework.batch:spring-batch-test:3.+"
 
@@ -19,6 +25,7 @@ dependencies {
     // For ReadUsersFromHsqlUsingUserWriterTest
     testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
     testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
+
 }
 
 sourceSets.test.resources.srcDir 'src/test/java'
