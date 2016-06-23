@@ -10,6 +10,9 @@ targetCompatibility = 1.8
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
 
+    // For loading images
+    compile "org.apache.tika:tika-parsers:1.13"
+
     // For shapefiles
     compile "org.apache.httpcomponents:httpmime:4.5.2"
 
