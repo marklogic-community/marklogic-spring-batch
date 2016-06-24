@@ -1,7 +1,21 @@
 allprojects {
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.14'
+    }
+}
+
+subprojects {
+    /*
+     * Not applying the bintray plugin. Couldn't get it working properly when declared
+     * in subprojects, and when declared at root level of this script, it caused an httpcomponents
+     * classpath issue with ml-gradle in the core project. So for now, each project has to
+     * duplicate bintray publishing configuration.
+     */
+
     apply plugin: "java"
     apply plugin: "eclipse"
     apply plugin: "idea"
+    apply plugin: "checkstyle"
 
     repositories {
         mavenLocal()
@@ -11,13 +25,8 @@ allprojects {
         maven { url "https://dl.bintray.com/sastafford/maven/" }
     }
 
-    task wrapper(type: Wrapper) {
-        gradleVersion = '2.13'
-    }
-}
-
-subprojects {
-    apply plugin: "checkstyle"
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     checkstyle {
         configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
@@ -25,15 +34,73 @@ subprojects {
     }
 }
 
+configure(subprojects.findAll {it.name != 'msb'}) {
+    apply plugin: "maven-publish"
 
-project(':jobs') {
-    dependencies {
-        compile project(':core')
-        compile project(':test')
+    sourceSets.test.resources.srcDir 'src/test/java'
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        baseName = project.name
+        version = project.version
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    jar {
+        baseName = project.name
+        version = project.version
+    }
+
+    /*
+     * Assumes each project has a single publication, and thus uses the name "MyPublication".
+     */
+    publishing {
+        publications {
+            MyPublication(MavenPublication) {
+                groupId group
+                artifactId project.name
+                version project.version
+                from components.java
+                artifact sourcesJar
+            }
+        }
     }
 }
 
-project(':test') {
+/**
+ * Include every project that you want to be part of the msb application.
+ */
+project(':msb') {
+    dependencies {
+        runtime project(':core')
+        runtime project(':msb-file-importers')
+        runtime project(':msb-shapefiles')
+        runtime project(':msb-sql')
+    }
+}
+
+project(':msb-file-importers') {
+    dependencies {
+        compile project(':core')
+        testCompile project(':msb-test')
+    }
+}
+
+project(':msb-shapefiles') {
+    dependencies {
+        compile project(':core')
+        testCompile project(':msb-test')
+    }
+}
+
+project(':msb-sql') {
+    dependencies {
+        compile project(':core')
+        testCompile project(':msb-test')
+    }
+}
+
+project(':msb-test') {
     dependencies {
         compile project(':core')
     }

@@ -1,3 +1,7 @@
 include "core"
-include "jobs"
-include "test"
+include "msb-test"
+include "msb"
+
+include "msb-file-importers"
+include "msb-shapefiles"
+include "msb-sql"
