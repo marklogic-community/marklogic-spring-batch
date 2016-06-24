@@ -18,11 +18,10 @@ subprojects {
     apply plugin: "checkstyle"
 
     repositories {
-        mavenLocal()
         jcenter()
         maven { url "http://repo.spring.io/milestone" }
         maven { url "http://developer.marklogic.com/maven2/" }
-        maven { url "https://dl.bintray.com/sastafford/maven/" }
+        mavenLocal()
     }
 
     sourceCompatibility = 1.8
@@ -31,7 +30,7 @@ subprojects {
     sourceSets.test.resources.srcDir 'src/test/java'
 
     checkstyle {
-        configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+        configFile = file("${project.rootDir}/dev-tools/checkstyle/checkstyle.xml")
         toolVersion = '6.19'
     }
 }
@@ -72,7 +71,7 @@ configure(subprojects.findAll {it.name != 'msb'}) {
  */
 project(':msb') {
     dependencies {
-        runtime project(':core')
+        runtime project(':msb-core')
         runtime project(':configurations:msb-file-importers')
         runtime project(':configurations:msb-shapefiles')
         runtime project(':configurations:msb-sql')
@@ -81,13 +80,13 @@ project(':msb') {
 
 project(':msb-test') {
     dependencies {
-        compile project(':core')
+        compile project(':msb-core')
     }
 }
 
-configure(subprojects.findAll {it.name != 'core' && it.name != "msb-test"}) {
+configure(subprojects.findAll {it.name != 'msb-core' && it.name != "msb-test"}) {
     dependencies {
-        compile project(':core')
+        compile project(':msb-core')
         testCompile project(':msb-test')
     }
 }

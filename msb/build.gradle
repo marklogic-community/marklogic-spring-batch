@@ -1,3 +1,9 @@
+/**
+ * This project is used for constructing a zip or tar of the marklogic-spring-batch
+ * Main program with all of the configuration projects specified as dependencies in
+ * the root build.gradle file.
+ */
+
 plugins {
     id "application"
 }
