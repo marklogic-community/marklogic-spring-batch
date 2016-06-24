@@ -3,7 +3,7 @@ plugins {
     id "com.jfrog.bintray" version "1.6"
 }
 
-if (System.getProperty("user.dir").endsWith("jobs")) {
+if (System.getProperty("user.dir").endsWith("configurations")) {
     project.ext.smartModulePaths = ["../core/src/test/ml-modules"]
 } else if (System.getProperty("user.dir").endsWith("marklogic-spring-batch")) {
     project.ext.smartModulePaths = ["core/src/test/ml-modules"]
