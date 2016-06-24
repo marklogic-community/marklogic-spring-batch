@@ -9,6 +9,6 @@ import org.springframework.context.annotation.PropertySource;
  * project's gradle.properties file. If that path works for you in your own project, feel free to use this.
  */
 @Configuration
-@PropertySource({"file:../core/gradle.properties"})
+@PropertySource({"file:../../core/gradle.properties"})
 public class JobProjectTestConfig extends BasicConfig {
 }

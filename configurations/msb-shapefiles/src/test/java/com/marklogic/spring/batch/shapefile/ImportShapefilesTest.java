@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-@ContextConfiguration(classes = {MyConfig.class})
+@ContextConfiguration(classes = {JobProjectTestConfig.class})
 public class ImportShapefilesTest extends AbstractJobTest {
 
     private final static String MOCK_OGRE_RESPONSE = "{\n" +
