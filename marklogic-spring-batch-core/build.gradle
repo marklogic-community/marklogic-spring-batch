@@ -4,9 +4,9 @@ plugins {
 }
 
 if (System.getProperty("user.dir").endsWith("configurations")) {
-    project.ext.smartModulePaths = ["../core/src/test/ml-modules"]
+    project.ext.smartModulePaths = ["../marklogic-spring-batch-core/src/test/ml-modules"]
 } else if (System.getProperty("user.dir").endsWith("marklogic-spring-batch")) {
-    project.ext.smartModulePaths = ["core/src/test/ml-modules"]
+    project.ext.smartModulePaths = ["marklogic-spring-batch-core/src/test/ml-modules"]
 } else {
     project.ext.smartModulePaths = ["src/test/ml-modules"]
 }

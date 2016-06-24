@@ -35,7 +35,7 @@ subprojects {
     }
 }
 
-configure(subprojects.findAll {it.name != 'msb'}) {
+configure(subprojects.findAll {it.name != 'jobs' && it.name != 'configurations'}) {
     apply plugin: "maven-publish"
 
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -69,24 +69,24 @@ configure(subprojects.findAll {it.name != 'msb'}) {
 /**
  * Include every project that you want to be part of the msb application.
  */
-project(':msb') {
+project(':jobs') {
     dependencies {
-        runtime project(':msb-core')
-        runtime project(':configurations:msb-file-importers')
-        runtime project(':configurations:msb-shapefiles')
-        runtime project(':configurations:msb-sql')
+        runtime project(':marklogic-spring-batch-core')
+        runtime project(':configurations:marklogic-spring-batch-file-importers')
+        runtime project(':configurations:marklogic-spring-batch-shapefiles')
+        runtime project(':configurations:marklogic-spring-batch-sql')
     }
 }
 
-project(':msb-test') {
+project(':marklogic-spring-batch-test') {
     dependencies {
-        compile project(':msb-core')
+        compile project(':marklogic-spring-batch-core')
     }
 }
 
-configure(subprojects.findAll {it.name != 'msb-core' && it.name != "msb-test"}) {
+configure(subprojects.findAll {it.name != 'marklogic-spring-batch-core' && it.name != "marklogic-spring-batch-test"}) {
     dependencies {
-        compile project(':msb-core')
-        testCompile project(':msb-test')
+        compile project(':marklogic-spring-batch-core')
+        testCompile project(':marklogic-spring-batch-test')
     }
 }
