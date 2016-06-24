@@ -52,11 +52,11 @@ configure(subprojects.findAll {it.name != 'msb'}) {
     }
 
     /*
-     * Assumes each project has a single publication, and thus uses the name "MyPublication".
+     * Assumes each project has a single publication.
      */
     publishing {
         publications {
-            MyPublication(MavenPublication) {
+            mainJavaWithSources(MavenPublication) {
                 groupId group
                 artifactId project.name
                 version project.version
