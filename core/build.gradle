@@ -3,7 +3,7 @@ plugins {
     id "com.jfrog.bintray" version "1.6"
 }
 
-if (System.getProperty("user.dir").endsWith("configurations")) {
+if (System.getProperty("user.dir").endsWith("jobs")) {
     project.ext.smartModulePaths = ["../marklogic-spring-batch-core/src/test/ml-modules"]
 } else if (System.getProperty("user.dir").endsWith("marklogic-spring-batch")) {
     project.ext.smartModulePaths = ["marklogic-spring-batch-core/src/test/ml-modules"]
@@ -63,7 +63,7 @@ bintray {
     publications = [bintrayPublicationName]
     pkg {
         repo = bintrayRepo
-        name = project.name
+        name = artifactId
         userOrg = bintrayUserOrg
         licenses = [bintrayLicense]
         vcsUrl = bintrayVcsUrl

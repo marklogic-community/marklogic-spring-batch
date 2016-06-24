@@ -2,8 +2,14 @@ plugins {
     id "com.jfrog.bintray" version "1.6"
 }
 
+ext {
+    artifactId = "marklogic-spring-batch-test"
+}
+
 dependencies {
-    compile "org.apache.httpcomponents:httpmime:4.5.2"
+    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+    //compile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
+    compile "com.marklogic:ml-junit:2.6.0"
 }
 
 bintray {
@@ -12,9 +18,9 @@ bintray {
     publications = [bintrayPublicationName]
     pkg {
         repo = bintrayRepo
-        name = project.name
-        userOrg = bintrayUserOrg
+        name = artifactId
         licenses = [bintrayLicense]
+        userOrg = bintrayUserOrg
         vcsUrl = bintrayVcsUrl
         version {
             name = project.version

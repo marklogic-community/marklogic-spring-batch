@@ -2,10 +2,17 @@ plugins {
     id "com.jfrog.bintray" version "1.6"
 }
 
+ext {
+    artifactId = "marklogic-spring-batch-sql"
+}
+
 dependencies {
-    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-    //compile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
-    compile "com.marklogic:ml-junit:2.6.0"
+    // For testing SQL readers with an embedded database
+    testCompile "org.hsqldb:hsqldb:2.3.3"
+
+    // For ReadUsersFromHsqlUsingUserWriterTest
+    testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
+    testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
 }
 
 bintray {
@@ -14,9 +21,9 @@ bintray {
     publications = [bintrayPublicationName]
     pkg {
         repo = bintrayRepo
-        name = project.name
-        licenses = [bintrayLicense]
+        name = artifactId
         userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
         vcsUrl = bintrayVcsUrl
         version {
             name = project.version

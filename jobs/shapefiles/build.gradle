@@ -2,13 +2,12 @@ plugins {
     id "com.jfrog.bintray" version "1.6"
 }
 
-dependencies {
-    // For testing SQL readers with an embedded database
-    testCompile "org.hsqldb:hsqldb:2.3.3"
+ext {
+    artifactId = "marklogic-spring-batch-shapefiles"
+}
 
-    // For ReadUsersFromHsqlUsingUserWriterTest
-    testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
-    testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
+dependencies {
+    compile "org.apache.httpcomponents:httpmime:4.5.2"
 }
 
 bintray {
@@ -17,7 +16,7 @@ bintray {
     publications = [bintrayPublicationName]
     pkg {
         repo = bintrayRepo
-        name = project.name
+        name = artifactId
         userOrg = bintrayUserOrg
         licenses = [bintrayLicense]
         vcsUrl = bintrayVcsUrl

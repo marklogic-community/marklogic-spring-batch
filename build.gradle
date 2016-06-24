@@ -35,18 +35,18 @@ subprojects {
     }
 }
 
-configure(subprojects.findAll {it.name != 'jobs' && it.name != 'configurations'}) {
+configure(subprojects.findAll {it.name != 'jobs'}) {
     apply plugin: "maven-publish"
 
     task sourcesJar(type: Jar, dependsOn: classes) {
-        baseName = project.name
+        baseName = artifactId
         version = project.version
         classifier = 'sources'
         from sourceSets.main.allSource
     }
 
     jar {
-        baseName = project.name
+        baseName = artifactId
         version = project.version
     }
 
@@ -57,7 +57,7 @@ configure(subprojects.findAll {it.name != 'jobs' && it.name != 'configurations'}
         publications {
             mainJavaWithSources(MavenPublication) {
                 groupId group
-                artifactId project.name
+                artifactId project.property("artifactId")
                 version project.version
                 from components.java
                 artifact sourcesJar
@@ -71,22 +71,22 @@ configure(subprojects.findAll {it.name != 'jobs' && it.name != 'configurations'}
  */
 project(':jobs') {
     dependencies {
-        runtime project(':marklogic-spring-batch-core')
-        runtime project(':configurations:marklogic-spring-batch-file-importers')
-        runtime project(':configurations:marklogic-spring-batch-shapefiles')
-        runtime project(':configurations:marklogic-spring-batch-sql')
+        runtime project(':core')
+        runtime project(':jobs:file-importers')
+        runtime project(':jobs:shapefiles')
+        runtime project(':jobs:sql')
     }
 }
 
-project(':marklogic-spring-batch-test') {
+project(':test') {
     dependencies {
-        compile project(':marklogic-spring-batch-core')
+        compile project(':core')
     }
 }
 
-configure(subprojects.findAll {it.name != 'marklogic-spring-batch-core' && it.name != "marklogic-spring-batch-test"}) {
+configure(subprojects.findAll {it.name != 'core' && it.name != "test"}) {
     dependencies {
-        compile project(':marklogic-spring-batch-core')
-        testCompile project(':marklogic-spring-batch-test')
+        compile project(':core')
+        testCompile project(':test')
     }
 }
