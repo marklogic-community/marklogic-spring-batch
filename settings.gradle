@@ -1,7 +1,7 @@
 include "core"
 include "msb-test"
 include "msb"
-
-include "msb-file-importers"
-include "msb-shapefiles"
-include "msb-sql"
+include "configurations"
+include "configurations:msb-file-importers"
+include "configurations:msb-shapefiles"
+include "configurations:msb-sql"

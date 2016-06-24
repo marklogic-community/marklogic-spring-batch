@@ -28,6 +28,8 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    sourceSets.test.resources.srcDir 'src/test/java'
+
     checkstyle {
         configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
         toolVersion = '6.19'
@@ -36,8 +38,6 @@ subprojects {
 
 configure(subprojects.findAll {it.name != 'msb'}) {
     apply plugin: "maven-publish"
-
-    sourceSets.test.resources.srcDir 'src/test/java'
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         baseName = project.name
@@ -73,35 +73,21 @@ configure(subprojects.findAll {it.name != 'msb'}) {
 project(':msb') {
     dependencies {
         runtime project(':core')
-        runtime project(':msb-file-importers')
-        runtime project(':msb-shapefiles')
-        runtime project(':msb-sql')
-    }
-}
-
-project(':msb-file-importers') {
-    dependencies {
-        compile project(':core')
-        testCompile project(':msb-test')
-    }
-}
-
-project(':msb-shapefiles') {
-    dependencies {
-        compile project(':core')
-        testCompile project(':msb-test')
-    }
-}
-
-project(':msb-sql') {
-    dependencies {
-        compile project(':core')
-        testCompile project(':msb-test')
+        runtime project(':configurations:msb-file-importers')
+        runtime project(':configurations:msb-shapefiles')
+        runtime project(':configurations:msb-sql')
     }
 }
 
 project(':msb-test') {
     dependencies {
         compile project(':core')
+    }
+}
+
+configure(subprojects.findAll {it.name != 'core' && it.name != "msb-test"}) {
+    dependencies {
+        compile project(':core')
+        testCompile project(':msb-test')
     }
 }
