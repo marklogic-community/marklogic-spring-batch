@@ -32,39 +32,13 @@ dependencies {
   	  exclude group: 'com.marklogic.java-client', module: 'client-api-java'
     }
 
-    compile('org.apache.jena:jena-arq:2.13.0') {
-        exclude(group: 'org.slf4j')
-        exclude(group: 'ch.qos.logback')
-        exclude(group: 'log4j')
-    }
-    compile('org.apache.jena:jena-core:2.13.0') {
-        exclude(group: 'org.slf4j')
-        exclude(group: 'xerces')
-        exclude(group: 'commons-cli')
-    }
-    compile('com.hp.hpl.jena:jena:2.6.4') {
-        exclude(group: 'org.slf4j')
-    }
-    compile('com.marklogic:marklogic-jena:1.0.0'){
-        changing=true
-        exclude(group: 'org.slf4j')
-        exclude(group: 'log4j')
-        exclude(group: 'ch.qos.logback')
-    }
-
+    // For deploying the ML Job Repo
     compile "com.marklogic:ml-app-deployer:2.2.0"
 
     // For the CLI
     compile "net.sf.jopt-simple:jopt-simple:5.0.1"
 
-    testCompile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
-
-    testCompile "junit:junit"
     testCompile "com.marklogic:ml-junit:2.6.0"
-
-    testCompile "com.jayway.restassured:rest-assured:2.3.1"
-    testCompile "org.springframework.batch:spring-batch-test:3.+"
-  
 }
 
 task deployMarkLogicJobRepository(type: JavaExec) {
