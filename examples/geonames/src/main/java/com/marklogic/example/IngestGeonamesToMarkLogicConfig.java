@@ -1,6 +1,6 @@
 package com.marklogic.example;
 
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.configuration.AbstractMarkLogicBatchConfig;
 import com.marklogic.example.geonames.GeonameFieldSetMapper;
 import com.marklogic.example.geonames.GeonamesItemProcessor;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
@@ -19,10 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
 
 

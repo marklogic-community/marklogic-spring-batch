@@ -3,13 +3,11 @@ plugins {
 }
 
 ext {
-    artifactId = "marklogic-spring-batch-test"
+    artifactId = "marklogic-spring-batch-shapefiles"
 }
 
 dependencies {
-    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-    //compile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
-    compile "com.marklogic:ml-junit:2.6.0"
+    compile "org.apache.httpcomponents:httpmime:4.5.2"
 }
 
 bintray {
@@ -19,8 +17,8 @@ bintray {
     pkg {
         repo = bintrayRepo
         name = artifactId
-        licenses = [bintrayLicense]
         userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
         vcsUrl = bintrayVcsUrl
         version {
             name = project.version

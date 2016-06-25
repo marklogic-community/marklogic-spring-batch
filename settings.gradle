@@ -1,3 +1,6 @@
 include "core"
-include "jobs"
 include "test"
+include "jobs"
+include "jobs:file-importers"
+include "jobs:shapefiles"
+include "jobs:sql"

@@ -1,0 +1,51 @@
+plugins {
+    id "com.jfrog.bintray" version "1.6"
+}
+
+ext {
+    artifactId = "marklogic-spring-batch-file-importers"
+}
+
+dependencies {
+    // For importing images
+    compile "org.apache.tika:tika-parsers:1.13"
+
+    // For importing RDF
+    compile('org.apache.jena:jena-arq:2.13.0') {
+        exclude(group: 'org.slf4j')
+        exclude(group: 'ch.qos.logback')
+        exclude(group: 'log4j')
+    }
+    compile('org.apache.jena:jena-core:2.13.0') {
+        exclude(group: 'org.slf4j')
+        exclude(group: 'xerces')
+        exclude(group: 'commons-cli')
+    }
+    compile('com.hp.hpl.jena:jena:2.6.4') {
+        exclude(group: 'org.slf4j')
+    }
+    compile('com.marklogic:marklogic-jena:1.0.0'){
+        changing=true
+        exclude(group: 'org.slf4j')
+        exclude(group: 'log4j')
+        exclude(group: 'ch.qos.logback')
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
+    publications = [bintrayPublicationName]
+    pkg {
+        repo = bintrayRepo
+        name = artifactId
+        userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
+        vcsUrl = bintrayVcsUrl
+        version {
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+        }
+    }
+}
