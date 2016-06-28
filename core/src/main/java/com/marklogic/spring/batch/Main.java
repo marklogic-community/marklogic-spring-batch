@@ -13,18 +13,20 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.JOptCommandLinePropertySource;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * Main program for running marklogic-spring-batch. Mimicking mlcp args where possible.
@@ -34,55 +36,12 @@ import java.util.Properties;
  */
 public class Main extends LoggingObject {
 
-    /**
-     * For now, mimicking mlcp args where possible.
-     *
-     * @param args
-     * @throws Exception
-     */
     public static void main(String[] args) throws Exception {
-        Main main = new Main();
-        if (("--" + Options.DEPLOY).equals(args[0])) {
-            main.deployMarkLogicJobRepository(args);
-        } else if (("--" + Options.UNDEPLOY).equals(args[0])) {
-            main.undeployMarkLogicJobRepository(args);
-        } else {
-            main.runJob(args);
-        }
-    }
-
-    public void deployMarkLogicJobRepository(String[] args) {
-        OptionParser parser = buildOptionParser();
-        OptionSet options = parser.parse(args);
-        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
-        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
-        ManageConfig manageConfig = new ManageConfig(
-                host, 8002,
-                options.valueOf(Options.JOB_REPOSITORY_USERNAME).toString(),
-                options.valueOf(Options.JOB_REPOSITORY_PASSWORD).toString());
-        ManageClient manageClient = new ManageClient(manageConfig);
-        MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
-        MarkLogicSimpleJobRepositoryAppDeployer deployer = new MarkLogicSimpleJobRepositoryAppDeployer(config);
-        deployer.deploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
-    }
-
-    public void undeployMarkLogicJobRepository(String[] args) {
-        OptionParser parser = buildOptionParser();
-        OptionSet options = parser.parse(args);
-        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
-        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
-        ManageConfig manageConfig = new ManageConfig(
-                host, 8002,
-                options.valueOf(Options.JOB_REPOSITORY_USERNAME).toString(),
-                options.valueOf(Options.JOB_REPOSITORY_PASSWORD).toString());
-        ManageClient manageClient = new ManageClient(manageConfig);
-        MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
-        MarkLogicSimpleJobRepositoryAppDeployer deployer = new MarkLogicSimpleJobRepositoryAppDeployer(config);
-        deployer.undeploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
+        new Main().runJob(args);
     }
 
     /**
-     * Instantiate a Spring container and launch a Spring Batch job based on the given arguments.
+     * Parses the arguments and figures out what job to run, launching a Spring container if needed.
      *
      * @param args
      * @throws Exception
@@ -92,8 +51,19 @@ public class Main extends LoggingObject {
         OptionSet options = parser.parse(args);
         if (options.has(Options.HELP)) {
             printHelp(parser, options, args);
-            return null;
-        } else {
+        }
+        else if (options.has(Options.DEPLOY)) {
+            deployMarkLogicJobRepository(options);
+        }
+        else if (options.has(Options.UNDEPLOY)) {
+            undeployMarkLogicJobRepository(options);
+        }
+        else if (options.has(Options.LIST_CONFIGS)) {
+            StringBuilder sb = new StringBuilder();
+            listConfigs(options, sb);
+            System.out.println(sb.toString());
+        }
+        else {
             ConfigurableApplicationContext ctx = buildApplicationContext(options);
             JobParameters params = buildJobParameters(options);
             JobLauncher launcher = getJobLauncher(ctx);
@@ -104,6 +74,53 @@ public class Main extends LoggingObject {
                 ctx.close();
             }
         }
+        return null;
+    }
+
+    /**
+     * List Spring Configuration classes on the classpath. This uses the optional BASE_PACKAGE option to constrain
+     * the classpath. That option could be used in the future too for supporting selecting a config by short class name
+     * as opposed to the fully-qualified class name.
+     *
+     * @param options
+     */
+    protected void listConfigs(OptionSet options, StringBuilder builder) {
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
+        String basePackage = options.has(Options.BASE_PACKAGE) ? options.valueOf(Options.BASE_PACKAGE).toString() : "*";
+        Set<BeanDefinition> set = scanner.findCandidateComponents(basePackage);
+        if (set.isEmpty()) {
+            builder.append("No classes with the Spring Configuration annotation were found on the classpath");
+        }
+        else {
+            builder.append("Listing Spring Configuration classes:\n");
+            for (BeanDefinition def : set) {
+                builder.append(def.getBeanClassName() + "\n");
+            }
+        }
+    }
+
+    protected void deployMarkLogicJobRepository(OptionSet options) {
+        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
+        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
+        buildAppDeployer(options).deploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
+    }
+
+    protected void undeployMarkLogicJobRepository(OptionSet options) {
+        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
+        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
+        buildAppDeployer(options).undeploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
+    }
+
+    protected MarkLogicSimpleJobRepositoryAppDeployer buildAppDeployer(OptionSet options) {
+        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
+        ManageConfig manageConfig = new ManageConfig(
+                host, 8002,
+                options.valueOf(Options.JOB_REPOSITORY_USERNAME).toString(),
+                options.valueOf(Options.JOB_REPOSITORY_PASSWORD).toString());
+        ManageClient manageClient = new ManageClient(manageConfig);
+        MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
+        return new MarkLogicSimpleJobRepositoryAppDeployer(config);
     }
 
     protected void printHelp(OptionParser parser, OptionSet options, String[] args) throws IOException {
@@ -140,6 +157,9 @@ public class Main extends LoggingObject {
         parser.accepts(Options.PASSWORD, "The password for the MarkLogic user").withRequiredArg();
         parser.accepts(Options.DATABASE, "The name of the destination database. Default: The database associated with the destination App Server identified by -host and -port.").withRequiredArg();
         parser.accepts(Options.AUTHENTICATION, "The authentication to use for the app server on the given port").withRequiredArg();
+
+        parser.accepts(Options.LIST_CONFIGS, "List all of the Spring Configuration classes on the classpath");
+        parser.accepts(Options.BASE_PACKAGE, "The optional base package to use when using --list-configs to find Spring Configuration classes").withRequiredArg();
 
         parser.accepts(Options.CONFIG, "The fully qualified classname of the Spring Configuration class to register").withRequiredArg();
         parser.accepts(Options.JOB, "The name of the Spring Batch Job bean to run").withRequiredArg();
