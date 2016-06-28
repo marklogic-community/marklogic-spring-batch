@@ -51,6 +51,8 @@ public class MarkLogicFileItemWriter extends AbstractDocumentWriter implements I
     public String generateUri(File file, String id) {
         String absolutePath = file.getAbsolutePath();
         String uri = absolutePath.replace("\\", "/");
+        uri = (getOutputUriPrefix() != null) ? getOutputUriPrefix() + uri : uri;
+        uri = (getOutputUriSuffix() != null) ? uri + getOutputUriSuffix() : uri;
         return uri;
     }
 

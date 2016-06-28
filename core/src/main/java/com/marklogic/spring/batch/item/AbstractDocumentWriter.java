@@ -68,15 +68,15 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
         this.outputUriReplace = outputUriReplace;
     }
 
-    public String getOutputUriPrefix(String outputUriPrefix) {
+    public String getOutputUriPrefix() {
         return outputUriPrefix;
     }
 
-    public String getOutputUriSuffix(String outputUriSuffix) {
+    public String getOutputUriSuffix() {
         return outputUriSuffix;
     }
 
-    public String getOutputUriReplace(String outputUriReplace) {
+    public String getOutputUriReplace() {
         return outputUriReplace;
     }
 
