@@ -5,9 +5,6 @@ import joptsimple.OptionSet;
 import org.junit.Test;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Created by rrudin on 6/28/2016.
- */
 public class ListConfigsTest extends AbstractSpringBatchTest {
 
     private Main main = new Main();
