@@ -6,16 +6,21 @@ import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.FileHandle;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.net.URI;
 import java.util.List;
 
+@Component
+@Scope("step")
 public class MarkLogicFileItemWriter extends AbstractDocumentWriter implements ItemWriter<FileHandle> {
 
     private DatabaseClient client;
 
     private GenericDocumentManager docMgr;
+
+    private ExecutionContext executionContext;
 
     public MarkLogicFileItemWriter(DatabaseClient databaseClient) {
         this.client = databaseClient;
@@ -23,6 +28,7 @@ public class MarkLogicFileItemWriter extends AbstractDocumentWriter implements I
 
     @Override
     public void open(ExecutionContext executionContext) {
+        this.executionContext = executionContext;
         docMgr = client.newDocumentManager();
     }
 

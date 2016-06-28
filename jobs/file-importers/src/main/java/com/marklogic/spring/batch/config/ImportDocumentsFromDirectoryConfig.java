@@ -8,6 +8,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -74,12 +75,9 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
 
     @Bean
     @StepScope
-    public ItemWriter<FileHandle> writer(
-        @Value("#{jobParameters['output_collections']}") String outputCollections
-    ) {
+    public ItemWriter<FileHandle> writer() {
         MarkLogicFileItemWriter writer = new MarkLogicFileItemWriter(getDatabaseClient());
-        writer.open(null);
-        writer.setCollections(outputCollections.split(","));
+        writer.open(new ExecutionContext());
         return writer;
     }
 

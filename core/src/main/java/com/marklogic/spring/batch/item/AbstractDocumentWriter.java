@@ -8,6 +8,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 import com.marklogic.uri.DefaultUriGenerator;
 import com.marklogic.uri.UriGenerator;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Base class for writing documents. Should be able to support both the Client API and XCC.
@@ -18,7 +19,19 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
     private UriGenerator uriGenerator = new DefaultUriGenerator();
 
+    @Value("#{jobParameters['output_collections']}")
     private String[] collections;
+
+    private String directory;
+
+    @Value("#{jobParameters['output_uri_prefix']}")
+    private String outputUriPrefix;
+
+    @Value("#{jobParameters['output_uri_suffix']}")
+    private String outputUriReplace;
+
+    @Value("#{jobParameters['output_uri_replace']}")
+    private String outputUriSuffix;
 
     // Comma-separated list of role,read,role,update, just like in Client API
     private String permissions;
@@ -45,6 +58,34 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
     public void setPermissions(String permissions) {
         this.permissions = permissions;
+    }
+
+    public void setDirectory(String directory) {
+        this.directory = directory;
+    }
+
+    public void setOutputUriPrefix(String outputUriPrefix) {
+        this.outputUriPrefix = outputUriPrefix;
+    }
+
+    public void setOutputUriSuffix(String outputUriSuffix) {
+        this.outputUriSuffix = outputUriSuffix;
+    }
+
+    public void setOutputUriReplace(String outputUriReplace) {
+        this.outputUriReplace = outputUriReplace;
+    }
+
+    public String getOutputUriPrefix(String outputUriPrefix) {
+        return outputUriPrefix;
+    }
+
+    public String getOutputUriSuffix(String outputUriSuffix) {
+        return outputUriSuffix;
+    }
+
+    public String getOutputUriReplace(String outputUriReplace) {
+        return outputUriReplace;
     }
 
     protected UriGenerator getUriGenerator() {
