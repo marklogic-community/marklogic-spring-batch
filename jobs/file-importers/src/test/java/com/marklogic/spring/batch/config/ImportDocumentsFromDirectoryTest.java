@@ -16,6 +16,17 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
         thenTwoDocumentsInMonsterCollection();
     }
 
+    @Test
+    public void loadJsonDocumentsTest() {
+        runJobWithMarkLogicJobRepository(
+                ImportDocumentsFromDirectoryConfig.class,
+                "--input_file_path", "data/*.json",
+                "--input_file_pattern", "(elmo|grover).json",
+                "--document_type", "json",
+                "--output_collections", "monster,seasmeStreet");
+        thenTwoDocumentsInMonsterCollection();
+    }
+
     public void thenTwoDocumentsInMonsterCollection() {
         ClientTestHelper client = new ClientTestHelper();
         client.setDatabaseClientProvider(getClientProvider());

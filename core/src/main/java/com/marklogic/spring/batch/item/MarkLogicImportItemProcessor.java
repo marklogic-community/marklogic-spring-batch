@@ -2,13 +2,9 @@ package com.marklogic.spring.batch.item;
 
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
-import com.marklogic.client.io.marker.GenericWriteHandle;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.core.io.Resource;
 
-/**
- * Created by sstafford on 6/27/2016.
- */
 public class MarkLogicImportItemProcessor implements ItemProcessor<Resource, FileHandle> {
 
     private String documentType;
