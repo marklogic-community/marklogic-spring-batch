@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.MarkLogicFileItemWriter;
 import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
 import org.springframework.batch.core.Job;
@@ -48,7 +49,7 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern) throws RuntimeException {
         if (inputFilePath == null) {
-            throw new RuntimeException("input_file_pattern cannot be null");
+            throw new RuntimeException("input_file_path cannot be null");
         }
         inputFilePattern = (inputFilePattern == null) ? ".*" : inputFilePattern;
         ResourcesItemReader itemReader = new ResourcesItemReader();
@@ -72,7 +73,11 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
     @StepScope
     public ItemProcessor<Resource, FileHandle> processor(
             @Value("#{jobParameters['document_type']}") String documentType) {
-        return new MarkLogicImportItemProcessor(documentType);
+        MarkLogicImportItemProcessor processor = new MarkLogicImportItemProcessor();
+        if (documentType != null) {
+            processor.setFormat(Format.valueOf(documentType.toUpperCase()));
+        }
+        return processor;
     }
 
     @Bean

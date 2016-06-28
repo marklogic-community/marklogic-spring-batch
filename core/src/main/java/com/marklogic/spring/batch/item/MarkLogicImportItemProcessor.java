@@ -5,29 +5,37 @@ import com.marklogic.client.io.Format;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
+
 public class MarkLogicImportItemProcessor implements ItemProcessor<Resource, FileHandle> {
 
-    private String documentType;
+    public void setFormat(Format format) {
+        this.format = format;
+    }
 
-    public MarkLogicImportItemProcessor(String documentType) {
-        this.documentType = documentType;
+    private Format format;
+
+    public MarkLogicImportItemProcessor() {
+        this.format = Format.UNKNOWN;
     }
 
     @Override
     public FileHandle process(Resource item) throws Exception {
-        FileHandle handle = new FileHandle(item.getFile());
-        if (documentType.toLowerCase().equals("xml")) {
+        File file = item.getFile();
+        FileHandle handle = new FileHandle(file);
+        String fileName = file.getName();
+        int i = fileName.lastIndexOf('.');
+        String extension = (i >= 0) ? fileName.substring(i+1) : ".xyz";
+        if (format.equals(Format.XML) || extension.equals("xml")) {
             handle.setFormat(Format.XML);
-        } else if (documentType.toLowerCase().equals("json")) {
+        } else if (format.equals(Format.JSON) || extension.equals("json")) {
             handle.setFormat(Format.JSON);
-        } else if (documentType.toLowerCase().equals("text")) {
+        } else if (format.equals(Format.TEXT) || extension.equals("txt")) {
             handle.setFormat(Format.TEXT);
-        } else if (documentType.toLowerCase().equals("binary")) {
+        } else if (format.equals(Format.BINARY)) {
             handle.setFormat(Format.BINARY);
-        } else if (documentType.toLowerCase().equals("mixed")) {
-            handle.setFormat(Format.UNKNOWN);
         } else {
-            throw new Exception("Document Type " + documentType + " is unknown");
+            handle.setFormat(Format.UNKNOWN);
         }
         return handle;
     }

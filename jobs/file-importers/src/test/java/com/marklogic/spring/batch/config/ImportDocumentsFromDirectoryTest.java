@@ -13,7 +13,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
                 "--input_file_pattern", "(elmo|grover).xml",
                 "--document_type", "xml",
                 "--output_collections", "monster,seasmeStreet");
-        thenTwoDocumentsInMonsterCollection();
+        thenDocumentsInMonsterCollection(2);
     }
 
     @Test
@@ -24,7 +24,16 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
                 "--input_file_pattern", "(elmo|grover).json",
                 "--document_type", "json",
                 "--output_collections", "monster,seasmeStreet");
-        thenTwoDocumentsInMonsterCollection();
+        thenDocumentsInMonsterCollection(2);
+    }
+
+    @Test
+    public void loadXmlJsonAndTextDocumentsTest() {
+        runJobWithMarkLogicJobRepository(
+                ImportDocumentsFromDirectoryConfig.class,
+                "--input_file_path", "data/*.*",
+                "--output_collections", "monster,seasmeStreet");
+        thenDocumentsInMonsterCollection(8);
     }
 
     @Test
@@ -34,7 +43,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
                 "--input_file_path", "binary/*.*",
                 "--document_type", "binary",
                 "--output_collections", "monster,seasmeStreet");
-        thenTwoDocumentsInMonsterCollection();
+        thenDocumentsInMonsterCollection(2);
     }
 
     @Test
@@ -44,7 +53,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
                 "--input_file_path", "data/*.txt",
                 "--document_type", "text",
                 "--output_collections", "monster,seasmeStreet");
-        thenTwoDocumentsInMonsterCollection();
+        thenDocumentsInMonsterCollection(2);
     }
 
     @Test(expected=AssertionError.class)
@@ -55,11 +64,11 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
                 "--output_collections", "monster,seasmeStreet");
     }
 
-    public void thenTwoDocumentsInMonsterCollection() {
+    public void thenDocumentsInMonsterCollection(int expectedCount) {
         ClientTestHelper client = new ClientTestHelper();
         client.setDatabaseClientProvider(getClientProvider());
-        client.assertCollectionSize("Expect 2 docs in monster collection", "monster", 2);
-        client.assertCollectionSize("Expect 2 docs in monster collection", "seasmeStreet", 2);
+        client.assertCollectionSize("Expect 2 docs in monster collection", "monster", expectedCount);
+        client.assertCollectionSize("Expect 2 docs in monster collection", "seasmeStreet", expectedCount);
     }
 
 }
