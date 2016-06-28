@@ -37,6 +37,16 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
         thenTwoDocumentsInMonsterCollection();
     }
 
+    @Test
+    public void loadTextDocumentsTest() {
+        runJobWithMarkLogicJobRepository(
+                ImportDocumentsFromDirectoryConfig.class,
+                "--input_file_path", "data/*.txt",
+                "--document_type", "text",
+                "--output_collections", "monster,seasmeStreet");
+        thenTwoDocumentsInMonsterCollection();
+    }
+
     public void thenTwoDocumentsInMonsterCollection() {
         ClientTestHelper client = new ClientTestHelper();
         client.setDatabaseClientProvider(getClientProvider());
