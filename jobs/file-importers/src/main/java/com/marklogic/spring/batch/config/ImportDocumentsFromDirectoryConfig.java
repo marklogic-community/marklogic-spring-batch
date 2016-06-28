@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @Configuration
-public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
+    public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
     public Job job(Step step) {
@@ -48,6 +48,7 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern)
     {
+        inputFilePattern = (inputFilePattern == null) ? ".*" : inputFilePattern;
         ResourcesItemReader itemReader = new ResourcesItemReader();
         ArrayList<Resource> resourceList = new ArrayList<Resource>();
         try {
