@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @Configuration
-    public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
+public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
 
     @Bean
     public Job job(Step step) {
@@ -44,10 +44,12 @@ import java.util.Map;
 
     @Bean
     @StepScope
-    public ItemReader<Resource> reader(
+    public ItemReader<Resource> reader (
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
-            @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern)
-    {
+            @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern) throws RuntimeException {
+        if (inputFilePath == null) {
+            throw new RuntimeException("input_file_pattern cannot be null");
+        }
         inputFilePattern = (inputFilePattern == null) ? ".*" : inputFilePattern;
         ResourcesItemReader itemReader = new ResourcesItemReader();
         ArrayList<Resource> resourceList = new ArrayList<Resource>();

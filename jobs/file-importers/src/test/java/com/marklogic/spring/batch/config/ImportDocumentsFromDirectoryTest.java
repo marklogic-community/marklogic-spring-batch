@@ -47,6 +47,14 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
         thenTwoDocumentsInMonsterCollection();
     }
 
+    @Test(expected=AssertionError.class)
+    public void inputFilePathExceptionTest() {
+        runJobWithMarkLogicJobRepository(
+                ImportDocumentsFromDirectoryConfig.class,
+                "--document_type", "text",
+                "--output_collections", "monster,seasmeStreet");
+    }
+
     public void thenTwoDocumentsInMonsterCollection() {
         ClientTestHelper client = new ClientTestHelper();
         client.setDatabaseClientProvider(getClientProvider());
