@@ -6,8 +6,6 @@ import org.springframework.batch.item.ItemStreamSupport;
 
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.DocumentMetadataHandle.Capability;
-import com.marklogic.uri.DefaultUriGenerator;
-import com.marklogic.uri.UriGenerator;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -16,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private UriGenerator uriGenerator = new DefaultUriGenerator();
 
     @Value("#{jobParameters['output_collections']}")
     private String[] collections;
@@ -35,10 +31,6 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
     // Comma-separated list of role,read,role,update, just like in Client API
     private String permissions;
-
-    protected String generateUri(Object o, String id) {
-        return uriGenerator.generateUri(o, id);
-    }
 
     protected DocumentMetadataHandle buildMetadata() {
         DocumentMetadataHandle h = new DocumentMetadataHandle();
@@ -88,7 +80,4 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
         return outputUriReplace;
     }
 
-    protected UriGenerator getUriGenerator() {
-        return uriGenerator;
-    }
 }
