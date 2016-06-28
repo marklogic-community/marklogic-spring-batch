@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.io.marker.GenericWriteHandle;
 import com.marklogic.spring.batch.item.MarkLogicFileItemWriter;
 import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
 import org.springframework.batch.core.Job;
