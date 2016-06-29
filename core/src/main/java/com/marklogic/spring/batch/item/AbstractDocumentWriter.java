@@ -15,18 +15,14 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Value("#{jobParameters['output_collections']}")
     private String[] collections;
 
     private String directory;
 
-    @Value("#{jobParameters['output_uri_prefix']}")
     private String outputUriPrefix;
 
-    @Value("#{jobParameters['output_uri_replace']}")
     private String outputUriReplace;
 
-    @Value("#{jobParameters['output_uri_suffix']}")
     private String outputUriSuffix;
 
     // Comma-separated list of role,read,role,update, just like in Client API
@@ -44,7 +40,7 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
         return h;
     }
 
-    public void setCollections(String... collections) {
+    public void setCollections(String[] collections) {
         this.collections = collections;
     }
 

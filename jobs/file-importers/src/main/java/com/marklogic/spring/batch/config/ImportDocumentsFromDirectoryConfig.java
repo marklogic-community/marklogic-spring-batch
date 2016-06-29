@@ -32,22 +32,24 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
 
     @Bean
     @JobScope
-    protected Step step(ItemReader<Resource> reader, ItemProcessor<Resource, FileHandle> processor,
-                           ItemWriter<FileHandle> writer, @Value("#{jobParameters['chunk'] ?: 100}") Integer chunkSize) {
-
+    protected Step step(
+        @Value("#{jobParameters['input_file_path']}") String inputFilePath,
+        @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern,
+        @Value("#{jobParameters['document_type']}") String documentType,
+        @Value("#{jobParameters['output_uri_prefix']}") String outputUriPrefix,
+        @Value("#{jobParameters['output_uri_replace']}") String outputUriReplace,
+        @Value("#{jobParameters['output_uri_suffix']}") String outputUriSuffix,
+        @Value("#{jobParameters['output_collections']}") String outputCollections,
+        @Value("#{jobParameters['chunk'] ?: 100}") Integer chunkSize) {
         return stepBuilderFactory.get("step")
                 .<Resource, FileHandle>chunk(chunkSize)
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
+                .reader(reader(inputFilePath, inputFilePattern))
+                .processor(processor(documentType))
+                .writer(writer(outputCollections, outputUriPrefix, outputUriReplace, outputUriSuffix))
                 .build();
     }
 
-    @Bean
-    @StepScope
-    public ItemReader<Resource> reader (
-            @Value("#{jobParameters['input_file_path']}") String inputFilePath,
-            @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern) throws RuntimeException {
+    public ItemReader<Resource> reader (String inputFilePath, String inputFilePattern) throws RuntimeException {
         if (inputFilePath == null) {
             throw new RuntimeException("input_file_path cannot be null");
         }
@@ -69,10 +71,7 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
         return itemReader;
     }
 
-    @Bean
-    @StepScope
-    public ItemProcessor<Resource, FileHandle> processor(
-            @Value("#{jobParameters['document_type']}") String documentType) {
+    public ItemProcessor<Resource, FileHandle> processor(String documentType) {
         MarkLogicImportItemProcessor processor = new MarkLogicImportItemProcessor();
         if (documentType != null) {
             processor.setFormat(Format.valueOf(documentType.toUpperCase()));
@@ -80,11 +79,14 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
         return processor;
     }
 
-    @Bean
-    @StepScope
-    public ItemWriter<FileHandle> writer() {
+    public ItemWriter<FileHandle> writer(String outputCollections, String outputUriPrefix, String outputUriReplace,
+        String outputUriSuffix) {
         MarkLogicFileItemWriter writer = new MarkLogicFileItemWriter(getDatabaseClient());
         writer.open(new ExecutionContext());
+        writer.setCollections(outputCollections.split(","));
+        writer.setOutputUriPrefix(outputUriPrefix);
+        writer.setOutputUriReplace(outputUriReplace);
+        writer.setOutputUriSuffix(outputUriSuffix);
         return writer;
     }
 
