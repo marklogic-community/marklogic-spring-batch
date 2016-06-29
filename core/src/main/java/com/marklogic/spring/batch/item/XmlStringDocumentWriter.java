@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.marklogic.uri.UriGenerator;
+import com.marklogic.uri.XmlStringUriGenerator;
 import org.springframework.batch.item.ItemWriter;
 
 import com.marklogic.client.DatabaseClient;
@@ -14,9 +15,11 @@ import com.marklogic.client.io.StringHandle;
 /**
  * Generic writer for writing a list of strings, where each string is intended to be written as an XML document.
  */
-public class XmlStringDocumentWriter extends AbstractDocumentWriter implements ItemWriter<String>, UriGenerator<String> {
+public class XmlStringDocumentWriter extends AbstractDocumentWriter implements ItemWriter<String> {
 
     private XMLDocumentManager mgr;
+
+    private XmlStringUriGenerator uriGenerator = new XmlStringUriGenerator();
 
     public XmlStringDocumentWriter(DatabaseClient client) {
         this.mgr = client.newXMLDocumentManager();
@@ -29,7 +32,7 @@ public class XmlStringDocumentWriter extends AbstractDocumentWriter implements I
         logger.info("Building set of documents to write");
         for (int i = 0; i < size; i++) {
             String xml = items.get(i);
-            String uri = generateUri(xml, i + 1 + "");
+            String uri = uriGenerator.generateUri(xml, i + 1 + "");
             set.add(uri, buildMetadata(), new StringHandle(xml));
         }
         logger.info("Writing set of documents, size: " + size);
@@ -37,24 +40,4 @@ public class XmlStringDocumentWriter extends AbstractDocumentWriter implements I
         logger.info("Finished writing set of documents");
     }
 
-    @Override
-    public String generateUri(String s, String id) {
-        String rootDir = getRootDirectory(s);
-        String path = "/" + rootDir + "/";
-        return id != null ? path + id + ".xml" : path + UUID.randomUUID() + ".xml";
-    }
-
-    @Override
-    public String generate() {
-        return null;
-    }
-
-    protected String getRootDirectory(String s) {
-        if (s.startsWith("<")) {
-            int pos = s.indexOf('>');
-            return s.substring(1, pos);
-        } else {
-            return s;
-        }
-    }
 }
