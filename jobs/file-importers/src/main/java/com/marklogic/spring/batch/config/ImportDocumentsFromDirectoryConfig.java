@@ -4,6 +4,7 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.MarkLogicFileItemWriter;
 import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -16,10 +17,14 @@ import org.springframework.batch.item.file.ResourcesItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -53,20 +58,20 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
             throw new RuntimeException("input_file_path cannot be null");
         }
         inputFilePattern = (inputFilePattern == null) ? ".*" : inputFilePattern;
-        ResourcesItemReader itemReader = new ResourcesItemReader();
-        ArrayList<Resource> resourceList = new ArrayList<Resource>();
-        try {
-            Resource[] resources = ctx.getResources(inputFilePath);
-            for (int i = 0; i < resources.length; i++) {
-                if (resources[i].getFilename().matches(inputFilePattern)) {
-                    resourceList.add(resources[i]);
-                }
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        File dir = new File(inputFilePath);
+        File parent = new File(dir.getParent());
+        String filter = dir.getName();
 
-        itemReader.setResources(resourceList.toArray(new Resource[resourceList.size()]));
+        FilenameFilter filenameFilter = new WildcardFileFilter(filter);
+        File[] files = parent.listFiles(filenameFilter);
+        List<Resource> resources = new ArrayList<Resource>();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].getName().matches(inputFilePattern)) {
+                resources.add(new FileSystemResource(files[i]));
+            }
+        }
+        ResourcesItemReader itemReader = new ResourcesItemReader();
+        itemReader.setResources(resources.toArray(new Resource[resources.size()]));
         return itemReader;
     }
 

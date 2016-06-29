@@ -19,7 +19,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     public void loadXmlDocumentsTest() {
         runJobWithMarkLogicJobRepository(
                 ImportDocumentsFromDirectoryConfig.class,
-                "--input_file_path", "data/*.xml",
+                "--input_file_path", "src/test/resources/data/*.xml",
                 "--input_file_pattern", "(elmo|grover).xml",
                 "--document_type", "xml",
                 "--output_collections", "monster,seasmeStreet");
@@ -30,7 +30,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     public void loadJsonDocumentsTest() {
         runJobWithMarkLogicJobRepository(
                 ImportDocumentsFromDirectoryConfig.class,
-                "--input_file_path", "data/*.json",
+                "--input_file_path", "src/test/resources/data/*.json",
                 "--input_file_pattern", "(elmo|grover).json",
                 "--document_type", "json",
                 "--output_collections", "monster,seasmeStreet");
@@ -41,7 +41,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     public void loadXmlJsonAndTextDocumentsTest() {
         runJobWithMarkLogicJobRepository(
                 ImportDocumentsFromDirectoryConfig.class,
-                "--input_file_path", "data/*.*",
+                "--input_file_path", "src/test/resources/data/*.*",
                 "--output_collections", "monster,seasmeStreet");
         thenDocumentsInMonsterCollection(8);
     }
@@ -50,7 +50,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     public void loadDocumentsAndTransformUriTest() {
         runJobWithMarkLogicJobRepository(
                 ImportDocumentsFromDirectoryConfig.class,
-                "--input_file_path", "data/*.*",
+                "--input_file_path", "src/test/resources/data/*.*",
                 "--output_collections", "monster,seasmeStreet",
                 "--output_uri_replace", ".*data/,/",
                 "--output_uri_prefix", "/monster");
@@ -63,7 +63,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     public void loadBinaryDocumentsTest() {
         runJobWithMarkLogicJobRepository(
                 ImportDocumentsFromDirectoryConfig.class,
-                "--input_file_path", "binary/*.*",
+                "--input_file_path", "src/test/resources/binary/*.*",
                 "--document_type", "binary",
                 "--output_collections", "monster,seasmeStreet");
         thenDocumentsInMonsterCollection(2);
@@ -73,7 +73,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     public void loadTextDocumentsTest() {
         runJobWithMarkLogicJobRepository(
                 ImportDocumentsFromDirectoryConfig.class,
-                "--input_file_path", "data/*.txt",
+                "--input_file_path", "src/test/resources/data/*.txt",
                 "--document_type", "text",
                 "--output_collections", "monster,seasmeStreet");
         thenDocumentsInMonsterCollection(2);

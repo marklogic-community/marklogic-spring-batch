@@ -7,6 +7,9 @@ ext {
 }
 
 dependencies {
+    //for filtering out directories
+    compile "commons-io:commons-io:2.5"
+
     // For importing images
     compile "org.apache.tika:tika-parsers:1.13"
 
