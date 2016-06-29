@@ -52,9 +52,10 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
                 ImportDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "data/*.*",
                 "--output_collections", "monster,seasmeStreet",
-                "--output_uri_replace", ".*data/,/");
+                "--output_uri_replace", ".*data/,/",
+                "--output_uri_prefix", "/monster");
         thenDocumentsInMonsterCollection(8);
-        Fragment frag = client.parseUri("/bigbird.xml", "monster", "seasmeStreet");
+        Fragment frag = client.parseUri("/monster/bigbird.xml", "monster", "seasmeStreet");
         frag.assertElementValue("/monster/name", "BigBird");
     }
 
