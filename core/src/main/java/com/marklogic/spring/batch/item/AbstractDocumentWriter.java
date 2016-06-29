@@ -23,10 +23,10 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
     @Value("#{jobParameters['output_uri_prefix']}")
     private String outputUriPrefix;
 
-    @Value("#{jobParameters['output_uri_suffix']}")
+    @Value("#{jobParameters['output_uri_replace']}")
     private String outputUriReplace;
 
-    @Value("#{jobParameters['output_uri_replace']}")
+    @Value("#{jobParameters['output_uri_suffix']}")
     private String outputUriSuffix;
 
     // Comma-separated list of role,read,role,update, just like in Client API

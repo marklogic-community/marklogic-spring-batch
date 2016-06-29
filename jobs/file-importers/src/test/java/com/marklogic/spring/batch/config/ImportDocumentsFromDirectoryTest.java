@@ -1,9 +1,19 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.junit.ClientTestHelper;
+import com.marklogic.junit.Fragment;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
+
+    ClientTestHelper client;
+
+    @Before
+    public void setup() {
+        client = new ClientTestHelper();
+        client.setDatabaseClientProvider(getClientProvider());
+    }
 
     @Test
     public void loadXmlDocumentsTest() {
@@ -37,6 +47,18 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     }
 
     @Test
+    public void loadDocumentsAndTransformUriTest() {
+        runJobWithMarkLogicJobRepository(
+                ImportDocumentsFromDirectoryConfig.class,
+                "--input_file_path", "data/*.*",
+                "--output_collections", "monster,seasmeStreet",
+                "--output_uri_replace", ".*data/,/");
+        thenDocumentsInMonsterCollection(8);
+        Fragment frag = client.parseUri("/bigbird.xml", "monster", "seasmeStreet");
+        frag.assertElementValue("/monster/name", "BigBird");
+    }
+
+    @Test
     public void loadBinaryDocumentsTest() {
         runJobWithMarkLogicJobRepository(
                 ImportDocumentsFromDirectoryConfig.class,
@@ -65,8 +87,6 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
     }
 
     public void thenDocumentsInMonsterCollection(int expectedCount) {
-        ClientTestHelper client = new ClientTestHelper();
-        client.setDatabaseClientProvider(getClientProvider());
         client.assertCollectionSize("Expect 2 docs in monster collection", "monster", expectedCount);
         client.assertCollectionSize("Expect 2 docs in monster collection", "seasmeStreet", expectedCount);
     }
