@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.List;
 
-@Component
-@Scope("step")
 public class MarkLogicFileItemWriter extends AbstractDocumentWriter implements ItemWriter<FileHandle>, UriGenerator<File> {
 
     private DatabaseClient client;
@@ -35,7 +33,6 @@ public class MarkLogicFileItemWriter extends AbstractDocumentWriter implements I
 
     @Override
     public void close() {
-        client.release();
     }
 
     @Override

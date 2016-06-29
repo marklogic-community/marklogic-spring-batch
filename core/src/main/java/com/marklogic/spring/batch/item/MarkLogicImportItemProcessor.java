@@ -26,13 +26,13 @@ public class MarkLogicImportItemProcessor implements ItemProcessor<Resource, Fil
         String fileName = file.getName();
         int i = fileName.lastIndexOf('.');
         String extension = (i >= 0) ? fileName.substring(i+1) : ".xyz";
-        if (format.equals(Format.XML) || extension.equals("xml")) {
+        if (Format.XML.equals(format) || extension.equals("xml")) {
             handle.setFormat(Format.XML);
-        } else if (format.equals(Format.JSON) || extension.equals("json")) {
+        } else if (Format.JSON.equals(format) || extension.equals("json")) {
             handle.setFormat(Format.JSON);
-        } else if (format.equals(Format.TEXT) || extension.equals("txt")) {
+        } else if (Format.TEXT.equals(format) || extension.equals("txt")) {
             handle.setFormat(Format.TEXT);
-        } else if (format.equals(Format.BINARY)) {
+        } else if (Format.BINARY.equals(format)) {
             handle.setFormat(Format.BINARY);
         } else {
             handle.setFormat(Format.UNKNOWN);

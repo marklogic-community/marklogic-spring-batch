@@ -39,10 +39,9 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
         @Value("#{jobParameters['output_uri_prefix']}") String outputUriPrefix,
         @Value("#{jobParameters['output_uri_replace']}") String outputUriReplace,
         @Value("#{jobParameters['output_uri_suffix']}") String outputUriSuffix,
-        @Value("#{jobParameters['output_collections']}") String outputCollections,
-        @Value("#{jobParameters['chunk'] ?: 100}") Integer chunkSize) {
+        @Value("#{jobParameters['output_collections']}") String outputCollections) {
         return stepBuilderFactory.get("step")
-                .<Resource, FileHandle>chunk(chunkSize)
+                .<Resource, FileHandle>chunk(getChunkSize())
                 .reader(reader(inputFilePath, inputFilePattern))
                 .processor(processor(documentType))
                 .writer(writer(outputCollections, outputUriPrefix, outputUriReplace, outputUriSuffix))
