@@ -2,10 +2,14 @@ package com.marklogic.spring.batch.config;
 
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
+import com.marklogic.spring.batch.test.AbstractJobTest;
+import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
 
-public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
+@ContextConfiguration(classes = {JobProjectTestConfig.class})
+public class ImportDocumentsFromDirectoryTest extends AbstractJobTest {
 
     ClientTestHelper client;
 
