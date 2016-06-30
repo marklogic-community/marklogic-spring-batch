@@ -36,6 +36,7 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
                 "--output_uri_prefix", "/monster");
         Fragment frag = client.parseUri("/monster/elmo.xml");
         frag.assertElementValue("/monster/name", "Elmo");
+        thenDocumentsInMonsterCollection(0);
     }
 
     @Test
