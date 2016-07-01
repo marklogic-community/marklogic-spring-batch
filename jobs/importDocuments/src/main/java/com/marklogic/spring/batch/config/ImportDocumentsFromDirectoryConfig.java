@@ -4,6 +4,8 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.MarkLogicFileItemWriter;
 import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
+import com.marklogic.uri.DefaultUriGenerator;
+import com.marklogic.uri.UriGenerator;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -42,11 +44,19 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
         @Value("#{jobParameters['output_uri_replace']}") String outputUriReplace,
         @Value("#{jobParameters['output_uri_suffix']}") String outputUriSuffix,
         @Value("#{jobParameters['output_collections']}") String outputCollections) {
+
+        MarkLogicFileItemWriter writer = new MarkLogicFileItemWriter(getDatabaseClient());
+        writer.setUriGenerator(uriGenerator(outputUriPrefix, outputUriReplace, outputUriSuffix));
+        writer.open(new ExecutionContext());
+        if (outputCollections != null) {
+            writer.setCollections(outputCollections.split(","));
+        }
+
         return stepBuilderFactory.get("step")
                 .<Resource, FileHandle>chunk(getChunkSize())
                 .reader(reader(inputFilePath, inputFilePattern))
                 .processor(processor(documentType))
-                .writer(writer(outputCollections, outputUriPrefix, outputUriReplace, outputUriSuffix))
+                .writer(writer)
                 .build();
     }
 
@@ -80,17 +90,12 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
         return processor;
     }
 
-    public ItemWriter<FileHandle> writer(String outputCollections, String outputUriPrefix, String outputUriReplace,
-        String outputUriSuffix) {
-        MarkLogicFileItemWriter writer = new MarkLogicFileItemWriter(getDatabaseClient());
-        writer.open(new ExecutionContext());
-        if (outputCollections != null) {
-            writer.setCollections(outputCollections.split(","));
-        }
-        writer.setOutputUriPrefix(outputUriPrefix);
-        writer.setOutputUriReplace(outputUriReplace);
-        writer.setOutputUriSuffix(outputUriSuffix);
-        return writer;
+    public UriGenerator<String> uriGenerator(String outputUriPrefix, String outputUriReplace, String outputUriSuffix) {
+        DefaultUriGenerator uriGen = new DefaultUriGenerator();
+        uriGen.setOutputUriPrefix(outputUriPrefix);
+        uriGen.setOutputUriReplace(outputUriReplace);
+        uriGen.setOutputUriSuffix(outputUriSuffix);
+        return uriGen;
     }
 
 }
