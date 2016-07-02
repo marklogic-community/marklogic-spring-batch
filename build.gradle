@@ -73,6 +73,7 @@ project(':jobs') {
     dependencies {
         runtime project(':core')
         runtime project(':jobs:importDocuments')
+        runtime project(':jobs:importGeonames')
     }
 }
 
