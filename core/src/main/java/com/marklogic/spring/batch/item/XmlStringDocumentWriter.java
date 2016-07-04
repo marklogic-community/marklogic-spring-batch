@@ -1,7 +1,10 @@
 package com.marklogic.spring.batch.item;
 
 import java.util.List;
+import java.util.UUID;
 
+import com.marklogic.uri.UriGenerator;
+import com.marklogic.uri.XmlStringUriGenerator;
 import org.springframework.batch.item.ItemWriter;
 
 import com.marklogic.client.DatabaseClient;
@@ -16,6 +19,8 @@ public class XmlStringDocumentWriter extends AbstractDocumentWriter implements I
 
     private XMLDocumentManager mgr;
 
+    private XmlStringUriGenerator uriGenerator = new XmlStringUriGenerator();
+
     public XmlStringDocumentWriter(DatabaseClient client) {
         this.mgr = client.newXMLDocumentManager();
     }
@@ -27,7 +32,7 @@ public class XmlStringDocumentWriter extends AbstractDocumentWriter implements I
         logger.info("Building set of documents to write");
         for (int i = 0; i < size; i++) {
             String xml = items.get(i);
-            String uri = generateUri(xml, i + 1 + "");
+            String uri = uriGenerator.generateUri(xml, i + 1 + "");
             set.add(uri, buildMetadata(), new StringHandle(xml));
         }
         logger.info("Writing set of documents, size: " + size);

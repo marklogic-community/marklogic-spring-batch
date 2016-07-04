@@ -61,7 +61,8 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
 
         ColumnMapItemWriter writer = new ColumnMapItemWriter(getDatabaseClient(), rootLocalName);
         if (collections == null || collections.length == 0) {
-            writer.setCollections(rootLocalName);
+            String[] coll = {rootLocalName};
+            writer.setCollections(coll);
         } else {
             writer.setCollections(collections);
         }

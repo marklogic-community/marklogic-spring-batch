@@ -8,6 +8,8 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.item.AbstractDocumentWriter;
+import com.marklogic.uri.UriGenerator;
+import com.marklogic.uri.XmlStringUriGenerator;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemWriter;
@@ -24,6 +26,7 @@ public class UserWriter extends AbstractDocumentWriter implements ItemWriter<Use
 
     private XMLDocumentManager mgr;
     private XmlMapper xmlMapper;
+    private XmlStringUriGenerator uriGenerator;
 
     // Keeps track of users between calls to the write method
     private Map<Integer, User> userMap = new HashMap<>();
@@ -32,6 +35,7 @@ public class UserWriter extends AbstractDocumentWriter implements ItemWriter<Use
         this.mgr = client.newXMLDocumentManager();
         this.xmlMapper = new XmlMapper();
         xmlMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
+        uriGenerator = new XmlStringUriGenerator();
     }
 
     /**
@@ -66,7 +70,7 @@ public class UserWriter extends AbstractDocumentWriter implements ItemWriter<Use
                 User user = userMap.get(id);
                 try {
                     String xml = xmlMapper.writeValueAsString(user);
-                    String uri = generateUri(xml, id + "");
+                    String uri = uriGenerator.generateUri(xml, id + "");
                     logger.debug("Adding user to the set of documents to write: " + id);
                     set.add(uri, buildMetadata(), new StringHandle(xml));
                     keysToRemove.add(id);
@@ -96,4 +100,5 @@ public class UserWriter extends AbstractDocumentWriter implements ItemWriter<Use
         logger.info("Closing UserWriter, and writing remaining user records");
         writeUsers(null);
     }
+
 }
