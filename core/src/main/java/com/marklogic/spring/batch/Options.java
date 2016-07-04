@@ -23,7 +23,7 @@ public interface Options {
     String JOB_REPOSITORY_DATABASE = "jr_database";
     String JOB_REPOSITORY_AUTHENTICATION = "jr_auth";
 
-    String LIST_CONFIGS = "list-configs";
+    String LIST = "list";
     String BASE_PACKAGE = "base-package";
 
     String CONFIG = "config";

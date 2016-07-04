@@ -25,7 +25,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -58,7 +57,7 @@ public class Main extends LoggingObject {
         else if (options.has(Options.UNDEPLOY)) {
             undeployMarkLogicJobRepository(options);
         }
-        else if (options.has(Options.LIST_CONFIGS)) {
+        else if (options.has(Options.LIST)) {
             StringBuilder sb = new StringBuilder();
             listConfigs(options, sb);
             System.out.println(sb.toString());
@@ -158,8 +157,8 @@ public class Main extends LoggingObject {
         parser.accepts(Options.DATABASE, "The name of the destination database. Default: The database associated with the destination App Server identified by -host and -port.").withRequiredArg();
         parser.accepts(Options.AUTHENTICATION, "The authentication to use for the app server on the given port").withRequiredArg();
 
-        parser.accepts(Options.LIST_CONFIGS, "List all of the Spring Configuration classes on the classpath");
-        parser.accepts(Options.BASE_PACKAGE, "The optional base package to use when using --list-configs to find Spring Configuration classes").withRequiredArg();
+        parser.accepts(Options.LIST, "List all of the Spring Configuration classes on the classpath");
+        parser.accepts(Options.BASE_PACKAGE, "The optional base package to use when using --list to find Spring Configuration classes").withRequiredArg();
 
         parser.accepts(Options.CONFIG, "The fully qualified classname of the Spring Configuration class to register").withRequiredArg();
         parser.accepts(Options.JOB, "The name of the Spring Batch Job bean to run").withRequiredArg();
