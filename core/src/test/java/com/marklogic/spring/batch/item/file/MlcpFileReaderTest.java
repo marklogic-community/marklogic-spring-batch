@@ -36,18 +36,8 @@ public class MlcpFileReaderTest extends Assert {
                 "file:src", test("file:src"));
     }
 
-    @Test
-    public void inputFilePattern() {
-        assertEquals("file:src" + File.separator + "*.java", test("src", "*.java"));
-    }
-
     private String test(String inputFilePath) {
-        return test(inputFilePath, null);
-    }
-
-    private String test(String inputFilePath, String inputFilePattern) {
         sut.setInputFilePath(inputFilePath);
-        sut.setInputFilePattern(inputFilePattern);
         return sut.buildPattern();
     }
 }
