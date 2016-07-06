@@ -11,10 +11,10 @@ public class LoadBinariesFromDirectoryTest extends AbstractFileImportTest {
     @Test
     public void importOneJpegTest() {
         runJob(LoadImagesFromDirectoryConfig.class,
-                "--input_file_path", "binary/*.jpg");
+                "--input_file_path", "src/test/resources/binary/*.jpg");
         XMLDocumentManager docMgr = getClient().newXMLDocumentManager();
         StringHandle handle = new StringHandle();
-        docMgr.read("test.xml", handle);
+        docMgr.read("Penguins.jpg", handle);
         Fragment frag = new Fragment(handle.toString(), getNamespaceProvider().getNamespaces());
         frag.assertElementExists("/html:html/html:head/html:meta[1][@content = 'Corbis']");
         frag.assertElementExists("/html:html/html:head/html:meta[1][@name = 'Artist']");
@@ -23,10 +23,10 @@ public class LoadBinariesFromDirectoryTest extends AbstractFileImportTest {
     @Test
     public void importOneDocxTest() {
         runJob(LoadDocumentsFromDirectoryConfig.class,
-                "--input_file_path", "binary/*.docx");
+                "--input_file_path", "src/test/resources/binary/*.docx");
         XMLDocumentManager docMgr = getClient().newXMLDocumentManager();
         StringHandle handle = new StringHandle();
-        docMgr.read("test.xml", handle);
+        docMgr.read("Hello.docx", handle);
         Fragment frag = new Fragment(handle.toString(), getNamespaceProvider().getNamespaces());
         String value = frag.getElementValue("/html:html/html:body/html:p");
         frag.assertElementValue("/html:html/html:body/html:p", value);
