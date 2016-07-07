@@ -1,13 +1,13 @@
 package com.marklogic.spring.batch.config.sql;
 
-import com.marklogic.spring.batch.config.ExtractUsersFromDatabaseConfig;
+import com.marklogic.spring.batch.config.ExtractCommentsFromDatabaseConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
-public class ReadUsersViaSqlXmlTest extends AbstractHsqlTest {
+public class ExtractCommentsFromDatabaseTest extends AbstractHsqlTest {
 
     @Before
     public void setup() {
@@ -17,7 +17,7 @@ public class ReadUsersViaSqlXmlTest extends AbstractHsqlTest {
     @Test
     public void readUsersViaSqlXmlQueryTest() {
         String sql = "SELECT comment FROM comments";
-        runJobWithMarkLogicJobRepository(ExtractUsersFromDatabaseTestConfig.class, "--sql", sql, "--root_local_name", "user");
+        runJobWithMarkLogicJobRepository(ExtractCommentsFromDatabaseTestConfig.class, "--sql", sql, "--root_local_name", "user");
     }
 
     /**
@@ -25,7 +25,7 @@ public class ReadUsersViaSqlXmlTest extends AbstractHsqlTest {
      * So we override this method in the config class that we're testing to inject our own data source.
      */
     @Configuration
-    public static class ExtractUsersFromDatabaseTestConfig extends ExtractUsersFromDatabaseConfig {
+    public static class ExtractCommentsFromDatabaseTestConfig extends ExtractCommentsFromDatabaseConfig {
         @Override
         protected DataSource buildDataSource() {
             return embeddedDatabase;

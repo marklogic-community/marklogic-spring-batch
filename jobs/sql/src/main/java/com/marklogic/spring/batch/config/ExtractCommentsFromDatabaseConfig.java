@@ -26,7 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 
-public class ExtractUsersFromDatabaseConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
+public class ExtractCommentsFromDatabaseConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
 
     private Environment env;
 
