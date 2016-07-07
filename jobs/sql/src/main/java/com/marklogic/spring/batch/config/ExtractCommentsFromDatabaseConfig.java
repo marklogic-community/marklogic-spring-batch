@@ -1,12 +1,13 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.spring.batch.Options;
-import com.marklogic.spring.batch.item.DocumentItemWriter;
+import com.marklogic.spring.batch.item.InputStreamHandleItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,18 +15,13 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
-import java.util.UUID;
 
 public class ExtractCommentsFromDatabaseConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
 
@@ -40,9 +36,7 @@ public class ExtractCommentsFromDatabaseConfig extends AbstractMarkLogicBatchCon
     @JobScope
     public Step step1(
             @Value("#{jobParameters['sql']}") String sql,
-            @Value("#{jobParameters['format']}") String format,
-            @Value("#{jobParameters['root_local_name']}") String rootLocalName,
-            @Value("#{jobParameters['collections']}") String[] collections) {
+            @Value("#{jobParameters['output_collections']}") String[] collections) {
 
         //Set up ItemReader
         RowMapper<SQLXML> mapper = new RowMapper<SQLXML>() {
@@ -57,23 +51,22 @@ public class ExtractCommentsFromDatabaseConfig extends AbstractMarkLogicBatchCon
         reader.setRowMapper(mapper);
         reader.setSql(sql);
 
-        ItemProcessor<SQLXML, Document> processor = new ItemProcessor<SQLXML, Document>() {
+        ItemProcessor<SQLXML, InputStreamHandle> processor = new ItemProcessor<SQLXML, InputStreamHandle>() {
 
             @Override
-            public Document process(SQLXML item) throws Exception {
+            public InputStreamHandle process(SQLXML item) throws Exception {
                 InputStream binaryStream = item.getBinaryStream();
-                DocumentBuilder parser =
-                        DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document result = parser.parse(binaryStream);
-                result.setDocumentURI(UUID.randomUUID().toString());
-                return result;
+                InputStreamHandle handle = new InputStreamHandle(binaryStream);
+                handle.setFormat(Format.XML);
+                return handle;
             }
         };
 
-        ItemWriter<Document> writer = new DocumentItemWriter(getDatabaseClient());
+        InputStreamHandleItemWriter writer = new InputStreamHandleItemWriter(getDatabaseClient());
+        writer.setCollections(collections);
 
         return stepBuilderFactory.get("step1")
-                .<SQLXML, Document>chunk(getChunkSize())
+                .<SQLXML, InputStreamHandle>chunk(getChunkSize())
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
