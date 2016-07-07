@@ -20,9 +20,16 @@ public class ExtractCommentsFromDatabaseTest extends AbstractHsqlTest {
     }
 
     @Test
-    public void readUsersViaSqlXmlQueryTest() {
+    public void readCommentsExtractLoadToMarkLogicTest() {
         String sql = "SELECT comment FROM comments";
-        runJobWithMarkLogicJobRepository(ExtractCommentsFromDatabaseTestConfig.class, "--sql", sql, "--output_collections", "abc");
+        runJobWithMarkLogicJobRepository(ExtractCommentsFromDatabaseTestConfig.class, "--sql", sql, "--format", "xml", "--output_collections", "abc");
+        testHelper.assertCollectionSize("Expect 2 in abc collection", "abc", 2);
+    }
+
+    @Test
+    public void readCommentsExtractTransformToJsonLoadToMarkLogicTest() {
+        String sql = "SELECT comment FROM comments";
+        runJobWithMarkLogicJobRepository(ExtractCommentsFromDatabaseTestConfig.class, "--sql", sql, "--format", "json", "--output_collections", "abc");
         testHelper.assertCollectionSize("Expect 2 in abc collection", "abc", 2);
     }
 
