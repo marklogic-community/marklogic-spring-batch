@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
+import java.util.UUID;
 
 public class ExtractCommentsFromDatabaseConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
 
@@ -64,7 +65,7 @@ public class ExtractCommentsFromDatabaseConfig extends AbstractMarkLogicBatchCon
                 DocumentBuilder parser =
                         DocumentBuilderFactory.newInstance().newDocumentBuilder();
                 Document result = parser.parse(binaryStream);
-                result.setDocumentURI("test.xml");
+                result.setDocumentURI(UUID.randomUUID().toString());
                 return result;
             }
         };
