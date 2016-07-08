@@ -34,8 +34,8 @@ public class ExtractCommentsFromDatabaseConfig extends AbstractMarkLogicBatchCon
     private int PRETTY_PRINT_INDENT_FACTOR = 2;
 
     @Bean
-    public Job extractUsersFromDatabaseConfigJob(@Qualifier("step1") Step step1) {
-        return jobBuilderFactory.get("extractUsersFromDatabase").start(step1).build();
+    public Job extractCommentsFromDatabaseConfigJob(@Qualifier("step1") Step step1) {
+        return jobBuilderFactory.get("extractCommentsFromDatabase").start(step1).build();
     }
 
     @Bean
