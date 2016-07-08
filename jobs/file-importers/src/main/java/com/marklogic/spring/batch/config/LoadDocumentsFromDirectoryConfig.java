@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.spring.batch.item.DocumentItemWriter;
-import com.marklogic.spring.batch.item.file.MlcpFileReader;
+import com.marklogic.spring.batch.item.file.EnhancedResourcesItemReader;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.ToXMLContentHandler;
@@ -55,7 +55,7 @@ public class LoadDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConf
 
         return stepBuilderFactory.get("step1")
                 .<Resource, Document>chunk(getChunkSize())
-                .reader(new MlcpFileReader(inputFilePath, inputFilePattern))
+                .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
                 .writer(new DocumentItemWriter(getDatabaseClient()))
                 .build();

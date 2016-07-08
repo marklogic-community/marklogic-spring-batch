@@ -14,18 +14,18 @@ import java.io.IOException;
 /**
  * Mimics mlcp in terms of what parameters are supported.
  */
-public class MlcpFileReader extends ResourcesItemReader {
+public class EnhancedResourcesItemReader extends ResourcesItemReader {
 
-    protected final static Logger logger = LoggerFactory.getLogger(MlcpFileReader.class);
+    protected final static Logger logger = LoggerFactory.getLogger(EnhancedResourcesItemReader.class);
 
     private String inputFilePath;
     private String inputFilePattern;
 
-    public MlcpFileReader() {
+    public EnhancedResourcesItemReader() {
         super();
     }
 
-    public MlcpFileReader(String inputFilePath, String inputFilePattern) {
+    public EnhancedResourcesItemReader(String inputFilePath, String inputFilePattern) {
         this.inputFilePath = inputFilePath;
         this.inputFilePattern = inputFilePattern;
     }

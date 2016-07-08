@@ -4,7 +4,7 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.MarkLogicFileItemWriter;
 import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
-import com.marklogic.spring.batch.item.file.MlcpFileReader;
+import com.marklogic.spring.batch.item.file.EnhancedResourcesItemReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -49,7 +49,7 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
 
         return stepBuilderFactory.get("step")
                 .<Resource, FileHandle>chunk(getChunkSize())
-                .reader(new MlcpFileReader(inputFilePath, inputFilePattern))
+                .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
                 .writer(writer)
                 .build();

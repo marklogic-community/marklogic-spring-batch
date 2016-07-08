@@ -8,9 +8,9 @@ import java.io.File;
 /**
  * Unit test for verifying we construct the pattern correctly.
  */
-public class MlcpFileReaderTest extends Assert {
+public class EnhancedResourcesItemReaderTest extends Assert {
 
-    private MlcpFileReader sut = new MlcpFileReader();
+    private EnhancedResourcesItemReader sut = new EnhancedResourcesItemReader();
 
     @Test
     public void fileDirectory() {
