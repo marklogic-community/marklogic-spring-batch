@@ -72,9 +72,8 @@ configure(subprojects.findAll {it.name != 'jobs'}) {
 project(':jobs') {
     dependencies {
         runtime project(':core')
-        runtime project(':jobs:file-importers')
-        runtime project(':jobs:shapefiles')
-        runtime project(':jobs:sql')
+        runtime project(':jobs:importDocuments')
+        runtime project(':jobs:importGeonames')
     }
 }
 

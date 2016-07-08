@@ -3,14 +3,12 @@ plugins {
 }
 
 ext {
-    artifactId = "marklogic-spring-batch-file-importers"
+    artifactId = "import-documents"
 }
 
 dependencies {
-
-    // For importing images
-    compile "org.apache.tika:tika-parsers:1.13"
-
+    //for filtering out directories
+    compile "commons-io:commons-io:2.5"
 }
 
 bintray {

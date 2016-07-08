@@ -7,6 +7,8 @@ import org.springframework.batch.item.ItemStreamSupport;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 
+import java.io.File;
+
 /**
  * Base class for writing documents. Should be able to support both the Client API and XCC.
  */
@@ -17,12 +19,6 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
     private String[] collections;
 
     private String directory;
-
-    private String outputUriPrefix;
-
-    private String outputUriReplace;
-
-    private String outputUriSuffix;
 
     // Comma-separated list of role,read,role,update, just like in Client API
     private String permissions;
@@ -49,30 +45,6 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
     public void setDirectory(String directory) {
         this.directory = directory;
-    }
-
-    public void setOutputUriPrefix(String outputUriPrefix) {
-        this.outputUriPrefix = outputUriPrefix;
-    }
-
-    public void setOutputUriSuffix(String outputUriSuffix) {
-        this.outputUriSuffix = outputUriSuffix;
-    }
-
-    public void setOutputUriReplace(String outputUriReplace) {
-        this.outputUriReplace = outputUriReplace;
-    }
-
-    public String getOutputUriPrefix() {
-        return outputUriPrefix;
-    }
-
-    public String getOutputUriSuffix() {
-        return outputUriSuffix;
-    }
-
-    public String getOutputUriReplace() {
-        return outputUriReplace;
     }
 
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    artifactId = "marklogic-spring-batch-file-importers"
+    artifactId = "importBinaries"
 }
 
 dependencies {
