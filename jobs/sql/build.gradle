@@ -7,6 +7,8 @@ ext {
 }
 
 dependencies {
+    compile "org.json:json:20160212"
+
     // For testing SQL readers with an embedded database
     testCompile "org.hsqldb:hsqldb:2.3.3"
 
