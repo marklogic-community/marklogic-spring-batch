@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
 
-    ClientTestHelper client;
+    private ClientTestHelper client;
 
     @Before
     public void setup() {
@@ -17,79 +17,79 @@ public class ImportDocumentsFromDirectoryTest extends AbstractFileImportTest {
 
     @Test
     public void loadXmlDocumentsTest() {
-        runJobWithMarkLogicJobRepository(
+        runJob(
                 ImportDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "src/test/resources/data/*.xml",
                 "--input_file_pattern", "(elmo|grover).xml",
                 "--document_type", "xml",
-                "--output_collections", "monster,seasmeStreet");
+                "--output_collections", "monster,sesameStreet");
         thenDocumentsInMonsterCollection(2);
     }
 
     @Test
     public void loadJsonDocumentsTest() {
-        runJobWithMarkLogicJobRepository(
+        runJob(
                 ImportDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "src/test/resources/data/*.json",
                 "--input_file_pattern", "(elmo|grover).json",
                 "--document_type", "json",
-                "--output_collections", "monster,seasmeStreet");
+                "--output_collections", "monster,sesameStreet");
         thenDocumentsInMonsterCollection(2);
     }
 
     @Test
     public void loadXmlJsonAndTextDocumentsTest() {
-        runJobWithMarkLogicJobRepository(
+        runJob(
                 ImportDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "src/test/resources/data/*.*",
-                "--output_collections", "monster,seasmeStreet");
+                "--output_collections", "monster,sesameStreet");
         thenDocumentsInMonsterCollection(8);
     }
 
     @Test
     public void loadDocumentsAndTransformUriTest() {
-        runJobWithMarkLogicJobRepository(
+        runJob(
                 ImportDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "src/test/resources/data/*.*",
-                "--output_collections", "monster,seasmeStreet",
+                "--output_collections", "monster,sesameStreet",
                 "--output_uri_replace", ".*data/,/",
                 "--output_uri_prefix", "/monster");
         thenDocumentsInMonsterCollection(8);
-        Fragment frag = client.parseUri("/monster/bigbird.xml", "monster", "seasmeStreet");
+        Fragment frag = client.parseUri("/monster/bigbird.xml", "monster", "sesameStreet");
         frag.assertElementValue("/monster/name", "BigBird");
     }
 
     @Test
     public void loadBinaryDocumentsTest() {
-        runJobWithMarkLogicJobRepository(
+        runJob(
                 ImportDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "src/test/resources/binary/*.*",
                 "--document_type", "binary",
-                "--output_collections", "monster,seasmeStreet");
+                "--output_collections", "monster,sesameStreet");
         thenDocumentsInMonsterCollection(2);
     }
 
     @Test
     public void loadTextDocumentsTest() {
-        runJobWithMarkLogicJobRepository(
+        runJob(
                 ImportDocumentsFromDirectoryConfig.class,
                 "--input_file_path", "src/test/resources/data/*.txt",
                 "--document_type", "text",
-                "--output_collections", "monster,seasmeStreet");
+                "--output_collections", "monster,sesameStreet");
         thenDocumentsInMonsterCollection(2);
     }
 
     @Test(expected=AssertionError.class)
     public void inputFilePathExceptionTest() {
-        runJobWithMarkLogicJobRepository(
+        runJob(
                 ImportDocumentsFromDirectoryConfig.class,
                 "--document_type", "text",
-                "--output_collections", "monster,seasmeStreet");
+                "--output_collections", "monster,sesameStreet");
     }
 
     public void thenDocumentsInMonsterCollection(int expectedCount) {
         client.assertCollectionSize("Expect 2 docs in monster collection", "monster", expectedCount);
-        client.assertCollectionSize("Expect 2 docs in monster collection", "seasmeStreet", expectedCount);
+        client.assertCollectionSize("Expect 2 docs in monster collection", "sesameStreet", expectedCount);
     }
 
 }
