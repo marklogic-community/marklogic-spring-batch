@@ -7,7 +7,7 @@ CREATE TABLE users (
 CREATE TABLE comments (
   id         INTEGER PRIMARY KEY,
   userId INTEGER,
-  comment VARCHAR(50)
+  comment VARCHAR(500)
 );
 
 CREATE TABLE addresses (
