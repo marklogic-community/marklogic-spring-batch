@@ -1,89 +1,60 @@
 package com.marklogic.uri;
 
 import java.io.File;
-import java.util.UUID;
 
-import com.marklogic.client.helper.LoggingObject;
+public class DefaultUriGenerator implements UriGenerator<String>{
 
+    public String getOutputUriPrefix() {
+        return outputUriPrefix;
+    }
 
-public class DefaultUriGenerator extends LoggingObject implements UriGenerator {
+    public void setOutputUriPrefix(String outputUriPrefix) {
+        this.outputUriPrefix = outputUriPrefix;
+    }
 
-    private String replacementPairs;
-    private String prefix;
-    private String suffix;
+    public String getOutputUriSuffix() {
+        return outputUriSuffix;
+    }
 
-    /**
-     * Mirroring rules at https://docs.marklogic.com/guide/mlcp/import#id_31989.
-     */
-    @Override
-    public String generateUri(Object o, String id) {
-        String uri = generateInitialUri(o, id);
-        if (prefix != null) {
-            uri = prefix + uri;
-        }
-        if (suffix != null) {
-            uri = uri + suffix;
+    public void setOutputUriSuffix(String outputUriSuffix) {
+        this.outputUriSuffix = outputUriSuffix;
+    }
+
+    public String getOutputUriReplace() {
+        return outputUriReplace;
+    }
+
+    public void setOutputUriReplace(String outputUriReplace) {
+        this.outputUriReplace = outputUriReplace;
+    }
+
+    private String outputUriPrefix;
+
+    private String outputUriReplace;
+
+    private String outputUriSuffix;
+
+    private String applyOutputUriReplace(String uri, String outputUriReplace) {
+        String[] regexReplace = outputUriReplace.split(",");
+        for (int i = 0; i < regexReplace.length; i=i+2) {
+            String regex = regexReplace[i];
+            String replace = regexReplace[i+1];
+            uri = uri.replaceAll(regex, replace);
         }
         return uri;
     }
 
-    /**
-     * For in-memory XML, which isn't supported by mlcp (everything comes from a file), we'll use the root element and a
-     * counter.
-     * 
-     * @param o
-     * @return
-     */
-    protected String generateInitialUri(Object o, String id) {
-        if (o instanceof File) {
-            return ((File) o).getAbsolutePath();
-        }
-
-        if (o instanceof String) {
-            String rootDir = getRootDirectory(o);
-            String path = "/" + rootDir + "/";
-            return id != null ? path + id + ".xml" : path + UUID.randomUUID() + ".xml";
-        }
-        return o.toString();
-    }
-
-    protected String getRootDirectory(Object o) {
-        String s = (String) o;
-        if (s.startsWith("<")) {
-            int pos = s.indexOf('>');
-            return s.substring(1, pos);
-        } else {
-            return s;
-        }
-    }
-
-    public String getReplacementPairs() {
-        return replacementPairs;
-    }
-
-    public void setReplacementPairs(String replacementPairs) {
-        this.replacementPairs = replacementPairs;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
+    @Override
+    public String generateUri(String s, String id) {
+        String uri = s;
+        uri = (getOutputUriReplace() != null) ? applyOutputUriReplace(uri, getOutputUriReplace()) : uri;
+        uri = (getOutputUriPrefix() != null) ? getOutputUriPrefix() + uri : uri;
+        uri = (getOutputUriSuffix() != null) ? uri + getOutputUriSuffix() : uri;
+        return uri;
     }
 
     @Override
-    public String generate(){
-        return UUID.randomUUID().toString();
+    public String generate() {
+        return null;
     }
-
 }

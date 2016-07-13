@@ -1,0 +1,36 @@
+plugins {
+    id "com.jfrog.bintray" version "1.6"
+}
+
+ext {
+    artifactId = "marklogic-spring-batch-sql"
+}
+
+dependencies {
+    compile "org.json:json:20160212"
+
+    // For testing SQL readers with an embedded database
+    testCompile "org.hsqldb:hsqldb:2.3.3"
+
+    // For ReadUsersFromHsqlUsingUserWriterTest
+    testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3"
+    testRuntime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
+    publications = [bintrayPublicationName]
+    pkg {
+        repo = bintrayRepo
+        name = artifactId
+        userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
+        vcsUrl = bintrayVcsUrl
+        version {
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+        }
+    }
+}
