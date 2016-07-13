@@ -5,9 +5,11 @@ Many applications within the enterprise domain require bulk processing to perfor
 [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) provides reusable functions that are essential in processing large volumes of records, including logging/tracing, transaction management, job processing statistics, job restart, skip, and resource management. It also provides more advanced technical services and features that will enable extremely high-volume and high performance batch jobs through optimization and partitioning techniques. Simple as well as complex, high-volume batch jobs can leverage the framework in a highly scalable manner to process significant volumes of information.
 
 # What is MarkLogic Spring Batch?
+MarkLogic Spring Batch is the fusion of the Spring Batch processing framework and the MarkLogic Java Client API to make it easier to write custom batch processing jobs.  All the details of reliability, performance, logging, reading/writing data to MarkLogic, and standard patterns are provided by MarkLogic Spring Batch.  This allows developers to focus in on writing application code and not worring about batch processing mechanics.    
+
 The vision of the MarkLogic Spring Batch (MSB) project is to provide a comprehensive and robust solution for building custom batch processing jobs for the MarkLogic platform.    
 
-There are three goals of the MarkLogic Spring Batch project.  
+# Whar are the goals for the MarkLogic Spring Batch project?
 
 * Develop batch processing solutions that are reliable, robust, and high performing
 * Reduce the amount of time it takes to build, operate, and maintain batch processing jobs with MarkLogic
@@ -15,8 +17,6 @@ There are three goals of the MarkLogic Spring Batch project.
 
 # Why use MarkLogic Spring Batch?
 Have you ever written a long running batch processing job, like migrating data from a relational database, and ask yourself "Someone should invent a tool that automates this work?".  Have you ever written three separate programs that must be individually started to accomplish a batch transform?  Have you ever wondered why that one batch process failed after running for 8 hours and had no idea why?  If these are the types of technical challenges that keep you up at night then MarkLogic Spring Batch is your sleep aid.  
-
-MarkLogic Spring Batch is the fusion of the Spring Batch processing framework and the MarkLogic Java Client API to makes it easier to write custom batch processing jobs.  All the details of reliability, performance, logging, reading/writing data to MarkLogic, and standard patterns are provided by MarkLogic Spring Batch.  This allows developers to focus in on writing application code and not worring about bathc processing mechanics.    
 
 ## Features
 * Ability to execute any job from a command line interface via the [Jobs](https://github.com/sastafford/marklogic-spring-batch/wiki/Jobs-Utility) utility.
@@ -35,6 +35,7 @@ OK, you need to build a custom MarkLogic batch processing job. The first step is
 ```
 plugins {
     id "java"
+    id "application"
 }
 
 repositories {
@@ -42,8 +43,8 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch:0.4.0"
-    runtime "com.marklogic:marklogic-spring-batch-jobs:0.4.0"
+    compile "com.marklogic:marklogic-spring-batch-core:0.5.0"
+    testComplile "com.marklogic:marklogic-spring-batch-test:0.5.0"
 }
 ```
 
