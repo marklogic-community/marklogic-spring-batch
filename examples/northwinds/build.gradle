@@ -8,13 +8,19 @@ plugins {
 }
 
 repositories {
-    jcenter()
     mavenLocal()
+    jcenter()
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.5.2"
+    runtime "com.marklogic:marklogic-spring-batch-core:0.5.2"
     compile "com.marklogic:ml-javaclient-util:2.9.1"
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+    compile "org.springframework:spring-jdbc:4.3.1.RELEASE"
+
+
+    testCompile "org.hsqldb:hsqldb:2.3.3"
     testCompile "com.marklogic:marklogic-spring-batch-test:0.5.1"
 
 }
