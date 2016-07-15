@@ -69,6 +69,12 @@ configure(subprojects.findAll {it.name != 'jobs'}) {
 /**
  * Include every project that you want to be part of the msb application.
  */
+project(':core') {
+    dependencies {
+        compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+    }
+}
+
 project(':jobs') {
     dependencies {
         runtime project(':core')
