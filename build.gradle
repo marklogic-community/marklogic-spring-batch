@@ -1,40 +1,91 @@
 allprojects {
-    apply plugin: "java"
-    apply plugin: "eclipse"
-    apply plugin: "idea"
-
-    repositories {
-        mavenLocal()
-        jcenter()
-        maven { url "http://repo.spring.io/milestone" }
-        maven { url "http://developer.marklogic.com/maven2/" }
-        maven { url "https://dl.bintray.com/sastafford/maven/" }
-    }
-
     task wrapper(type: Wrapper) {
-        gradleVersion = '2.13'
+        gradleVersion = '2.14'
     }
 }
 
 subprojects {
+    /*
+     * Not applying the bintray plugin. Couldn't get it working properly when declared
+     * in subprojects, and when declared at root level of this script, it caused an httpcomponents
+     * classpath issue with ml-gradle in the core project. So for now, each project has to
+     * duplicate bintray publishing configuration.
+     */
+
+    apply plugin: "java"
+    apply plugin: "eclipse"
+    apply plugin: "idea"
     apply plugin: "checkstyle"
 
+    repositories {
+        jcenter()
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "http://developer.marklogic.com/maven2/" }
+        mavenLocal()
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    sourceSets.test.resources.srcDir 'src/test/java'
+
     checkstyle {
-        configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+        configFile = file("${project.rootDir}/dev-tools/checkstyle/checkstyle.xml")
         toolVersion = '6.19'
     }
 }
 
+configure(subprojects.findAll {it.name != 'jobs'}) {
+    apply plugin: "maven-publish"
 
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        baseName = artifactId
+        version = project.version
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    jar {
+        baseName = artifactId
+        version = project.version
+    }
+
+    /*
+     * Assumes each project has a single publication.
+     */
+    publishing {
+        publications {
+            mainJavaWithSources(MavenPublication) {
+                groupId group
+                artifactId project.property("artifactId")
+                version project.version
+                from components.java
+                artifact sourcesJar
+            }
+        }
+    }
+}
+
+/**
+ * Include every project that you want to be part of the msb application.
+ */
 project(':jobs') {
     dependencies {
-        compile project(':core')
-        compile project(':test')
+        runtime project(':core')
+        runtime project(':jobs:importDocuments')
+        runtime project(':jobs:importGeonames')
     }
 }
 
 project(':test') {
     dependencies {
         compile project(':core')
+    }
+}
+
+configure(subprojects.findAll {it.name != 'core' && it.name != "test"}) {
+    dependencies {
+        compile project(':core')
+        testCompile project(':test')
     }
 }

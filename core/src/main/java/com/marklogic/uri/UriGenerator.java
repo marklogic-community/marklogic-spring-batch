@@ -1,15 +1,15 @@
 package com.marklogic.uri;
 
-public interface UriGenerator {
+public interface UriGenerator<T> {
 
     /**
-     * @param o
+     * @param t
      *            Object to generate a URI for - can be anything - a File, a String, etc.
      * @param id
      *            Optional ID to use in the URI; assumption is that if this is null, a UUID will be generated
      * @return
      */
-    String generateUri(Object o, String id);
+    String generateUri(T t, String id);
 
     String generate();
 

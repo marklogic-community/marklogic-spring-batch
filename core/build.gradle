@@ -1,18 +1,12 @@
 plugins {
-    id "com.jfrog.bintray" version "1.6"
-    id "maven-publish"
-    id "application"
     id "com.marklogic.ml-gradle" version "2.2.0"
+    id "com.jfrog.bintray" version "1.6"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-
 if (System.getProperty("user.dir").endsWith("jobs")) {
-    project.ext.smartModulePaths = ["../core/src/test/ml-modules"]
+    project.ext.smartModulePaths = ["../marklogic-spring-batch-core/src/test/ml-modules"]
 } else if (System.getProperty("user.dir").endsWith("marklogic-spring-batch")) {
-    project.ext.smartModulePaths = ["core/src/test/ml-modules"]
+    project.ext.smartModulePaths = ["marklogic-spring-batch-core/src/test/ml-modules"]
 } else {
     project.ext.smartModulePaths = ["src/test/ml-modules"]
 }
@@ -34,102 +28,49 @@ dependencies {
     // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
     compile "org.springframework:spring-oxm:4.2.6.RELEASE"
 
-    compile("com.marklogic:ml-javaclient-util:2.5") {
+    compile("com.marklogic:ml-javaclient-util:2.9.1") {
   	  exclude group: 'com.marklogic.java-client', module: 'client-api-java'
     }
 
-    compile('org.apache.jena:jena-arq:2.13.0') {
-        exclude(group: 'org.slf4j')
-        exclude(group: 'ch.qos.logback')
-        exclude(group: 'log4j')
-    }
-    compile('org.apache.jena:jena-core:2.13.0') {
-        exclude(group: 'org.slf4j')
-        exclude(group: 'xerces')
-        exclude(group: 'commons-cli')
-    }
-    compile('com.hp.hpl.jena:jena:2.6.4') {
-        exclude(group: 'org.slf4j')
-    }
-    compile('com.marklogic:marklogic-jena:1.0.0'){
-        changing=true
-        exclude(group: 'org.slf4j')
-        exclude(group: 'log4j')
-        exclude(group: 'ch.qos.logback')
-    }
-
+    // For deploying the ML Job Repo
     compile "com.marklogic:ml-app-deployer:2.2.0"
 
     // For the CLI
     compile "net.sf.jopt-simple:jopt-simple:5.0.1"
 
-    testCompile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
-
-    testCompile "junit:junit"
     testCompile "com.marklogic:ml-junit:2.6.0"
-
-    testCompile "com.jayway.restassured:rest-assured:2.3.1"
-    testCompile "org.springframework.batch:spring-batch-test:3.+"
-  
 }
-
-sourceSets.test.resources.srcDir 'src/test/java'
 
 task deployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
-    args = ["--deploy_job_repo", "--jrName", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
+    args = ["--deploy_job_repo", "--jr_name", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
 }
 
 task undeployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
-    args = ["--undepoy_job_repo", "--jrName", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    baseName = "marklogic-spring-batch"
-    version = coreVersion
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-jar {
-    baseName = "marklogic-spring-batch"
-    version = coreVersion
+    args = ["--undeploy_job_repo", "--jr_name", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
 }
 
 // Setup the Job Repo in our test application so it's available for use by tests.
 mlPostDeploy.dependsOn deployMarkLogicJobRepository
 mlUndeploy.dependsOn undeployMarkLogicJobRepository
 
-mainClassName = "com.marklogic.spring.batch.Main"
-
-publishing {
-    publications {
-        core(MavenPublication) {
-            groupId group
-            artifactId coreArtifact
-            version coreVersion
-            from components.java
-            artifact sourcesJar
-        }
-    }
-}
-
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
-    publications = ['core']
+    publications = [bintrayPublicationName]
     pkg {
-        repo = 'maven'
-        name = coreArtifact
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/sastafford/marklogic-spring-batch.git'
+        repo = bintrayRepo
+        name = artifactId
+        userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
+        vcsUrl = bintrayVcsUrl
         version {
-            name = coreVersion
+            name = project.version
             released = new Date()
-            vcsTag = coreVersion
+            vcsTag = project.version
         }
     }
 }
