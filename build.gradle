@@ -75,14 +75,6 @@ project(':core') {
     }
 }
 
-project(':jobs') {
-    dependencies {
-        runtime project(':core')
-        runtime project(':jobs:importDocuments')
-        runtime project(':jobs:importGeonames')
-    }
-}
-
 project(':test') {
     dependencies {
         compile project(':core')
