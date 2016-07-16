@@ -2,15 +2,26 @@ package example;
 
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-public class ExtractNorthwindsDataJob extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
+public class ExtractInvoiceDataToMarkLogicConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
     
     private Environment env;
+    
+    @Bean
+    public Job job(
+            @Value("#{jobParameters['output_collections']}") String[] collections) {
+        Step step = null;
+        return jobBuilderFactory.get("extractCommentsFromDatabase").start(step).build();
+    }
     
     /**
      * Protected so that a different data source can be used.

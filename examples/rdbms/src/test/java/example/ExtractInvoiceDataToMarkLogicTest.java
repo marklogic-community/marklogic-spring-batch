@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import javax.sql.DataSource;
 
 @ContextConfiguration(classes = {JobProjectTestConfig.class})
-public class ExtractNorthwindsDataTest extends AbstractJobTest {
+public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
     
     protected static EmbeddedDatabase embeddedDatabase;
     
@@ -25,6 +25,7 @@ public class ExtractNorthwindsDataTest extends AbstractJobTest {
     
     @Test
     public void verifyNorthwindDatabase() {
+        
         assertTrue(true);
     }
         
@@ -45,7 +46,7 @@ public class ExtractNorthwindsDataTest extends AbstractJobTest {
      * So we override this method in the config class that we're testing to inject our own data source.
      */
     @Configuration
-    public static class ExtractCommentsFromDatabaseTestConfig extends ExtractNorthwindsDataJob {
+    public static class ExtractCommentsFromDatabaseTestConfig extends ExtractInvoiceDataToMarkLogicConfig {
         @Override
         protected DataSource buildDataSource() {
             return embeddedDatabase;

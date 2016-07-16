@@ -16,7 +16,8 @@ public class YourJob extends AbstractMarkLogicBatchConfig implements Environment
     private Environment env;
     
     @Bean
-    public Job extractCommentsFromDatabaseConfigJob(@Qualifier("step1") XPath.Step step1) {
+    public Job job(
+            @Value("#{jobParameters['output_collections']}") String[] collections) {
         Step step = null;
         return jobBuilderFactory.get("extractCommentsFromDatabase").start(step).build();
     }
