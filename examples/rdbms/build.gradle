@@ -20,9 +20,10 @@ dependencies {
     compile "org.springframework:spring-jdbc:4.3.1.RELEASE"
 
 
-    testCompile "org.hsqldb:hsqldb:2.3.3"
+    testCompile "org.hsqldb:hsqldb:2.3.4"
     testCompile "com.marklogic:marklogic-spring-batch-test:0.5.1"
 
+    runtime "org.hsqldb:hsqldb:2.3.4"
 }
 
 distributions {
@@ -32,3 +33,9 @@ distributions {
 }
 
 mainClassName = "com.marklogic.spring.batch.Main"
+
+task runServer(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.hsqldb.server.Server"
+    args = []
+}
