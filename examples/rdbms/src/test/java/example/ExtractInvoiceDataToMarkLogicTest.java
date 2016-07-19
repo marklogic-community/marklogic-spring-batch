@@ -26,7 +26,7 @@ public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
     
     @Test
     public void verifySampleDatabase() {
-        
+        runJob(ExtractInvoiceDataToMarkLogicConfig.class);
         assertTrue(true);
     }
         

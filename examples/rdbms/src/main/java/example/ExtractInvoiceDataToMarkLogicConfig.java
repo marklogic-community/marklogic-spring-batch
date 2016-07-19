@@ -59,6 +59,7 @@ public class ExtractInvoiceDataToMarkLogicConfig extends AbstractMarkLogicBatchC
                 Document doc = db.newDocument();
                 Marshaller m = jc.createMarshaller();
                 m.marshal( item, doc );
+                doc.setDocumentURI("/test/invoice.xml");
                 return doc;
             }
         };
