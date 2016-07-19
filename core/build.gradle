@@ -41,6 +41,14 @@ dependencies {
     testCompile "com.marklogic:ml-junit:2.6.0"
 }
 
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.marklogic.spring.batch.Main'
+        )
+    }
+}
+
 task deployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
