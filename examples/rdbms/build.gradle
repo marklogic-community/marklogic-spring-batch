@@ -37,5 +37,18 @@ mainClassName = "com.marklogic.spring.batch.Main"
 task runServer(type: JavaExec) {
     classpath = configurations.runtime
     main = "org.hsqldb.server.Server"
-    args = []
+    args = [
+            "--database.0", "file:data/sampledata",
+            "--dbname.0", "sampledata"
+    ]
+}
+
+task runManager(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.hsqldb.util.DatabaseManagerSwing"
+    args = [
+            "--driver", "org.hsqldb.jdbc.JDBCDriver",
+            "--url", "jdbc:hsqldb:file:data/sampledata",
+            "--user", "SA"
+    ]
 }
