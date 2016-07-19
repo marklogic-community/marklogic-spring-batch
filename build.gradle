@@ -82,6 +82,11 @@ project(':test') {
 }
 
 configure(subprojects.findAll {it.name != 'core' && it.name != "test"}) {
+
+    apply plugin: "application"
+
+    mainClassName = "com.marklogic.spring.batch.Main"
+
     dependencies {
         compile project(':core')
         testCompile project(':test')
