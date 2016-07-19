@@ -1,8 +1,10 @@
 package example;
 
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
+import com.marklogic.spring.batch.item.DocumentItemWriter;
 import example.data.Invoice;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -16,8 +18,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.Map;
 
 public class ExtractInvoiceDataToMarkLogicConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
@@ -41,18 +48,24 @@ public class ExtractInvoiceDataToMarkLogicConfig extends AbstractMarkLogicBatchC
         reader.setRowMapper(new InvoiceRowMapper());
         reader.setSql(sql);
         
-        ItemProcessor processor = new ItemProcessor<Invoice, InputStreamHandle>() {
+        ItemProcessor processor = new ItemProcessor<Invoice, Document>() {
     
             @Override
-            public InputStreamHandle process(Invoice item) throws Exception {
-                InputStreamHandle handle = null;
-                return handle;
+            public Document process(Invoice item) throws Exception {
+                JAXBContext jc = JAXBContext.newInstance( "example.data.Invoice" );
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setNamespaceAware(true);
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document doc = db.newDocument();
+                Marshaller m = jc.createMarshaller();
+                m.marshal( item, doc );
+                return doc;
             }
         };
-        ItemWriter writer = null;
+        ItemWriter writer = new DocumentItemWriter(getDatabaseClient());
         
         return stepBuilderFactory.get("step1")
-                .<Invoice, InputStreamHandle>chunk(getChunkSize())
+                .<Invoice, Document>chunk(getChunkSize())
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
