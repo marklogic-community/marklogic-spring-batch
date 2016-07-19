@@ -1,5 +1,6 @@
 package example;
 
+import com.marklogic.spring.batch.config.support.BatchDatabaseClientProvider;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.After;
@@ -20,11 +21,11 @@ public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
     
     @Before
     public void setup() {
-        createDb("db/northwind.sql");
+        createDb("db/sampledata_ddl.sql", "db/sampledata_insert.sql");
     }
     
     @Test
-    public void verifyNorthwindDatabase() {
+    public void verifySampleDatabase() {
         
         assertTrue(true);
     }
@@ -39,6 +40,7 @@ public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
     
     protected void createDb(String... scripts) {
         embeddedDatabase = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).addScripts(scripts).build();
+        BatchDatabaseClientProvider provider = null;
     }
     
     /**
