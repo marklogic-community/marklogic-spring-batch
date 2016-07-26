@@ -1,5 +1,6 @@
 package example;
 
+import com.marklogic.spring.batch.config.support.BatchDatabaseClientProvider;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.After;
@@ -14,17 +15,18 @@ import org.springframework.test.context.ContextConfiguration;
 import javax.sql.DataSource;
 
 @ContextConfiguration(classes = {JobProjectTestConfig.class})
-public class ExtractNorthwindsDataTest extends AbstractJobTest {
+public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
     
     protected static EmbeddedDatabase embeddedDatabase;
     
     @Before
     public void setup() {
-        createDb("db/northwind.sql");
+        createDb("db/sampledata_ddl.sql", "db/sampledata_insert.sql");
     }
     
     @Test
-    public void verifyNorthwindDatabase() {
+    public void verifySampleDatabase() {
+        runJob(ExtractInvoiceDataToMarkLogicConfig.class);
         assertTrue(true);
     }
         
@@ -38,6 +40,7 @@ public class ExtractNorthwindsDataTest extends AbstractJobTest {
     
     protected void createDb(String... scripts) {
         embeddedDatabase = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).addScripts(scripts).build();
+        BatchDatabaseClientProvider provider = null;
     }
     
     /**
@@ -45,7 +48,7 @@ public class ExtractNorthwindsDataTest extends AbstractJobTest {
      * So we override this method in the config class that we're testing to inject our own data source.
      */
     @Configuration
-    public static class ExtractCommentsFromDatabaseTestConfig extends ExtractNorthwindsDataJob {
+    public static class ExtractCommentsFromDatabaseTestConfig extends ExtractInvoiceDataToMarkLogicConfig {
         @Override
         protected DataSource buildDataSource() {
             return embeddedDatabase;

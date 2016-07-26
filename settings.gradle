@@ -1,6 +1,5 @@
 include "core"
 include "test"
-include "jobs"
 include "jobs:file-importers"
 include "jobs:importDocuments"
 include "jobs:importTriples"

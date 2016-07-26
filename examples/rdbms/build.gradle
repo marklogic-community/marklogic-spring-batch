@@ -1,0 +1,54 @@
+/*
+This base gradle file imports the latest MarkLogic Spring Batch Core and Test libraries that are published to jCenter.
+ */
+
+plugins {
+    id "java"
+    id "application"
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    compile "com.marklogic:marklogic-spring-batch-core:0.5.2"
+    compile "com.marklogic:ml-javaclient-util:2.9.1"
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+    compile "org.springframework:spring-jdbc:4.3.1.RELEASE"
+
+
+    testCompile "org.hsqldb:hsqldb:2.3.4"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.5.1"
+
+    runtime "org.hsqldb:hsqldb:2.3.4"
+}
+
+distributions {
+    main {
+        baseName = 'baseJob'
+    }
+}
+
+mainClassName = "com.marklogic.spring.batch.Main"
+
+task runServer(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.hsqldb.server.Server"
+    args = [
+            "--database.0", "file:data/sampledata",
+            "--dbname.0", "sampledata"
+    ]
+}
+
+task runManager(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.hsqldb.util.DatabaseManagerSwing"
+    args = [
+            "--driver", "org.hsqldb.jdbc.JDBCDriver",
+            "--url", "jdbc:hsqldb:file:data/sampledata",
+            "--user", "SA"
+    ]
+}
