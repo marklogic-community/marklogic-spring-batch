@@ -5,6 +5,8 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.item.DocumentItemWriter;
+import com.marklogic.uri.DefaultUriGenerator;
+import com.marklogic.uri.UriGenerator;
 import example.data.Invoice;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -22,6 +24,7 @@ import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,19 +50,20 @@ public class ExtractInvoiceDataToMarkLogicConfig extends AbstractMarkLogicBatchC
         reader.setDataSource(dataSource);
         reader.setRowMapper(new InvoiceRowMapper());
         reader.setSql(sql);
+        UriGenerator uriGenerator = new DefaultUriGenerator();
         
         ItemProcessor processor = new ItemProcessor<Invoice, Document>() {
     
             @Override
             public Document process(Invoice item) throws Exception {
-                JAXBContext jc = JAXBContext.newInstance( "example.data.Invoice" );
+                JAXBContext jc = JAXBContext.newInstance(example.data.Invoice.class);
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 dbf.setNamespaceAware(true);
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 Document doc = db.newDocument();
                 Marshaller m = jc.createMarshaller();
                 m.marshal( item, doc );
-                doc.setDocumentURI("/test/invoice.xml");
+                doc.setDocumentURI("/test/invoice_" + uriGenerator.generate() + ".xml");
                 return doc;
             }
         };

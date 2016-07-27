@@ -26,7 +26,7 @@ public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
     
     @Test
     public void verifySampleDatabase() {
-        runJob(ExtractInvoiceDataToMarkLogicConfig.class);
+        runJob(ExtractInvoiceDataToMarkLogicTestConfig.class);
         assertTrue(true);
     }
         
@@ -48,7 +48,7 @@ public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
      * So we override this method in the config class that we're testing to inject our own data source.
      */
     @Configuration
-    public static class ExtractCommentsFromDatabaseTestConfig extends ExtractInvoiceDataToMarkLogicConfig {
+    public static class ExtractInvoiceDataToMarkLogicTestConfig extends ExtractInvoiceDataToMarkLogicConfig {
         @Override
         protected DataSource buildDataSource() {
             return embeddedDatabase;

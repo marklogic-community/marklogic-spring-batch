@@ -12,11 +12,13 @@ public class InvoiceRowMapper implements RowMapper<Invoice> {
     @Override
     public Invoice mapRow(ResultSet rs, int rowNum) throws SQLException {
         Invoice invoice = new Invoice();
-        invoice.setId(rs.getInt(0));
-        invoice.setTotal(rs.getFloat(2));
+        invoice.setId(rs.getInt("invoice.ID"));
+        invoice.setTotal(rs.getFloat("TOTAL"));
         
         Customer customer = new Customer();
-        customer.setId(rs.getInt(1));
+        customer.setId(rs.getInt("CUSTOMERID"));
+        
+        invoice.setCustomer(customer);
         
         return invoice;
     }
