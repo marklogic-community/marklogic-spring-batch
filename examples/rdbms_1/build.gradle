@@ -12,6 +12,12 @@ dependencies {
     runtime "org.hsqldb:hsqldb:2.3.4"
 }
 
+distributions {
+    main {
+        baseName = artifactId
+    }
+}
+
 mainClassName = "com.marklogic.spring.batch.Main"
 
 task runManager(type: JavaExec) {
