@@ -41,7 +41,4 @@ task importInvoices(type: JavaExec) {
         "--root_local_name", "invoice",
         "--collections", "invoice"
     ]
-
-
-
 }
