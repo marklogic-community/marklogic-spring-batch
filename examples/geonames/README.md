@@ -1,1 +1,0 @@
-The geonames example is a standalone project that uses the MarkLogic Spring Batch libraries to ingest data from [geonames](www.geonames.org) into MarkLogic.  
