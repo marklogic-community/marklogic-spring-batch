@@ -193,13 +193,17 @@ public class AdaptedStepExecution {
 		this.filterCount = filterCount;
 	}
 
+	/* Issue #139 - https://github.com/sastafford/marklogic-spring-batch/issues/139
+	
 	public List<Throwable> getFailureExceptions() {
 		return failureExceptions;
 	}
-
+	
 	public void setFailureExceptions(List<Throwable> failureExceptions) {
 		this.failureExceptions = failureExceptions;
 	}
+	
+	*/
 
 	public Long getJobExecutionId() {
 		return jobExecutionId;
