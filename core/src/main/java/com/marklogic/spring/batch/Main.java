@@ -3,6 +3,7 @@ package com.marklogic.spring.batch;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.spring.batch.config.ConfigTypeFilter;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryAppDeployer;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryConfig;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.JOptCommandLinePropertySource;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.RegexPatternTypeFilter;
 
 import java.io.File;
 import java.io.FileReader;
@@ -86,6 +88,7 @@ public class Main extends LoggingObject {
     protected void listConfigs(OptionSet options, StringBuilder builder) {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
+        scanner.addExcludeFilter(new ConfigTypeFilter());
         String basePackage = options.has(Options.BASE_PACKAGE) ? options.valueOf(Options.BASE_PACKAGE).toString() : "*";
         Set<BeanDefinition> set = scanner.findCandidateComponents(basePackage);
         if (set.isEmpty()) {

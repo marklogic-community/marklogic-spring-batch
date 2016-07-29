@@ -1,0 +1,59 @@
+/*
+This base gradle file imports the latest MarkLogic Spring Batch Core and Test libraries that are published to jCenter.
+ */
+
+plugins {
+    id "java"
+    id "application"
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    compile "com.marklogic:marklogic-spring-batch-core:0.5.2"
+    compile "com.marklogic:ml-javaclient-util:2.9.1"
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+    compile "org.springframework:spring-jdbc:4.3.1.RELEASE"
+
+    testCompile "org.hsqldb:hsqldb:2.3.4"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.5.1"
+
+    runtime "org.hsqldb:hsqldb:2.3.4"
+}
+
+distributions {
+    main {
+        baseName = artifactId
+    }
+}
+
+mainClassName = "com.marklogic.spring.batch.Main"
+
+task runManager(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.hsqldb.util.DatabaseManagerSwing"
+    args = [
+            "--driver", "org.hsqldb.jdbc.JDBCDriver",
+            "--url", "jdbc:hsqldb:file:data/invoices",
+            "--user", "SA"
+    ]
+}
+
+task importInvoices(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+            "--host", mlHost,
+            "--port", mlPort,
+            "--username", mlUsername,
+            "--password", mlPassword,
+            "--config", "example.ExtractInvoiceDataToMarkLogicConfig",
+            "--jdbc_driver", "org.hsqldb.jdbc.JDBCDriver",
+            "--jdbc_url", "jdbc:hsqldb:file:E:\\gitrepo\\marklogic-spring-batch\\examples\\rdbms_2\\data\\invoices",
+            "--jdbc_username", "sa",
+    ]
+}

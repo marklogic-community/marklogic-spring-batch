@@ -22,6 +22,7 @@ import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -36,6 +37,9 @@ public class JobRepositoryConfigurer extends DefaultBatchConfigurer {
     @Autowired(required = false)
     @Qualifier(JOB_REPOSITORY_DATABASE_CLIENT_PROVIDER_BEAN_NAME)
     private DatabaseClientProvider databaseClientProvider;
+
+    @Autowired(required = false)
+    private TaskExecutor taskExecutor;
 
     private PlatformTransactionManager transactionManager;
     private JobRepository jobRepository;
@@ -67,6 +71,9 @@ public class JobRepositoryConfigurer extends DefaultBatchConfigurer {
 
             SimpleJobLauncher jbl = new SimpleJobLauncher();
             jbl.setJobRepository(jobRepository);
+            if (taskExecutor != null) {
+                jbl.setTaskExecutor(taskExecutor);
+            }
             try {
                 jbl.afterPropertiesSet();
             } catch (Exception e) {

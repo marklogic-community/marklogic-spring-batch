@@ -69,11 +69,19 @@ configure(subprojects.findAll {it.name != 'jobs'}) {
 /**
  * Include every project that you want to be part of the msb application.
  */
-project(':jobs') {
+project(':core') {
     dependencies {
-        runtime project(':core')
-        runtime project(':jobs:importDocuments')
-        runtime project(':jobs:importGeonames')
+        runtime "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+
+        runtime fileTree(include: ['*.jar'], dir: 'lib')
+
+        //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
+        runtime "com.marklogic:ml-javaclient-util:2.9.1"
+
+        //Main depends on joptsimple.OptionParser;
+        runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
+
+        runtime "org.springframework:spring-jdbc:4.2.6.RELEASE"
     }
 }
 
@@ -84,6 +92,10 @@ project(':test') {
 }
 
 configure(subprojects.findAll {it.name != 'core' && it.name != "test"}) {
+
+    apply plugin: "application"
+    mainClassName = "com.marklogic.spring.batch.Main"
+
     dependencies {
         compile project(':core')
         testCompile project(':test')
