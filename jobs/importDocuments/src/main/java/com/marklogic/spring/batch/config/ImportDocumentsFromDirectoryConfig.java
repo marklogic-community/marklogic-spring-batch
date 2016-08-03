@@ -1,9 +1,13 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.MarkLogicFileItemWriter;
 import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
+import com.marklogic.spring.batch.item.MarkLogicItemWriter;
+import com.marklogic.spring.batch.item.ResourceToDocumentRecordItemProcessor;
 import com.marklogic.uri.DefaultUriGenerator;
 import com.marklogic.uri.UriGenerator;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -52,20 +56,18 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
 
         Assert.hasText(inputFilePath, "input_file_path cannot be null");
 
-        MarkLogicImportItemProcessor processor = new MarkLogicImportItemProcessor();
+        ResourceToDocumentRecordItemProcessor processor = new ResourceToDocumentRecordItemProcessor();
         if (documentType != null) {
             processor.setFormat(Format.valueOf(documentType.toUpperCase()));
         }
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        metadata.withCollections(outputCollections.split(","));
+        processor.setMetadataHandle(metadata);
 
-        MarkLogicFileItemWriter writer = new MarkLogicFileItemWriter(getDatabaseClient());
-        writer.setUriGenerator(uriGenerator(outputUriPrefix, outputUriReplace, outputUriSuffix));
-        writer.open(new ExecutionContext());
-        if (outputCollections != null) {
-            writer.setCollections(outputCollections.split(","));
-        }
+        MarkLogicItemWriter writer = new MarkLogicItemWriter(getDatabaseClient());
 
         return stepBuilderFactory.get("step")
-                .<Resource, FileHandle>chunk(getChunkSize())
+                .<Resource, DocumentWriteOperation>chunk(getChunkSize())
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
                 .writer(writer)
