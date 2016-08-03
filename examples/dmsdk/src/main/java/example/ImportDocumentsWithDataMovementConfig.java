@@ -46,26 +46,27 @@ public class ImportDocumentsWithDataMovementConfig extends AbstractMarkLogicBatc
         final DataMovementManager manager = DataMovementManager.newInstance();
         manager.setClient(getDatabaseClient());
         WriteHostBatcher batcher = manager.newWriteHostBatcher();
+        batcher.withJobName(JOB_NAME);
+        batcher.onBatchSuccess((client, batch) -> {
+            System.out.println("Sucessfully wrote " + batch.getItems().length);
+        });
+        batcher.onBatchFailure((client, batch, throwable) -> {
+            System.err.println(throwable.toString());
+        });
+        manager.startJob(batcher);
     
         ItemWriter<FileHandle> writer = new ItemWriter<FileHandle>() {
             @Override
             public void write(List<? extends FileHandle> items) throws Exception {
                 logger.info("DMSDK ItemWriter");
-                batcher.withJobName(JOB_NAME);
-                batcher.withBatchSize(items.size());
-                batcher.onBatchSuccess((client, batch) -> {
-                    System.out.println("Sucessfully wrote " + batch.getItems().length);
-                });
-                batcher.onBatchFailure((client, batch, throwable) -> {
-                    System.err.println(throwable.toString());
-                });
-                manager.startJob(batcher);
                 logger.info("Size: " + items.size());
+                batcher.withBatchSize(items.size());
                 for (FileHandle item : items) {
                     DocumentMetadataHandle meta = new DocumentMetadataHandle().withCollections(collections);
                     batcher.add(UUID.randomUUID().toString(), meta, item);
                 }
-                batcher.awaitCompletion(1000, TimeUnit.MILLISECONDS);
+                //batcher.awaitCompletion(1000, TimeUnit.MILLISECONDS);
+                batcher.flush();
             }
         };
                    

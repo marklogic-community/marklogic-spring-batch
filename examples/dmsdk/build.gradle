@@ -9,14 +9,13 @@ plugins {
 
 repositories {
     jcenter()
-    mavenLocal()
     maven {
         url "http://developer.marklogic.com/maven2"
     }
 }
 
 dependencies {
-    compile "com.marklogic:java-client-api:version:4.0.0-EA2"
+    compile "com.marklogic:java-client-api:4.0.0-EA2"
     compile "com.marklogic:data-movement:1.0.0-EA2"
     compile "com.marklogic:marklogic-spring-batch-core:0.5.2"
     compile "com.marklogic:ml-javaclient-util:2.9.1"
