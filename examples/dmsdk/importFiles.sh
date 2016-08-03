@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+build/install/baseJob/bin/dmsdk --host oscar --port 8200 --username admin --password admin --config example.ImportDocumentsWithDataMovementConfig --input_file_path src/test/resources/data/*.xml --output_collections examples --chunk 100
