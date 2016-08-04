@@ -5,14 +5,12 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.MarkLogicWriteHandle;
-import com.marklogic.client.io.marker.AbstractReadHandle;
-import com.marklogic.client.io.marker.DocumentMetadataReadHandle;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
 
-public class ResourceToDocumentRecordItemProcessor implements ItemProcessor<Resource, DocumentWriteOperation> {
+public class ResourceToDocumentWriteOperationItemProcessor implements ItemProcessor<Resource, DocumentWriteOperation> {
 
     private Format format;
     private DocumentMetadataHandle metadataHandle;
@@ -45,12 +43,7 @@ public class ResourceToDocumentRecordItemProcessor implements ItemProcessor<Reso
             handle.setFormat(Format.UNKNOWN);
         }
         
-        MarkLogicWriteHandle mlHandle = new MarkLogicWriteHandle();
-        mlHandle.setUri(fileName);
-        mlHandle.setHandle(handle);
-        mlHandle.setMetadataHandle(metadataHandle);
-        
-        return mlHandle;
+        return new MarkLogicWriteHandle(fileName, metadataHandle, handle);
     }
     
     
