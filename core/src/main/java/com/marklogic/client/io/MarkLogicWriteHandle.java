@@ -11,19 +11,19 @@ public class MarkLogicWriteHandle implements DocumentWriteOperation {
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private DocumentUriTemplate uriTemplate;
     private String uri;
     private DocumentMetadataHandle metadataHandle;
-    
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-    
     private AbstractWriteHandle handle;
     private OperationType opType;
     
-    public void setUriTemplate(DocumentUriTemplate uriTemplate) {
-        this.uriTemplate = uriTemplate;
+    public MarkLogicWriteHandle(String uri, DocumentMetadataHandle metadata, AbstractWriteHandle handle) {
+        this.uri = uri;
+        this.metadataHandle = metadata;
+        this.handle = handle;
+    }
+    
+    public void setUri(String uri) {
+        this.uri = uri;
     }
     
     public void setMetadataHandle(DocumentMetadataHandle metadataHandle) {
@@ -34,18 +34,13 @@ public class MarkLogicWriteHandle implements DocumentWriteOperation {
         this.handle = handle;
     }
     
-    public void setOpType(OperationType opType) {
-        this.opType = opType;
-    }
-    
     @Override
     public OperationType getOperationType() {
-        return opType;
+        return OperationType.DOCUMENT_WRITE;
     }
     
     @Override
     public String getUri() {
-        //return uriTemplate.getDirectory() + uri + uriTemplate.getExtension();
         return uri;
     }
     

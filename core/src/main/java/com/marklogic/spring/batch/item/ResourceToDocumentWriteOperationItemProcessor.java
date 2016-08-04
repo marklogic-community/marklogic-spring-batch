@@ -23,12 +23,11 @@ public class ResourceToDocumentWriteOperationItemProcessor implements ItemProces
         this.format = format;
     }
     
-    
     @Override
     public DocumentWriteOperation process(Resource item) throws Exception {
         File file = item.getFile();
         FileHandle handle = new FileHandle(file);
-        String fileName = file.getName();
+        String fileName = item.getURL().getPath();
         int i = fileName.lastIndexOf('.');
         String extension = (i >= 0) ? fileName.substring(i+1) : ".xyz";
         if (Format.XML.equals(format) || extension.equals("xml")) {

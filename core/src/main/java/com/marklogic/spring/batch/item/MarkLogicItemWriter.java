@@ -17,6 +17,22 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
     private GenericDocumentManager docMgr;
     private DatabaseClient client;
     
+    public void setOutputUriPrefix(String outputUriPrefix) {
+        this.outputUriPrefix = outputUriPrefix;
+    }
+    
+    public void setOutputUriReplace(String outputUriReplace) {
+        this.outputUriReplace = outputUriReplace;
+    }
+    
+    public void setOutputUriSuffix(String outputUriSuffix) {
+        this.outputUriSuffix = outputUriSuffix;
+    }
+    
+    private String outputUriPrefix;
+    private String outputUriReplace;
+    private String outputUriSuffix;
+    
     public MarkLogicItemWriter(DatabaseClient client) {
         this.client = client;
         docMgr = client.newDocumentManager();
@@ -26,8 +42,23 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
         DocumentWriteSet batch = docMgr.newWriteSet();
         for (DocumentWriteOperation item : items) {
-            batch.add(item);
+            String uri = item.getUri();
+            uri = (outputUriReplace != null) ? applyOutputUriReplace(uri, outputUriReplace) : uri;
+            uri = (outputUriPrefix != null) ? outputUriPrefix + uri : uri;
+            uri = (outputUriSuffix != null) ? uri + outputUriSuffix : uri;
+            batch.add(uri, item.getMetadata(), item.getContent());
         }
         docMgr.write(batch);
     }
+    
+    private String applyOutputUriReplace(String uri, String outputUriReplace) {
+        String[] regexReplace = outputUriReplace.split(",");
+        for (int i = 0; i < regexReplace.length; i=i+2) {
+            String regex = regexReplace[i];
+            String replace = regexReplace[i+1];
+            uri = uri.replaceAll(regex, replace);
+        }
+        return uri;
+    }
+    
 }
