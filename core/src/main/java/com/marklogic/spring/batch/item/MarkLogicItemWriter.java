@@ -19,22 +19,8 @@ The MarkLogicItemWriter is an ItemWriter used to write any type of document to M
 public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private GenericDocumentManager docMgr;
+    protected GenericDocumentManager docMgr;
     private DatabaseClient client;
-    
-    public void setOutputUriPrefix(String outputUriPrefix) {
-        this.outputUriPrefix = outputUriPrefix;
-    }
-    
-    public void setOutputUriReplace(String outputUriReplace) {
-        this.outputUriReplace = outputUriReplace;
-    }
-    
-    public void setOutputUriSuffix(String outputUriSuffix) {
-        this.outputUriSuffix = outputUriSuffix;
-    }
-    
     private String outputUriPrefix;
     private String outputUriReplace;
     private String outputUriSuffix;
@@ -66,5 +52,28 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
         }
         return uri;
     }
+    
+    /*
+    Prepends a string to the URI after substitution
+     */
+    public void setOutputUriPrefix(String outputUriPrefix) {
+        this.outputUriPrefix = outputUriPrefix;
+    }
+    
+    /*
+    The outputUriReplace option accepts a comma delimited list of regular expression and replacement string pairs
+    @param outputUriReplace Example regex,'replaceString',regex,'replaceString'
+     */
+    public void setOutputUriReplace(String outputUriReplace) {
+        this.outputUriReplace = outputUriReplace;
+    }
+    
+    /*
+    Appends a string to the URI after substitution
+     */
+    public void setOutputUriSuffix(String outputUriSuffix) {
+        this.outputUriSuffix = outputUriSuffix;
+    }
+    
     
 }
