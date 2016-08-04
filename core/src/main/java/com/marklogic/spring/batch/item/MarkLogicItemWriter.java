@@ -10,6 +10,12 @@ import org.springframework.batch.item.ItemWriter;
 
 import java.util.List;
 
+/*
+The MarkLogicItemWriter is an ItemWriter used to write any type of document to MarkLogic.  It expects a
+<a href="http://docs.marklogic.com/javadoc/client/com/marklogic/client/document/DocumentWriteOperation.html">DocumentWriteOperation</a> class.
+
+@see <a href="">MarkLogicWriteHandle</a>
+ */
 public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
