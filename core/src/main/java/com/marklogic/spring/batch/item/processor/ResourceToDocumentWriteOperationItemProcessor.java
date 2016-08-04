@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item;
+package com.marklogic.spring.batch.item.processor;
 
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.io.DocumentMetadataHandle;

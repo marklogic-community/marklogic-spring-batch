@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.shapefile;
 
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
-import com.marklogic.spring.batch.item.DirectoryReader;
+import com.marklogic.spring.batch.item.reader.DirectoryReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;

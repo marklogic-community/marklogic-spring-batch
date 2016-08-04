@@ -5,7 +5,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.MarkLogicWriteHandle;
 import com.marklogic.spring.batch.item.MarkLogicItemWriter;
-import com.marklogic.spring.batch.item.file.EnhancedResourcesItemReader;
+import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.ToXMLContentHandler;
