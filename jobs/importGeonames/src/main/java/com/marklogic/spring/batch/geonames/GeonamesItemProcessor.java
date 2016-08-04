@@ -1,5 +1,9 @@
 package com.marklogic.spring.batch.geonames;
 
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.MarkLogicWriteHandle;
 import org.geonames.Geoname;
 import org.springframework.batch.item.ItemProcessor;
 import org.w3c.dom.Document;
@@ -11,7 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
+public class GeonamesItemProcessor implements ItemProcessor<Geoname, DocumentWriteOperation> {
 
     protected JAXBContext jaxbContext() {
         JAXBContext jaxbContext;
@@ -29,14 +33,16 @@ public class GeonamesItemProcessor implements ItemProcessor<Geoname, Document> {
     }
 
     @Override
-    public Document process(Geoname item) throws Exception {
+    public DocumentWriteOperation process(Geoname item) throws Exception {
         Document doc = documentBuilder().newDocument();
         Marshaller marshaller = jaxbContext().createMarshaller();
         marshaller.marshal(item, doc);
 
         //Set document URI
-        doc.setDocumentURI("http://geonames.org/geoname/" + item.getId());
-        return doc;
+        String uri = "http://geonames.org/geoname/" + item.getId();
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        metadata.withCollections("geonames");
+        return new MarkLogicWriteHandle(uri, metadata, new DOMHandle(doc));
     }
 
 }
