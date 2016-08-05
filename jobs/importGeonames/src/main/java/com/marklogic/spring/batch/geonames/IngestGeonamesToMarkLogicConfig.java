@@ -1,8 +1,9 @@
 package com.marklogic.spring.batch.geonames;
 
+import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
-import com.marklogic.spring.batch.item.DocumentItemWriter;
+import com.marklogic.spring.batch.item.MarkLogicItemWriter;
 import joptsimple.OptionParser;
 import org.geonames.Geoname;
 import org.springframework.batch.core.Job;
@@ -57,10 +58,10 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
         taskExecutor.setConcurrencyLimit(2);
 
         return stepBuilderFactory.get("step1")
-                .<Geoname, Document>chunk(getChunkSize())
+                .<Geoname, DocumentWriteOperation>chunk(getChunkSize())
                 .reader(reader)
                 .processor(new GeonamesItemProcessor())
-                .writer(new DocumentItemWriter(getDatabaseClient()))
+                .writer(new MarkLogicItemWriter(getDatabaseClient()))
                 .taskExecutor(taskExecutor)
                 .build();
     }

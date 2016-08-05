@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item;
+package com.marklogic.spring.batch.item.reader;
 
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.NonTransientResourceException;
