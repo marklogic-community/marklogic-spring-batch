@@ -1,29 +1,33 @@
-package com.marklogic.spring.batch.item;
+package com.marklogic.spring.batch.item.processor;
 
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.MarkLogicWriteHandle;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
 
-public class MarkLogicImportItemProcessor implements ItemProcessor<Resource, FileHandle> {
+public class ResourceToDocumentWriteOperationItemProcessor implements ItemProcessor<Resource, DocumentWriteOperation> {
 
+    private Format format;
+    private DocumentMetadataHandle metadataHandle;
+    
+    public void setMetadataHandle(DocumentMetadataHandle metadataHandle) {
+        this.metadataHandle = metadataHandle;
+    }
+    
     public void setFormat(Format format) {
         this.format = format;
     }
-
-    private Format format;
-
-    public MarkLogicImportItemProcessor() {
-        this.format = Format.UNKNOWN;
-    }
-
+    
     @Override
-    public FileHandle process(Resource item) throws Exception {
+    public DocumentWriteOperation process(Resource item) throws Exception {
         File file = item.getFile();
         FileHandle handle = new FileHandle(file);
-        String fileName = file.getName();
+        String fileName = item.getURL().getPath();
         int i = fileName.lastIndexOf('.');
         String extension = (i >= 0) ? fileName.substring(i+1) : ".xyz";
         if (Format.XML.equals(format) || extension.equals("xml")) {
@@ -37,6 +41,9 @@ public class MarkLogicImportItemProcessor implements ItemProcessor<Resource, Fil
         } else {
             handle.setFormat(Format.UNKNOWN);
         }
-        return handle;
+        
+        return new MarkLogicWriteHandle(fileName, metadataHandle, handle);
     }
+    
+    
 }

@@ -1,34 +1,22 @@
 package com.marklogic.spring.batch.config;
 
-import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
-import com.marklogic.spring.batch.item.MarkLogicFileItemWriter;
-import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
+import com.marklogic.spring.batch.item.MarkLogicItemWriter;
+import com.marklogic.spring.batch.item.processor.ResourceToDocumentWriteOperationItemProcessor;
 import com.marklogic.uri.DefaultUriGenerator;
 import com.marklogic.uri.UriGenerator;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.file.ResourcesItemReader;
-import com.marklogic.spring.batch.item.file.EnhancedResourcesItemReader;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobScope;
+import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.util.Assert;
 
 @Configuration
@@ -51,24 +39,27 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
             @Value("#{jobParameters['output_collections']}") String outputCollections) {
 
         Assert.hasText(inputFilePath, "input_file_path cannot be null");
-
-        MarkLogicImportItemProcessor processor = new MarkLogicImportItemProcessor();
+    
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        if (outputCollections != null) {
+            metadata.withCollections(outputCollections.split(","));
+        }
+        ResourceToDocumentWriteOperationItemProcessor processor = new ResourceToDocumentWriteOperationItemProcessor();
         if (documentType != null) {
             processor.setFormat(Format.valueOf(documentType.toUpperCase()));
         }
-
-        MarkLogicFileItemWriter writer = new MarkLogicFileItemWriter(getDatabaseClient());
-        writer.setUriGenerator(uriGenerator(outputUriPrefix, outputUriReplace, outputUriSuffix));
-        writer.open(new ExecutionContext());
-        if (outputCollections != null) {
-            writer.setCollections(outputCollections.split(","));
-        }
-
+        processor.setMetadataHandle(metadata);
+        
+        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(getDatabaseClient());
+        itemWriter.setOutputUriPrefix(outputUriPrefix);
+        itemWriter.setOutputUriReplace(outputUriReplace);
+        itemWriter.setOutputUriSuffix(outputUriSuffix);
+        
         return stepBuilderFactory.get("step")
-                .<Resource, FileHandle>chunk(getChunkSize())
+                .<Resource, DocumentWriteOperation>chunk(getChunkSize())
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
-                .writer(writer)
+                .writer(itemWriter)
                 .build();
     }
 
