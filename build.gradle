@@ -101,3 +101,8 @@ configure(subprojects.findAll {it.name != 'core' && it.name != "test"}) {
         testCompile project(':test')
     }
 }
+
+task exampleTests(type: GradleBuild) {
+    buildFile = 'examples/build.gradle'
+    tasks = ['test']
+}
