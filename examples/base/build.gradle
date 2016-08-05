@@ -3,6 +3,7 @@ This base gradle file imports the latest MarkLogic Spring Batch Core and Test li
  */
 
 plugins {
+    id "com.marklogic.ml-gradle" version "2.3.1"
     id "java"
     id "application"
 }
@@ -13,9 +14,9 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.5.2"
+    compile "com.marklogic:marklogic-spring-batch-core:0.5.3"
     compile "com.marklogic:ml-javaclient-util:2.9.1"
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.5.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.5.3"
 
 }
 
