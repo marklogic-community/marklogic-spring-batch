@@ -1,10 +1,10 @@
 package example;
 
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.io.*;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
-import com.marklogic.spring.batch.item.DocumentItemWriter;
+import com.marklogic.spring.batch.item.MarkLogicItemWriter;
 import com.marklogic.uri.DefaultUriGenerator;
 import com.marklogic.uri.UriGenerator;
 import example.data.Invoice;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.w3c.dom.Document;
 
@@ -52,10 +51,10 @@ public class ExtractInvoiceDataToMarkLogicConfig extends AbstractMarkLogicBatchC
         reader.setSql(sql);
         UriGenerator uriGenerator = new DefaultUriGenerator();
         
-        ItemProcessor processor = new ItemProcessor<Invoice, Document>() {
+        ItemProcessor processor = new ItemProcessor<Invoice, DocumentWriteOperation>() {
     
             @Override
-            public Document process(Invoice item) throws Exception {
+            public DocumentWriteOperation process(Invoice item) throws Exception {
                 JAXBContext jc = JAXBContext.newInstance(example.data.Invoice.class);
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 dbf.setNamespaceAware(true);
@@ -63,14 +62,20 @@ public class ExtractInvoiceDataToMarkLogicConfig extends AbstractMarkLogicBatchC
                 Document doc = db.newDocument();
                 Marshaller m = jc.createMarshaller();
                 m.marshal( item, doc );
-                doc.setDocumentURI("/test/invoice_" + uriGenerator.generate() + ".xml");
-                return doc;
+                DOMHandle handle = new DOMHandle(doc);
+                
+                String uri = "/test/invoice_" + uriGenerator.generate() + ".xml";
+                
+                DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+                metadata.withCollections("invoice");
+                
+                return new MarkLogicWriteHandle(uri, metadata, handle);
             }
         };
-        ItemWriter writer = new DocumentItemWriter(getDatabaseClient());
+        ItemWriter writer = new MarkLogicItemWriter(getDatabaseClient());
         
         return stepBuilderFactory.get("step1")
-                .<Invoice, Document>chunk(getChunkSize())
+                .<Invoice, DocumentWriteOperation>chunk(getChunkSize())
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

@@ -1,21 +1,31 @@
 package example;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.ClientTestHelper;
+import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.spring.batch.test.AbstractJobTest;
-import com.marklogic.spring.batch.test.JobProjectTestConfig;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {JobProjectTestConfig.class})
+@ContextConfiguration(classes = {BasicConfig.class})
 public class ImportDocumentsWithDataMovementJobTest extends AbstractJobTest {
     
-    private ClientTestHelper client;
+    private ClientTestHelper clientHelper;
     
     @Before
     public void setup() {
-        client = new ClientTestHelper();
-        client.setDatabaseClientProvider(getClientProvider());
+        DatabaseClientProvider clientProvider = getClientProvider();
+        DatabaseClient client = clientProvider.getDatabaseClient();
+        AdminConfig config = new AdminConfig(client.getHost(), client.getPassword());
+        AdminManager mgr = new AdminManager(config);
+        Assume.assumeTrue(mgr.getServerVersion().startsWith("9"));
+        clientHelper = new ClientTestHelper();
+        clientHelper.setDatabaseClientProvider(clientProvider);
     }
     
     @Test
@@ -28,7 +38,7 @@ public class ImportDocumentsWithDataMovementJobTest extends AbstractJobTest {
     }
     
     public void thenDocumentsInMonsterCollection(int expectedCount) {
-        client.assertCollectionSize("Expect " + expectedCount + " docs in monster collection", "monster", expectedCount);
+        clientHelper.assertCollectionSize("Expect " + expectedCount + " docs in monster collection", "monster", expectedCount);
     }
     
 
