@@ -1,7 +1,13 @@
 package example.data;
 
+import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
+@XmlRootElement(name = "invoice")
 public class Invoice {
     public int getId() {
         return id;
@@ -47,6 +53,8 @@ public class Invoice {
         return products;
     }
     
+    @XmlElementWrapper( name="products")
+    @XmlElement(name = "product")
     public void setProducts(List<Product> productList) {
         this.products = productList;
     }
