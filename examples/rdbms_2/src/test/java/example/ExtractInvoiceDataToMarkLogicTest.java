@@ -1,5 +1,6 @@
 package example;
 
+import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.spring.batch.config.support.BatchDatabaseClientProvider;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import com.marklogic.spring.batch.test.JobProjectTestConfig;
@@ -27,7 +28,9 @@ public class ExtractInvoiceDataToMarkLogicTest extends AbstractJobTest {
     @Test
     public void verifySampleDatabase() {
         runJob(ExtractInvoiceDataToMarkLogicTestConfig.class);
-        assertTrue(true);
+        ClientTestHelper helper = new ClientTestHelper();
+        helper.setDatabaseClientProvider(getClientProvider());
+        helper.assertCollectionSize("Expecting 650 docs in Invoice collection", "invoice", 650);
     }
         
     @After
