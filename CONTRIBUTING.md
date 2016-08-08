@@ -47,7 +47,7 @@ The gradlew (or gradlew.bat on Windows) command is a Java program called the [Gr
 Once you have cloned the project locally execute the test cases.  Gradle will handle downloading any dependencies that you need for this effort.  
 
 ```
-gradlew test
+gradlew testAll
 ```
 
 It is our policy that the dev branch tests always are 100% passing.  If all tests run to completion and 100% passing then you are ready to start coding.    
@@ -89,11 +89,11 @@ Once you have verified your version then run the following command to publish to
 gradle bintrayUpload
 ```
 
-## Jobs Utility
-To deploy the MarkLogic Jobs utility, execute the following gradle command
+## MSB Command Line Utility
+To deploy the MarkLogic Spring Batch command line program, execute the following gradle command
 
 ```
-gradle :jobs:distZip
+gradle distZip
 ```
 
 This will create the distribution archive file under ./jobs/build/distribution/jobs.zip.  This can then be uploaded to the distribution website.  

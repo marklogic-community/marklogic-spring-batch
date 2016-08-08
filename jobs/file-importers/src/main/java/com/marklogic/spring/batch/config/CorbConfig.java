@@ -1,9 +1,8 @@
 package com.marklogic.spring.batch.config;
 
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.corb.CorbWriter;
-import com.marklogic.spring.batch.item.MarkLogicItemReader;
+import com.marklogic.spring.batch.item.reader.MarkLogicItemReader;
 import joptsimple.OptionParser;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

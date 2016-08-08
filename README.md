@@ -1,36 +1,31 @@
 # What is Spring Batch?
 
-Many applications within the enterprise domain require bulk processing to perform business operations in mission critical environments. These business operations include automated, complex processing of large volumes of information that is most efficiently processed without user interaction. These operations typically include time based events (e.g. month-end calculations, notices or correspondence), periodic application of complex business rules processed repetitively across very large data sets (e.g. Insurance benefit determination or rate adjustments), or the integration of information that is received from internal and external systems that typically requires formatting, validation and processing in a transactional manner into the system of record. Batch processing is used to process billions of transactions every day for enterprises.<sup>1</sup>
-
-[Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) provides reusable functions that are essential in processing large volumes of records, including logging/tracing, transaction management, job processing statistics, job restart, skip, and resource management. It also provides more advanced technical services and features that will enable extremely high-volume and high performance batch jobs through optimization and partitioning techniques. Simple as well as complex, high-volume batch jobs can leverage the framework in a highly scalable manner to process significant volumes of information.
+[Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) is an open source framework for batch processing. It is a lightweight, comprehensive solution designed to enable the development of robust batch applications, often found in modern enterprise systems.  Spring Batch is a sub-project of the Spring Framework.  It provides reusable functions that are essential in processing large volumes of records, including logging/tracing, transaction management, job processing statistics, job restart, skip, and resource management. It also provides more advanced technical services and features that will enable extremely high-volume and high performance batch jobs though optimization and partitioning techniques.
 
 # What is MarkLogic Spring Batch?
-MarkLogic Spring Batch is the fusion of the Spring Batch processing framework and the MarkLogic Java Client API to make it easier to write custom batch processing jobs.  All the details of reliability, performance, logging, reading/writing data to MarkLogic, and standard patterns are provided by MarkLogic Spring Batch.  This allows developers to focus in on writing application code and not worring about batch processing mechanics.    
+MarkLogic Spring Batch is the fusion of the Spring Batch processing framework and the MarkLogic Java Client API.  The vision is to provide a comprehensive and robust solution for building custom batch processing jobs for the MarkLogic platform.    
 
-The vision of the MarkLogic Spring Batch (MSB) project is to provide a comprehensive and robust solution for building custom batch processing jobs for the MarkLogic platform.    
+# What are the goals for the MarkLogic Spring Batch project?
 
-# Whar are the goals for the MarkLogic Spring Batch project?
-
-* Develop batch processing solutions that are reliable, robust, and high performing
-* Reduce the amount of time it takes to build, operate, and maintain batch processing jobs with MarkLogic
-* Minimize the complexity of batch processing applications and allow developers to focus on application code
+  * Write batch processing solutions that are reliable, robust, and high performing
+  * Reduce the amount of time it takes to build, operate, and maintain batch processing jobs with MarkLogic
+  * Minimize complexity of batch processing applications
 
 # Why use MarkLogic Spring Batch?
-Have you ever written a long running batch processing job, like migrating data from a relational database, and ask yourself "Someone should invent a tool that automates this work?".  Have you ever written three separate programs that must be individually started to accomplish a batch transform?  Have you ever wondered why that one batch process failed after running for 8 hours and had no idea why?  If these are the types of technical challenges that keep you up at night then MarkLogic Spring Batch is your sleep aid.  
+Have you ever written a long running batch processing job, like migrating data from a relational database, and ask yourself "Someone should invent a tool that automates this work?".  Do you have to execute multiple custom programs and a Content Pump or CORB job to accomplish a batch transform?  Have you ever wondered why that one batch process failed after running for 8 hours and had no idea why?  If these are the types of technical challenges that keep you up at night then MarkLogic Spring Batch is your sleep aid.  
 
-## Features
-* Ability to execute any job from a command line interface via the [Jobs](https://github.com/sastafford/marklogic-spring-batch/wiki/Jobs-Utility) utility.
-* Perform common tasks related to a MarkLogic Batch Processing job via custom ItemReader, ItemProcesor, ItemWriter, and tasklet classes (i.e. Writing documents to MarkLogic)
-* Execute one of many generic MarkLogic batch processing jobs for importing, transforming, and exporting data in a MarkLogic database
+# What are the main features of MarkLogic Spring Batch?
+* Provide custom ItemReaders, ItemProcessors, ItemWriters, and tasklets for writing custom MarkLogic batch processing jobs.
 * Persist the metadata of any JobExecution with a MarkLogic [JobRepository](http://docs.spring.io/spring-batch/trunk/reference/html/domain.html#domainJobRepository)
-* Mitigate the risk of the Spring Batch learning curve by providing several examples of creating your own custom batch processing job
-* Leverage _all_ the features of Spring Batch in all your batch processing jobs 
+* Execute one of many generic MarkLogic batch processing jobs for importing, transforming, and exporting data in a MarkLogic database
+* Mitigate the risk of the Spring Batch learning curve by providing examples of creating your own custom batch processing job
 
 # How do I build a custom MarkLogic batch processing job? 
 
-Refer to the [Wiki](https://github.com/sastafford/marklogic-spring-batch/wiki) or the [FAQ](https://github.com/sastafford/marklogic-spring-batch/wiki/Frequently-Asked-Questions) for questions that you may come across.  
+The [examples directory](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) provides examples of MarkLogic batch processing jobs.  Each example is setup to be deployed as a command line utility.  The [base job](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples/base) provides a template for creating a custom import batch processing job.    
 
-OK, you need to build a custom MarkLogic batch processing job. The first step is to create a build.gradle file and it needs to refer to the MarkLogic Spring Batch Jar files.  The following code snippet will get you started.    
+## Import the MSB jars
+Create a build.gradle file to import the MarkLogic Spring Batch (MSB) jars.  Use the [latest version](https://github.com/sastafford/marklogic-spring-batch/releases) of the MSB jars.  
 
 ```
 plugins {
@@ -48,19 +43,33 @@ dependencies {
 }
 ```
 
-The next step is to create your Spring Batch [job configuration](http://docs.spring.io/spring-batch/reference/html/configureJob.html).  The goal is to assemble the step, steps, or tasklets needed to execute a Job.  The procedure for putting together job configuration follows the standard Spring Batch way of creating jobs.  Each step requires an ItemReader, ItemProcessor, and ItemWriter.  Spring Batch offers many out of the box classes for these ItemReader/Processor/Writers and they should be leveraged first before reinventing the wheel.  MarkLogic Spring Batch offers custom ItemReader/Processor/Writer and tasklets that can also be used.  But we have provided [several examples of custom Spring Batch processing jobs for MarkLogic](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples).   
+## Create your Spring Batch Job Configuration
+The next step is to create your Spring Batch [job configuration](http://docs.spring.io/spring-batch/reference/html/configureJob.html).  The goal is to assemble the step, steps, or tasklets needed to execute a Job.  Each step requires an ItemReader, ItemProcessor, and ItemWriter.  Spring Batch offers many out of the box classes for these ItemReader/Processor/Writers and they should be leveraged first before reinventing the wheel.  MarkLogic Spring Batch offers custom ItemReader/Processor/Writer and tasklets that can also be used.  Take a look at the [JobConfiguration for the base example](https://github.com/sastafford/marklogic-spring-batch/blob/dev/examples/base/src/main/java/example/YourJobConfig.java).
 
-# How do I test my job?
-Subclass the AbstractJobTest - **TBD** 
+## Test your job
+Create a test class by subclassing the [AbstractJobTest](https://github.com/sastafford/marklogic-spring-batch/blob/dev/test/src/main/java/com/marklogic/spring/batch/test/AbstractJobTest.java).  Check out the [test class](https://github.com/sastafford/marklogic-spring-batch/blob/dev/examples/base/src/test/java/example/YourJobTest.java) from the base example. 
 
 # How do I execute my job? 
+An easy way to execute your job is to execute it as a command line utility similar to MarkLogic Content Pump or CORB.  An easy way to deploy the job is via the [Gradle Application Plugin](https://docs.gradle.org/current/userguide/application_plugin.html).  Once you have your JobConfiguration created and have verified that it works, then execute the following gradle command to build an executable.
 
-## The Jobs Utility
+    gradle distZip
+    
+This will create a zip file under ../install/distributions that can be transferred and executed on any host.  
 
-The first option is to execute a job via the [Jobs utility](https://github.com/sastafford/marklogic-spring-batch/wiki/Jobs-Utility).  The Jobs utility (jobs.zip) can be downloaded from the [MSB releases page](https://github.com/sastafford/marklogic-spring-batch/releases).  Unzip the jobs.zip file onto your machine and then execute the scripts under the bin/ directory.  This is recommended when you are deploying into operations.       
+Each MarkLogic Spring Batch execution application (based on the Main class) expects a few command line parameters.  Custom parameters can be defined in the JobConfiguration. 
+
+  * config - The class name of your Job configuration
+  * host - MarkLogic host
+  * port - MarkLogic application port
+  * username - MarkLogic user name
+  * password - MarkLogic password
+  * jrHost (optional) - the Job Repository MarkLogic host
+  * jrPort (optional) - the Job Repository MarkLogic port
+  * jrUsername (optional) - the Job Repository MarkLogic username
+  * jrPassword (optional) - the Job Repository MarkLogic password
 
 ```
-./jobs --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
+./jobExec --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
 ```
 
 ## Create a Gradle JavaExec task
@@ -93,7 +102,7 @@ gradle migrateActors
 ```
 
 # How can I use the MarkLogic Job Repository?
-If you want to use a MarkLogic Job Repository then you first need to install a new application onto your MarkLogic database.  A MarkLogic Job Repository can be installed via the jobs utility.  
+If you want to use a MarkLogic Job Repository then you first need to install a new application onto your MarkLogic database.  A MarkLogic Job Repository can be installed via the executable created with your Gradle application plugin.  
 
 ```
 ./jobs deployMarkLogicJobRepository --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin

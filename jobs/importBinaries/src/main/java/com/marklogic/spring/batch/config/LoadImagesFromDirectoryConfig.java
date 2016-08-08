@@ -1,7 +1,11 @@
 package com.marklogic.spring.batch.config;
 
-import com.marklogic.spring.batch.item.DocumentItemWriter;
-import com.marklogic.spring.batch.item.file.EnhancedResourcesItemReader;
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.MarkLogicWriteHandle;
+import com.marklogic.spring.batch.item.MarkLogicItemWriter;
+import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.jpeg.JpegParser;
 import org.apache.tika.sax.ToXMLContentHandler;
@@ -34,12 +38,12 @@ public class LoadImagesFromDirectoryConfig extends AbstractMarkLogicBatchConfig 
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern) {
 
-        ItemProcessor<Resource, Document> processor = new ItemProcessor<Resource, Document>() {
+        ItemProcessor<Resource, DocumentWriteOperation> processor = new ItemProcessor<Resource, DocumentWriteOperation>() {
 
             private DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
             @Override
-            public Document process(Resource item) throws Exception {
+            public DocumentWriteOperation process(Resource item) throws Exception {
                 ContentHandler handler = new ToXMLContentHandler();
                 JpegParser parser = new JpegParser();
                 Metadata metadata = new Metadata();
@@ -50,15 +54,15 @@ public class LoadImagesFromDirectoryConfig extends AbstractMarkLogicBatchConfig 
                  * TODO Need to expand this to have more options for setting the URI.
                  */
                 document.setDocumentURI(item.getFilename());
-                return document;
+                return new MarkLogicWriteHandle(item.getFilename(), new DocumentMetadataHandle(), new DOMHandle(document));
             }
         };
 
         return stepBuilderFactory.get("step1")
-                .<Resource, Document>chunk(getChunkSize())
+                .<Resource, DocumentWriteOperation>chunk(getChunkSize())
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
-                .writer(new DocumentItemWriter(getDatabaseClient()))
+                .writer(new MarkLogicItemWriter(getDatabaseClient()))
                 .build();
     }
 }
