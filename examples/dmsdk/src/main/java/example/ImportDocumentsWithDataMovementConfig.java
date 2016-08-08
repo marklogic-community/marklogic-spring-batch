@@ -1,12 +1,14 @@
 package example;
 
+import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
 import com.marklogic.datamovement.DataMovementManager;
 import com.marklogic.datamovement.WriteHostBatcher;
 import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
-import com.marklogic.spring.batch.item.MarkLogicImportItemProcessor;
-import com.marklogic.spring.batch.item.file.EnhancedResourcesItemReader;
+import com.marklogic.spring.batch.item.processor.ResourceToDocumentWriteOperationItemProcessor;
+import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -20,7 +22,6 @@ import org.springframework.core.io.Resource;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class ImportDocumentsWithDataMovementConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
     
@@ -40,7 +41,7 @@ public class ImportDocumentsWithDataMovementConfig extends AbstractMarkLogicBatc
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern) {
     
-        ItemProcessor<Resource, FileHandle> processor = new MarkLogicImportItemProcessor();
+        ItemProcessor<Resource, DocumentWriteOperation> processor = new ResourceToDocumentWriteOperationItemProcessor();
 
         //DMSDK Initialization
         final DataMovementManager manager = DataMovementManager.newInstance();
@@ -55,15 +56,16 @@ public class ImportDocumentsWithDataMovementConfig extends AbstractMarkLogicBatc
         });
         manager.startJob(batcher);
     
-        ItemWriter<FileHandle> writer = new ItemWriter<FileHandle>() {
+        ItemWriter<DocumentWriteOperation> writer = new ItemWriter<DocumentWriteOperation>() {
             @Override
-            public void write(List<? extends FileHandle> items) throws Exception {
+            public void write(List<? extends DocumentWriteOperation> items) throws Exception {
                 logger.info("DMSDK ItemWriter");
                 logger.info("Size: " + items.size());
                 batcher.withBatchSize(items.size());
-                for (FileHandle item : items) {
-                    DocumentMetadataHandle meta = new DocumentMetadataHandle().withCollections(collections);
-                    batcher.add(UUID.randomUUID().toString(), meta, item);
+                for (DocumentWriteOperation item : items) {
+                    DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                    meta.withCollections("monster");
+                    batcher.add(UUID.randomUUID().toString(), meta, item.getContent());
                 }
                 //batcher.awaitCompletion(1000, TimeUnit.MILLISECONDS);
                 batcher.flush();
@@ -71,7 +73,7 @@ public class ImportDocumentsWithDataMovementConfig extends AbstractMarkLogicBatc
         };
                    
         return stepBuilderFactory.get("step1")
-                .<Resource, FileHandle>chunk(getChunkSize())
+                .<Resource, DocumentWriteOperation>chunk(getChunkSize())
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
                 .writer(writer)
