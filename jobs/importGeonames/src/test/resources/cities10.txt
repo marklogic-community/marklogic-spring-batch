@@ -6,5 +6,5 @@
 4143637	Middletown	Middletown	"Midltaun,mi de er dui,midalata'una,Мидлтаун,मिडलटाउन,米德尔敦"	39.44956	-75.71632	P	PPL	US		DE	3			18871	21	21	America/New_York	5/14/2011
 4143861	Newark	Newark	"N'juark,Njuark,n'yu'arka,niu wa ke,nyuaku,Њуарк,Ньюарк,Нюарк,न्युआर्क,ニューアーク,纽瓦克"	39.68372	-75.74966	P	PPL	US		DE	3			31454	38	39	America/New_York	5/14/2011
 4145381	Wilmington	Wilmington	"Gorad Uilmingtan,ILG,Uilmington,Uilmingtun,Vilmington,Vilmingtonas,Vilmingtonia,Wilmington,Wilmington i Delaware,u~iruminton,vilmingatana,wei er ming dun,wilmingteon,wylmyngtwn  dlawr,Вилмингтон,Вілмінгтон,Горад Уілмінгтан,Уилмингтон,Уилмингтън,ویلمینگتون، دلاور,विल्मिंगटन,ウィルミントン,威尔明顿,윌밍턴"	39.74595	-75.54659	P	PPLA2	US		DE	3			70851	28	37	America/New_York	5/14/2011
-4145805	Allapattah	Allapattah		25.81454	-80.22394	P	PPL	US		FL	86			54289	3	11	America/New_York	5/5/2013
+3671473	Puerto Elvira	Puerto Elvira		-2.43909	-72.85096	P	PPL	PE		16	1601	160109		0		127	America/Lima	2012-11-08
 4145941	Altamonte Springs	Altamonte Springs	"Altamont Springs,Altamonte Spgs,Altamonte-Springs,a er ta meng te si pu lin si,altamonte springas,altamwnt aspryngz  flwryda,altamwnt sbrnghz  flwryda,Алтамонт Спрингс,Алтамонте-Спрінгс,آلتامونت اسپرینگز، فلوریدا,ألتامونت سبرنغز، فلوريدا,अल्तामोन्ते स्प्रिङ्गस्,阿尔塔蒙特斯普林斯"	28.66111	-81.36562	P	PPL	US		FL	117			41496	26	33	America/New_York	7/19/2013

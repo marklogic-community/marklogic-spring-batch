@@ -71,16 +71,16 @@ public class Geoname {
 	public void setAdmin4Code(String admin4Code) {
 		this.admin4Code = admin4Code;
 	}
-	public int getPopulation() {
+	public String getPopulation() {
 		return population;
 	}
-	public void setPopulation(int population) {
+	public void setPopulation(String population) {
 		this.population = population;
 	}
-	public int getElevation() {
+	public String getElevation() {
 		return elevation;
 	}
-	public void setElevation(int elevation) {
+	public void setElevation(String elevation) {
 		this.elevation = elevation;
 	}
 	public String getDigitalElevationModel() {
@@ -133,8 +133,8 @@ public class Geoname {
     private String admin2Code;
     private String admin3Code;
     private String admin4Code;
-    private int population;
-    private int elevation;
+    private String population;
+    private String elevation;
     private String digitalElevationModel;
 	private String timeZone;
     private Date modificationDate;

@@ -38,8 +38,8 @@ public class GeonameFieldSetMapper implements FieldSetMapper<Geoname>{
 		geo.setAdmin2Code(fieldSet.readString(11));
 		geo.setAdmin3Code(fieldSet.readString(12));
 		geo.setAdmin4Code(fieldSet.readString(13));
-		geo.setPopulation(fieldSet.readInt(14));
-		geo.setElevation(fieldSet.readInt(15));
+		geo.setPopulation(fieldSet.readString(14));
+		geo.setElevation(fieldSet.readString(15));
 		geo.setDigitalElevationModel(fieldSet.readString(16));
 		geo.setTimeZone(fieldSet.readString(17));
 		//geo.setModificationDate(fieldSet.read);
