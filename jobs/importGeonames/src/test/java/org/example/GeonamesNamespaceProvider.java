@@ -1,6 +1,5 @@
 package org.example;
 
-import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
 import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
 import org.jdom2.Namespace;
 

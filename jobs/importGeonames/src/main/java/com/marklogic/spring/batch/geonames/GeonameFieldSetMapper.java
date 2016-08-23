@@ -33,8 +33,17 @@ public class GeonameFieldSetMapper implements FieldSetMapper<Geoname>{
 		geo.setFeatureClass(fieldSet.readString(6));
 		geo.setFeatureCode(fieldSet.readString(7));
 		geo.setCountryCode(fieldSet.readString(8));
+		geo.setAltCountryCode(fieldSet.readString(9));
 		geo.setAdmin1Code(fieldSet.readString(10));
 		geo.setAdmin2Code(fieldSet.readString(11));
+		geo.setAdmin3Code(fieldSet.readString(12));
+		geo.setAdmin4Code(fieldSet.readString(13));
+		geo.setPopulation(fieldSet.readInt(14));
+		geo.setElevation(fieldSet.readInt(15));
+		geo.setDigitalElevationModel(fieldSet.readString(16));
+		geo.setTimeZone(fieldSet.readString(17));
+		//geo.setModificationDate(fieldSet.read);
+		
 		return geo;
 	}
 
