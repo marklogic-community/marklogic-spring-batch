@@ -69,7 +69,7 @@ Each MarkLogic Spring Batch execution application (based on the Main class) expe
   * jrPassword (optional) - the Job Repository MarkLogic password
 
 ```
-./<artifactId_script_name> --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
+./<artifactId_script_name> --config com.marklogic.spring.batch.job.JobNameConfig --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
 ```
 
 # How do I distribute my command line job utility?
@@ -123,7 +123,7 @@ If you ever need to undeploy the JobRepository then you can issue the following 
 Now when you execute your job, then add the additional parameters for the MarkLogic Job Repository.  All JobExecution metadata is now logged to the MarkLogic JobRepository.  
 
 ```
-./<jobArtifactScriptName> --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --custom_param1 xyz --customParamX abc --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
+./<jobArtifactScriptName> --config com.marklogic.spring.batch.job.JobNameConfig --host localhost --port 8010 --username admin --password admin --custom_param1 xyz --customParamX abc --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
 ```
 
 # How can I contribute to the project?
