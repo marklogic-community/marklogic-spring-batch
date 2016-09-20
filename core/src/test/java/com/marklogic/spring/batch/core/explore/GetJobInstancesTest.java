@@ -2,6 +2,7 @@ package com.marklogic.spring.batch.core.explore;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobParametersTestUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -18,6 +19,11 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
 
     @Autowired
     private JobExplorer jobExplorer;
+    
+    @Before
+    public void initialize() {
+        initializeJobRepository();
+    }
 
     @Test
     public void retrieveJobInstanceByIdTest() {
