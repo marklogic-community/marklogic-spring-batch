@@ -2,18 +2,14 @@ package com.marklogic.spring.batch.core.explore;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobParametersTestUtils;
-import com.marklogic.spring.batch.MarkLogicJobRepositoryConfiguration;
 import org.junit.Test;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
-@ContextConfiguration(classes = {MarkLogicJobRepositoryConfiguration.class})
 public class GetJobInstancesTest extends AbstractSpringBatchTest {
 
     private final String JOB_NAME = "testJob";
@@ -23,12 +19,9 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
     @Autowired
     private JobExplorer jobExplorer;
 
-    @Autowired
-    private JobRepository jobRepository;
-
     @Test
     public void retrieveJobInstanceByIdTest() {
-        JobInstance expectedJobInstance = jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
+        JobInstance expectedJobInstance = getJobRepository().createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
         JobInstance actualJobInstance = jobExplorer.getJobInstance(expectedJobInstance.getId());
         assertTrue(expectedJobInstance.equals(actualJobInstance));
     }
@@ -69,11 +62,11 @@ public class GetJobInstancesTest extends AbstractSpringBatchTest {
     }
 
     private void createJobInstances() {
-        jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
-        jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
-        jobRepository.createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
-        jobRepository.createJobInstance(JOB_NAME_2, JobParametersTestUtils.getJobParameters());
-        jobRepository.createJobInstance(JOB_NAME_3, JobParametersTestUtils.getJobParameters());
+        getJobRepository().createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
+        getJobRepository().createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
+        getJobRepository().createJobInstance(JOB_NAME, JobParametersTestUtils.getJobParameters());
+        getJobRepository().createJobInstance(JOB_NAME_2, JobParametersTestUtils.getJobParameters());
+        getJobRepository().createJobInstance(JOB_NAME_3, JobParametersTestUtils.getJobParameters());
     }
 
 }

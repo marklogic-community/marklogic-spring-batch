@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.bind;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
-import com.marklogic.spring.batch.MarkLogicJobRepositoryConfiguration;
 import com.marklogic.spring.batch.core.*;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;

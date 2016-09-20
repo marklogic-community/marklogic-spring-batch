@@ -6,17 +6,12 @@ import java.util.List;
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.marklogic.junit.spring.AbstractSpringTest;
-
-@RunWith(SpringJUnit4ClassRunner.class)
 public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 
 	private static final long DATE = 777;
@@ -26,15 +21,10 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 	private JobParameters fooParams = new JobParametersBuilder().addString("stringKey", "stringValue")
 			.addLong("longKey", Long.MAX_VALUE).addDouble("doubleKey", Double.MAX_VALUE)
 			.addDate("dateKey", new Date(DATE)).toJobParameters();
-	
-	private JobInstanceDao dao;
-	protected JobInstanceDao getJobInstanceDao() {
-		return dao;
-	}
 
 	@Before
 	public void onSetUp() throws Exception {
-		dao = new MarkLogicJobInstanceDao(getClient());
+		initializeJobRepository();
 	}
 
 	/*
@@ -44,11 +34,11 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 	@Test
 	public void testCreateAndRetrieve() throws Exception {
 
-		JobInstance fooInstance = dao.createJobInstance(fooJob, fooParams);
+		JobInstance fooInstance = getJobInstanceDao().createJobInstance(fooJob, fooParams);
 		assertNotNull(fooInstance.getId());
 		assertEquals(fooJob, fooInstance.getJobName());
 
-		JobInstance retrievedInstance = dao.getJobInstance(fooJob, fooParams);
+		JobInstance retrievedInstance = getJobInstanceDao().getJobInstance(fooJob, fooParams);
 		assertEquals(fooInstance, retrievedInstance);
 		assertEquals(fooJob, retrievedInstance.getJobName());
 	}
@@ -62,11 +52,11 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 
 		JobParameters jobParameters = new JobParametersBuilder().addString("foo", null).toJobParameters();
 
-		JobInstance fooInstance = dao.createJobInstance(fooJob, jobParameters);
+		JobInstance fooInstance = getJobInstanceDao().createJobInstance(fooJob, jobParameters);
 		assertNotNull(fooInstance.getId());
 		assertEquals(fooJob, fooInstance.getJobName());
 
-		JobInstance retrievedInstance = dao.getJobInstance(fooJob, jobParameters);
+		JobInstance retrievedInstance = getJobInstanceDao().getJobInstance(fooJob, jobParameters);
 		assertEquals(fooInstance, retrievedInstance);
 		assertEquals(fooJob, retrievedInstance.getJobName());
 	}
@@ -78,11 +68,11 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 	@Test
 	public void testCreateAndGetById() throws Exception {
 
-		JobInstance fooInstance = dao.createJobInstance(fooJob, fooParams);
+		JobInstance fooInstance = getJobInstanceDao().createJobInstance(fooJob, fooParams);
 		assertNotNull(fooInstance.getId());
 		assertEquals(fooJob, fooInstance.getJobName());
 
-		JobInstance retrievedInstance = dao.getJobInstance(fooInstance.getId());
+		JobInstance retrievedInstance = getJobInstanceDao().getJobInstance(fooInstance.getId());
 		assertEquals(fooInstance, retrievedInstance);
 		assertEquals(fooJob, retrievedInstance.getJobName());
 	}
@@ -94,7 +84,7 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 	@Test
 	public void testGetMissingById() throws Exception {
 
-		JobInstance retrievedInstance = dao.getJobInstance(1111111L);
+		JobInstance retrievedInstance = getJobInstanceDao().getJobInstance(1111111L);
 		assertNull(retrievedInstance);
 
 	}
@@ -107,7 +97,7 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 	public void testGetJobNames() throws Exception {
 
 		testCreateAndRetrieve();
-		List<String> jobNames = dao.getJobNames();
+		List<String> jobNames = getJobInstanceDao().getJobNames();
 		assertFalse(jobNames.isEmpty());
 		assertTrue(jobNames.contains(fooJob));
 
@@ -123,12 +113,12 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 		testCreateAndRetrieve();
 
 		// unrelated job instance that should be ignored by the query
-		dao.createJobInstance("anotherJob", new JobParameters());
+		getJobInstanceDao().createJobInstance("anotherJob", new JobParameters());
 
 		// we need two instances of the same job to check ordering
-		dao.createJobInstance(fooJob, new JobParameters());
+		getJobInstanceDao().createJobInstance(fooJob, new JobParameters());
 
-		List<JobInstance> jobInstances = dao.getJobInstances(fooJob, 0, 2);
+		List<JobInstance> jobInstances = getJobInstanceDao().getJobInstances(fooJob, 0, 2);
 		assertEquals(2, jobInstances.size());
 		assertEquals(fooJob, jobInstances.get(0).getJobName());
 		assertEquals(fooJob, jobInstances.get(1).getJobName());
@@ -150,7 +140,7 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 		testCreateAndRetrieve();
 
 		// unrelated job instance that should be ignored by the query
-		dao.createJobInstance("anotherJob", new JobParameters());
+		getJobInstanceDao().createJobInstance("anotherJob", new JobParameters());
 
 		// we need multiple instances of the same job to check ordering
 		String multiInstanceJob = "multiInstanceJob";
@@ -158,13 +148,13 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 		int instanceCount = 6;
 		for (int i = 1; i <= instanceCount; i++) {
 			JobParameters params = new JobParametersBuilder().addLong(paramKey, (long) i).toJobParameters();
-			dao.createJobInstance(multiInstanceJob, params);
+			getJobInstanceDao().createJobInstance(multiInstanceJob, params);
 		}
 
 
 		int startIndex = 3;
 		int queryCount = 2;
-		List<JobInstance> jobInstances = dao.getJobInstances(multiInstanceJob, startIndex, queryCount);
+		List<JobInstance> jobInstances = getJobInstanceDao().getJobInstances(multiInstanceJob, startIndex, queryCount);
 
 		assertEquals(queryCount, jobInstances.size());
 
@@ -189,12 +179,12 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 		testCreateAndRetrieve();
 
 		// unrelated job instance that should be ignored by the query
-		dao.createJobInstance("anotherJob", new JobParameters());
+		getJobInstanceDao().createJobInstance("anotherJob", new JobParameters());
 
 		// we need two instances of the same job to check ordering
-		dao.createJobInstance(fooJob, new JobParameters());
+		getJobInstanceDao().createJobInstance(fooJob, new JobParameters());
 
-		List<JobInstance> jobInstances = dao.getJobInstances(fooJob, 4, 2);
+		List<JobInstance> jobInstances = getJobInstanceDao().getJobInstances(fooJob, 4, 2);
 		assertEquals(0, jobInstances.size());
 
 	}
@@ -205,11 +195,11 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 	@Transactional
 	@Test
 	public void testCreateDuplicateInstance() {
-
-		dao.createJobInstance(fooJob, fooParams);
+		
+		getJobInstanceDao().createJobInstance(fooJob, fooParams);
 
 		try {
-			dao.createJobInstance(fooJob, fooParams);
+			getJobInstanceDao().createJobInstance(fooJob, fooParams);
 			fail();
 		}
 		catch (IllegalStateException e) {
@@ -225,7 +215,7 @@ public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 
 		assertNull(jobInstance.getVersion());
 
-		jobInstance = dao.createJobInstance("testVersion", new JobParameters());
+		jobInstance = getJobInstanceDao().createJobInstance("testVersion", new JobParameters());
 
 		assertNotNull(jobInstance.getVersion());
 	}

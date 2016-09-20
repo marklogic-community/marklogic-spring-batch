@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch;
 
 import com.marklogic.client.spring.BasicConfig;
-import com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.junit.Test;
@@ -25,7 +24,6 @@ public class ListConfigsTest extends AbstractSpringBatchTest {
 		assertTrue("Our test config below is expected to be on the classpath", list.contains(TestConfigForListConfigTest.class.getName()));
 		assertFalse("MainConfig should have been filtered out", list.contains(MainConfig.class.getName()));
 		assertFalse("BasicConfig should have been filtered out", list.contains(BasicConfig.class.getName()));
-		assertFalse("MarkLogicDaoConfig should have been filtered out", list.contains(MarkLogicDaoConfig.class.getName()));
 	}
 
 	@Configuration
