@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.MarkLogicItemWriter;
@@ -9,18 +10,29 @@ import com.marklogic.uri.DefaultUriGenerator;
 import com.marklogic.uri.UriGenerator;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.*;
 import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
 import org.springframework.util.Assert;
 
-@Configuration
-public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
+@EnableBatchProcessing
+@Import( { MarkLogicBatchConfigurer.class } )
+public class ImportDocumentsFromDirectoryConfig  {
+    
+    @Autowired
+    protected JobBuilderFactory jobBuilderFactory;
+    
+    @Autowired
+    protected StepBuilderFactory stepBuilderFactory;
+    
+    @Autowired
+    DatabaseClientProvider databaseClientProvider;
 
     @Bean
     public Job importDocumentsFromDirectoryJob(@Qualifier("importDocumentsFromDirectoryStep1") Step step) {
@@ -50,13 +62,13 @@ public class ImportDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchCo
         }
         processor.setMetadataHandle(metadata);
         
-        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(getDatabaseClient());
+        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
         itemWriter.setOutputUriPrefix(outputUriPrefix);
         itemWriter.setOutputUriReplace(outputUriReplace);
         itemWriter.setOutputUriSuffix(outputUriSuffix);
         
         return stepBuilderFactory.get("step")
-                .<Resource, DocumentWriteOperation>chunk(getChunkSize())
+                .<Resource, DocumentWriteOperation>chunk(10)
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
                 .writer(itemWriter)
