@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
@@ -19,38 +20,22 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.junit.spring.AbstractSpringTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, com.marklogic.client.spring.BasicConfig.class })
-public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
+public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
 
-	@Autowired
-	protected JobExecutionDao dao;
-	
-	@Autowired
 	protected JobInstanceDao jobInstanceDao;
-
-	@Autowired
+	protected JobExecutionDao dao;
 	protected StepExecutionDao stepExecutionDao;
 	
-	@Autowired
-	DatabaseClientProvider databaseClientProvider;
-
 	protected JobInstance jobInstance;
-
 	protected JobExecution execution;
-
 	protected JobParameters jobParameters;
 
 	/**
@@ -59,7 +44,6 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	protected JobExecutionDao getJobExecutionDao() {
 		return dao;
 	}
-
 	protected JobInstanceDao getJobInstanceDao() {
 		return jobInstanceDao;
 	}
@@ -68,7 +52,9 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	public void onSetUp() throws Exception {
 		dao = getJobExecutionDao();
 		jobParameters = new JobParameters();
-		jobInstance = getJobInstanceDao().createJobInstance("execTestJob", jobParameters);
+		jobInstanceDao = new MarkLogicJobInstanceDao(getClient());
+		dao = new MarkLogicJobExecutionDao(getClient());
+		jobInstance = jobInstanceDao.createJobInstance("execTestJob", jobParameters);
 		execution = new JobExecution(jobInstance, new JobParameters());
 	}
 
@@ -290,8 +276,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		assertEquals((Integer) 1, exec1.getVersion());
 		
 		//change the content of the JobExecution
-		DatabaseClient client = databaseClientProvider.getDatabaseClient();
-		ServerEvaluationCall theCall = client.newServerEval();
+		ServerEvaluationCall theCall = getClient().newServerEval();
 		String uri = "/projects.spring.io/spring-batch/" + exec1.getId().toString() + ".xml";
 		String query = "xdmp:document-insert('" + uri + "', <hello />)";
 		logger.info(query);
