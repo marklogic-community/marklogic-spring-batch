@@ -3,6 +3,7 @@ package com.marklogic.spring.batch.core.repository.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,36 +11,30 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.marklogic.junit.spring.AbstractSpringTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, com.marklogic.client.spring.BasicConfig.class })
-public class MarkLogicJobInstanceDaoTests extends AbstractSpringTest {
+public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {
 
 	private static final long DATE = 777;
-
-	@Autowired
-	protected JobInstanceDao dao;
 	
-
 	private String fooJob = "foo";
 
 	private JobParameters fooParams = new JobParametersBuilder().addString("stringKey", "stringValue")
 			.addLong("longKey", Long.MAX_VALUE).addDouble("doubleKey", Double.MAX_VALUE)
 			.addDate("dateKey", new Date(DATE)).toJobParameters();
-
+	
+	private JobInstanceDao dao;
 	protected JobInstanceDao getJobInstanceDao() {
 		return dao;
 	}
 
 	@Before
 	public void onSetUp() throws Exception {
-		dao = getJobInstanceDao();
+		dao = new MarkLogicJobInstanceDao(getClient());
 	}
 
 	/*
