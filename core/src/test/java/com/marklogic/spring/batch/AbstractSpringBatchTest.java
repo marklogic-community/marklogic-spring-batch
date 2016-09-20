@@ -5,6 +5,8 @@ import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.*;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
@@ -23,6 +25,7 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
     private StepExecutionDao stepExecutionDao;
     private ExecutionContextDao executionContextDao;
     private JobRepository jobRepository;
+    private JobExplorer jobExplorer;
     
     protected void initializeJobRepository() {
         jobInstanceDao = new MarkLogicJobInstanceDao(getClient());
@@ -31,6 +34,7 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
         executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao, stepExecutionDao);
         jobRepository = new MarkLogicSimpleJobRepository(jobInstanceDao, jobExecutionDao,
                             stepExecutionDao, executionContextDao);
+        jobExplorer = new SimpleJobExplorer(jobInstanceDao, jobExecutionDao, stepExecutionDao, executionContextDao);
     }
     
     @Override
@@ -57,5 +61,10 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
     public JobRepository getJobRepository() {
         return jobRepository;
     }
-
+    
+    public JobExplorer getJobExplorer() {
+        return jobExplorer;
+    }
+    
+    
 }
