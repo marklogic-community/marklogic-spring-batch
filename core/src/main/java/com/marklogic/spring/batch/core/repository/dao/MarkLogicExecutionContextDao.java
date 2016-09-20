@@ -8,18 +8,21 @@ import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+@Component
 public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 
 	private JobExecutionDao jobExecutionDao;
 	private StepExecutionDao stepExecutionDao;
 	
+	@Autowired
 	public MarkLogicExecutionContextDao(JobExecutionDao jobExecDao, StepExecutionDao stepExecDao) {
 		this.jobExecutionDao = jobExecDao;
 		this.stepExecutionDao = stepExecDao;
 	}
-	
 
 	@Override
 	public ExecutionContext getExecutionContext(JobExecution jobExecution) {

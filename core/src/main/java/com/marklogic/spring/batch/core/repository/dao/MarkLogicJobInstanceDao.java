@@ -20,6 +20,8 @@ import org.springframework.batch.core.JobKeyGenerator;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 
@@ -33,10 +35,12 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.ValuesHandle;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
+@Component
 public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao implements JobInstanceDao {
 	
 	private JobKeyGenerator<JobParameters> jobKeyGenerator = new DefaultJobKeyGenerator();
 	
+	@Autowired
 	public MarkLogicJobInstanceDao(DatabaseClient databaseClient) {
 		this.databaseClient = databaseClient;
 		this.incrementer = new UriIncrementer();
@@ -85,7 +89,7 @@ public class MarkLogicJobInstanceDao extends AbstractMarkLogicBatchMetadataDao i
         jobInstanceMetadata.getCollections().add(COLLECTION_JOB_INSTANCE);
         
 		xmlDocMgr.write(desc, jobInstanceMetadata, handle);
-		logger.info("insert:" + uri + "," + desc.getVersion());
+		logger.debug("insert:" + uri + "," + desc.getVersion());
 		
     	return jobInstance;
 	}

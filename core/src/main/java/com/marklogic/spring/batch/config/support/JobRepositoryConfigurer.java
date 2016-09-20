@@ -61,7 +61,7 @@ public class JobRepositoryConfigurer extends DefaultBatchConfigurer {
 
             JobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(client);
             JobExecutionDao jobExecutionDao = new MarkLogicJobExecutionDao(client);
-            MarkLogicStepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(client);
+            MarkLogicStepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(client, jobExecutionDao);
             stepExecutionDao.setJobExecutionDao(jobExecutionDao);
             ExecutionContextDao executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao, stepExecutionDao);
 

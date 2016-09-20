@@ -13,6 +13,8 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 
@@ -31,11 +33,10 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import org.springframework.batch.core.BatchStatus;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 
+@Component
 public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao implements JobExecutionDao {
 
-	public MarkLogicJobExecutionDao() {
-	}
-	
+	@Autowired
 	public MarkLogicJobExecutionDao(DatabaseClient databaseClient) {
 		this.databaseClient = databaseClient;
 		this.incrementer = new UriIncrementer();
