@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository.support;
 
 import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -20,13 +21,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Date;
 
-import com.marklogic.junit.spring.AbstractSpringTest;
-
 public class SimpleJobRepositoryIntegrationTests extends AbstractSpringBatchTest {
 
 	private JobSupport job = new JobSupport("SimpleJobRepositoryIntegrationTestsJob");
 
 	private JobParameters jobParameters = new JobParameters();
+	
+	@Before
+	public void initialize() {
+		initializeJobRepository();
+	}
 
 	/*
 	 * Create two job executions for same job+parameters tuple. Check both

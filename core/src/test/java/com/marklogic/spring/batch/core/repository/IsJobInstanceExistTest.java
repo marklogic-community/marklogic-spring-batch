@@ -15,7 +15,9 @@ public class IsJobInstanceExistTest extends AbstractSpringBatchTest {
     private JobParameters params;
 
     @Before
-    public void JobExecution() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+    public void JobExecution() throws JobExecutionAlreadyRunningException, JobRestartException,
+        JobInstanceAlreadyCompleteException {
+        initializeJobRepository();
         JobParametersBuilder builder = new JobParametersBuilder();
         builder.addLong("count", 123L);
         getJobRepository().createJobExecution(jobName, builder.toJobParameters());
