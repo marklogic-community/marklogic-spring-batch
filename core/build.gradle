@@ -1,5 +1,5 @@
 plugins {
-    id "com.marklogic.ml-gradle" version "2.2.0"
+    id "com.marklogic.ml-gradle" version "2.3.3"
     id "com.jfrog.bintray" version "1.6"
 }
 
