@@ -25,23 +25,18 @@ import org.springframework.util.Assert;
 @Import( { MarkLogicBatchConfigurer.class } )
 public class ImportDocumentsFromDirectoryConfig  {
     
-    @Autowired
-    protected JobBuilderFactory jobBuilderFactory;
-    
-    @Autowired
-    protected StepBuilderFactory stepBuilderFactory;
-    
-    @Autowired
-    DatabaseClientProvider databaseClientProvider;
-
     @Bean
-    public Job importDocumentsFromDirectoryJob(@Qualifier("importDocumentsFromDirectoryStep1") Step step) {
+    public Job importDocumentsFromDirectoryJob(
+        JobBuilderFactory jobBuilderFactory,
+        @Qualifier("importDocumentsFromDirectoryStep1") Step step) {
         return jobBuilderFactory.get("importDocumentsFromDirectoryJob").start(step).build();
     }
 
     @Bean
     @JobScope
     public Step importDocumentsFromDirectoryStep1(
+            StepBuilderFactory stepBuilderFactory,
+            DatabaseClientProvider databaseClientProvider,
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern,
             @Value("#{jobParameters['document_type']}") String documentType,
