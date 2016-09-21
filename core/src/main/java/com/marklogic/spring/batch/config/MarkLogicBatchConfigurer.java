@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.core.explore.support.MarkLogicJobExplorerFactoryBean;
 import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryFactoryBean;
 import org.slf4j.Logger;
@@ -31,9 +32,9 @@ public class MarkLogicBatchConfigurer implements BatchConfigurer {
     
     protected MarkLogicBatchConfigurer() {}
     
-    @Autowired(required = false)
-    public MarkLogicBatchConfigurer(DatabaseClient databaseClient) {
-        this.databaseClient = databaseClient;
+    @Autowired
+    public MarkLogicBatchConfigurer(DatabaseClientProvider databaseClientProvider) {
+        this.databaseClient = databaseClientProvider.getDatabaseClient();
     }
     
     @PostConstruct
@@ -53,8 +54,9 @@ public class MarkLogicBatchConfigurer implements BatchConfigurer {
             jobExplorerFactory.afterPropertiesSet();
             this.jobExplorer = jobExplorerFactory.getObject();
         } else {
+            this.transactionManager = new ResourcelessTransactionManager();
             this.jobRepository = createJobRepository();
-            jobExplorer = createJobExplorer();
+            this.jobExplorer = createJobExplorer();
         }
         this.jobLauncher = createJobLauncher();
     }
