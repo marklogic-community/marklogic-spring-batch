@@ -1,26 +1,33 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.reader.CollectionUrisReader;
 import com.marklogic.spring.batch.item.DeleteUriWriter;
 import joptsimple.OptionParser;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-/**
- * In order to reference job parameters, the step is defined at the job scope and the reader is defined
- * at the step scope.
- */
-@Configuration
-public class DeleteDocumentsConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer {
+@EnableBatchProcessing
+@Import( MarkLogicBatchConfigurer.class )
+public class DeleteDocumentsConfig implements OptionParserConfigurer {
+    
+    @Autowired
+    protected JobBuilderFactory jobBuilderFactory;
+    
+    @Autowired
+    protected StepBuilderFactory stepBuilderFactory;
+    
+    @Autowired
+    DatabaseClientProvider databaseClientProvider;
 
     @Override
     public void configureOptionParser(OptionParser parser) {
@@ -36,7 +43,7 @@ public class DeleteDocumentsConfig extends AbstractMarkLogicBatchConfig implemen
     @JobScope
     protected Step step1(ItemReader<String> reader, ItemWriter<String> writer) {
         return stepBuilderFactory.get("step1")
-                .<String, String>chunk(getChunkSize())
+                .<String, String>chunk(10)
                 .reader(reader)
                 .writer(writer)
                 .build();
@@ -45,12 +52,12 @@ public class DeleteDocumentsConfig extends AbstractMarkLogicBatchConfig implemen
     @Bean
     @StepScope
     public CollectionUrisReader reader(@Value("#{jobParameters['collections']}") String[] collections) {
-        return new CollectionUrisReader(getDatabaseClient(), collections);
+        return new CollectionUrisReader(databaseClientProvider.getDatabaseClient(), collections);
     }
 
     @Bean
     public ItemWriter<String> writer() {
-        return new DeleteUriWriter(getDatabaseClient());
+        return new DeleteUriWriter(databaseClientProvider.getDatabaseClient());
     }
 
 }
