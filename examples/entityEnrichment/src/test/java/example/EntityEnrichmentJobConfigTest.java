@@ -37,6 +37,7 @@ public class EntityEnrichmentJobConfigTest extends AbstractJobTest {
             "--tokenizer_model", "src/main/resources/nlp/tokenizer/en-token.bin",
             "--named_entity_model", "src/main/resources/nlp/en/en-ner-person.bin");
         StringHandle handle = docMgr.read("hello.xml", new StringHandle());
+        logger.info(handle.toString());
         Fragment frag = new Fragment(handle.toString());
         frag.assertElementCount("Expecting two names", "//name", 2);
         

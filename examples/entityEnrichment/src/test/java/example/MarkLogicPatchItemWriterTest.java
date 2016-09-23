@@ -4,6 +4,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.spring.BasicConfig;
+import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.junit.spring.BasicTestConfig;
 import org.junit.Before;
@@ -35,5 +36,9 @@ public class MarkLogicPatchItemWriterTest extends AbstractSpringTest {
         List<String[]> strings = new ArrayList<String[]>();
         strings.add(info);
         itemWriter.write(strings);
+        StringHandle handle = docMgr.read("hello.xml", new StringHandle());
+        logger.info(handle.toString());
+        Fragment frag = new Fragment(handle.toString());
+        frag.assertElementExists("Expecting new content", "//new[text() = 'content']");
     }
 }

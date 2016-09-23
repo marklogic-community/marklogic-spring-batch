@@ -32,8 +32,9 @@ public class MarkLogicPatchItemWriter implements ItemWriter<String[]> {
             
             DocumentPatchBuilder xmlPatchBldr = docMgr.newPatchBuilder();
             xmlPatchBldr.setNamespaces(namespaces);
-    
-            DocumentPatchHandle patchHandle = xmlPatchBldr.insertFragment("/html:html", DocumentPatchBuilder.Position.LAST_CHILD, xmlPatch).build();
+        
+            //note the root element is referenced in the first parameter of this call, you may need to change based on your document
+            DocumentPatchHandle patchHandle = xmlPatchBldr.insertFragment("/doc", DocumentPatchBuilder.Position.LAST_CHILD, xmlPatch).build();
             docMgr.patch(uri, patchHandle);
         }
         
