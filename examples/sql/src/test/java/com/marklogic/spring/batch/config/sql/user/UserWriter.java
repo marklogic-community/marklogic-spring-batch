@@ -8,7 +8,6 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.item.AbstractDocumentWriter;
-import com.marklogic.uri.UriGenerator;
 import com.marklogic.uri.XmlStringUriGenerator;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
