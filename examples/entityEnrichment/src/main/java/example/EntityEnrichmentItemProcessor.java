@@ -33,7 +33,6 @@ public class EntityEnrichmentItemProcessor implements ItemProcessor<CountedDisti
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private DatabaseClient databaseClient;
-    private final String TRANSFORM_NAME = "xmlToText";
     private DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private final String TOKENIZER_MODEL_FILE_PATH;
     private final String NAMED_ENTITY_FILE_PATH;
@@ -52,9 +51,7 @@ public class EntityEnrichmentItemProcessor implements ItemProcessor<CountedDisti
     public String[] process(CountedDistinctValue item) throws Exception {
         XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
         String uri = item.get("xs:string", String.class);
-        ServerTransform transform = new ServerTransform(TRANSFORM_NAME);
-        StringHandle handle = docMgr.read(uri, new StringHandle(), transform);
-        
+        StringHandle handle = docMgr.read(uri, new StringHandle());
         InputStream tokenModel = new FileInputStream(TOKENIZER_MODEL_FILE_PATH);
         TokenizerModel model = new TokenizerModel(tokenModel);
         Tokenizer tokenizer = new TokenizerME(model);
