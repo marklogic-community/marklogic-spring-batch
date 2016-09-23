@@ -16,13 +16,13 @@ Have you ever written a long running batch processing job, like migrating data f
 
 # What are the main features of MarkLogic Spring Batch?
 * Provide custom ItemReaders, ItemProcessors, ItemWriters, and tasklets for writing custom MarkLogic batch processing jobs.
+* Mitigate the risk of the Spring Batch learning curve by providing examples of creating your own custom batch processing job
 * Persist the metadata of any JobExecution with a MarkLogic [JobRepository](http://docs.spring.io/spring-batch/trunk/reference/html/domain.html#domainJobRepository)
 * Execute one of many generic MarkLogic batch processing jobs for importing, transforming, and exporting data in a MarkLogic database
-* Mitigate the risk of the Spring Batch learning curve by providing examples of creating your own custom batch processing job
 
 # How do I build a custom MarkLogic batch processing job? 
 
-The [examples directory](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) provides examples of MarkLogic batch processing jobs.  Each example is setup to be deployed as a command line utility.  The [base job](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples/base) provides a template for creating a custom import batch processing job.    
+The [examples directory](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) provides different examples of MarkLogic batch processing jobs.  Each example is setup to be deployed as a command line utility.  The [base job example](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples/base) is a bare bones Spring configuration template for creating a custom ingest batch processing job.
 
 ## Import the MSB jars
 Create a build.gradle file to import the MarkLogic Spring Batch (MSB) jars.  Use the [latest version](https://github.com/sastafford/marklogic-spring-batch/releases) of the MSB jars.  
@@ -38,8 +38,8 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.5.0"
-    testComplile "com.marklogic:marklogic-spring-batch-test:0.5.0"
+    compile "com.marklogic:marklogic-spring-batch-core:0.6.0"
+    testComplile "com.marklogic:marklogic-spring-batch-test:0.6.0"
 }
 ```
 
