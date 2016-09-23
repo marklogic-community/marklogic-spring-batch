@@ -35,7 +35,7 @@ subprojects {
     }
 }
 
-configure(subprojects.findAll {it.name != 'jobs'}) {
+configure(subprojects.findAll {it.name != 'examples'}) {
     apply plugin: "maven-publish"
 
     task sourcesJar(type: Jar, dependsOn: classes) {
