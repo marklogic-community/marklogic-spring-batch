@@ -35,7 +35,7 @@ subprojects {
     }
 }
 
-configure(subprojects.findAll {it.name != 'jobs'}) {
+configure(subprojects.findAll {it.name != 'examples'}) {
     apply plugin: "maven-publish"
 
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -107,4 +107,4 @@ task testExamples(type: GradleBuild) {
     tasks = [ 'test' ]
 }
 
-task testAll(dependsOn:[':core:test', 'jobs:test', 'testExamples'] )
+task testAll(dependsOn:[':core:test', 'examples:test', 'testExamples'] )

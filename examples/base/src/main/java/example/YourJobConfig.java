@@ -1,37 +1,74 @@
 package example;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.MarkLogicWriteHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.item.MarkLogicItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
-import java.util.List;
+/**
+ * YourJobConfig.java - a sample Spring Batch configuration class for demonstrating the use of creating a SpringBatch job
+ * running with MarkLogic.  By default it uses a in-memory JobRepository.  Remove the comment to import the MarkLogicBatchConfigurer
+ * to utilize the MarkLogic JobRepository.
+ * @author  Scott Stafford
+ * @version 1.0
+ * @see EnableBatchProcessing
+ */
 
-public class YourJobConfig extends AbstractMarkLogicBatchConfig implements EnvironmentAware {
+@EnableBatchProcessing
+// @Import( { MarkLogicBatchConfigurer.class } )
+public class YourJobConfig implements EnvironmentAware {
     
     private Environment env;
     
+    //Rename this private variable
     private final String JOB_NAME = "yourJob";
     
+    /**
+     * The JobBuilderFactory and Step parameters are injected via Spring
+     * @param jobBuilderFactory injected from the @EnableBatchProcessing annotation
+     * @param step injected from the step method in this class
+     * @return Job bean
+     */
     @Bean
-    public Job job(Step step) {
+    public Job job(JobBuilderFactory jobBuilderFactory, Step step) {
         return jobBuilderFactory.get(JOB_NAME).start(step).build();
     }
+    
+    /**
+     * The StepBuilderFactory and DatabaseClientProvider parameters are injected via Spring.  Custom parameters must be annotated with @Value.
+     * @return Step
+     * @param stepBuilderFactory injected from the @EnableBatchProcessing annotation
+     * @param databaseClientProvider injected from the BasicConfig class
+     * @param collections This is an example of how user parameters could be injected via command line or a properties file
+     * @see DatabaseClientProvider
+     * @see com.marklogic.client.spring.BasicConfig
+     * @see ItemReader
+     * @see ItemProcessor
+     * @see MarkLogicItemWriter
+     */
     
     @Bean
     @JobScope
     public Step step(
-            @Value("#{jobParameters['output_collections']}") String[] collections) {
+        StepBuilderFactory stepBuilderFactory,
+        DatabaseClientProvider databaseClientProvider,
+        @Value("#{jobParameters['output_collections']}") String[] collections) {
+        
+        DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
             
         ItemReader<String> reader = new ItemReader<String>() {
             int i = 0;
@@ -42,6 +79,8 @@ public class YourJobConfig extends AbstractMarkLogicBatchConfig implements Envir
             }
         };
         
+        //The ItemProcessor is typically customized for your Job.  An anoymous class is a nice way to instantiate but
+        //if it is a reusable component instantiate in its own class
         ItemProcessor<String, DocumentWriteOperation> processor = new ItemProcessor<String, DocumentWriteOperation>() {
     
             @Override
@@ -57,10 +96,10 @@ public class YourJobConfig extends AbstractMarkLogicBatchConfig implements Envir
                 return new MarkLogicWriteHandle(uri, metadata, handle);
             }
         };
-        ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(getDatabaseClient());
+        ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClient);
     
         return stepBuilderFactory.get("step1")
-                .<String, DocumentWriteOperation>chunk(getChunkSize())
+                .<String, DocumentWriteOperation>chunk(10)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

@@ -3,37 +3,20 @@ package com.marklogic.spring.batch.core.repository.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.repository.dao.JobExecutionDao;
-import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.marklogic.junit.spring.AbstractSpringTest;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { 
-		com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class,
-		com.marklogic.client.spring.BasicConfig.class })
-public class MarkLogicJobDaoTests extends AbstractSpringTest {
+public class MarkLogicJobDaoTests extends AbstractSpringBatchTest {
 	
-	@Autowired
-	protected JobInstanceDao jobInstanceDao;
-
-	@Autowired
-	protected JobExecutionDao jobExecutionDao;
-
 	protected JobParameters jobParameters = new JobParametersBuilder().addString("job.key", "jobKey").addLong("long",
 			(long) 1).addDate("date", new Date(7)).addDouble("double", 7.7).toJobParameters();
 
@@ -44,55 +27,42 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	protected JobExecution jobExecution;
 
 	protected Date jobExecutionStartTime = new Date(System.currentTimeMillis());
-
-
-	/*
-	 * Because AbstractTransactionalSpringContextTests is used, this method will
-	 * be called by Spring to set the JobRepository.
-	 */
-	@Autowired
-	public void setJobInstanceDao(JobInstanceDao jobInstanceDao) {
-		this.jobInstanceDao = jobInstanceDao;
-	}
-
-	@Autowired
-	public void setJobExecutionDao(JobExecutionDao jobExecutionDao) {
-		this.jobExecutionDao = jobExecutionDao;
-	}
-
+	
 	@Before
 	public void onSetUpInTransaction() throws Exception {
+		initializeJobRepository();
+		
 		// Create job.
-		jobInstance = jobInstanceDao.createJobInstance(jobName, jobParameters);
+		jobInstance = getJobInstanceDao().createJobInstance(jobName, jobParameters);
 
 		// Create an execution
 		jobExecutionStartTime = new Date(System.currentTimeMillis());
 		jobExecution = new JobExecution(jobInstance, jobParameters);
 		jobExecution.setStartTime(jobExecutionStartTime);
 		jobExecution.setStatus(BatchStatus.STARTED);
-		jobExecutionDao.saveJobExecution(jobExecution);
+		getJobExecutionDao().saveJobExecution(jobExecution);
 	}
 
 	@Transactional @Test
 	public void testVersionIsNotNullForJob() throws Exception {
-		assertEquals(0, jobInstanceDao.getJobInstance(jobInstance.getId()).getVersion().intValue());
+		assertEquals(0, getJobInstanceDao().getJobInstance(jobInstance.getId()).getVersion().intValue());
 	}
 
 	@Transactional @Test
 	public void testVersionIsNotNullForJobExecution() throws Exception {
-		assertEquals(0, jobExecutionDao.getJobExecution(jobExecution.getId()).getVersion().intValue());
+		assertEquals(0, getJobExecutionDao().getJobExecution(jobExecution.getId()).getVersion().intValue());
 	}
 
 	@Transactional @Test
 	public void testFindNonExistentJob() {
 		// No job should be found since it hasn't been created.
-		JobInstance jobInstance = jobInstanceDao.getJobInstance("nonexistentJob", jobParameters);
+		JobInstance jobInstance = getJobInstanceDao().getJobInstance("nonexistentJob", jobParameters);
 		assertNull(jobInstance);
 	}
 
 	@Transactional @Test
 	public void testFindJob() {
-		JobInstance instance = jobInstanceDao.getJobInstance(jobName, jobParameters);
+		JobInstance instance = getJobInstanceDao().getJobInstance(jobName, jobParameters);
 		assertNotNull(instance);
 		assertTrue(jobInstance.equals(instance));
 	}
@@ -101,7 +71,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	public void testFindJobWithNullRuntime() {
 
 		try {
-			jobInstanceDao.getJobInstance(null, null);
+			getJobInstanceDao().getJobInstance(null, null);
 			fail();
 		}
 		catch (IllegalArgumentException ex) {
@@ -118,17 +88,17 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	public void testCreateJobWithExistingName() {
 
 		String scheduledJob = "ScheduledJob";
-		jobInstanceDao.createJobInstance(scheduledJob, jobParameters);
+		getJobInstanceDao().createJobInstance(scheduledJob, jobParameters);
 
 		// Modifying the key should bring back a completely different
 		// JobInstance
 		JobParameters tempProps = new JobParametersBuilder().addString("job.key", "testKey1").toJobParameters();
 
 		JobInstance instance;
-		instance = jobInstanceDao.getJobInstance(scheduledJob, jobParameters);
+		instance = getJobInstanceDao().getJobInstance(scheduledJob, jobParameters);
 		assertNotNull(instance);
 
-		instance = jobInstanceDao.getJobInstance(scheduledJob, tempProps);
+		instance = getJobInstanceDao().getJobInstance(scheduledJob, tempProps);
 		assertNull(instance);
 
 	}
@@ -139,9 +109,9 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 		jobExecution.setStatus(BatchStatus.COMPLETED);
 		jobExecution.setExitStatus(ExitStatus.COMPLETED);
 		jobExecution.setEndTime(new Date(System.currentTimeMillis()));
-		jobExecutionDao.updateJobExecution(jobExecution);
+		getJobExecutionDao().updateJobExecution(jobExecution);
 
-		List<JobExecution> executions = jobExecutionDao.findJobExecutions(jobInstance);
+		List<JobExecution> executions = getJobExecutionDao().findJobExecutions(jobInstance);
 		assertEquals(executions.size(), 1);
 		validateJobExecution(jobExecution, executions.get(0));
 
@@ -150,7 +120,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	@Transactional @Test
 	public void testSaveJobExecution() {
 
-		List<JobExecution> executions = jobExecutionDao.findJobExecutions(jobInstance);
+		List<JobExecution> executions = getJobExecutionDao().findJobExecutions(jobInstance);
 		assertEquals(executions.size(), 1);
 		validateJobExecution(jobExecution, executions.get(0));
 	}
@@ -162,7 +132,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 		JobExecution execution = new JobExecution(jobInstance, (long) 29432, jobParameters, null);
 		execution.incrementVersion();
 		try {
-			jobExecutionDao.updateJobExecution(execution);
+			getJobExecutionDao().updateJobExecution(execution);
 			fail("Expected NoSuchBatchDomainObjectException");
 		}
 		catch (NoSuchObjectException ex) {
@@ -175,7 +145,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 
 		JobExecution execution = new JobExecution(jobInstance, jobParameters);
 		try {
-			jobExecutionDao.updateJobExecution(execution);
+			getJobExecutionDao().updateJobExecution(execution);
 			fail();
 		}
 		catch (IllegalArgumentException ex) {
@@ -189,9 +159,9 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 
 		String testJob = "test";
 		// Create job.
-		jobInstance = jobInstanceDao.createJobInstance(testJob, jobParameters);
+		jobInstance = getJobInstanceDao().createJobInstance(testJob, jobParameters);
 
-		JobInstance jobInst = jobInstanceDao.getJobInstance(jobInstance.getId());
+		JobInstance jobInst = getJobInstanceDao().getJobInstance(jobInstance.getId());
 		
 		assertNotNull(jobInst);
 		assertEquals("test", jobInst.getJobName());
@@ -203,9 +173,9 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 
 		String testDefaultJob = "testDefault";
 		// Create job.
-		jobInstance = jobInstanceDao.createJobInstance(testDefaultJob, jobParameters);
+		jobInstance = getJobInstanceDao().createJobInstance(testDefaultJob, jobParameters);
 
-		JobInstance instance = jobInstanceDao.getJobInstance(testDefaultJob, jobParameters);
+		JobInstance instance = getJobInstanceDao().getJobInstance(testDefaultJob, jobParameters);
 
 		assertNotNull(instance);
 	}
@@ -213,7 +183,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	@Transactional @Test
 	public void testFindJobExecutions() {
 
-		List<JobExecution> results = jobExecutionDao.findJobExecutions(jobInstance);
+		List<JobExecution> results = getJobExecutionDao().findJobExecutions(jobInstance);
 		assertEquals(results.size(), 1);
 		validateJobExecution(jobExecution, results.get(0));
 	}
@@ -236,9 +206,9 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 
 		int JUMP_INTO_FUTURE = 1000; // makes sure start time is 'greatest'
 		lastExecution.setCreateTime(new Date(System.currentTimeMillis() + JUMP_INTO_FUTURE));
-		jobExecutionDao.saveJobExecution(lastExecution);
+		getJobExecutionDao().saveJobExecution(lastExecution);
 
-		assertEquals(lastExecution, jobExecutionDao.getLastJobExecution(jobInstance));
+		assertEquals(lastExecution, getJobExecutionDao().getLastJobExecution(jobInstance));
 		assertNotNull(lastExecution.getJobParameters());
 		assertEquals("jobKey", lastExecution.getJobParameters().getString("job.key"));
 	}
@@ -250,11 +220,11 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	public void testCreateDuplicateInstance() {
 
 		jobParameters = new JobParameters();
-
-		jobInstanceDao.createJobInstance(jobName, jobParameters);
+		
+		getJobInstanceDao().createJobInstance(jobName, jobParameters);
 
 		try {
-			jobInstanceDao.createJobInstance(jobName, jobParameters);
+			getJobInstanceDao().createJobInstance(jobName, jobParameters);
 			fail();
 		}
 		catch (IllegalStateException e) {
@@ -265,7 +235,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	@Transactional @Test
 	public void testCreationAddsVersion() {
 
-		jobInstance = jobInstanceDao.createJobInstance("testCreationAddsVersion", new JobParameters());
+		jobInstance = getJobInstanceDao().createJobInstance("testCreationAddsVersion", new JobParameters());
 
 		assertNotNull(jobInstance.getVersion());
 	}
@@ -278,7 +248,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 		assertNull(jobExecution.getId());
 		assertNull(jobExecution.getVersion());
 
-		jobExecutionDao.saveJobExecution(jobExecution);
+		getJobExecutionDao().saveJobExecution(jobExecution);
 
 		assertNotNull(jobExecution.getId());
 		assertNotNull(jobExecution.getVersion());
@@ -288,7 +258,7 @@ public class MarkLogicJobDaoTests extends AbstractSpringTest {
 	public void testUpdateIncrementsVersion() {
 		int version = jobExecution.getVersion();
 
-		jobExecutionDao.updateJobExecution(jobExecution);
+		getJobExecutionDao().updateJobExecution(jobExecution);
 
 		assertEquals(version + 1, jobExecution.getVersion().intValue());
 	}

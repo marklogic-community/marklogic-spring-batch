@@ -16,13 +16,13 @@ Have you ever written a long running batch processing job, like migrating data f
 
 # What are the main features of MarkLogic Spring Batch?
 * Provide custom ItemReaders, ItemProcessors, ItemWriters, and tasklets for writing custom MarkLogic batch processing jobs.
+* Mitigate the risk of the Spring Batch learning curve by providing examples of creating your own custom batch processing job
 * Persist the metadata of any JobExecution with a MarkLogic [JobRepository](http://docs.spring.io/spring-batch/trunk/reference/html/domain.html#domainJobRepository)
 * Execute one of many generic MarkLogic batch processing jobs for importing, transforming, and exporting data in a MarkLogic database
-* Mitigate the risk of the Spring Batch learning curve by providing examples of creating your own custom batch processing job
 
 # How do I build a custom MarkLogic batch processing job? 
 
-The [examples directory](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) provides examples of MarkLogic batch processing jobs.  Each example is setup to be deployed as a command line utility.  The [base job](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples/base) provides a template for creating a custom import batch processing job.    
+The [examples directory](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) provides different examples of MarkLogic batch processing jobs.  Each example is setup to be deployed as a command line utility.  The [base job example](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples/base) is a bare bones Spring configuration template for creating a custom ingest batch processing job.
 
 ## Import the MSB jars
 Create a build.gradle file to import the MarkLogic Spring Batch (MSB) jars.  Use the [latest version](https://github.com/sastafford/marklogic-spring-batch/releases) of the MSB jars.  
@@ -38,8 +38,8 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.5.0"
-    testComplile "com.marklogic:marklogic-spring-batch-test:0.5.0"
+    compile "com.marklogic:marklogic-spring-batch-core:0.6.0"
+    testComplile "com.marklogic:marklogic-spring-batch-test:0.6.0"
 }
 ```
 
@@ -52,10 +52,10 @@ Create a test class by subclassing the [AbstractJobTest](https://github.com/sast
 # How do I execute my job? 
 An easy way to execute your job is to execute it as a command line utility similar to MarkLogic Content Pump or CORB.  An easy way to deploy the job is via the [Gradle Application Plugin](https://docs.gradle.org/current/userguide/application_plugin.html).  Once you have your JobConfiguration created and have verified that it works, then execute the following gradle command to build an executable.
 
-    gradle distZip
-    
-This will create a zip file under ../install/distributions that can be transferred and executed on any host.  
+    gradle installDist
 
+This command will create two start scripts, one for Windows and one for Unix, and will package up all the libraries.  The installation package can be found under the ./build/install/<artifactId>.   directory where artifactId is a variable of the same name defined in your build.gradle or gradle.properties file.  Once this exists, you can then execute the start script and pass the required and any optional parameters defined by your job.  See either the [importInvoices task from the rdbms_2 build.gradle file](https://github.com/sastafford/marklogic-spring-batch/blob/master/examples/rdbms_2/build.gradle) or the manually created [runInovices.bat](https://github.com/sastafford/marklogic-spring-batch/blob/master/examples/rdbms_2/runInvoices.bat) file.  The runInvoices.bat assumes that the gradle installDist task has already been executed.   
+    
 Each MarkLogic Spring Batch execution application (based on the Main class) expects a few command line parameters.  Custom parameters can be defined in the JobConfiguration. 
 
   * config - The class name of your Job configuration
@@ -69,8 +69,14 @@ Each MarkLogic Spring Batch execution application (based on the Main class) expe
   * jrPassword (optional) - the Job Repository MarkLogic password
 
 ```
-./jobExec --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
+./<artifactId_script_name> --config com.marklogic.spring.batch.job.JobNameConfig --host localhost --port 8010 --username admin --password admin --customParam1 xyz --customParamX abc
 ```
+
+# How do I distribute my command line job utility?
+
+The following gradle command will create a zip file under ./build/distributions that can be transferred and executed on any host.  
+ 
+    gradle distZip
 
 ## Create a Gradle JavaExec task
 
@@ -105,19 +111,19 @@ gradle migrateActors
 If you want to use a MarkLogic Job Repository then you first need to install a new application onto your MarkLogic database.  A MarkLogic Job Repository can be installed via the executable created with your Gradle application plugin.  
 
 ```
-./jobs deployMarkLogicJobRepository --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
+./<jobArtifactScriptName> deployMarkLogicJobRepository --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
 ```
 
 If you ever need to undeploy the JobRepository then you can issue the following command.
 
 ```
-./jobs undeployMarkLogicJobRepository --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
+./<jobArtifactScriptName> undeployMarkLogicJobRepository --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
 ```
 
 Now when you execute your job, then add the additional parameters for the MarkLogic Job Repository.  All JobExecution metadata is now logged to the MarkLogic JobRepository.  
 
 ```
-./jobs --config com.marklogic.spring.batch.job.JobNameConfig.class --host localhost --port 8010 --username admin --password admin --custom_param1 xyz --customParamX abc --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
+./<jobArtifactScriptName> --config com.marklogic.spring.batch.job.JobNameConfig --host localhost --port 8010 --username admin --password admin --custom_param1 xyz --customParamX abc --jr_host localhost --jr_port 8011 --jr_username admin --jr_password admin
 ```
 
 # How can I contribute to the project?

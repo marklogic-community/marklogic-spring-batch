@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    runtime "com.marklogic:marklogic-spring-batch-sql:0.5.2"
+    runtime "com.marklogic:marklogic-spring-batch-sql:0.6.1"
     runtime "org.hsqldb:hsqldb:2.3.4"
 }
 

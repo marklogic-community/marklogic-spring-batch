@@ -13,18 +13,23 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
 
+@Component
 public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao implements StepExecutionDao {
 
 	private JobExecutionDao jobExecutionDao;
 	
-	public MarkLogicStepExecutionDao(DatabaseClient databaseClient) {
+	@Autowired
+	public MarkLogicStepExecutionDao(DatabaseClient databaseClient, JobExecutionDao dao) {
 		this.databaseClient = databaseClient;
+		this.jobExecutionDao = dao;
 		this.incrementer = new UriIncrementer();
 	}
 

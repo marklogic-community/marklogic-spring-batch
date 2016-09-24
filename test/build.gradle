@@ -8,7 +8,6 @@ ext {
 
 dependencies {
     compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-    //compile "org.springframework.batch:spring-batch-samples:2.2.7.RELEASE"
     compile "com.marklogic:ml-junit:2.6.0"
 }
 

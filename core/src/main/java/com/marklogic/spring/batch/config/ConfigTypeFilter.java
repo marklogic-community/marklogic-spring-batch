@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.spring.batch.MainConfig;
-import com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.filter.AbstractClassTestingTypeFilter;
 
@@ -17,7 +16,6 @@ public class ConfigTypeFilter extends AbstractClassTestingTypeFilter {
 		String name = metadata.getClassName();
 		return name.startsWith("org.springframework")
 			|| name.equals(MainConfig.class.getName())
-			|| name.equals(MarkLogicDaoConfig.class.getName())
 			|| name.equals(BasicConfig.class.getName());
 	}
 

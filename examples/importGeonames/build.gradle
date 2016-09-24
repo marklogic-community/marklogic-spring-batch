@@ -1,0 +1,43 @@
+plugins {
+    id "com.jfrog.bintray" version "1.6"
+}
+
+ext {
+    artifactId = "marklogic-spring-batch-geonames"
+}
+
+/*
+
+gradle -PmlHost=localhost -PmlPort=8888 -PmlUsename=username -PmlPassword=password importGeonames
+ */
+task importGeonames(type: org.gradle.api.tasks.JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+            "--host", "localhost",
+            "--port", "8200",
+            "--username", "admin",
+            "--password", "admin",
+            "--config", "com.marklogic.spring.batch.geonames.IngestGeonamesToMarkLogicConfig",
+            "--input_file_path", "src/test/resources/cities10.txt"
+    ]
+}
+
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
+    publications = [bintrayPublicationName]
+    pkg {
+        repo = bintrayRepo
+        name = artifactId
+        userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
+        vcsUrl = bintrayVcsUrl
+        version {
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+        }
+    }
+}

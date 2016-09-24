@@ -6,67 +6,32 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.repository.dao.JobExecutionDao;
-import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.batch.core.repository.dao.StepExecutionDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.junit.spring.AbstractSpringTest;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, com.marklogic.client.spring.BasicConfig.class })
-public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
-
-	@Autowired
-	protected JobExecutionDao dao;
+public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
 	
-	@Autowired
-	protected JobInstanceDao jobInstanceDao;
-
-	@Autowired
-	protected StepExecutionDao stepExecutionDao;
-	
-	@Autowired
-	DatabaseClientProvider databaseClientProvider;
-
 	protected JobInstance jobInstance;
-
 	protected JobExecution execution;
-
 	protected JobParameters jobParameters;
-
-	/**
-	 * @return tested object ready for use
-	 */
-	protected JobExecutionDao getJobExecutionDao() {
-		return dao;
-	}
-
-	protected JobInstanceDao getJobInstanceDao() {
-		return jobInstanceDao;
-	}
+	
 
 	@Before
 	public void onSetUp() throws Exception {
-		dao = getJobExecutionDao();
+		initializeJobRepository();
 		jobParameters = new JobParameters();
 		jobInstance = getJobInstanceDao().createJobInstance("execTestJob", jobParameters);
 		execution = new JobExecution(jobInstance, new JobParameters());
@@ -83,9 +48,9 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		execution.setLastUpdated(new Date(System.currentTimeMillis()));
 		execution.setExitStatus(ExitStatus.UNKNOWN);
 		execution.setEndTime(new Date(System.currentTimeMillis()));
-		dao.saveJobExecution(execution);
+		getJobExecutionDao().saveJobExecution(execution);
 
-		List<JobExecution> executions = dao.findJobExecutions(jobInstance);
+		List<JobExecution> executions = getJobExecutionDao().findJobExecutions(jobInstance);
 		assertEquals(1, executions.size());
 		assertEquals(execution, executions.get(0));
 		assertExecutionsAreEqual(execution, executions.get(0));
@@ -104,10 +69,10 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 			JobExecution exec = new JobExecution(jobInstance, jobParameters);
 			exec.setCreateTime(new Date(i));
 			execs.add(exec);
-			dao.saveJobExecution(exec);
+			getJobExecutionDao().saveJobExecution(exec);
 		}
 
-		List<JobExecution> retrieved = dao.findJobExecutions(jobInstance);
+		List<JobExecution> retrieved = getJobExecutionDao().findJobExecutions(jobInstance);
 		Collections.reverse(retrieved);
 
 		for (int i = 0; i < 10; i++) {
@@ -122,7 +87,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	@Transactional
 	@Test
 	public void testFindNonExistentExecutions() {
-		List<JobExecution> executions = dao.findJobExecutions(jobInstance);
+		List<JobExecution> executions = getJobExecutionDao().findJobExecutions(jobInstance);
 		assertEquals(0, executions.size());
 	}
 
@@ -135,7 +100,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 
 		assertNull(execution.getId());
 		assertNull(execution.getVersion());
-		dao.saveJobExecution(execution);
+		getJobExecutionDao().saveJobExecution(execution);
 		assertNotNull(execution.getId());
 		assertNotNull(execution.getVersion());
 	}
@@ -148,13 +113,13 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	@Test
 	public void testUpdateExecution() {
 		execution.setStatus(BatchStatus.STARTED);
-		dao.saveJobExecution(execution);
+		getJobExecutionDao().saveJobExecution(execution);
 
 		execution.setLastUpdated(new Date(0));
 		execution.setStatus(BatchStatus.COMPLETED);
-		dao.updateJobExecution(execution);
+		getJobExecutionDao().updateJobExecution(execution);
 
-		JobExecution updated = dao.findJobExecutions(jobInstance).get(0);
+		JobExecution updated = getJobExecutionDao().findJobExecutions(jobInstance).get(0);
 		assertEquals(execution, updated);
 		assertEquals(BatchStatus.COMPLETED, updated.getStatus());
 		assertExecutionsAreEqual(execution, updated);
@@ -171,11 +136,11 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 
 		JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
 		exec2.setCreateTime(new Date(1));
+		
+		getJobExecutionDao().saveJobExecution(exec1);
+		getJobExecutionDao().saveJobExecution(exec2);
 
-		dao.saveJobExecution(exec1);
-		dao.saveJobExecution(exec2);
-
-		JobExecution last = dao.getLastJobExecution(jobInstance);
+		JobExecution last = getJobExecutionDao().getLastJobExecution(jobInstance);
 		assertEquals(exec2, last);
 	}
 
@@ -185,7 +150,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	@Transactional
 	@Test
 	public void testGetMissingLastExecution() {
-		JobExecution value = dao.getLastJobExecution(jobInstance);
+		JobExecution value = getJobExecutionDao().getLastJobExecution(jobInstance);
 		assertNull(value);
 	}
 
@@ -200,20 +165,20 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		exec.setCreateTime(new Date(0));
 		exec.setEndTime(new Date(1L));
 		exec.setLastUpdated(new Date(5L));
-		dao.saveJobExecution(exec);
+		getJobExecutionDao().saveJobExecution(exec);
 
 		exec = new JobExecution(jobInstance, jobParameters);
 		exec.setLastUpdated(new Date(5L));
 		exec.createStepExecution("step");
-		dao.saveJobExecution(exec);
+		getJobExecutionDao().saveJobExecution(exec);
 
-		if (stepExecutionDao != null) {
+		if (getStepExecutionDao() != null) {
 			for (StepExecution stepExecution : exec.getStepExecutions()) {
-				stepExecutionDao.saveStepExecution(stepExecution);
+				getStepExecutionDao().saveStepExecution(stepExecution);
 			}
 		}
 
-		Set<JobExecution> values = dao.findRunningJobExecutions(exec.getJobInstance().getJobName());
+		Set<JobExecution> values = getJobExecutionDao().findRunningJobExecutions(exec.getJobInstance().getJobName());
 
 		assertEquals(1, values.size());
 		JobExecution value = values.iterator().next();
@@ -228,7 +193,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	@Transactional
 	@Test
 	public void testNoRunningExecutions() {
-		Set<JobExecution> values = dao.findRunningJobExecutions("no-such-job");
+		Set<JobExecution> values = getJobExecutionDao().findRunningJobExecutions("no-such-job");
 		assertEquals(0, values.size());
 	}
 
@@ -241,15 +206,15 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		JobExecution exec = new JobExecution(jobInstance, jobParameters);
 		exec.setCreateTime(new Date(0));
 		exec.createStepExecution("step");
+		
+		getJobExecutionDao().saveJobExecution(exec);
 
-		dao.saveJobExecution(exec);
-
-		if (stepExecutionDao != null) {
+		if (getStepExecutionDao() != null) {
 			for (StepExecution stepExecution : exec.getStepExecutions()) {
-				stepExecutionDao.saveStepExecution(stepExecution);
+				getStepExecutionDao().saveStepExecution(stepExecution);
 			}
 		}
-		JobExecution value = dao.getJobExecution(exec.getId());
+		JobExecution value = getJobExecutionDao().getJobExecution(exec.getId());
 
 		assertEquals(exec, value);
 		// N.B. the job instance is not re-hydrated in the JDBC case...
@@ -261,7 +226,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	@Transactional
 	@Test
 	public void testGetMissingExecution() {
-		JobExecution value = dao.getJobExecution(54321L);
+		JobExecution value = getJobExecutionDao().getJobExecution(54321L);
 		assertNull(value);
 	}
 
@@ -277,7 +242,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 	public void testConcurrentModificationException() {
 
 		JobExecution exec1 = new JobExecution(jobInstance, jobParameters);
-		dao.saveJobExecution(exec1);
+		getJobExecutionDao().saveJobExecution(exec1);
 /*
 		JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
 		exec2.setId(exec1.getId());
@@ -286,12 +251,11 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		assertEquals((Integer) 0, exec1.getVersion());
 		assertEquals(exec1.getVersion(), exec2.getVersion());
 */
-		dao.updateJobExecution(exec1);
+		getJobExecutionDao().updateJobExecution(exec1);
 		assertEquals((Integer) 1, exec1.getVersion());
 		
 		//change the content of the JobExecution
-		DatabaseClient client = databaseClientProvider.getDatabaseClient();
-		ServerEvaluationCall theCall = client.newServerEval();
+		ServerEvaluationCall theCall = getClient().newServerEval();
 		String uri = "/projects.spring.io/spring-batch/" + exec1.getId().toString() + ".xml";
 		String query = "xdmp:document-insert('" + uri + "', <hello />)";
 		logger.info(query);
@@ -299,7 +263,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		theCall.eval();
 		
 		try {
-			dao.updateJobExecution(exec1);
+			getJobExecutionDao().updateJobExecution(exec1);
 			fail();
 		}
 		catch (OptimisticLockingFailureException e) {
@@ -317,7 +281,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 
 		JobExecution exec1 = new JobExecution(jobInstance, jobParameters);
 		exec1.setStatus(BatchStatus.STOPPING);
-		dao.saveJobExecution(exec1);
+		getJobExecutionDao().saveJobExecution(exec1);
 
 		JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
 		Assert.state(exec1.getId() != null);
@@ -327,8 +291,8 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		exec2.setVersion(7);
 		Assert.state(exec1.getVersion() != exec2.getVersion());
 		Assert.state(exec1.getStatus() != exec2.getStatus());
-
-		dao.synchronizeStatus(exec2);
+		
+		getJobExecutionDao().synchronizeStatus(exec2);
 
 		assertEquals(exec1.getVersion(), exec2.getVersion());
 		assertEquals(exec1.getStatus(), exec2.getStatus());
@@ -345,7 +309,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 
 		JobExecution exec1 = new JobExecution(jobInstance, jobParameters);
 		exec1.setStatus(BatchStatus.STARTED);
-		dao.saveJobExecution(exec1);
+		getJobExecutionDao().saveJobExecution(exec1);
 
 		JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
 		Assert.state(exec1.getId() != null);
@@ -355,8 +319,8 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringTest {
 		exec2.setVersion(7);
 		Assert.state(exec1.getVersion() != exec2.getVersion());
 		Assert.state(exec1.getStatus().isLessThan(exec2.getStatus()));
-
-		dao.synchronizeStatus(exec2);
+		
+		getJobExecutionDao().synchronizeStatus(exec2);
 
 		assertEquals(exec1.getVersion(), exec2.getVersion());
 		assertEquals(BatchStatus.UNKNOWN, exec2.getStatus());

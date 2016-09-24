@@ -1,45 +1,22 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import com.marklogic.junit.spring.AbstractSpringTest;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.marklogic.spring.batch.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.repository.dao.ExecutionContextDao;
-import org.springframework.batch.core.repository.dao.JobExecutionDao;
-import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { com.marklogic.spring.batch.core.repository.dao.MarkLogicDaoConfig.class, com.marklogic.client.spring.BasicConfig.class })
-public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
-	
-	@Autowired
-	private JobInstanceDao jobInstanceDao;
-
-	@Autowired
-	private JobExecutionDao jobExecutionDao;
-
-	@Autowired
-	private StepExecutionDao stepExecutionDao;
-
-	@Autowired
-	private ExecutionContextDao contextDao;
+public class MarkLogicExecutionContextDaoTests extends AbstractSpringBatchTest {
 
 	private JobExecution jobExecution;
 
@@ -47,49 +24,13 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 
 	@Before
 	public void setUp() {
-		jobInstanceDao = getJobInstanceDao();
-		jobExecutionDao = getJobExecutionDao();
-		stepExecutionDao = getStepExecutionDao();
-		contextDao = getExecutionContextDao();
-
-		JobInstance ji = jobInstanceDao.createJobInstance("testJob", new JobParameters());
+		initializeJobRepository();
+		JobInstance ji = getJobInstanceDao().createJobInstance("testJob", new JobParameters());
 		jobExecution = new JobExecution(ji, new JobParameters());
-		jobExecutionDao.saveJobExecution(jobExecution);
+		getJobExecutionDao().saveJobExecution(jobExecution);
 		stepExecution = new StepExecution("stepName", jobExecution);
-		stepExecutionDao.saveStepExecution(stepExecution);
+		getStepExecutionDao().saveStepExecution(stepExecution);
 
-	}
-
-	/**
-	 * @return Configured {@link ExecutionContextDao} implementation ready for
-	 * use.
-	 */
-	protected JobExecutionDao getJobExecutionDao() {
-		return this.jobExecutionDao;
-	}
-
-	/**
-	 * @return Configured {@link ExecutionContextDao} implementation ready for
-	 * use.
-	 */
-	protected JobInstanceDao getJobInstanceDao() {
-		return this.jobInstanceDao;
-	}
-
-	/**
-	 * @return Configured {@link ExecutionContextDao} implementation ready for
-	 * use.
-	 */
-	protected StepExecutionDao getStepExecutionDao() {
-		return this.stepExecutionDao;
-	}
-
-	/**
-	 * @return Configured {@link ExecutionContextDao} implementation ready for
-	 * use.
-	 */
-	protected ExecutionContextDao getExecutionContextDao() {
-		return this.contextDao;
 	}
 
 	@Transactional
@@ -98,9 +39,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 
 		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
-		contextDao.saveExecutionContext(jobExecution);
+		getExecutionContextDao().saveExecutionContext(jobExecution);
 
-		ExecutionContext retrieved = contextDao.getExecutionContext(jobExecution);
+		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(jobExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -110,9 +51,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 
 		List<StepExecution> stepExecutions = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
-			JobInstance ji = jobInstanceDao.createJobInstance("testJob" + i, new JobParameters());
+			JobInstance ji = getJobInstanceDao().createJobInstance("testJob" + i, new JobParameters());
 			JobExecution je = new JobExecution(ji, new JobParameters());
-			jobExecutionDao.saveJobExecution(je);
+			getJobExecutionDao().saveJobExecution(je);
 			StepExecution se = new StepExecution("step" + i, je);
 			se.setStatus(BatchStatus.STARTED);
 			se.setReadSkipCount(i);
@@ -126,11 +67,11 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 			se.setWriteCount(i);
 			stepExecutions.add(se);
 		}
-		stepExecutionDao.saveStepExecutions(stepExecutions);
-		contextDao.saveExecutionContexts(stepExecutions);
+		getStepExecutionDao().saveStepExecutions(stepExecutions);
+		getExecutionContextDao().saveExecutionContexts(stepExecutions);
 
 		for (int i = 0; i < 3; i++) {
-			ExecutionContext retrieved = contextDao.getExecutionContext(stepExecutions.get(i).getJobExecution());
+			ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecutions.get(i).getJobExecution());
 			assertEquals(stepExecutions.get(i).getExecutionContext(), retrieved);
 		}
 	}
@@ -138,13 +79,13 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 	@Transactional
 	@Test(expected = IllegalArgumentException.class)
 	public void testSaveNullExecutionContexts() {
-		contextDao.saveExecutionContexts(null);
+		getExecutionContextDao().saveExecutionContexts(null);
 	}
 
 	@Transactional
 	@Test
 	public void testSaveEmptyExecutionContexts() {
-		contextDao.saveExecutionContexts(new ArrayList<StepExecution>());
+		getExecutionContextDao().saveExecutionContexts(new ArrayList<StepExecution>());
 	}
 
 	@Transactional
@@ -153,9 +94,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 
 		ExecutionContext ctx = new ExecutionContext();
 		jobExecution.setExecutionContext(ctx);
-		contextDao.saveExecutionContext(jobExecution);
+		getExecutionContextDao().saveExecutionContext(jobExecution);
 
-		ExecutionContext retrieved = contextDao.getExecutionContext(jobExecution);
+		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(jobExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -166,12 +107,12 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 		ExecutionContext ctx = new ExecutionContext(Collections
 				.<String, Object> singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
-		contextDao.saveExecutionContext(jobExecution);
+		getExecutionContextDao().saveExecutionContext(jobExecution);
 
 		ctx.putLong("longKey", 7);
-		contextDao.updateExecutionContext(jobExecution);
+		getExecutionContextDao().updateExecutionContext(jobExecution);
 
-		ExecutionContext retrieved = contextDao.getExecutionContext(jobExecution);
+		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(jobExecution);
 		assertEquals(ctx, retrieved);
 		assertEquals(7, retrieved.getLong("longKey"));
 	}
@@ -182,9 +123,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 
 		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
-		contextDao.saveExecutionContext(stepExecution);
+		getExecutionContextDao().saveExecutionContext(stepExecution);
 
-		ExecutionContext retrieved = contextDao.getExecutionContext(stepExecution);
+		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -194,9 +135,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 
 		ExecutionContext ctx = new ExecutionContext();
 		stepExecution.setExecutionContext(ctx);
-		contextDao.saveExecutionContext(stepExecution);
+		getExecutionContextDao().saveExecutionContext(stepExecution);
 
-		ExecutionContext retrieved = contextDao.getExecutionContext(stepExecution);
+		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -206,12 +147,12 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 
 		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
-		contextDao.saveExecutionContext(stepExecution);
+		getExecutionContextDao().saveExecutionContext(stepExecution);
 
 		ctx.putLong("longKey", 7);
-		contextDao.updateExecutionContext(stepExecution);
+		getExecutionContextDao().updateExecutionContext(stepExecution);
 
-		ExecutionContext retrieved = contextDao.getExecutionContext(stepExecution);
+		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecution);
 		assertEquals(ctx, retrieved);
 		assertEquals(7, retrieved.getLong("longKey"));
 	}
@@ -223,8 +164,8 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringTest {
 		ExecutionContext ec = new ExecutionContext();
 		ec.put("intValue", 343232);
 		stepExecution.setExecutionContext(ec);
-		contextDao.saveExecutionContext(stepExecution);
-		ExecutionContext restoredEc = contextDao.getExecutionContext(stepExecution);
+		getExecutionContextDao().saveExecutionContext(stepExecution);
+		ExecutionContext restoredEc = getExecutionContextDao().getExecutionContext(stepExecution);
 		assertEquals(ec, restoredEc);
 	}
 
