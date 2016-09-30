@@ -21,6 +21,7 @@ import org.springframework.core.env.Environment;
  * The assumption is most MarkLogic Spring Batch config classes will need at least a JobBuilderFactory,
  * a StepBuilderFactory, and a DatabaseClient.
  */
+@Deprecated
 @EnableBatchProcessing
 public abstract class AbstractMarkLogicBatchConfig extends LoggingObject implements ApplicationContextAware {
 
