@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.test;
 
+import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
@@ -131,11 +132,11 @@ public abstract class AbstractJobTest extends AbstractSpringTest {
      */
     protected String[] getMlConnectionArgs() {
         ApplicationContext ctx = getApplicationContext();
-        BasicConfig config = ctx.getBean(BasicConfig.class);
-        String mlHost = config.getMlHost();
-        String mlUsername = config.getMlUsername();
-        String mlPassword = config.getMlPassword();
-        Integer port = config.getMlRestPort();
+        DatabaseClientConfig config = ctx.getBean(DatabaseClientConfig.class);
+        String mlHost = config.getHost();
+        String mlUsername = config.getUsername();
+        String mlPassword = config.getPassword();
+        Integer port = config.getPort();
         try {
             BasicTestConfig testConfig = ctx.getBean(BasicTestConfig.class);
             port = testConfig.getMlTestRestPort();

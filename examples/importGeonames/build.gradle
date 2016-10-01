@@ -1,9 +1,9 @@
-ext {
-    artifactId = "marklogic-spring-batch-geonames"
+test {
+    systemProperty "job.home", examplesDir
 }
 
-/*
 
+/*
 gradle -PmlHost=localhost -PmlPort=8888 -PmlUsename=username -PmlPassword=password importGeonames
  */
 task importGeonames(type: org.gradle.api.tasks.JavaExec) {
