@@ -14,7 +14,7 @@ test {
 
 distributions {
     main {
-        baseName = 'entityEnrichment'
+        baseName = 'importGeonames'
     }
 }
 

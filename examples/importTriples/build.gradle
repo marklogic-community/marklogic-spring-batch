@@ -1,12 +1,33 @@
+plugins {
+    id "java"
+    id "application"
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
 test {
     systemProperty "job.home", examplesDir
+}
+
+distributions {
+    main {
+        baseName = 'importTripes'
+    }
 }
 
 ext {
     artifactId = "importTriples"
 }
 
+mainClassName = "com.marklogic.spring.batch.Main"
+
 dependencies {
+
+    compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
 
     // For importing RDF
     compile('org.apache.jena:jena-arq:2.13.0') {
