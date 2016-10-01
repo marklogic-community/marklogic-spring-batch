@@ -14,7 +14,7 @@ test {
 
 distributions {
     main {
-        baseName = 'importTripes'
+        baseName = 'importTriples'
     }
 }
 

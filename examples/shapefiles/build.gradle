@@ -1,11 +1,33 @@
-ext {
-    artifactId = "marklogic-spring-batch-shapefiles"
+plugins {
+    id "java"
+    id "application"
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
 }
 
 test {
     systemProperty "job.home", examplesDir
 }
 
+distributions {
+    main {
+        baseName = 'shapefiles'
+    }
+}
+
+mainClassName = "com.marklogic.spring.batch.Main"
+
+ext {
+    artifactId = "marklogic-spring-batch-shapefiles"
+}
+
 dependencies {
     compile "org.apache.httpcomponents:httpmime:4.5.2"
+    compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
 }
+
+
