@@ -8,6 +8,10 @@ plugins {
     id "application"
 }
 
+test {
+    systemProperty "job.home", examplesDir
+}
+
 repositories {
     jcenter()
     maven {
@@ -17,12 +21,11 @@ repositories {
 }
 
 dependencies {
+    compile "com.marklogic:ml-app-deployer:2.3.0"
     compile "com.marklogic:java-client-api:4.0.0-EA3"
     compile "com.marklogic:data-movement:1.0.0-EA3"
     compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
-    compile "com.marklogic:ml-javaclient-util:2.9.1"
-    compile "com.marklogic:ml-app-deployer:2.3.0"
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.6.0"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
 }
 
 distributions {

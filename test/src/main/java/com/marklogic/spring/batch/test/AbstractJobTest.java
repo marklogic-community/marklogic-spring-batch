@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.test;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
-import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.junit.spring.BasicTestConfig;
