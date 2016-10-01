@@ -7,7 +7,6 @@ import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentCollections;
 import com.marklogic.client.io.DocumentMetadataHandle.DocumentPermissions;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
 import com.marklogic.spring.batch.config.sql.user.User;
 import com.marklogic.spring.batch.config.sql.user.UserRowMapper;
 import com.marklogic.spring.batch.config.sql.user.UserWriter;
