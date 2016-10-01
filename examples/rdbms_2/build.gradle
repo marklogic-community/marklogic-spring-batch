@@ -1,10 +1,10 @@
-/*
-This base gradle file imports the latest MarkLogic Spring Batch Core and Test libraries that are published to jCenter.
- */
-
 plugins {
     id "java"
     id "application"
+}
+
+test {
+    systemProperty "job.home", examplesDir
 }
 
 repositories {
@@ -27,7 +27,7 @@ dependencies {
 
 distributions {
     main {
-        baseName = artifactId
+        baseName = "rdbms2"
     }
 }
 
@@ -42,7 +42,7 @@ task runManager(type: JavaExec) {
             "--user", "SA"
     ]
 }
-
+/*
 task importInvoices(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.marklogic.spring.batch.Main"
@@ -57,3 +57,4 @@ task importInvoices(type: JavaExec) {
             "--jdbc_username", "sa",
     ]
 }
+*/

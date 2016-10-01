@@ -4,6 +4,10 @@ plugins {
     id "application"
 }
 
+test {
+    systemProperty "job.home", examplesDir
+}
+
 repositories {
     jcenter()
     maven {
