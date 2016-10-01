@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.test;
 
-import com.marklogic.client.spring.BasicConfig;
+import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.junit.spring.BasicTestConfig;
@@ -10,6 +10,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
  * so that it knows what ML connection arguments to construct. If you don't use either of those,
  * you'll need to override the getMlConnectionArgs method.
  */
+@ContextConfiguration(classes = {JobProjectTestConfig.class})
 public abstract class AbstractJobTest extends AbstractSpringTest {
 
     @Override
@@ -131,11 +133,11 @@ public abstract class AbstractJobTest extends AbstractSpringTest {
      */
     protected String[] getMlConnectionArgs() {
         ApplicationContext ctx = getApplicationContext();
-        BasicConfig config = ctx.getBean(BasicConfig.class);
-        String mlHost = config.getMlHost();
-        String mlUsername = config.getMlUsername();
-        String mlPassword = config.getMlPassword();
-        Integer port = config.getMlRestPort();
+        DatabaseClientConfig config = ctx.getBean(DatabaseClientConfig.class);
+        String mlHost = config.getHost();
+        String mlUsername = config.getUsername();
+        String mlPassword = config.getPassword();
+        Integer port = config.getPort();
         try {
             BasicTestConfig testConfig = ctx.getBean(BasicTestConfig.class);
             port = testConfig.getMlTestRestPort();

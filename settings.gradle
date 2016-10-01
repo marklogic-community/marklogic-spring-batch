@@ -1,8 +1,2 @@
 include "core"
 include "test"
-include "examples:file-importers"
-include "examples:importDocuments"
-include "examples:importTriples"
-include "examples:importGeonames"
-include "examples:shapefiles"
-include "examples:sql"

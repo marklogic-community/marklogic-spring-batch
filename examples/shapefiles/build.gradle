@@ -1,3 +1,9 @@
+distributions {
+    main {
+        baseName = 'shapefiles'
+    }
+}
+
 ext {
     artifactId = "marklogic-spring-batch-shapefiles"
 }
@@ -5,3 +11,5 @@ ext {
 dependencies {
     compile "org.apache.httpcomponents:httpmime:4.5.2"
 }
+
+

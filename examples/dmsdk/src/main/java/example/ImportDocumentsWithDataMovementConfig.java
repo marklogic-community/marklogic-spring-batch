@@ -30,7 +30,7 @@ import java.util.UUID;
 public class ImportDocumentsWithDataMovementConfig implements EnvironmentAware {
     
     private Environment env;
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(ImportDocumentsWithDataMovementConfig.class);
     private final String JOB_NAME = "importDocumentsWithDataMovementSdk";
     
     @Bean

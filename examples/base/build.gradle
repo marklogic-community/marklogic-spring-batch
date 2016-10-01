@@ -3,9 +3,12 @@ This base gradle file imports the latest MarkLogic Spring Batch Core and Test li
  */
 
 plugins {
-    id "com.marklogic.ml-gradle" version "2.3.4"
     id "java"
     id "application"
+}
+
+test {
+    systemProperty "job.home", examplesDir
 }
 
 repositories {
@@ -17,7 +20,6 @@ dependencies {
     compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
     compile "com.marklogic:ml-javaclient-util:2.9.1"
     testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
-
 }
 
 distributions {
@@ -27,3 +29,16 @@ distributions {
 }
 
 mainClassName = "com.marklogic.spring.batch.Main"
+
+task runBaseJob(type: org.gradle.api.tasks.JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+            "--host", "localhost",
+            "--port", "8200",
+            "--username", "admin",
+            "--password", "admin",
+            "--config", "example.YourJobConfig",
+            "--output_collections", "yourJob"
+    ]
+}

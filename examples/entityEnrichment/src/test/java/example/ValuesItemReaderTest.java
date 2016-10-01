@@ -9,11 +9,12 @@ import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.junit.spring.BasicTestConfig;
+import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = { BasicConfig.class } )
+@ContextConfiguration(classes = { JobProjectTestConfig.class } )
 public class ValuesItemReaderTest extends AbstractSpringTest {
 
     private ValuesItemReader reader;

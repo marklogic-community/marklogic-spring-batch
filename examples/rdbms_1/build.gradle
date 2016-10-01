@@ -1,24 +1,12 @@
-plugins {
-    id "application"
-}
-
-repositories {
-    jcenter()
-    mavenLocal()
-}
-
 dependencies {
-    runtime "com.marklogic:marklogic-spring-batch-sql:0.6.1"
     runtime "org.hsqldb:hsqldb:2.3.4"
 }
 
 distributions {
     main {
-        baseName = artifactId
+        baseName = "invoices"
     }
 }
-
-mainClassName = "com.marklogic.spring.batch.Main"
 
 task runManager(type: JavaExec) {
     classpath = configurations.runtime
@@ -34,10 +22,10 @@ task importInvoices(type: JavaExec) {
     classpath = configurations.runtime
     main = "com.marklogic.spring.batch.Main"
     args = [
-        "--host", mlHost,
-        "--port", mlPort,
-        "--username", mlUsername,
-        "--password", mlPassword,
+        "--host", "localhost",
+        "--port", "8200",
+        "--username", "admin",
+        "--password", "admin",
         "--config", "com.marklogic.spring.batch.config.MigrateColumnMapsConfig",
         "--jdbc_driver", "org.hsqldb.jdbc.JDBCDriver",
         "--jdbc_url", "jdbc:hsqldb:file:data\\invoices",
