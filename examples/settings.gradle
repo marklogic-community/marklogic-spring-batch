@@ -1,8 +1,10 @@
 include "base"
 include "dmsdk"
 include "entityEnrichment"
+include "file-importers"
 include "importBinaries"
 include "importDocuments"
+include "importGeonames"
 include "rdbms_1"
 include "rdbms_2"
 
