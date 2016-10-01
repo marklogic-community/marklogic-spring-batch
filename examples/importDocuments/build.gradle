@@ -1,5 +1,19 @@
+plugins {
+    id "com.marklogic.ml-gradle" version "2.3.4"
+    id "java"
+    id "application"
+}
+
 ext {
     artifactId = "import-documents"
+}
+
+repositories {
+    jcenter()
+    maven {
+        url "http://developer.marklogic.com/maven2"
+    }
+    mavenLocal()
 }
 
 test {
@@ -9,4 +23,14 @@ test {
 dependencies {
     //for filtering out directories
     compile "commons-io:commons-io:2.5"
+    compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
 }
+
+distributions {
+    main {
+        baseName = 'importDocuments'
+    }
+}
+
+mainClassName = "com.marklogic.spring.batch.Main"

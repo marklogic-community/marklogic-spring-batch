@@ -3,4 +3,4 @@ include "dmsdk"
 include "rdbms_1"
 include "rdbms_2"
 include "importBinaries"
-
+include "importDocuments"
