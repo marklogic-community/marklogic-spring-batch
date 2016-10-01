@@ -2,6 +2,10 @@ ext {
     artifactId = "marklogic-spring-batch-shapefiles"
 }
 
+test {
+    systemProperty "job.home", examplesDir
+}
+
 dependencies {
     compile "org.apache.httpcomponents:httpmime:4.5.2"
 }
