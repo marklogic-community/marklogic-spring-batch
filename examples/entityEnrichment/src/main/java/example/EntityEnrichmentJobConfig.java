@@ -3,7 +3,6 @@ package example;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.query.CountedDistinctValue;
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
