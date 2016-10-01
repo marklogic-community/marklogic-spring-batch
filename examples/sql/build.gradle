@@ -1,25 +1,9 @@
-plugins {
-    id "java"
-    id "application"
-}
-
-repositories {
-    jcenter()
-    mavenLocal()
-}
-
 ext {
     artifactId = "marklogic-spring-batch-sql"
 }
 
-test {
-    systemProperty "job.home", examplesDir
-}
-
 dependencies {
     compile "org.json:json:20160212"
-    compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
 
     // For testing SQL readers with an embedded database
     testCompile "org.hsqldb:hsqldb:2.3.3"

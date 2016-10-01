@@ -1,37 +1,19 @@
-plugins {
-    id "java"
-    id "application"
-}
-
-test {
-    systemProperty "job.home", examplesDir
-}
-
-repositories {
-    jcenter()
-    mavenLocal()
-}
-
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
     compile "com.marklogic:ml-javaclient-util:2.9.1"
 
     // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
     compile "org.springframework:spring-jdbc:4.3.1.RELEASE"
 
     testCompile "org.hsqldb:hsqldb:2.3.4"
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
 
     runtime "org.hsqldb:hsqldb:2.3.4"
 }
 
 distributions {
     main {
-        baseName = "rdbms2"
+        baseName = "rdbms_2"
     }
 }
-
-mainClassName = "com.marklogic.spring.batch.Main"
 
 task runManager(type: JavaExec) {
     classpath = configurations.runtime
@@ -42,19 +24,19 @@ task runManager(type: JavaExec) {
             "--user", "SA"
     ]
 }
-/*
+
 task importInvoices(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.marklogic.spring.batch.Main"
     args = [
-            "--host", mlHost,
-            "--port", mlPort,
-            "--username", mlUsername,
-            "--password", mlPassword,
+            "--host", "localhost",
+            "--port", "8200",
+            "--username", "admin",
+            "--password", "admin",
             "--config", "example.ExtractInvoiceDataToMarkLogicConfig",
             "--jdbc_driver", "org.hsqldb.jdbc.JDBCDriver",
             "--jdbc_url", "jdbc:hsqldb:file:E:\\gitrepo\\marklogic-spring-batch\\examples\\rdbms_2\\data\\invoices",
             "--jdbc_username", "sa",
     ]
 }
-*/
+

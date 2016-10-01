@@ -1,37 +1,16 @@
 /*
-This requires MarkLogic 9
- */
-
-plugins {
-    id "com.marklogic.ml-gradle" version "2.3.4"
-    id "java"
-    id "application"
-}
-
-test {
-    systemProperty "job.home", examplesDir
-}
-
-repositories {
-    jcenter()
-    maven {
-        url "http://developer.marklogic.com/maven2"
-    }
-    mavenLocal()
-}
+ Refer to the build.gradle under ./examples for additional gradle build information
+ This job requires MarkLogic 9
+*/
 
 dependencies {
     compile "com.marklogic:ml-app-deployer:2.3.0"
     compile "com.marklogic:java-client-api:4.0.0-EA3"
     compile "com.marklogic:data-movement:1.0.0-EA3"
-    compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
 }
 
 distributions {
     main {
-        baseName = 'baseJob'
+        baseName = 'dmsdk'
     }
 }
-
-mainClassName = "com.marklogic.spring.batch.Main"
