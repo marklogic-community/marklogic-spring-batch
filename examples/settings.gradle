@@ -1,6 +1,8 @@
 include "base"
 include "dmsdk"
-include "rdbms_1"
-include "rdbms_2"
+include "entityEnrichment"
 include "importBinaries"
 include "importDocuments"
+include "rdbms_1"
+include "rdbms_2"
+

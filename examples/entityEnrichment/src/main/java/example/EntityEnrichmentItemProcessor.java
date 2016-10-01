@@ -1,7 +1,6 @@
 package example;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.CountedDistinctValue;

@@ -4,16 +4,11 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.Fragment;
-import com.marklogic.junit.spring.BasicTestConfig;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
 
-
-@ContextConfiguration(classes = { BasicConfig.class } )
 public class EntityEnrichmentJobConfigTest extends AbstractJobTest {
     
     XMLDocumentManager docMgr;

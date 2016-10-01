@@ -7,6 +7,7 @@ import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.junit.spring.BasicTestConfig;
+import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextConfiguration(classes = { BasicConfig.class } )
+@ContextConfiguration(classes = { JobProjectTestConfig.class } )
 public class MarkLogicPatchItemWriterTest extends AbstractSpringTest {
     
     XMLDocumentManager docMgr;
