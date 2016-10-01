@@ -1,27 +1,29 @@
 package com.marklogic.spring.batch.geonames;
 
 import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.MarkLogicItemWriter;
 import joptsimple.OptionParser;
 import org.geonames.Geoname;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 
-@Configuration
-public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer{
+@EnableBatchProcessing
+public class IngestGeonamesToMarkLogicConfig implements OptionParserConfigurer{
 
     @Override
     public void configureOptionParser(OptionParser parser) {
@@ -29,7 +31,7 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
     }
 
     @Bean
-    public Job job(@Qualifier("ingestGeonamesStep1") Step step1) {
+    public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("ingestGeonamesStep1") Step step1) {
         return jobBuilderFactory.get("ingestGeonames").start(step1).build();
     }
 
@@ -42,7 +44,10 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
      */
     @Bean
     @JobScope
-    protected Step ingestGeonamesStep1(@Value("#{jobParameters['input_file_path']}") String inputFilePath) {
+    protected Step ingestGeonamesStep1(
+            StepBuilderFactory stepBuilderFactory,
+            DatabaseClientProvider databaseClientProvider,
+            @Value("#{jobParameters['input_file_path']}") String inputFilePath) {
         FlatFileItemReader<Geoname> reader = new FlatFileItemReader<>();
         reader.setResource(new FileSystemResource(inputFilePath));
         DefaultLineMapper<Geoname> mapper = new DefaultLineMapper<>();
@@ -56,10 +61,10 @@ public class IngestGeonamesToMarkLogicConfig extends AbstractMarkLogicBatchConfi
         taskExecutor.setConcurrencyLimit(2);
 
         return stepBuilderFactory.get("step1")
-                .<Geoname, DocumentWriteOperation>chunk(getChunkSize())
+                .<Geoname, DocumentWriteOperation>chunk(10)
                 .reader(reader)
                 .processor(new GeonamesItemProcessor())
-                .writer(new MarkLogicItemWriter(getDatabaseClient()))
+                .writer(new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient()))
                 .taskExecutor(taskExecutor)
                 .build();
     }
