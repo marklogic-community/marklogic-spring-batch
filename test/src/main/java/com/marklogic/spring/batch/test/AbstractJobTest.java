@@ -11,6 +11,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
  * so that it knows what ML connection arguments to construct. If you don't use either of those,
  * you'll need to override the getMlConnectionArgs method.
  */
+@ContextConfiguration(classes = {JobProjectTestConfig.class})
 public abstract class AbstractJobTest extends AbstractSpringTest {
 
     @Override

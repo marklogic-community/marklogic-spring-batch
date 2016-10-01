@@ -1,13 +1,12 @@
 package example;
 
-import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.spring.batch.test.AbstractJobTest;
+import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {BasicConfig.class})
 public class YourJobTest extends AbstractJobTest {
 
     private ClientTestHelper client;
