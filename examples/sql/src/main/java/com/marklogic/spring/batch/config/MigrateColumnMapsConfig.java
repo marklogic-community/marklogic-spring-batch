@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.columnmap.JsonColumnMapSerializer;
 import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
@@ -8,13 +9,15 @@ import com.marklogic.spring.batch.item.ColumnMapItemWriter;
 import joptsimple.OptionParser;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -25,8 +28,8 @@ import java.util.Map;
 /**
  * Configuration for a simple approach for migrating rows to documents via Spring JDBC ColumnMaps.
  */
-@Configuration
-public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implements OptionParserConfigurer {
+@EnableBatchProcessing
+public class MigrateColumnMapsConfig implements OptionParserConfigurer {
 
     @Autowired
     private Environment env;
@@ -40,13 +43,15 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
     }
 
     @Bean
-    public Job job(@Qualifier("step1") Step step1) {
+    public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("step1") Step step1) {
         return jobBuilderFactory.get("migrateRowsViaColumnMapsConfig").start(step1).build();
     }
 
     @Bean
     @JobScope
     public Step step1(
+            StepBuilderFactory stepBuilderFactory,
+            DatabaseClientProvider databaseClientProvider,
             @Value("#{jobParameters['sql']}") String sql,
             @Value("#{jobParameters['format']}") String format,
             @Value("#{jobParameters['root_local_name']}") String rootLocalName,
@@ -59,7 +64,7 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
         reader.setRowMapper(new ColumnMapRowMapper());
         reader.setSql(sql);
 
-        ColumnMapItemWriter writer = new ColumnMapItemWriter(getDatabaseClient(), rootLocalName);
+        ColumnMapItemWriter writer = new ColumnMapItemWriter(databaseClientProvider.getDatabaseClient(), rootLocalName);
         if (collections == null || collections.length == 0) {
             String[] coll = {rootLocalName};
             writer.setCollections(coll);
@@ -71,7 +76,7 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
         }
 
         return stepBuilderFactory.get("step1")
-                .<Map<String, Object>, Map<String, Object>>chunk(getChunkSize())
+                .<Map<String, Object>, Map<String, Object>>chunk(10)
                 .reader(reader)
                 .processor(new PathAwareColumnMapProcessor())
                 .writer(writer)
@@ -82,7 +87,7 @@ public class MigrateColumnMapsConfig extends AbstractMarkLogicBatchConfig implem
      * Protected so that a different data source can be used.
      */
     protected DataSource buildDataSource() {
-        logger.info("Creating simple data source based on JDBC connection options");
+        //logger.info("Creating simple data source based on JDBC connection options");
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName(env.getProperty(Options.JDBC_DRIVER));
         ds.setUrl(env.getProperty(Options.JDBC_URL));

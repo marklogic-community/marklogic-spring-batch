@@ -1,10 +1,13 @@
 package com.marklogic.spring.batch.shapefile;
 
-import com.marklogic.spring.batch.config.AbstractMarkLogicBatchConfig;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.item.reader.DirectoryReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,16 +18,19 @@ import java.io.File;
  * This is fairly minimal so far. Possible improvements - allow for separate collections and permissions for the
  * shapefile ZIP and JSON files; provide support for command-line ogr2ogr; allow for customization of the URIs.
  */
-public class ImportShapefilesConfig extends AbstractMarkLogicBatchConfig {
+@EnableBatchProcessing
+public class ImportShapefilesConfig {
 
     @Bean
-    public Job job(@Qualifier("step1") Step step1) {
+    public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("step1") Step step1) {
         return jobBuilderFactory.get("importShapefilesJob").start(step1).build();
     }
 
     @Bean
     @JobScope
     protected Step step1(
+            StepBuilderFactory stepBuilderFactory,
+            DatabaseClientProvider databaseClientProvider,
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['ogre_url']}") String ogreUrl,
             @Value("#{jobParameters['output_collections']}") String[] collections,
@@ -32,12 +38,12 @@ public class ImportShapefilesConfig extends AbstractMarkLogicBatchConfig {
 
         DirectoryReader reader = new DirectoryReader(new File(inputFilePath));
 
-        ShapefileAndJsonWriter writer = new ShapefileAndJsonWriter(getDatabaseClient());
+        ShapefileAndJsonWriter writer = new ShapefileAndJsonWriter(databaseClientProvider.getDatabaseClient());
         writer.setPermissions(permissions);
         writer.setCollections(collections);
 
         return stepBuilderFactory.get("step1")
-                .<File, ShapefileAndJson>chunk(getChunkSize())
+                .<File, ShapefileAndJson>chunk(10)
                 .reader(reader)
                 .processor(shapefileProcessor(ogreUrl))
                 .writer(writer)

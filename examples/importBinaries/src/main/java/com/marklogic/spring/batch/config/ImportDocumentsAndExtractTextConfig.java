@@ -1,6 +1,8 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.MarkLogicWriteHandle;
@@ -11,7 +13,10 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,20 +30,21 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 
-/**
- * TODO Is this needed when we have ImportDocumentsFromDirectoryConfig? This seemingly should at least
- * be renamed to capture its scope, which is to use Apache Tika to process documents.
- */
-public class LoadDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
+@EnableBatchProcessing
+public class ImportDocumentsAndExtractTextConfig {
 
     @Bean
-    public Job loadDocumentsFromDirectoryJob(@Qualifier("loadDocumentsFromDirectoryJobStep1") Step step) {
+    public Job loadDocumentsFromDirectoryJob(
+        JobBuilderFactory jobBuilderFactory,
+        @Qualifier("loadDocumentsFromDirectoryJobStep1") Step step) {
         return jobBuilderFactory.get("loadImagesFromDirectoryJob").start(step).build();
     }
 
     @Bean
     @JobScope
     public Step loadDocumentsFromDirectoryJobStep1(
+            StepBuilderFactory stepBuilderFactory,
+            DatabaseClientProvider databaseClientProvider,
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern) {
 
@@ -58,10 +64,10 @@ public class LoadDocumentsFromDirectoryConfig extends AbstractMarkLogicBatchConf
         };
 
         return stepBuilderFactory.get("step1")
-                .<Resource, DocumentWriteOperation>chunk(getChunkSize())
+                .<Resource, DocumentWriteOperation>chunk(10)
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
-                .writer(new MarkLogicItemWriter(getDatabaseClient()))
+                .writer(new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient()))
                 .build();
     }
 }
