@@ -19,6 +19,11 @@ subprojects {
         mavenLocal()
     }
 
+    dependencies {
+        compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+        compile "com.marklogic:ml-javaclient-util:2.10.0-alpha"
+    }
+
     task wrapper(type: Wrapper) {
         gradleVersion = '3.1'
     }
@@ -61,15 +66,19 @@ subprojects {
     }
 }
 
+project(':core') {
+    task testExamples(type: GradleBuild) {
+        buildFile = '../examples/build.gradle'
+        tasks = [ 'test' ]
+    }
+
+    test.dependsOn testExamples
+}
+
 project(':test') {
     dependencies {
         compile project(':core')
     }
 }
 
-task testExamples(type: GradleBuild) {
-    buildFile = 'examples/build.gradle'
-    tasks = [ 'test' ]
-}
 
-task testAll(dependsOn:[':core:test', 'testExamples'] )

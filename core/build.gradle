@@ -5,8 +5,6 @@ plugins {
 
 dependencies {
     compile "com.marklogic:java-client-api:4.0.0-EA3"
-    compile "com.marklogic:ml-javaclient-util:2.10.0-alpha"
-    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
     // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
     compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
 
