@@ -5,10 +5,12 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CorbJobTest extends AbstractFileImportTest {
 
+    @Ignore
     @Test
     public void runCorbJobTest() {
         givenATestDocument();

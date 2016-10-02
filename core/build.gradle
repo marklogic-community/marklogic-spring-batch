@@ -1,51 +1,46 @@
 plugins {
-    id "com.marklogic.ml-gradle" version "2.3.3"
-    id "com.jfrog.bintray" version "1.6"
-}
-
-if (System.getProperty("user.dir").endsWith("jobs")) {
-    project.ext.smartModulePaths = ["../marklogic-spring-batch-core/src/test/ml-modules"]
-} else if (System.getProperty("user.dir").endsWith("marklogic-spring-batch")) {
-    project.ext.smartModulePaths = ["marklogic-spring-batch-core/src/test/ml-modules"]
-} else {
-    project.ext.smartModulePaths = ["src/test/ml-modules"]
-}
-
-ext {
-    mlAppConfig {
-        modulePaths = smartModulePaths
-        createTriggersDatabase = false
-    }
+    id "com.jfrog.bintray" version "1.7.1"
+    id "com.marklogic.ml-gradle" version "2.3.4"
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'lib')
-    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-
+    compile "com.marklogic:java-client-api:4.0.0-EA3"
     // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
     compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
 
     // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
     compile "org.springframework:spring-oxm:4.2.6.RELEASE"
 
-    compile("com.marklogic:ml-javaclient-util:2.9.1") {
-  	  exclude group: 'com.marklogic.java-client', module: 'client-api-java'
-    }
-
     // For deploying the ML Job Repo
-    compile "com.marklogic:ml-app-deployer:2.2.0"
+    compile "com.marklogic:ml-app-deployer:2.3.0"
 
     // For the CLI
     compile "net.sf.jopt-simple:jopt-simple:5.0.1"
 
     testCompile "com.marklogic:ml-junit:2.6.0"
+
+    runtime "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+
+    //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
+    runtime "com.marklogic:ml-javaclient-util:2.10.0-alpha"
+
+    //Main depends on joptsimple.OptionParser;
+    runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
+
+    runtime "org.springframework:spring-jdbc:4.2.6.RELEASE"
 }
 
 jar {
     manifest {
         attributes(
-            'Main-Class': 'com.marklogic.spring.batch.Main'
+                'Main-Class': 'com.marklogic.spring.batch.Main'
         )
+    }
+}
+
+ext {
+    mlAppConfig {
+        createTriggersDatabase = false
     }
 }
 

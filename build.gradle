@@ -1,9 +1,3 @@
-allprojects {
-    task wrapper(type: Wrapper) {
-        gradleVersion = '3.1'
-    }
-}
-
 subprojects {
     /*
      * Not applying the bintray plugin. Couldn't get it working properly when declared
@@ -16,12 +10,22 @@ subprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: "checkstyle"
+    apply plugin: "maven-publish"
 
     repositories {
         jcenter()
         maven { url "http://repo.spring.io/milestone" }
         maven { url "http://developer.marklogic.com/maven2/" }
         mavenLocal()
+    }
+
+    dependencies {
+        compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+        compile "com.marklogic:ml-javaclient-util:2.10.0-alpha"
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.1'
     }
 
     sourceCompatibility = 1.8
@@ -33,10 +37,6 @@ subprojects {
         configFile = file("${project.rootDir}/dev-tools/checkstyle/checkstyle.xml")
         toolVersion = '6.19'
     }
-}
-
-configure(subprojects.findAll {it.name != 'examples'}) {
-    apply plugin: "maven-publish"
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         baseName = artifactId
@@ -66,23 +66,13 @@ configure(subprojects.findAll {it.name != 'examples'}) {
     }
 }
 
-/**
- * Include every project that you want to be part of the msb application.
- */
 project(':core') {
-    dependencies {
-        runtime "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-
-        runtime fileTree(include: ['*.jar'], dir: 'lib')
-
-        //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
-        runtime "com.marklogic:ml-javaclient-util:2.9.1"
-
-        //Main depends on joptsimple.OptionParser;
-        runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
-
-        runtime "org.springframework:spring-jdbc:4.2.6.RELEASE"
+    task testExamples(type: GradleBuild) {
+        buildFile = '../examples/build.gradle'
+        tasks = [ 'test' ]
     }
+
+    test.dependsOn testExamples
 }
 
 project(':test') {
@@ -91,20 +81,4 @@ project(':test') {
     }
 }
 
-configure(subprojects.findAll {it.name != 'core' && it.name != "test"}) {
 
-    apply plugin: "application"
-    mainClassName = "com.marklogic.spring.batch.Main"
-
-    dependencies {
-        compile project(':core')
-        testCompile project(':test')
-    }
-}
-
-task testExamples(type: GradleBuild) {
-    buildFile = 'examples/build.gradle'
-    tasks = [ 'test' ]
-}
-
-task testAll(dependsOn:[':core:test', 'testExamples'] )
