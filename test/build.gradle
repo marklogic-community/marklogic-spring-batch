@@ -1,5 +1,5 @@
 plugins {
-    id "com.jfrog.bintray" version "1.6"
+    id "com.jfrog.bintray" version "1.7.1"
 }
 
 ext {
@@ -7,7 +7,6 @@ ext {
 }
 
 dependencies {
-    compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
     compile "com.marklogic:ml-junit:2.6.0"
 }
 

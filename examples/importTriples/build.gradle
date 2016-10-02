@@ -1,5 +1,7 @@
-plugins {
-    id "com.jfrog.bintray" version "1.6"
+distributions {
+    main {
+        baseName = 'importTriples'
+    }
 }
 
 ext {
@@ -7,7 +9,6 @@ ext {
 }
 
 dependencies {
-
     // For importing RDF
     compile('org.apache.jena:jena-arq:2.13.0') {
         exclude(group: 'org.slf4j')
@@ -27,23 +28,5 @@ dependencies {
         exclude(group: 'org.slf4j')
         exclude(group: 'log4j')
         exclude(group: 'ch.qos.logback')
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
-    publications = [bintrayPublicationName]
-    pkg {
-        repo = bintrayRepo
-        name = artifactId
-        userOrg = bintrayUserOrg
-        licenses = [bintrayLicense]
-        vcsUrl = bintrayVcsUrl
-        version {
-            name = project.version
-            released = new Date()
-            vcsTag = project.version
-        }
     }
 }

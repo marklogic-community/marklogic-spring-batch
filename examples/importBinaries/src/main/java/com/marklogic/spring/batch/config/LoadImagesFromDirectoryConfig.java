@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.MarkLogicWriteHandle;
@@ -11,7 +12,10 @@ import org.apache.tika.parser.jpeg.JpegParser;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,16 +29,21 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 
-public class LoadImagesFromDirectoryConfig extends AbstractMarkLogicBatchConfig {
+@EnableBatchProcessing
+public class LoadImagesFromDirectoryConfig {
 
     @Bean
-    public Job loadImagesFromDirectoryJob(@Qualifier("loadImagesFromDirectoryJobStep1") Step step1) {
+    public Job loadImagesFromDirectoryJob(
+        JobBuilderFactory jobBuilderFactory,
+        @Qualifier("loadImagesFromDirectoryJobStep1") Step step1) {
         return jobBuilderFactory.get("loadImagesFromDirectoryJob").start(step1).build();
     }
 
     @Bean
     @JobScope
     public Step loadImagesFromDirectoryJobStep1(
+            StepBuilderFactory stepBuilderFactory,
+            DatabaseClientProvider databaseClientProvider,
             @Value("#{jobParameters['input_file_path']}") String inputFilePath,
             @Value("#{jobParameters['input_file_pattern']}") String inputFilePattern) {
 
@@ -59,10 +68,10 @@ public class LoadImagesFromDirectoryConfig extends AbstractMarkLogicBatchConfig 
         };
 
         return stepBuilderFactory.get("step1")
-                .<Resource, DocumentWriteOperation>chunk(getChunkSize())
+                .<Resource, DocumentWriteOperation>chunk(10)
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
                 .processor(processor)
-                .writer(new MarkLogicItemWriter(getDatabaseClient()))
+                .writer(new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient()))
                 .build();
     }
 }

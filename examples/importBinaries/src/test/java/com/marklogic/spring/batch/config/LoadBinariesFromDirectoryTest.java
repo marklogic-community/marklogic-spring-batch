@@ -22,7 +22,7 @@ public class LoadBinariesFromDirectoryTest extends AbstractFileImportTest {
 
     @Test
     public void importOneDocxTest() {
-        runJob(LoadDocumentsFromDirectoryConfig.class,
+        runJob(ImportDocumentsAndExtractTextConfig.class,
                 "--input_file_path", "src/test/resources/binary/*.docx");
         XMLDocumentManager docMgr = getClient().newXMLDocumentManager();
         StringHandle handle = new StringHandle();

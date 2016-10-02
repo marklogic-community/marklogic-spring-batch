@@ -14,3 +14,11 @@ Execute your Java unit tests
 The following Gradle command will create an executable under install/distributions that can be used to initialize the batch processing program 
    
     gradle distZip
+    
+You can also test the execution of your job.  First install your job with the following gradle call.    
+
+    gradle installDist
+
+Next call the generated start script and pass the necessary parameters.  
+
+    $PROJECT_HOME\examples\base\build\install\baseJob\bin\base.bat --config example.YourJobConfig --host oscar --port 8200 --username admin --password admin --output_collections monster123 

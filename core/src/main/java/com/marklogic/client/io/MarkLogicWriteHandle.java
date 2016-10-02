@@ -53,4 +53,9 @@ public class MarkLogicWriteHandle implements DocumentWriteOperation {
     public AbstractWriteHandle getContent() {
         return handle;
     }
+    
+    @Override
+    public String getTemporalDocumentURI() {
+        return null;
+    }
 }

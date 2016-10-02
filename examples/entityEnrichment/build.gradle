@@ -1,27 +1,9 @@
-plugins {
-    id "com.marklogic.ml-gradle" version "2.3.3"
-    id "java"
-    id "application"
-}
-
-repositories {
-    jcenter()
-    mavenLocal()
-}
-
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.6.0"
-    compile "com.marklogic:ml-javaclient-util:2.9.1"
     compile "org.apache.opennlp:opennlp-tools:1.6.0"
-
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.6.0"
-
 }
 
 distributions {
     main {
-        baseName = 'baseJob'
+        baseName = 'entityEnrichment'
     }
 }
-
-mainClassName = "com.marklogic.spring.batch.Main"
