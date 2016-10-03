@@ -1,3 +1,4 @@
+
 subprojects {
     /*
      * Not applying the bintray plugin. Couldn't get it working properly when declared
