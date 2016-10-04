@@ -53,17 +53,29 @@ The gradlew (or gradlew.bat on Windows) command is a Java program called the [Gr
 
 Check the following properties file to see if there is any conflicts with your existing system.
 
-    $PROJET_ROOT/core/gradle.properties
+    $PROJECT_ROOT/core/gradle.properties
+
+The gradle.properties file indicates where to deploy a test database to test the core unit test.  The job.properties are used for testing the examples.  
 
 From the project root, run the following command.  This will create a test database that is configured as a MarkLogic Job Repository.  
 
     gradlew :core:mlDeploy
 
-Run the automated unit tests from the project root
+## Set your environment variables for running the examples
+
+Every example under the examples project relies on a properties file called job.properties that indicates the connection information for your MarkLogic database.  The default job.properties can be found for the project in the following location. 
+
+    $PROJECT_ROOT/examples/job.properties
+
+The directory location for the job.properties is indicated in the environment variable _job.home_.  Make sure that this environment variable (job.home) is set before running any of the example tests.  
+
+To execute all of the automated unit tests, from the project root, run the following command.  
 
 ```
 gradlew test
 ```
+
+This will execute all the core and examples testing.  
 
 The policy is the dev branch tests are 100% passing.  If all tests run to completion and 100% passing then you are ready to start commiting code.    
 
