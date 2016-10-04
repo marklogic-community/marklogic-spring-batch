@@ -1,14 +1,10 @@
 /*
-This base gradle file imports the latest MarkLogic Spring Batch Core and Test libraries that are published to jCenter.
+This base gradle file imports the latest MarkLogic Spring Batch Core and Test libraries that are published to jCenter.  Make sure that the job.home environment variable is set.
  */
 
 plugins {
     id "java"
     id "application"
-}
-
-test {
-    systemProperty "job.home", examplesDir
 }
 
 repositories {
@@ -17,9 +13,9 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
+    compile "com.marklogic:marklogic-spring-batch-core:0.7.2"
     compile "com.marklogic:ml-javaclient-util:2.9.1"
-    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.2"
 }
 
 distributions {

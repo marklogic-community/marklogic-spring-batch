@@ -2,10 +2,12 @@ subprojects {
     apply plugin: "java"
     apply plugin: "application"
 
+/*
+// The job.home environment variable is assumed to be predefined.  Otherwise, you can uncomment this section and set the examplesDir variable in the gradle.properties file.
     test {
         systemProperty "job.home", examplesDir
     }
-
+*/
     repositories {
         jcenter()
         maven { url "http://developer.marklogic.com/maven2" }
@@ -13,8 +15,8 @@ subprojects {
     }
 
     dependencies {
-        compile "com.marklogic:marklogic-spring-batch-core:0.7.1"
-        testCompile "com.marklogic:marklogic-spring-batch-test:0.7.1"
+        compile "com.marklogic:marklogic-spring-batch-core:0.7.2"
+        testCompile "com.marklogic:marklogic-spring-batch-test:0.7.2"
     }
 
     mainClassName = "com.marklogic.spring.batch.Main"

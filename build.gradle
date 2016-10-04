@@ -1,3 +1,4 @@
+
 subprojects {
     /*
      * Not applying the bintray plugin. Couldn't get it working properly when declared
@@ -67,6 +68,17 @@ subprojects {
 }
 
 project(':core') {
+    dependencies {
+        runtime "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+
+        //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
+        runtime "com.marklogic:ml-javaclient-util:2.10.0-alpha"
+
+        runtime "org.springframework:spring-jdbc:4.2.6.RELEASE"
+
+        runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
+    }
+
     task testExamples(type: GradleBuild) {
         buildFile = '../examples/build.gradle'
         tasks = [ 'test' ]
