@@ -18,7 +18,7 @@ Each contributor should be knowledgeable and proficient at the following project
 
 * [MarkLogic 8+](http://developer.marklogic.com/products)
 * [Java Development Kit 1.8+](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* Recommended: [Gradle 3.+](http://gradle.org/gradle-download/)
+* [Gradle 3.+](http://gradle.org/gradle-download/)
 
 You will need to first install MarkLogic if you haven't already.  It is recommended to use a virtual machine or remote server to run MarkLogic to partition our resources (MarkLogic likes to use a lot of memory).  
 

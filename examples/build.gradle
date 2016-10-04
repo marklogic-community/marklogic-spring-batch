@@ -1,6 +1,7 @@
 subprojects {
     apply plugin: "java"
     apply plugin: "application"
+    apply plugin: "wrapper"
 
 /*
 // The job.home environment variable is assumed to be predefined.  Otherwise, you can uncomment this section and set the examplesDir variable in the gradle.properties file.
