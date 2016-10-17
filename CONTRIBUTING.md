@@ -13,17 +13,24 @@ Each contributor should be knowledgeable and proficient at the following project
 * [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
 * [MarkLogic App Deployer](https://github.com/rjrudin/ml-app-deployer)
 * [Git](http://git-scm.com/doc)
+  * [Git Large File System](https://git-lfs.github.com/) - this is required to pull down large binary files used for the Entity Extraction examples
 
 # What software do I need?
 
 * [MarkLogic 8+](http://developer.marklogic.com/products)
 * [Java Development Kit 1.8+](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Gradle 3.+](http://gradle.org/gradle-download/)
+* (Recommended) [Gradle 3.+](http://gradle.org/gradle-download/)
 
 You will need to first install MarkLogic if you haven't already.  It is recommended to use a virtual machine or remote server to run MarkLogic to partition our resources (MarkLogic likes to use a lot of memory).  
 
+# Git Large File System
+
+Make sure that after you clone this repository that you also pull from Git LFS.  Otherwise your tests may not pass. 
+
 # What code baseline should I use?
-We use a [fork-and-Branch Git workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/).  The dev branch contains the latest and greatest code, while master represents the latest published version.  **Always branch from DEV**.  If you issue a pull request, make sure to compare against the DEV branch.  
+The dev branch contains the latest and greatest code, while master represents the latest published version.  **Always branch from DEV**.  If you issue a pull request, make sure to compare against the DEV branch.
+
+We use a [fork-and-Branch Git workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/).
 
 # Should I use an IDE? 
 Yes, it is recommended to use a Java friendly IDE to make one's life easier.  Of course, you can use a simple text editor if that is your preference.  The lead authors have a recent preference for [IntelliJ](https://www.jetbrains.com/idea/).  We also use Gradle for our swiss army knife of building, testing, deploying, etc.  One of the cool features of Gradle is the ability to create the project files for two popular IDE's, IntelliJ and Eclipse.    
