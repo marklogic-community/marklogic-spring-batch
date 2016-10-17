@@ -1,6 +1,5 @@
 package com.marklogic.client.io;
 
-import com.marklogic.client.document.DocumentUriTemplate;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;

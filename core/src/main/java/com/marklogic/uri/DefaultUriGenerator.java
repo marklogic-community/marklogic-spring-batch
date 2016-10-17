@@ -1,6 +1,5 @@
 package com.marklogic.uri;
 
-import java.io.File;
 import java.util.UUID;
 
 public class DefaultUriGenerator implements UriGenerator<String>{

@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.bind;
 
-import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.spring.batch.*;
