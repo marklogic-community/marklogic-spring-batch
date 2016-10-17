@@ -1,7 +1,5 @@
 package example.data;
 
-import com.marklogic.spring.batch.core.MarkLogicSpringBatch;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;

@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.transaction.annotation.Transactional;
 
 public class MarkLogicJobInstanceDaoTests extends AbstractSpringBatchTest {

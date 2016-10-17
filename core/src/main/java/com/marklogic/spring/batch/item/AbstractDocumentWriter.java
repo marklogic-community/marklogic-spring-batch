@@ -7,8 +7,6 @@ import org.springframework.batch.item.ItemStreamSupport;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.DocumentMetadataHandle.Capability;
 
-import java.io.File;
-
 /**
  * Base class for writing documents. Should be able to support both the Client API and XCC.
  */
