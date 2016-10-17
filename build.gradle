@@ -36,7 +36,7 @@ subprojects {
 
     checkstyle {
         configFile = file("${project.rootDir}/dev-tools/checkstyle/checkstyle.xml")
-        toolVersion = '6.19'
+        toolVersion = '7.1.2'
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
