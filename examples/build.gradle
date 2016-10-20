@@ -18,6 +18,8 @@ subprojects {
     dependencies {
         compile "com.marklogic:marklogic-spring-batch-core:0.7.2"
         testCompile "com.marklogic:marklogic-spring-batch-test:0.7.2"
+
+        runtime "com.marklogic:marklogic-spring-batch-core:0.7.2"
     }
 
     mainClassName = "com.marklogic.spring.batch.Main"
