@@ -1,4 +1,4 @@
-build\install\rowToJson\bin\sql.bat ^
+build\install\rowToDoc\bin\sql.bat ^
   --host oscar --port 8200 --username admin --password admin ^
   --config com.marklogic.spring.batch.config.MigrateColumnMapsConfig ^
   --jdbc_driver org.hsqldb.jdbc.JDBCDriver ^
@@ -8,4 +8,3 @@ build\install\rowToJson\bin\sql.bat ^
   --format json ^
   --root_local_name invoice ^
   --collections invoice
-  
