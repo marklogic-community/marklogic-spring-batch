@@ -25,6 +25,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -74,7 +75,12 @@ public class RowToDocConfig implements OptionParserConfigurer {
         itemProcessor.setRootElementName(rootLocalName);
 
         MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
-        itemWriter.setTransform(Format.XML, transformName, null);
+        Map<String, String> paramsMap = new HashMap<String, String>();
+        String params[] = transformParameters.split(",");
+        for (int i = 0; i < params.length; i+=2) {
+            paramsMap.put(params[i], params[i+1]);
+        }
+        itemWriter.setTransform(Format.XML, transformName, paramsMap);
 
 
         return stepBuilderFactory.get("step1")

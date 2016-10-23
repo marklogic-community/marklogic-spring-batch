@@ -75,7 +75,9 @@ public class RowToDocConfigTest extends AbstractJobTest {
                 "--jdbc_username", "sa",
                 "--format", "xml",
                 "--root_local_name", "invoice",
-                "--collections", "invoice");
+                "--collections", "invoice",
+                "--transform_name", "simple",
+                "--transform_parameters", "monster,grover,trash,oscar");
 
     }
 
