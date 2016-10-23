@@ -1,17 +1,21 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.MarkLogicItemWriter;
 import joptsimple.OptionParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +36,8 @@ public class RowToDocConfig implements OptionParserConfigurer {
     @Autowired
     private Environment env;
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     public void configureOptionParser(OptionParser parser) {
         parser.accepts("sql", "The SQL query for selecting rows to migrate").withRequiredArg();
@@ -42,7 +48,7 @@ public class RowToDocConfig implements OptionParserConfigurer {
 
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("step1") Step step1) {
-        return jobBuilderFactory.get("migrateRowsViaColumnMapsConfig").start(step1).build();
+        return jobBuilderFactory.get("rowToDocConfig").start(step1).build();
     }
 
     @Bean
@@ -64,20 +70,19 @@ public class RowToDocConfig implements OptionParserConfigurer {
         reader.setRowMapper(new PathAwareColumnMapRowMapper());
         reader.setSql(sql);
 
+        RowToDocItemProcessor itemProcessor = new RowToDocItemProcessor();
+        itemProcessor.setRootElementName(rootLocalName);
+
         MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
-        itemWriter.setTransform(Format.valueOf(format), transformName, null);
+        itemWriter.setTransform(Format.XML, transformName, null);
 
 
-        return null;
-        /*
-        stepBuilderFactory.get("step1")
-
-                .<Map<String, Object>, MarkLogicItemWriter>chunk(10)
+        return stepBuilderFactory.get("step1")
+                .<Map<String, Object>, DocumentWriteOperation>chunk(10)
                 .reader(reader)
-                .processor(new RowToDocItemProcessor())
+                .processor(itemProcessor)
                 .writer(itemWriter)
                 .build();
-                */
     }
 
     /**

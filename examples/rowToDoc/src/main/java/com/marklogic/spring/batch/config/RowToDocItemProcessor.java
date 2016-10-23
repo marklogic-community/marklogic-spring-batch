@@ -1,8 +1,13 @@
 package com.marklogic.spring.batch.config;
 
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.MarkLogicWriteHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.columnmap.ColumnMapMerger;
 import com.marklogic.spring.batch.columnmap.ColumnMapSerializer;
-import com.marklogic.spring.batch.item.MarkLogicItemWriter;
+import com.marklogic.spring.batch.columnmap.DefaultColumnMapMerger;
+import com.marklogic.spring.batch.columnmap.DefaultStaxColumnMapSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -12,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class RowToDocItemProcessor implements ItemProcessor<Map<String, Object>, MarkLogicItemWriter> {
+public class RowToDocItemProcessor implements ItemProcessor<Map<String, Object>, DocumentWriteOperation> {
 
     // Configurable
     private ColumnMapSerializer columnMapSerializer;
@@ -24,18 +29,40 @@ public class RowToDocItemProcessor implements ItemProcessor<Map<String, Object>,
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    public RowToDocItemProcessor() {
+        super();
+        if (columnMapSerializer == null) {
+            columnMapSerializer = new DefaultStaxColumnMapSerializer();
+        }
+
+        if (columnMapMerger == null) {
+            columnMapMerger = new DefaultColumnMapMerger();
+        }
+    }
+
+    public RowToDocItemProcessor(ColumnMapSerializer columnMapSerializer, ColumnMapMerger columnMapMerger) {
+
+    }
+
     @Override
-    public MarkLogicItemWriter process(Map<String, Object> item) throws Exception {
+    public DocumentWriteOperation process(Map<String, Object> item) throws Exception {
         Set<Object> idsToIgnore = new HashSet<>();
         String idKey = item.keySet().iterator().next();
-        Object idValue = item.get(idKey);
-        idsToIgnore.add(idValue);
-        Map<String, Object> existingColumnMap = recordMap.get(idValue);
+        Object id = item.get(idKey);
+        idsToIgnore.add(id);
+        Map<String, Object> existingColumnMap = recordMap.get(id);
         if (existingColumnMap != null && columnMapMerger != null) {
             columnMapMerger.mergeColumnMaps(existingColumnMap, item);
         } else {
-            recordMap.put(idValue, item);
+            recordMap.put(id, item);
         }
+        return rowToMarkLogicItemWriter(idsToIgnore);
+
+    }
+
+    private DocumentWriteOperation rowToMarkLogicItemWriter(Set<Object> idsToIgnore) {
+        MarkLogicWriteHandle handle = null;
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         Set<Object> recordIds = recordMap.keySet();
         Set<Object> idsToRemove = new HashSet<>();
         for (Object id : recordIds) {
@@ -47,7 +74,7 @@ public class RowToDocItemProcessor implements ItemProcessor<Map<String, Object>,
                     }
                     String content = columnMapSerializer.serializeColumnMap(columnMap, this.rootElementName, null);
                     String uri = generateUri(content, id);
-                    //set.add(uri, buildMetadata(), new StringHandle(content));
+                    handle = new MarkLogicWriteHandle(uri, metadata, new StringHandle(content));
                     if (logger.isDebugEnabled()) {
                         logger.debug("Writing URI: " + uri + "; content: " + content);
                     }
@@ -61,20 +88,10 @@ public class RowToDocItemProcessor implements ItemProcessor<Map<String, Object>,
                 }
             }
         }
-/*
-        if (!set.isEmpty()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Writing set of documents");
-            }
-            mgr.write(set);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Finished writing set of documents");
-            }
-        }
         recordIds.removeAll(idsToRemove);
-        */
-        return null;
+        return handle;
     }
+
 
     protected String generateUri(String content, Object id) {
         String uri = "/" + this.rootElementName + "/" + id;
@@ -85,4 +102,21 @@ public class RowToDocItemProcessor implements ItemProcessor<Map<String, Object>,
         }
         return uri;
     }
+
+    public void setColumnMapSerializer(ColumnMapSerializer columnMapSerializer) {
+        this.columnMapSerializer = columnMapSerializer;
+    }
+
+    public void setColumnMapMerger(ColumnMapMerger columnMapMerger) {
+        this.columnMapMerger = columnMapMerger;
+    }
+
+    public String getRootElementName() {
+        return rootElementName;
+    }
+
+    public void setRootElementName(String rootElementName) {
+        this.rootElementName = rootElementName;
+    }
+
 }

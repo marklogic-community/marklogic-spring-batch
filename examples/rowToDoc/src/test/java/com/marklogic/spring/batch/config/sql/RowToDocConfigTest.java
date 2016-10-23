@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.config.sql;
 
 import com.marklogic.spring.batch.config.PathAwareColumnMapRowMapper;
+import com.marklogic.spring.batch.config.RowToDocConfig;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import org.junit.After;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -32,7 +34,7 @@ import java.util.Map;
  */
 public class RowToDocConfigTest extends AbstractJobTest {
 
-    protected EmbeddedDatabase embeddedDatabase;
+    protected static EmbeddedDatabase embeddedDatabase;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Before
@@ -62,17 +64,27 @@ public class RowToDocConfigTest extends AbstractJobTest {
         Map<String, Object> row = reader.read();
         for (String key : row.keySet()) {
             logger.info(key);
-            logger.info(Integer.toString((Integer)row.get(key)));
+            //logger.info(Integer.toString((Map<String, Object>)row.get(key)));
         }
+    }
 
+    @Test
+    public void runRowToDocJobTest() {
+        runJob(RowToDocTestConfig.class,
+                "--sql", "SELECT customer.* FROM customer",
+                "--jdbc_username", "sa",
+                "--format", "xml",
+                "--root_local_name", "invoice",
+                "--collections", "invoice");
 
-       /*
-        Fragment f = loadUserFromMarkLogic();
-        f.assertElementValue("/user/ID", "1");
-        f.assertElementValue("/user/NAME", "user1");
-        f.assertElementExists("/user/address[1]/street[. = '123 Main St']");
-        f.assertElementExists("/user/address[2]/street[. = '456 Main St']");
-        */
+    }
+
+    @Configuration
+    public static class RowToDocTestConfig extends RowToDocConfig {
+        @Override
+        protected DataSource buildDataSource() {
+            return embeddedDatabase;
+        }
     }
 
 }

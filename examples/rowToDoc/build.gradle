@@ -9,6 +9,7 @@ distributions {
 }
 
 dependencies {
+    compile "com.marklogic:java-client-api:4.0.0-EA3"
     // For testing SQL readers with an embedded database
     testCompile "org.hsqldb:hsqldb:2.3.4"
 
