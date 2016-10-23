@@ -1,14 +1,14 @@
 package com.marklogic.spring.batch.item;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.*;
+import com.marklogic.client.io.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 
 import java.util.List;
+import java.util.Map;
 
 /*
 The MarkLogicItemWriter is an ItemWriter used to write any type of document to MarkLogic.  It expects a
@@ -24,6 +24,9 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
     private String outputUriPrefix;
     private String outputUriReplace;
     private String outputUriSuffix;
+    private ServerTransform serverTransform;
+    private Format format;
+    private boolean transformOn = false;
     
     public MarkLogicItemWriter(DatabaseClient client) {
         this.client = client;
@@ -40,9 +43,13 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
             uri = (outputUriSuffix != null) ? uri + outputUriSuffix : uri;
             batch.add(uri, item.getMetadata(), item.getContent());
         }
-        docMgr.write(batch);
+        if (!transformOn) {
+            docMgr.write(batch);
+        } else {
+            docMgr.write(batch, serverTransform);
+        }
     }
-    
+
     private String applyOutputUriReplace(String uri, String outputUriReplace) {
         String[] regexReplace = outputUriReplace.split(",");
         for (int i = 0; i < regexReplace.length; i=i+2) {
@@ -74,6 +81,19 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation> {
     public void setOutputUriSuffix(String outputUriSuffix) {
         this.outputUriSuffix = outputUriSuffix;
     }
-    
-    
+
+    /*
+    Applies transform for every document
+    */
+    public void setTransform(Format format, String transformName, Map<String, String> transformParameters) {
+        this.format = format;
+        docMgr.setContentFormat(format);
+        this.serverTransform = new ServerTransform(transformName);
+        if (transformParameters != null) {
+            for (String key : transformParameters.keySet()) {
+                serverTransform.put(key, transformParameters.get(key));
+            }
+        }
+        transformOn = true;
+    }
 }
