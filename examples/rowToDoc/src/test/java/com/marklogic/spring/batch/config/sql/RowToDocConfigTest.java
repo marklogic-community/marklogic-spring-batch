@@ -71,7 +71,7 @@ public class RowToDocConfigTest extends AbstractJobTest {
     @Test
     public void runRowToDocJobTest() {
         runJob(RowToDocTestConfig.class,
-                "--sql", "SELECT customer.* FROM customer",
+                "--sql", "SELECT customer.*, invoice.id as \"invoice/id\", invoice.total as \"invoice/total\" FROM invoice LEFT JOIN customer on invoice.customerId = customer.id ORDER BY customer.id",
                 "--jdbc_username", "sa",
                 "--format", "xml",
                 "--root_local_name", "invoice",
