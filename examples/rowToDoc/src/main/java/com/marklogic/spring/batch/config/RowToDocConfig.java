@@ -1,11 +1,10 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.Options;
-import com.marklogic.spring.batch.columnmap.JsonColumnMapSerializer;
-import com.marklogic.spring.batch.columnmap.PathAwareColumnMapProcessor;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
-import com.marklogic.spring.batch.item.ColumnMapItemWriter;
+import com.marklogic.spring.batch.item.MarkLogicItemWriter;
 import joptsimple.OptionParser;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
@@ -29,7 +27,7 @@ import java.util.Map;
  * Configuration for a simple approach for migrating rows to documents via Spring JDBC ColumnMaps.
  */
 @EnableBatchProcessing
-public class MigrateColumnMapsConfig implements OptionParserConfigurer {
+public class RowToDocConfig implements OptionParserConfigurer {
 
     @Autowired
     private Environment env;
@@ -63,26 +61,23 @@ public class MigrateColumnMapsConfig implements OptionParserConfigurer {
 
         JdbcCursorItemReader<Map<String, Object>> reader = new JdbcCursorItemReader<>();
         reader.setDataSource(dataSource);
-        reader.setRowMapper(new ColumnMapRowMapper());
+        reader.setRowMapper(new PathAwareColumnMapRowMapper());
         reader.setSql(sql);
 
-        ColumnMapItemWriter writer = new ColumnMapItemWriter(databaseClientProvider.getDatabaseClient(), rootLocalName);
-        if (collections == null || collections.length == 0) {
-            String[] coll = {rootLocalName};
-            writer.setCollections(coll);
-        } else {
-            writer.setCollections(collections);
-        }
-        if ("json".equals(format)) {
-            writer.setColumnMapSerializer(new JsonColumnMapSerializer());
-        }
+        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
+        itemWriter.setTransform(Format.valueOf(format), transformName, null);
 
-        return stepBuilderFactory.get("step1")
-                .<Map<String, Object>, Map<String, Object>>chunk(10)
+
+        return null;
+        /*
+        stepBuilderFactory.get("step1")
+
+                .<Map<String, Object>, MarkLogicItemWriter>chunk(10)
                 .reader(reader)
-                .processor(new PathAwareColumnMapProcessor())
-                .writer(writer)
+                .processor(new RowToDocItemProcessor())
+                .writer(itemWriter)
                 .build();
+                */
     }
 
     /**
