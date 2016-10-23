@@ -22,7 +22,7 @@ subprojects {
 
     dependencies {
         compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
-        compile "com.marklogic:ml-javaclient-util:2.10.0-alpha"
+        compile "com.marklogic:ml-javaclient-util:2.10.0"
     }
 
     task wrapper(type: Wrapper) {
