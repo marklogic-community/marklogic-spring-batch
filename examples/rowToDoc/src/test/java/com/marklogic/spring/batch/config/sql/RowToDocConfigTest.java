@@ -1,5 +1,11 @@
 package com.marklogic.spring.batch.config.sql;
 
+import com.marklogic.client.admin.TransformExtensionsManager;
+import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.config.PathAwareColumnMapRowMapper;
 import com.marklogic.spring.batch.config.RowToDocConfig;
 import com.marklogic.spring.batch.test.AbstractJobTest;
@@ -11,11 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.Map;
 
 
@@ -36,20 +44,20 @@ public class RowToDocConfigTest extends AbstractJobTest {
 
     protected static EmbeddedDatabase embeddedDatabase;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private TransformExtensionsManager transMgr;
+    private String sql = "SELECT customer.*, invoice.id as \"invoice/id\", invoice.total as \"invoice/total\" FROM invoice LEFT JOIN customer on invoice.customerId = customer.id ORDER BY customer.id";
 
     @Before
-    public void createDb() {
+    public void createDb() throws IOException {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL);
         builder.addScripts("db/sampledata_ddl.sql", "db/sampledata_insert.sql");
         embeddedDatabase = builder.build();
-    }
 
-    @After
-    public void teardown() {
-        if (embeddedDatabase != null) {
-            embeddedDatabase.shutdown();
-        }
-        embeddedDatabase = null;
+        Resource transform = getApplicationContext().getResource("classpath:/transforms/simple.xqy");
+        transMgr = getClient().newServerConfigManager().newTransformExtensionsManager();
+        FileHandle fileHandle = new FileHandle(transform.getFile());
+        fileHandle.setFormat(Format.XML);
+        transMgr.writeXQueryTransform("simple", fileHandle);
     }
 
     @Test
@@ -69,7 +77,7 @@ public class RowToDocConfigTest extends AbstractJobTest {
     }
 
     @Test
-    public void runRowToDocJobTest() {
+    public void runRowToDocJobWithTransformTest() {
         runJob(RowToDocTestConfig.class,
                 "--sql", "SELECT customer.*, invoice.id as \"invoice/id\", invoice.total as \"invoice/total\" FROM invoice LEFT JOIN customer on invoice.customerId = customer.id ORDER BY customer.id",
                 "--jdbc_username", "sa",
@@ -78,7 +86,29 @@ public class RowToDocConfigTest extends AbstractJobTest {
                 "--collections", "invoice",
                 "--transform_name", "simple",
                 "--transform_parameters", "monster,grover,trash,oscar");
+        Fragment f = loadInvoice();
+        f.assertElementValue("/invoice/invoice/ID", "13");
+        f.assertElementValue("/invoice/invoice/LASTNAME", "Ringer");
+        f.assertElementExists("/invoice/invoice/invoice[1]/total[. = '3215']");
+        f.assertElementExists("/invoice/invoice/invoice[2]/total[. = '1376']");
+        f.assertElementExists("/invoice/transform");
+        f.assertElementExists("/invoice/monster[. = 'grover']");
+        f.assertElementExists("/invoice/trash[. = 'oscar']");
+    }
 
+    private Fragment loadInvoice() {
+        XMLDocumentManager mgr = getClient().newXMLDocumentManager();
+        String xml = mgr.read("/invoice/13.xml", new StringHandle()).get();
+        return parse(xml);
+    }
+
+    @After
+    public void teardown() {
+        if (embeddedDatabase != null) {
+            embeddedDatabase.shutdown();
+        }
+        embeddedDatabase = null;
+        transMgr.deleteTransform("simple");
     }
 
     @Configuration
