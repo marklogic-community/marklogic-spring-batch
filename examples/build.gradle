@@ -1,6 +1,7 @@
 subprojects {
     apply plugin: "java"
     apply plugin: "application"
+    apply plugin: "wrapper"
 
 /*
 // The job.home environment variable is assumed to be predefined.  Otherwise, you can uncomment this section and set the examplesDir variable in the gradle.properties file.
@@ -15,8 +16,10 @@ subprojects {
     }
 
     dependencies {
-        compile "com.marklogic:marklogic-spring-batch-core:0.7.2"
-        testCompile "com.marklogic:marklogic-spring-batch-test:0.7.2"
+        compile "com.marklogic:marklogic-spring-batch-core:0.7.3"
+        testCompile "com.marklogic:marklogic-spring-batch-test:0.7.3"
+
+        runtime "com.marklogic:marklogic-spring-batch-core:0.7.2"
     }
 
     mainClassName = "com.marklogic.spring.batch.Main"

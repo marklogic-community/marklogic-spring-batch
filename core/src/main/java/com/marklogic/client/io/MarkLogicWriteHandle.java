@@ -1,6 +1,5 @@
 package com.marklogic.client.io;
 
-import com.marklogic.client.document.DocumentUriTemplate;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
@@ -15,6 +14,10 @@ public class MarkLogicWriteHandle implements DocumentWriteOperation {
     private DocumentMetadataHandle metadataHandle;
     private AbstractWriteHandle handle;
     private OperationType opType;
+
+    public MarkLogicWriteHandle() {
+
+    }
     
     public MarkLogicWriteHandle(String uri, DocumentMetadataHandle metadata, AbstractWriteHandle handle) {
         this.uri = uri;

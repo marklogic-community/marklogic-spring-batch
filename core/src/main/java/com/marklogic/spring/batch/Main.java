@@ -22,7 +22,6 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.JOptCommandLinePropertySource;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.core.type.filter.RegexPatternTypeFilter;
 
 import java.io.File;
 import java.io.FileReader;

@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
-import javax.xml.crypto.Data;
 
 /**
  * This test is an example of reading from a SQL database and writing to MarkLogic via a JDBC reader, a custom Java
