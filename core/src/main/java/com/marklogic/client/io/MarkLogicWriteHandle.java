@@ -14,6 +14,10 @@ public class MarkLogicWriteHandle implements DocumentWriteOperation {
     private DocumentMetadataHandle metadataHandle;
     private AbstractWriteHandle handle;
     private OperationType opType;
+
+    public MarkLogicWriteHandle() {
+
+    }
     
     public MarkLogicWriteHandle(String uri, DocumentMetadataHandle metadata, AbstractWriteHandle handle) {
         this.uri = uri;
