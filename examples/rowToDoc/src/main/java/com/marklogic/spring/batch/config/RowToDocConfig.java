@@ -4,6 +4,7 @@ import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.Options;
+import com.marklogic.spring.batch.columnmap.JsonColumnMapSerializer;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.MarkLogicItemWriter;
 import joptsimple.OptionParser;
@@ -72,6 +73,9 @@ public class RowToDocConfig implements OptionParserConfigurer {
         reader.setSql(sql);
 
         RowToDocItemProcessor itemProcessor = new RowToDocItemProcessor();
+        if ("json".equals(format.toLowerCase())) {
+            itemProcessor.setColumnMapSerializer(new JsonColumnMapSerializer());
+        }
         itemProcessor.setRootElementName(rootLocalName);
 
         MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
@@ -82,7 +86,7 @@ public class RowToDocConfig implements OptionParserConfigurer {
                 paramsMap.put(params[i], params[i + 1]);
             }
         }
-        itemWriter.setTransform(Format.XML, transformName, paramsMap);
+        itemWriter.setTransform(Format.valueOf(format.toUpperCase()), transformName, paramsMap);
 
 
         return stepBuilderFactory.get("step1")
