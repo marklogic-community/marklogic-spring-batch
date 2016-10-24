@@ -76,9 +76,11 @@ public class RowToDocConfig implements OptionParserConfigurer {
 
         MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
         Map<String, String> paramsMap = new HashMap<String, String>();
-        String params[] = transformParameters.split(",");
-        for (int i = 0; i < params.length; i+=2) {
-            paramsMap.put(params[i], params[i+1]);
+        if (transformParameters != null) {
+            String params[] = transformParameters.split(",");
+            for (int i = 0; i < params.length; i += 2) {
+                paramsMap.put(params[i], params[i + 1]);
+            }
         }
         itemWriter.setTransform(Format.XML, transformName, paramsMap);
 
