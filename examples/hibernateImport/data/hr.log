@@ -1,3 +1,0 @@
-/*C3*/SET SCHEMA PUBLIC
-alter table PUBLIC.job_history drop constraint UK_h6opskkcq049s2hipihl61s76
-alter table PUBLIC.job_history add constraint UK_h6opskkcq049s2hipihl61s76 unique (employee_id, start_date)
