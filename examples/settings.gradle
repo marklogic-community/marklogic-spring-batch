@@ -8,7 +8,6 @@ include "importGeonames"
 include "importTriples"
 include "rdbms_1"
 include "rdbms_2"
-include "rowToDoc"
 include "shapefiles"
 include "sql"
 
