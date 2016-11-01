@@ -16,8 +16,8 @@ subprojects {
     }
 
     dependencies {
-        compile "com.marklogic:marklogic-spring-batch-core:0.7.3"
-        testCompile "com.marklogic:marklogic-spring-batch-test:0.7.3"
+        compile "com.marklogic:marklogic-spring-batch-core:0.7.4"
+        testCompile "com.marklogic:marklogic-spring-batch-test:0.7.4"
 
         runtime "com.marklogic:marklogic-spring-batch-core:0.7.2"
     }
