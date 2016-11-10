@@ -38,8 +38,8 @@ repositories {
 }
 
 dependencies {
-    compile "com.marklogic:marklogic-spring-batch-core:0.7.0"
-    testComplile "com.marklogic:marklogic-spring-batch-test:0.7.0"
+    compile "com.marklogic:marklogic-spring-batch-core:0.7.4"
+    testCompile "com.marklogic:marklogic-spring-batch-test:0.7.4"
 }
 ```
 
