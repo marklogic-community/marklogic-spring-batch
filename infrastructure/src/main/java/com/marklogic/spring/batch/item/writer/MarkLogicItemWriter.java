@@ -1,10 +1,7 @@
 package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.document.ServerTransform;
+import com.marklogic.client.document.*;
 import com.marklogic.client.io.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

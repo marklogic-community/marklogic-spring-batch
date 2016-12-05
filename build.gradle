@@ -60,6 +60,7 @@ subprojects {
         compile "org.springframework.batch:spring-batch-core:$springVersion"
         compile "com.marklogic:java-client-api:4.0.0-EA3"
         compile "com.marklogic:ml-javaclient-util:2.11.0-dev"
+        compile 'org.slf4j:slf4j-api:1.7.21'
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
         testCompile "com.marklogic:ml-junit:2.6.0"
     }
@@ -104,6 +105,8 @@ project(':core') {
 
     dependencies {
 
+        compile project(":infrastructure")
+
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
         compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
 
@@ -125,13 +128,14 @@ project(':core') {
 
         runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
     }
-
+/*
     task testExamples(type: GradleBuild) {
         buildFile = '../examples/build.gradle'
         tasks = [ 'test' ]
     }
 
     test.dependsOn testExamples
+*/
 }
 
 project(":infrastructure") {
