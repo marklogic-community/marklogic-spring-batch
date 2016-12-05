@@ -58,8 +58,10 @@ subprojects {
 
     dependencies {
         compile "org.springframework.batch:spring-batch-core:$springVersion"
-        compile "com.marklogic:ml-javaclient-util:2.10.0"
+        compile "com.marklogic:java-client-api:4.0.0-EA3"
+        compile "com.marklogic:ml-javaclient-util:2.11.0-dev"
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
+        testCompile "com.marklogic:ml-junit:2.6.0"
     }
 
     sourceCompatibility = 1.8
@@ -101,6 +103,19 @@ subprojects {
 project(':core') {
 
     dependencies {
+
+        // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
+        compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
+
+        // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
+        compile "org.springframework:spring-oxm:4.2.6.RELEASE"
+
+        // For deploying the ML Job Repo
+        compile "com.marklogic:ml-app-deployer:2.3.0"
+
+        // For the CLI
+        compile "net.sf.jopt-simple:jopt-simple:5.0.1"
+
         runtime "org.springframework.batch:spring-batch-core:$springVersion"
 
         //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
@@ -121,16 +136,14 @@ project(':core') {
 
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
-    dependencies {
-        compile "org.springframework:spring-core:$springVersion"
-    }
+
 }
 
 project(':test') {
     dependencies {
         compile project(':core')
         compile "org.springframework.batch:spring-batch-test:$springVersion"
-    }
+}
 }
 
 
