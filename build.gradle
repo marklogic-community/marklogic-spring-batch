@@ -1,5 +1,44 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+            jcenter()
+        }
+    }
+    dependencies {
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
+        classpath "com.marklogic:ml-gradle:2.4.0"
+    }
+}
+
+plugins {
+    id "com.marklogic.ml-gradle" version "2.4.0"
+    id "java"
+    id "eclipse"
+    id "idea"
+    id "checkstyle"
+    id "maven-publish"
+}
+
+allprojects {
+    apply plugin: "com.marklogic.ml-gradle"
+
+    repositories {
+        jcenter()
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "http://developer.marklogic.com/maven2/" }
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.2.1'
+    }
+
+    sourceSets.test.resources.srcDir 'src/test/java'
+}
+
 
 subprojects {
+
     /*
      * Not applying the bintray plugin. Couldn't get it working properly when declared
      * in subprojects, and when declared at root level of this script, it caused an httpcomponents
@@ -8,31 +47,23 @@ subprojects {
      */
 
     apply plugin: "java"
-    apply plugin: "eclipse"
-    apply plugin: "idea"
-    apply plugin: "checkstyle"
+    apply plugin: "com.jfrog.bintray"
     apply plugin: "maven-publish"
 
-    repositories {
-        jcenter()
-        maven { url "http://repo.spring.io/milestone" }
-        maven { url "http://developer.marklogic.com/maven2/" }
-        mavenLocal()
+
+    ext {
+        springVersionDefault = '3.0.7.RELEASE'
+        springVersion = project.hasProperty('springVersion') ? getProperty('springVersion') : springVersionDefault
     }
 
     dependencies {
-        compile "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+        compile "org.springframework.batch:spring-batch-core:$springVersion"
         compile "com.marklogic:ml-javaclient-util:2.10.0"
-    }
-
-    task wrapper(type: Wrapper) {
-        gradleVersion = '3.1'
+        testCompile "org.springframework.batch:spring-batch-test:$springVersion"
     }
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
-
-    sourceSets.test.resources.srcDir 'src/test/java'
 
     checkstyle {
         configFile = file("${project.rootDir}/dev-tools/checkstyle/checkstyle.xml")
@@ -68,8 +99,9 @@ subprojects {
 }
 
 project(':core') {
+
     dependencies {
-        runtime "org.springframework.batch:spring-batch-core:3.0.7.RELEASE"
+        runtime "org.springframework.batch:spring-batch-core:$springVersion"
 
         //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
         runtime "com.marklogic:ml-javaclient-util:2.10.0-alpha"
@@ -87,9 +119,17 @@ project(':core') {
     test.dependsOn testExamples
 }
 
+project(":infrastructure") {
+    description = 'MarkLogic Spring Batch Infrastructure'
+    dependencies {
+        compile "org.springframework:spring-core:$springVersion"
+    }
+}
+
 project(':test') {
     dependencies {
         compile project(':core')
+        compile "org.springframework.batch:spring-batch-test:$springVersion"
     }
 }
 
