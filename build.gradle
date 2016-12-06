@@ -63,7 +63,7 @@ subprojects {
         compile 'org.slf4j:slf4j-api:1.7.21'
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
         testCompile "com.marklogic:ml-junit:2.6.0"
-    }
+}
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -147,7 +147,8 @@ project(':test') {
     dependencies {
         compile project(':core')
         compile "org.springframework.batch:spring-batch-test:$springVersion"
-}
+        compile "com.marklogic:ml-junit:2.6.0"
+    }
 }
 
 

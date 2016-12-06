@@ -8,6 +8,7 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.*;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
+import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
-public class MarkLogicItemWriterTest extends ClientTestHelper implements ApplicationContextAware {
+public class MarkLogicItemWriterTest extends AbstractSpringTest implements ApplicationContextAware {
 
     @Autowired
     private DatabaseClientProvider databaseClientProvider;
@@ -40,10 +41,12 @@ public class MarkLogicItemWriterTest extends ClientTestHelper implements Applica
     TransformExtensionsManager transMgr;
     XMLDocumentManager docMgr;
     private ApplicationContext ctx;
+    private ClientTestHelper clientTestHelper;
 
     @Before
     public void setup() throws IOException {
-        setDatabaseClientProvider(databaseClientProvider);
+        clientTestHelper = new ClientTestHelper();
+        clientTestHelper.setDatabaseClientProvider(databaseClientProvider);
         databaseClient = databaseClientProvider.getDatabaseClient();
         itemWriter = new MarkLogicItemWriter(databaseClient);
         Resource transform = ctx.getResource("classpath:/transforms/simple.xqy");
@@ -64,7 +67,7 @@ public class MarkLogicItemWriterTest extends ClientTestHelper implements Applica
         handles.add(handle);
 
         MarkLogicWriteHandle handle2 = new MarkLogicWriteHandle();
-        handle.setUri("abc.xml");
+        handle.setUri("abc2.xml");
         handle.setMetadataHandle(new DocumentMetadataHandle().withCollections("raw"));
         handle.setHandle(new StringHandle("<hello2 />"));
         handles.add(handle2);
@@ -73,8 +76,8 @@ public class MarkLogicItemWriterTest extends ClientTestHelper implements Applica
     @Test
     public void writeTwoDocumentsTest() throws Exception {
         itemWriter.write(handles);
-        assertInCollections("abc.xml", "raw");
-        assertCollectionSize("Expecting two items in raw collection", "raw", 2);
+        clientTestHelper.assertInCollections("abc.xml", "raw");
+        clientTestHelper.assertCollectionSize("Expecting two items in raw collection", "raw", 2);
     }
 
     @Test
