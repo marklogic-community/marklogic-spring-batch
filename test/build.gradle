@@ -1,13 +1,5 @@
-plugins {
-    id "com.jfrog.bintray" version "1.7.1"
-}
-
 ext {
     artifactId = "marklogic-spring-batch-test"
-}
-
-dependencies {
-    compile "com.marklogic:ml-junit:2.6.0"
 }
 
 bintray {

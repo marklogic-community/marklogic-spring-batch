@@ -9,6 +9,7 @@ import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import org.jdom2.input.DOMBuilder;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
@@ -17,6 +18,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,8 +26,9 @@ import javax.xml.transform.dom.DOMResult;
 import java.util.Date;
 import java.util.List;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {JaxbConfiguration.class})
-public class MarshallSpringBatchPojoToXmlTest extends AbstractSpringBatchTest {
+public class MarshallSpringBatchPojoToXmlTest {
 
     private Document doc;
     private DOMResult result;
