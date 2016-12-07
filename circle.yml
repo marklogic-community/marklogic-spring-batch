@@ -1,0 +1,32 @@
+machine:
+  services:
+    - docker
+  java:
+
+dependencies:
+  override:
+    # Install git-lfs
+    - curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+    - sudo apt-get install git-lfs=1.1.0
+    - ssh git@github.com git-lfs-authenticate sstafford/marklogic-spring-batch.git download
+    # Docker commands
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - docker info
+    - docker pull $ML8_LATEST_DOCKER_IMAGE
+
+test:
+  override:
+    - docker run --name ml -d -p 8000:8000 -p 8001:8001 -p 8002:8002 -p 8200:8200 $ML8_LATEST_DOCKER_IMAGE
+    - sleep 10
+    - git lfs env
+    - ./gradlew :core:mlInit -PmlHost=localhost --info
+    - ./gradlew :core:mlInstallAdmin -PmlHost=localhost -PmlAdminPassword=admin -PmlAdminUsername=admin --info
+    - ./gradlew :core:mlDeploy -PmlHost=localhost --info
+    # - export job_home="${HOME}/marklogic-spring-batch/examples"
+    # - ./gradlew :core:test --info
+    - ./gradlew test --info
+    # - ./gradlew -Djob.home="/home/ubuntu/marklogic-spring-batch/examples" :core:test --info
+
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
