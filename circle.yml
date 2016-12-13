@@ -12,16 +12,17 @@ dependencies:
     # Docker commands
     - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWORD
     - docker info
-    - docker pull $ML9_DOCKER_IMAGE
+    - docker pull $DOCKER_MARKLOGIC_IMAGE
 
 test:
   override:
-    - docker run --name ml -d -p 8000:8000 -p 8001:8001 -p 8002:8002 -p 8200:8200 $ML9_DOCKER_IMAGE
+    - docker run --name ml -d -p 8000:8000 -p 8001:8001 -p 8002:8002 -p 8200:8200 $DOCKER_MARKLOGIC_IMAGE
     - sleep 10
-    - sudo lxc-attach -n "$(docker inspect --format "{{.Id}}" $ML9_DOCKER_IMAGE)" -- bash -c /etc/init.d/MarkLogic start
     - git lfs env
     - pwd
     - chmod +x gradlew
+    - ./gradlew :core:mlInit -PmlHost=localhost --info
+    - ./gradlew :core:mlInstallAdmin -PmlHost=localhost -PmlAdminPassword=admin -PmlAdminUsername=admin --info
     - ./gradlew :core:mlDeploy -PmlHost=localhost --info
     - ./gradlew test --info
 
