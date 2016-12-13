@@ -36,7 +36,7 @@ public class MarkLogicSpringBatchConfigTests extends Assert {
 		assertEquals(UpdatePolicy.VERSION_OPTIONAL, configMgr.getUpdatePolicy());
 
 		// release the client
-		client.release();
+		//client.release();
 	}
 
 }

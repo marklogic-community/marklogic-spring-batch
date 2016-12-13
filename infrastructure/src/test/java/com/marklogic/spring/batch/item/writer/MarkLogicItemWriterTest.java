@@ -67,9 +67,9 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         handles.add(handle);
 
         MarkLogicWriteHandle handle2 = new MarkLogicWriteHandle();
-        handle.setUri("abc2.xml");
-        handle.setMetadataHandle(new DocumentMetadataHandle().withCollections("raw"));
-        handle.setHandle(new StringHandle("<hello2 />"));
+        handle2.setUri("abc2.xml");
+        handle2.setMetadataHandle(new DocumentMetadataHandle().withCollections("raw"));
+        handle2.setHandle(new StringHandle("<hello2 />"));
         handles.add(handle2);
     }
 

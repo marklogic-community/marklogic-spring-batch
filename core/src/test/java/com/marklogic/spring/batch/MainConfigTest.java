@@ -34,13 +34,8 @@ public class MainConfigTest extends Assert {
         ConfigurableApplicationContext ctx = main.buildApplicationContext(options);
         DatabaseClientProvider provider = ctx.getBean("databaseClientProvider", DatabaseClientProvider.class);
         DatabaseClient client = provider.getDatabaseClient();
-        try {
-            String response = client.newServerEval().xquery("fn:current-dateTime()").evalAs(String.class);
-            assertNotNull("Just verifying that we're able to make a connection successfully", response);
-        } finally {
-            client.release();
-            ctx.close();
-        }
+        String response = client.newServerEval().xquery("fn:current-dateTime()").evalAs(String.class);
+        assertNotNull("Just verifying that we're able to make a connection successfully", response);
     }
 
     @Test
