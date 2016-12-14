@@ -1,12 +1,8 @@
 package com.marklogic.spring.batch.samples;
 
-import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import com.marklogic.spring.batch.test.AbstractJobTest;
-import javafx.print.PrinterJob;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -14,12 +10,10 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @ContextConfiguration(classes = {
-        com.marklogic.spring.batch.samples.YourJobConfig.class,
+        com.marklogic.spring.batch.samples.YourJob.class,
         com.marklogic.spring.batch.test.JobRunnerContext.class,
         com.marklogic.spring.batch.test.JobProjectTestConfig.class})
 public class YourJobTest extends AbstractSpringTest {
