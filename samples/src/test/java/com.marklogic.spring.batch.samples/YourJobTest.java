@@ -33,21 +33,16 @@ public class YourJobTest extends AbstractSpringTest {
     }
 
     @Test
-    public void testJob() throws Exception {
+    public void confirmJobCompletesTest() throws Exception {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob();
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
     }
 
     @Test
-    public void findZeroMonstersInDatabaseTest() throws Exception {
+    public void findOneMonsterInDatabaseTest() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("output_collections", "monster");
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
-        /*
-        runJob(
-                YourJobConfig.class,
-                "--output_collections", "monster");
-             */
         client.assertCollectionSize("Expecting 1 items in monster collection", "monster", 1);
     }
 
