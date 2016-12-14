@@ -1,26 +1,3 @@
-plugins {
-    id "com.jfrog.bintray" version "1.7.1"
-    id "com.marklogic.ml-gradle" version "2.3.4"
-}
-
-dependencies {
-    compile "com.marklogic:java-client-api:4.0.0-EA3"
-    // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
-    compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
-
-    // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
-    compile "org.springframework:spring-oxm:4.2.6.RELEASE"
-
-    // For deploying the ML Job Repo
-    compile "com.marklogic:ml-app-deployer:2.3.0"
-
-    // For the CLI
-    compile "net.sf.jopt-simple:jopt-simple:5.0.1"
-
-    testCompile "com.marklogic:ml-junit:2.6.0"
-
-}
-
 jar {
     manifest {
         attributes(
@@ -32,6 +9,11 @@ jar {
 ext {
     mlAppConfig {
         createTriggersDatabase = false
+    }
+
+    mlInstallAdmin {
+        adminUsername = "admin"
+        adminPassword = "admin"
     }
 }
 

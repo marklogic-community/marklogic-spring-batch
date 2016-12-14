@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item;
+package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.*;

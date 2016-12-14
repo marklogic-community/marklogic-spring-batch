@@ -1,8 +1,8 @@
 package com.marklogic.spring.batch;
 
-import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.config.MarkLogicApplicationContext;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.*;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 /**
  * Base class for any "core" test.
  */
-@ContextConfiguration(classes = {BasicConfig.class})
+@ContextConfiguration(classes = {MarkLogicApplicationContext.class})
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
     
     private JobInstanceDao jobInstanceDao;

@@ -2,6 +2,7 @@ package com.marklogic.spring.batch;
 
 import static org.junit.Assert.*;
 
+import com.marklogic.spring.batch.config.MarkLogicApplicationContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import com.marklogic.client.admin.ServerConfigurationManager.UpdatePolicy;
 import com.marklogic.client.helper.DatabaseClientProvider;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { com.marklogic.client.spring.BasicConfig.class })
+@ContextConfiguration(classes = { MarkLogicApplicationContext.class })
 public class MarkLogicSpringBatchConfigTests extends Assert {
 	
 	@Autowired
@@ -35,7 +36,7 @@ public class MarkLogicSpringBatchConfigTests extends Assert {
 		assertEquals(UpdatePolicy.VERSION_OPTIONAL, configMgr.getUpdatePolicy());
 
 		// release the client
-		client.release();
+		//client.release();
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.marklogic.client;
 
 import com.marklogic.client.spring.BasicConfig;
+import com.marklogic.junit.MarkLogicNamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Test;
 
@@ -14,8 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
  * https://github.com/marklogic/java-client-api/issues/388
  */
 
-@ContextConfiguration(classes = { BasicConfig.class } )
-public class JavaClientApiIssue388Test extends AbstractSpringTest {
+public class JavaClientApiIssue388Test {
 	
 	@Test
 	public void replicateIssue388Test() {
@@ -23,7 +23,7 @@ public class JavaClientApiIssue388Test extends AbstractSpringTest {
 		StructuredQueryDefinition querydef = 
 			    qb.and(qb.term("neighborhood"), 
 			           qb.valueConstraint("industry", "Real Estate"));
-		Fragment frag = new Fragment(querydef.serialize(), getNamespaceProvider().getNamespaces());
+		Fragment frag = new Fragment(querydef.serialize(), new MarkLogicNamespaceProvider().getNamespaces());
 		frag.assertElementValue("//search:text", "neighborhood");
 		System.out.println(frag.getPrettyXml());
 	}

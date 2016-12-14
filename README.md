@@ -1,3 +1,10 @@
+![GitHub version](https://badge.fury.io/gh/sastafford%2Fmarklogic-spring-batch.svg)
+
+| Branch | Status |
+| ------------- | ------------- |
+| master | ![master](https://circleci.com/gh/sastafford/marklogic-spring-batch/tree/master.png?circle-token=e1b8b3198d3416fcb535509f2e7d600444ef153e)  |
+| dev  | ![dev](https://circleci.com/gh/sastafford/marklogic-spring-batch/tree/dev.png?circle-token=e1b8b3198d3416fcb535509f2e7d600444ef153e)  |
+
 # What is Spring Batch?
 
 [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) is an open source framework for batch processing. It is a lightweight, comprehensive solution designed to enable the development of robust batch applications, often found in modern enterprise systems.  Spring Batch is a sub-project of the Spring Framework.  It provides reusable functions that are essential in processing large volumes of records, including logging/tracing, transaction management, job processing statistics, job restart, skip, and resource management. It also provides more advanced technical services and features that will enable extremely high-volume and high performance batch jobs though optimization and partitioning techniques.
