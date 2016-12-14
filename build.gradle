@@ -151,4 +151,11 @@ project(':test') {
     }
 }
 
+project(':samples') {
+    dependencies {
+        compile project(':core')
+        testCompile project(':test')
+    }
+}
+
 

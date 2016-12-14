@@ -14,8 +14,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 
 @Configuration
-@PropertySource(value = "classpath:job.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:${job.home}/job.properties")
+@PropertySource(value = "classpath:job.properties", ignoreResourceNotFound = true)
 @Import(value = { SpringDatabaseClientConfig.class } )
 public class JobProjectTestConfig {
     
