@@ -140,6 +140,9 @@ project(':core') {
 
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
+    dependencies {
+        compile "com.marklogic:data-movement:1.0.0-EA3"
+    }
 
 }
 
