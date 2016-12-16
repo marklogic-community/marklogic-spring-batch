@@ -23,7 +23,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 
 @EnableBatchProcessing
-public class IngestGeonamesToMarkLogicConfig implements OptionParserConfigurer{
+public class IngestGeonamesToMarkLogicJob implements OptionParserConfigurer{
 
     @Override
     public void configureOptionParser(OptionParser parser) {

@@ -7,16 +7,16 @@ import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.geonames.IngestGeonamesToMarkLogicConfig.class})
-public class IngestGeonamesToMarkLogicTest extends AbstractJobTest {
+@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.geonames.IngestGeonamesToMarkLogicJob.class})
+public class IngestGeonamesToMarkLogicJobTest extends AbstractJobTest {
 
-    public IngestGeonamesToMarkLogicTest() {
+    public IngestGeonamesToMarkLogicJobTest() {
         setNamespaceProvider(new SpringBatchNamespaceProvider());
     }
 
     @Test
     public void ingestCitiesTest() {
-        runJob(IngestGeonamesToMarkLogicConfig.class,
+        runJob(IngestGeonamesToMarkLogicJob.class,
                 Options.CHUNK_SIZE, 100,
                 "--input_file_path", "src/test/resources/geonames/cities10.txt");
 
