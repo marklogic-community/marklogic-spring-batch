@@ -43,11 +43,6 @@ public abstract class AbstractJobTest extends AbstractSpringTest {
     @Autowired
     protected DatabaseClientProvider databaseClientProvider;
 
-    @Override
-    protected NamespaceProvider getNamespaceProvider() {
-        return new SpringBatchNamespaceProvider();
-    }
-
     /**
      * Assumes that the given config class defines a single Job bean, and runs it.
      *
@@ -171,6 +166,7 @@ public abstract class AbstractJobTest extends AbstractSpringTest {
     protected ClientTestHelper getClientTestHelper() {
         ClientTestHelper clientTestHelper = new ClientTestHelper();
         clientTestHelper.setDatabaseClientProvider(getClientProvider());
+        clientTestHelper.setNamespaceProvider(getNamespaceProvider());
         return clientTestHelper;
     }
 }
