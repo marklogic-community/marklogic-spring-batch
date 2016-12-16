@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.item.writer;
 
-
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.document.*;

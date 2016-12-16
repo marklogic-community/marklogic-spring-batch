@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Import;
 
 @EnableBatchProcessing
 @Import( MarkLogicBatchConfigurer.class )
-public class DeleteDocumentsConfig implements OptionParserConfigurer {
+public class DeleteDocumentsJob {
     
     @Autowired
     protected JobBuilderFactory jobBuilderFactory;

@@ -16,9 +16,10 @@ dependencies:
 
 test:
   override:
-    - docker run --name ml -d -p 8000:8000 -p 8001:8001 -p 8002:8002 -p 8200:8200 $DOCKER_MARKLOGIC_IMAGE
+    - docker run --hostname grover --name ml -d -p 8000:8000 -p 8001:8001 -p 8002:8002 -p 8200:8200 $DOCKER_MARKLOGIC_IMAGE
     - sleep 10
     - git lfs env
+    - git lfs pull
     - pwd
     - chmod +x gradlew
     - ./gradlew :core:mlInit -PmlHost=localhost --info

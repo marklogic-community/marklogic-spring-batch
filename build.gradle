@@ -140,6 +140,9 @@ project(':core') {
 
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
+    dependencies {
+        compile "com.marklogic:data-movement:1.0.0-EA3"
+    }
 
 }
 
@@ -148,6 +151,14 @@ project(':test') {
         compile project(':core')
         compile "org.springframework.batch:spring-batch-test:$springVersion"
         compile "com.marklogic:ml-junit:2.6.0"
+    }
+}
+
+project(':samples') {
+    dependencies {
+        compile project(':core')
+        testCompile project(':test')
+        compile "org.apache.opennlp:opennlp-tools:1.6.0"
     }
 }
 

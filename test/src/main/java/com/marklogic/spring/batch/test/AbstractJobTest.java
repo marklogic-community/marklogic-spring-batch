@@ -1,14 +1,21 @@
 package com.marklogic.spring.batch.test;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
+import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.junit.spring.BasicTestConfig;
+import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.spring.batch.Main;
 import com.marklogic.spring.batch.Options;
+import org.junit.Before;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -25,13 +32,18 @@ import java.util.List;
  * so that it knows what ML connection arguments to construct. If you don't use either of those,
  * you'll need to override the getMlConnectionArgs method.
  */
-@ContextConfiguration(classes = {JobProjectTestConfig.class})
+@ContextConfiguration(classes = {
+        com.marklogic.spring.batch.test.JobRunnerContext.class,
+        com.marklogic.spring.batch.test.JobProjectTestConfig.class})
 public abstract class AbstractJobTest extends AbstractSpringTest {
 
-    @Override
-    protected NamespaceProvider getNamespaceProvider() {
-        return new SpringBatchNamespaceProvider();
-    }
+    @Autowired
+    protected JobLauncherTestUtils jobLauncherTestUtils;
+
+    @Autowired
+    protected DatabaseClientProvider databaseClientProvider;
+
+    protected ClientTestHelper clientTestHelper;
 
     /**
      * Assumes that the given config class defines a single Job bean, and runs it.
@@ -145,5 +157,20 @@ public abstract class AbstractJobTest extends AbstractSpringTest {
             // ignore
         }
         return new String[]{mlHost, port.toString(), mlUsername, mlPassword};
+    }
+
+    protected boolean isMarkLogic9() {
+        AdminConfig config = new AdminConfig(getClient().getHost(), getClient().getPassword());
+        AdminManager mgr = new AdminManager(config);
+        return mgr.getServerVersion().startsWith("9");
+    }
+
+    protected ClientTestHelper getClientTestHelper() {
+        if (clientTestHelper == null) {
+            clientTestHelper = new ClientTestHelper();
+            clientTestHelper.setDatabaseClientProvider(getClientProvider());
+            clientTestHelper.setNamespaceProvider(getNamespaceProvider());
+        }
+        return clientTestHelper;
     }
 }
