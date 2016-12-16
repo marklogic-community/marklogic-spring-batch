@@ -158,6 +158,7 @@ project(':samples') {
     dependencies {
         compile project(':core')
         testCompile project(':test')
+        compile "org.apache.opennlp:opennlp-tools:1.6.0"
     }
 }
 
