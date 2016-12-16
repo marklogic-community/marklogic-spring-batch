@@ -5,6 +5,8 @@ import com.marklogic.spring.batch.Options;
 import com.marklogic.spring.batch.test.AbstractJobTest;
 import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
 import org.junit.Test;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.samples.geonames.IngestGeonamesToMarkLogicJob.class})
@@ -15,10 +17,11 @@ public class IngestGeonamesToMarkLogicJobTest extends AbstractJobTest {
     }
 
     @Test
-    public void ingestCitiesTest() {
-        runJob(IngestGeonamesToMarkLogicJob.class,
-                Options.CHUNK_SIZE, 100,
-                "--input_file_path", "src/test/resources/geonames/cities10.txt");
+    public void ingestCitiesTest() throws Exception {
+        JobParametersBuilder jpb = new JobParametersBuilder();
+        jpb.addLong("chunk", 10L);
+        jpb.addString("input_file_path", "src/test/resources/geonames/cities10.txt");
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
 
         String xquery = "xquery version \"1.0-ml\";\n" +
                 "declare namespace g = \"http://geonames.org\";\n" +
