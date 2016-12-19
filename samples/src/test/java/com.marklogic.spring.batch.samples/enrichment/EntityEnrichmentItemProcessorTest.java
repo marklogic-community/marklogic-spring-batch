@@ -8,8 +8,8 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.marker.DocumentPatchHandle;
 import com.marklogic.client.query.CountedDistinctValue;
 import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.config.MarkLogicApplicationContext;
 import com.marklogic.spring.batch.item.reader.ValuesItemReader;
-import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,7 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 
-@ContextConfiguration(classes = { JobProjectTestConfig.class } )
+@ContextConfiguration(classes = {MarkLogicApplicationContext.class } )
 public class EntityEnrichmentItemProcessorTest extends AbstractSpringTest {
 
     XMLDocumentManager docMgr;

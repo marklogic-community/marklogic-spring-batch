@@ -10,8 +10,9 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
+@PropertySource(value = "classpath:job.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "file:job.properties", ignoreResourceNotFound = true)
 @Import(value = { SpringDatabaseClientConfig.class } )
-@PropertySource("classpath:application.properties")
 public class MarkLogicApplicationContext {
 
     @Value("${marklogic.name}")
