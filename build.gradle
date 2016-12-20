@@ -155,11 +155,25 @@ project(':test') {
 }
 
 project(':samples') {
+    apply plugin: "application"
+
     dependencies {
         compile project(':core')
         testCompile project(':test')
         compile "org.apache.opennlp:opennlp-tools:1.6.0"
     }
+
+    distributions {
+        main {
+            baseName = "samples"
+        }
+    }
+
+    jar {
+        baseName = "samples"
+    }
+
+    mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
 }
 
 

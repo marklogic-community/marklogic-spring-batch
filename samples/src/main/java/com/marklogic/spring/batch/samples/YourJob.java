@@ -43,7 +43,7 @@ public class YourJob implements EnvironmentAware {
      * @param step injected from the step method in this class
      * @return Job bean
      */
-    @Bean
+    @Bean(name = "yourJob")
     public Job job(JobBuilderFactory jobBuilderFactory, Step step) {
         return jobBuilderFactory.get(JOB_NAME).start(step).build();
     }
@@ -97,7 +97,6 @@ public class YourJob implements EnvironmentAware {
             }
         };
         ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClient);
-    
         return stepBuilderFactory.get("step1")
                 .<String, DocumentWriteOperation>chunk(10)
                 .reader(reader)
