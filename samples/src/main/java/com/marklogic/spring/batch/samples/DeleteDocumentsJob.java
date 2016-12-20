@@ -21,7 +21,7 @@ public class DeleteDocumentsJob  {
     @Autowired
     DatabaseClientProvider databaseClientProvider;
 
-    @Bean
+    @Bean(name = "deleteDocumentsJob")
     public Job job(JobBuilderFactory jobBuilderFactory,
                    Step deleteDocumentsStep) {
         return jobBuilderFactory.get("deleteDocumentsJob").start(deleteDocumentsStep).build();
@@ -29,7 +29,7 @@ public class DeleteDocumentsJob  {
 
     @Bean
     @JobScope
-    public Step step(StepBuilderFactory stepBuilderFactory,
+    public Step deleteDocumentsStep(StepBuilderFactory stepBuilderFactory,
                      DatabaseClientProvider databaseClientProvider,
                      @Value("#{jobParameters['output_collections']}") String[] collections) {
         QueryDefinition query = new StructuredQueryBuilder().collection(collections);
