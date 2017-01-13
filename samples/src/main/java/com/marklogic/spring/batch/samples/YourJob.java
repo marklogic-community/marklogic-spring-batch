@@ -43,7 +43,7 @@ public class YourJob implements EnvironmentAware {
      * @param step injected from the step method in this class
      * @return Job bean
      */
-    @Bean(name = "yourJob")
+    @Bean
     public Job job(JobBuilderFactory jobBuilderFactory, Step step) {
         return jobBuilderFactory.get(JOB_NAME).start(step).build();
     }
