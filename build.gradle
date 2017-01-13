@@ -174,6 +174,8 @@ project(':samples') {
     }
 
     mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
+    //mainClassName = "com.marklogic.spring.batch.Main"
+    applicationName = "samples"
 }
 
 

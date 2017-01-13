@@ -1,10 +1,47 @@
-# MarkLogic Spring Batch Samples
+# MarkLogic Spring Batch Samples Project
 
-The samples project is intended to provide an example of how a batch processing application can be built using MarkLogic Spring Batch.
+The samples project demonstrates a process to build batch processing application using MarkLogic Spring Batch and Gradle.
 
+Spring Batch provides several ways of [running a job](http://docs.spring.io/spring-batch/trunk/reference/html/configureJob.html#runningAJob).  This sample will concentrate on launching a job via the commmand line.
 
-  Using the command line job runner
+## How do I build a MSB Application?
+
+An easy way to create your application is via the [Gradle Application Plugin](https://docs.gradle.org/current/userguide/application_plugin.html).  Executing the following gradle task will install the samples application.   
+
+    gradlew :samples:installDist
+
+The installation package can be found under the ./build/install/samples.  Two start scripts, one for Windows and one for Unix, will be created and all the dependent runtime libraries will be packaged.  At this point, you can then execute the start script and pass the required and any optional parameters defined by your job. 
+ 
+## CommandLineJobLauncher
+    
+Spring Batch provides a [CommandLineJobRunner](http://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/launch/support/CommandLineJobRunner.html) that is a basic launcher for starting jobs from the command line.  The default main class for the samples application is the CommandLineJobRunner.  
+
+The arguments to this class can be provided on the command line (separated by spaces), or through stdin (separated by new line). They are as follows:
+
+    jobPath <options> jobIdentifier (jobParameters)*
+
+The command line options are as follows
+
+ * jobPath: the XML or Java Config Spring application context containing a Job
+ * -restart: (optional) to restart the last failed execution
+ * -stop: (optional) to stop a running execution
+ * -abandon: (optional) to abandon a stopped execution
+ * -next: (optional) to start the next in a sequence according to the JobParametersIncrementer in the Job
+ * jobIdentifier: the name of the job or the id of a job execution (for -stop, -abandon or -restart).
+ * jobParameters: 0 to many parameters that will be used to launch a job specified in the form of key=value pairs.
+
+For the samples application, the _jobPath_ parameter points to the Spring configuration that wires up your application.  For this example, the [JobsConfig](./src/main/java/com/marklogic/spring/batch/batch/samples/JobsConfig.java) provides the application context.  
+
+   
+
+### Example
+
+Using the command line job runner
   samples.bat com.marklogic.spring.batch.samples.JobsConfig deleteDocumentsJob output_collections=monster
+
+## MarkLogic Spring Batch Main Job Launcher
+
+Included in the core project is a [main program](../core/src/main/java/spring/batch/Main.java) that also provides a command line job launcher.  
 
 
 * [BaseJob]()
