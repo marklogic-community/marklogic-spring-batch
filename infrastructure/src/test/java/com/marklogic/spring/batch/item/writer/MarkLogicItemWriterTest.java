@@ -8,8 +8,7 @@ import com.marklogic.client.io.*;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.BeansException;
@@ -35,7 +34,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     private MarkLogicItemWriter itemWriter;
     List<DocumentWriteOperation> handles;
-    public String xml;
+    public String xml = "<hello>world</hello>";
     public String transformName = "simple";
     DatabaseClient databaseClient;
     TransformExtensionsManager transMgr;
@@ -48,17 +47,16 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         clientTestHelper = new ClientTestHelper();
         clientTestHelper.setDatabaseClientProvider(databaseClientProvider);
         databaseClient = databaseClientProvider.getDatabaseClient();
+
         itemWriter = new MarkLogicItemWriter(databaseClient);
         itemWriter.open(new ExecutionContext());
         itemWriter.setThreadCount(1);
+
         Resource transform = ctx.getResource("classpath:/transforms/simple.xqy");
         TransformExtensionsManager transMgr = databaseClient.newServerConfigManager().newTransformExtensionsManager();
         FileHandle fileHandle = new FileHandle(transform.getFile());
         fileHandle.setFormat(Format.XML);
         transMgr.writeXQueryTransform(transformName, fileHandle);
-        xml = "<hello>world</hello>";
-        docMgr = databaseClient.newXMLDocumentManager();
-
 
         handles = new ArrayList<DocumentWriteOperation>();
 
@@ -73,8 +71,10 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         handle2.setMetadataHandle(new DocumentMetadataHandle().withCollections("raw"));
         handle2.setHandle(new StringHandle("<hello2 />"));
         handles.add(handle2);
-    }
 
+        docMgr = databaseClient.newXMLDocumentManager();
+    }
+    
     @Test
     public void writeTwoDocumentsTest() throws Exception {
         itemWriter.write(handles);
@@ -87,14 +87,17 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         ServerTransform transform = new ServerTransform(transformName);
         itemWriter.setServerTransform(transform);
         itemWriter.setReturnFormat(Format.XML);
+
         DocumentWriteOperation writeOp = new MarkLogicWriteHandle("hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
         writeOps.add(writeOp);
+
         try {
             itemWriter.write(writeOps);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         StringHandle handle = docMgr.read("hello.xml", new StringHandle());
         Fragment frag = new Fragment(handle.toString());
         frag.assertElementExists("//hello[text() = 'world']");
