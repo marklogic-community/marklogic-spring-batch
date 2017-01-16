@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 
 @EnableBatchProcessing
 //@Import( MarkLogicBatchConfigurer.class )
@@ -22,6 +23,7 @@ public class DeleteDocumentsJob  {
     DatabaseClientProvider databaseClientProvider;
 
     @Bean(name = "deleteDocumentsJob")
+    @Primary
     public Job job(JobBuilderFactory jobBuilderFactory,
                    Step deleteDocumentsStep) {
         return jobBuilderFactory.get("deleteDocumentsJob").start(deleteDocumentsStep).build();

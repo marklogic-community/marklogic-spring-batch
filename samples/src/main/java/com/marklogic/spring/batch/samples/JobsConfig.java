@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 @EnableBatchProcessing
 @Import({ com.marklogic.spring.batch.config.MarkLogicApplicationContext.class,
         DeleteDocumentsJob.class,
+        ImportDocumentsFromDirectoryJob.class,
         YourJob.class})
 public class JobsConfig {
 }
