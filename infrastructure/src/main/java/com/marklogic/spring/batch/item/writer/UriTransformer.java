@@ -14,9 +14,9 @@ public class UriTransformer {
     }
 
     public String transform(String uri) {
-        uri = (outputUriReplace != null) ? applyOutputUriReplace(uri, outputUriReplace) : uri;
-        uri = (outputUriPrefix != null) ? outputUriPrefix + uri : uri;
-        uri = (outputUriSuffix != null) ? uri + outputUriSuffix : uri;
+        uri = (outputUriReplace != null) && !outputUriReplace.isEmpty() ? applyOutputUriReplace(uri, outputUriReplace) : uri;
+        uri = (outputUriPrefix != null) && !outputUriPrefix.isEmpty() ? outputUriPrefix + uri : uri;
+        uri = (outputUriSuffix != null) && !outputUriSuffix.isEmpty() ? uri + outputUriSuffix : uri;
         return uri;
     }
 
