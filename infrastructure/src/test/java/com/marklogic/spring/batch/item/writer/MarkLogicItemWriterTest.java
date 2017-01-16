@@ -11,6 +11,7 @@ import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -48,6 +49,8 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         clientTestHelper.setDatabaseClientProvider(databaseClientProvider);
         databaseClient = databaseClientProvider.getDatabaseClient();
         itemWriter = new MarkLogicItemWriter(databaseClient);
+        itemWriter.open(new ExecutionContext());
+        itemWriter.setThreadCount(1);
         Resource transform = ctx.getResource("classpath:/transforms/simple.xqy");
         TransformExtensionsManager transMgr = databaseClient.newServerConfigManager().newTransformExtensionsManager();
         FileHandle fileHandle = new FileHandle(transform.getFile());
@@ -81,7 +84,9 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     @Test
     public void writeDocumentWithTransformNoParametersTest() {
-        itemWriter.setTransform(Format.XML, transformName, null);
+        ServerTransform transform = new ServerTransform(transformName);
+        itemWriter.setServerTransform(transform);
+        itemWriter.setReturnFormat(Format.XML);
         DocumentWriteOperation writeOp = new MarkLogicWriteHandle("hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
         writeOps.add(writeOp);
@@ -98,10 +103,11 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     @Test
     public void writeDocumentWithTransformWithParametersTest() {
-        Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("monster", "grover");
-        parameters.put("trash-can", "oscar");
-        itemWriter.setTransform(Format.XML, transformName, parameters);
+        ServerTransform serverTransform = new ServerTransform(transformName);
+        serverTransform.addParameter("monster", "grover");
+        serverTransform.addParameter("trash-can", "oscar");
+        itemWriter.setServerTransform(serverTransform);
+        itemWriter.setReturnFormat(Format.XML);
         DocumentWriteOperation writeOp = new MarkLogicWriteHandle("hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
         writeOps.add(writeOp);
