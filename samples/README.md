@@ -4,14 +4,18 @@ The samples project demonstrates a process to build batch processing application
 
 Spring Batch provides several ways of [running a job](http://docs.spring.io/spring-batch/trunk/reference/html/configureJob.html#runningAJob).  This sample will concentrate on launching a job via the commmand line.
 
-# How do I execute a MSB Application?
+# How do I install the Samples application?
 
-An easy way to create your application is via the [Gradle Application Plugin](https://docs.gradle.org/current/userguide/application_plugin.html).  Executing the following gradle task will install the samples application.   
+The samples application is built using the the [Gradle Application Plugin](https://docs.gradle.org/current/userguide/application_plugin.html).  The Gradle application plugin is a simple way of building a deployable command line based application.  Executing the following gradle task will install the samples application.   
 
     gradlew :samples:installDist
 
 The installation package can be found under the ./build/install/samples.  Two start scripts, one for Windows and one for Unix, will be created and all the dependent runtime libraries will be packaged.  At this point, you can then execute the start script and pass the required and any optional parameters defined by your job. 
  
+# How do I execute the Samples Application?
+
+Spring Batch applications are launched via an interface called a [JobLauncher](http://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html).  Through the implementation of this interface, jobs are launched.  There are two methods that the samples job can be launched.  
+
 ## CommandLineJobLauncher
     
 Spring Batch provides a [CommandLineJobRunner](http://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/launch/support/CommandLineJobRunner.html) that is a basic launcher for starting jobs from the command line.  The default main class for the samples application is the CommandLineJobRunner.  
@@ -41,7 +45,8 @@ For the samples application, the _jobPath_ parameter points to the Spring config
 ## MarkLogic Spring Batch Main Job Launcher
 
 Included in the core project is a [main program](../core/src/main/java/spring/batch/Main.java) that also provides a command line job launcher.  Each MarkLogic Spring Batch execution application (based on the Main class) expects a few command line parameters.  Custom parameters can be defined in the JobConfiguration. 
-                                                                                                              * config - The class name of your Job configuration
+
+  * config - The class name of your Job configuration
   * host - MarkLogic host
   * port - MarkLogic application port
   * username - MarkLogic user name

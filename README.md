@@ -35,6 +35,10 @@ There are common themes when writing batch processing jobs which get addressed w
 
 The top layer of the Spring Batch architecture is the application layer.  The application contains all batch jobs and custom code written by developers using Spring Batch. Look under the [samples](./samples/README.md) project for an example application.   
 
+Here are some batch processing applications using Spring Batch
+
+ * [rowToDoc](https://github.com/sastafford/rowToDoc)
+
 ### Extend the Spring Batch Core
 
 The Batch Core contains the core runtime classes necessary to launch and control a batch job. It includes things such as a [JobLauncher](), [Job](), and [Step]() implementations. The MSB project extends several batch core classes intended for specific use for MarkLogic.  MSB core extensions can be found under the [core subproject](./core/README.md).  
