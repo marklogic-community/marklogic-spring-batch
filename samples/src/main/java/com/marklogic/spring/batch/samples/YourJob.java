@@ -29,7 +29,7 @@ import org.springframework.core.env.Environment;
  */
 
 @EnableBatchProcessing
-// @Import( { MarkLogicBatchConfigurer.class } )
+//@Import( { MarkLogicBatchConfigurer.class } )
 public class YourJob implements EnvironmentAware {
     
     private Environment env;
