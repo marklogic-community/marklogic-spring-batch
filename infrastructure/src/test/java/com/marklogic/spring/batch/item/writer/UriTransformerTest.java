@@ -18,4 +18,25 @@ public class UriTransformerTest extends Assert {
         String uri = "test";
         assertEquals("pretest", transformer.transform(uri));
     }
+
+    @Test
+    public void uriSuffixTest() {
+        UriTransformer transformer = new UriTransformer("", "post", "");
+        String uri = "test";
+        assertEquals("testpost", transformer.transform(uri));
+    }
+
+    @Test
+    public void uriReplaceTest() {
+        UriTransformer transformer = new UriTransformer("", "", "test,ABC");
+        String uri = "thisisatest";
+        assertEquals("thisisaABC", transformer.transform(uri));
+    }
+
+    @Test
+    public void uriPrefixAndReplaceTest() {
+        UriTransformer transformer = new UriTransformer("pre", "", "test,ABC");
+        String uri = "thisisatest";
+        assertEquals("prethisisaABC", transformer.transform(uri));
+    }
 }
