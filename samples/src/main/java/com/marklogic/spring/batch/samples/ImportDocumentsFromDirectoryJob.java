@@ -7,6 +7,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import com.marklogic.spring.batch.item.processor.ResourceToDocumentWriteOperationItemProcessor;
+import com.marklogic.spring.batch.item.writer.UriTransformer;
 import com.marklogic.uri.DefaultUriGenerator;
 import com.marklogic.uri.UriGenerator;
 import org.springframework.batch.core.Job;
@@ -58,10 +59,10 @@ public class ImportDocumentsFromDirectoryJob {
         processor.setMetadataHandle(metadata);
         
         MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
-        itemWriter.setOutputUriPrefix(outputUriPrefix);
-        itemWriter.setOutputUriReplace(outputUriReplace);
-        itemWriter.setOutputUriSuffix(outputUriSuffix);
-        
+        itemWriter.setUriTransformer(new UriTransformer(outputUriPrefix, outputUriSuffix, outputUriReplace));
+        itemWriter.setReturnFormat(Format.valueOf(documentType.toUpperCase()));
+        itemWriter.setThreadCount(1);
+
         return stepBuilderFactory.get("step")
                 .<Resource, DocumentWriteOperation>chunk(10)
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))

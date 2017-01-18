@@ -8,9 +8,11 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ExecutorConfigurationSupport;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.ArrayList;
@@ -92,28 +94,29 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
     @Override
     public void close() throws ItemStreamException {
         int size = futures.size();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Waiting for threads to finish document processing; futures count: " + size);
-        }
-
         for (int i = 0; i < size; i++) {
             Future<?> f = futures.get(i);
-            if (f.isDone()) {
+            if (f.isDone() || f.isCancelled()) {
                 continue;
             }
             try {
                 // Wait up to 1 hour for a write to ML to finish (should never happen)
                 f.get(1, TimeUnit.HOURS);
             } catch (Exception ex) {
-                logger.warn("Unable to wait for last set of documents to be processed: " + ex.getMessage(), ex);
+                logger.warn("Unable to wait for last task future to finish: " + ex.getMessage(), ex);
             }
         }
 
-        logger.info("Releasing DatabaseClient instances...");
-        for (DatabaseClient client : databaseClients) {
-            client.release();
+        if (taskExecutor instanceof ExecutorConfigurationSupport) {
+            ((ExecutorConfigurationSupport)taskExecutor).shutdown();
+        } else if (taskExecutor instanceof DisposableBean) {
+            try {
+                ((DisposableBean) taskExecutor).destroy();
+            } catch (Exception ex) {
+                logger.warn("Unexpected exception while calling destroy() on taskExecutor: " + ex.getMessage(), ex);
+            }
         }
-        logger.info("Finished writing data to MarkLogic!");
+
     }
 
     public void setThreadCount(int threadCount) {

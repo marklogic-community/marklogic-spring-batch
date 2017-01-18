@@ -21,9 +21,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
@@ -50,7 +49,6 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
         itemWriter = new MarkLogicItemWriter(databaseClient);
         itemWriter.open(new ExecutionContext());
-        itemWriter.setThreadCount(1);
 
         Resource transform = ctx.getResource("classpath:/transforms/simple.xqy");
         TransformExtensionsManager transMgr = databaseClient.newServerConfigManager().newTransformExtensionsManager();
@@ -78,6 +76,8 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
     @Test
     public void writeTwoDocumentsTest() throws Exception {
         itemWriter.write(handles);
+        //Make sure that all the threads close before making assert statements
+        itemWriter.close();
         clientTestHelper.assertInCollections("abc.xml", "raw");
         clientTestHelper.assertCollectionSize("Expecting two items in raw collection", "raw", 2);
     }
@@ -94,6 +94,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
         try {
             itemWriter.write(writeOps);
+            itemWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,6 +117,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         writeOps.add(writeOp);
         try {
             itemWriter.write(writeOps);
+            itemWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,8 +133,8 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         GenericDocumentManager docMgr = databaseClient.newDocumentManager();
         docMgr.setContentFormat(Format.XML);
         DocumentWriteSet batch = docMgr.newWriteSet();
-        batch.add("/hello.xml", new DocumentMetadataHandle(), new StringHandle("<hello />"));
-        batch.add("/hello2.xml", new DocumentMetadataHandle(), new StringHandle("<hello2 />"));
+        batch.add("hello.xml", new DocumentMetadataHandle(), new StringHandle("<hello />"));
+        batch.add("hello2.xml", new DocumentMetadataHandle(), new StringHandle("<hello2 />"));
         ServerTransform serverTransform = new ServerTransform("simple");
         docMgr.write(batch, serverTransform);
     }
