@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class DeleteDocumentsJobTest extends AbstractJobTest {
 
     public void insertDocument(String uri, String collections, String xml) {
-        DatabaseClient client = databaseClientProvider.getDatabaseClient();
+        DatabaseClient client = getClient();
         XMLDocumentManager docMgr = client.newXMLDocumentManager();
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         String[] collectionArray = collections.split(",");

@@ -1,7 +1,6 @@
 package com.marklogic.client.io;
 
 import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
 import org.slf4j.Logger;
