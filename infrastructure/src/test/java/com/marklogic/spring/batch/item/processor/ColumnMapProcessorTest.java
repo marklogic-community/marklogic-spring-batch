@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.item.processor;
 
 import com.marklogic.client.io.MarkLogicWriteHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.columnmap.DefaultStaxColumnMapSerializer;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,12 +20,16 @@ public class ColumnMapProcessorTest extends Assert {
     @Test
     public void columnMapSimpleTest() throws Exception {
         columnMapProcessor = new ColumnMapProcessor(new DefaultStaxColumnMapSerializer());
+        columnMapProcessor.setRootLocalName("test");
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("sample", "value");
 
         MarkLogicWriteHandle handle = columnMapProcessor.process(map);
         logger.info(handle.getUri());
+        StringHandle strHandle = (StringHandle) handle.getContent();
+        logger.info(strHandle.get());
+        assertTrue("<test><sample>value</sample></test>".equals(strHandle.get()));
         assertNotNull(handle);
 
     }
