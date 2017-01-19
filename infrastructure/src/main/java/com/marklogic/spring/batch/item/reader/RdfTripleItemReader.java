@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item;
+package com.marklogic.spring.batch.item.reader;
 
 import java.util.Iterator;
 import java.util.Map;

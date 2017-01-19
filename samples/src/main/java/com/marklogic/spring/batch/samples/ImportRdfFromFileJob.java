@@ -1,8 +1,8 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.samples;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.item.RdfTripleItemReader;
-import com.marklogic.spring.batch.item.RdfTripleItemWriter;
+import com.marklogic.spring.batch.item.reader.RdfTripleItemReader;
+import com.marklogic.spring.batch.item.writer.RdfTripleItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.Map;
 
 @EnableBatchProcessing
-public class ImportRdfFromFileConfig {
+public class ImportRdfFromFileJob {
 
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("step1") Step step1) {

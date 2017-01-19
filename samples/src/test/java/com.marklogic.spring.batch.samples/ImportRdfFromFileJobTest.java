@@ -1,17 +1,16 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.samples;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.test.AbstractJobTest;
-import com.marklogic.spring.batch.test.JobProjectTestConfig;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {JobProjectTestConfig.class})
-public class ImportRdfFromFileTest extends AbstractJobTest {
+@ContextConfiguration(classes = {ImportRdfFromFileJob.class})
+public class ImportRdfFromFileJobTest extends AbstractJobTest {
 
     @Test
     public void test() {
-        runJob(ImportRdfFromFileConfig.class,
+        runJob(ImportRdfFromFileJob.class,
                 "--input_file_path", "src/test/resources/triple/test1.ttl",
                 "--graph_name", "myTestGraph");
 
