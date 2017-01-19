@@ -3,6 +3,7 @@ package com.marklogic.spring.batch.samples;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
 import com.marklogic.spring.batch.item.tasklet.DeleteDocumentsTasklet;
 import org.springframework.batch.core.Job;
@@ -22,7 +23,7 @@ public class DeleteDocumentsJob  {
     @Autowired
     DatabaseClientProvider databaseClientProvider;
 
-    @Bean(name = "deleteDocumentsJob")
+    @Bean
     @Primary
     public Job job(JobBuilderFactory jobBuilderFactory,
                    Step deleteDocumentsStep) {
@@ -34,7 +35,7 @@ public class DeleteDocumentsJob  {
     public Step deleteDocumentsStep(StepBuilderFactory stepBuilderFactory,
                      DatabaseClientProvider databaseClientProvider,
                      @Value("#{jobParameters['output_collections']}") String[] collections) {
-        QueryDefinition query = new StructuredQueryBuilder().collection(collections);
+        StructuredQueryDefinition query = new StructuredQueryBuilder().collection(collections);
         Tasklet deleteDocumentsTasklet = new DeleteDocumentsTasklet(databaseClientProvider, query);
         return stepBuilderFactory.get("Delete Documents").tasklet(deleteDocumentsTasklet).build();
     }
