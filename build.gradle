@@ -47,9 +47,11 @@ subprojects {
      */
 
     apply plugin: "java"
-    apply plugin: "com.jfrog.bintray"
-    apply plugin: "maven-publish"
 
+    if (!it.name.startsWith('samples')) {
+        apply plugin: "com.jfrog.bintray"
+        apply plugin: 'maven-publish'
+    }
 
     ext {
         springVersionDefault = '3.0.7.RELEASE'
@@ -75,32 +77,36 @@ subprojects {
         toolVersion = '7.1.2'
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        baseName = artifactId
-        version = project.version
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
+    if (!it.name.startsWith('samples')) {
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            baseName = artifactId
+            version = project.version
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
 
-    jar {
-        baseName = artifactId
-        version = project.version
-    }
+        jar {
+            baseName = artifactId
+            version = project.version
+        }
 
-    /*
-     * Assumes each project has a single publication.
-     */
-    publishing {
-        publications {
-            mainJavaWithSources(MavenPublication) {
-                groupId group
-                artifactId project.property("artifactId")
-                version project.version
-                from components.java
-                artifact sourcesJar
+        /*
+         * Assumes each project has a single publication.
+         */
+        publishing {
+            publications {
+                mainJavaWithSources(MavenPublication) {
+                    groupId group
+                    artifactId project.property("artifactId")
+                    version project.version
+                    from components.java
+                    artifact sourcesJar
+                }
             }
         }
     }
+
+
 }
 
 project(':core') {
