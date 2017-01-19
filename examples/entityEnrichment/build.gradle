@@ -1,9 +1,0 @@
-dependencies {
-    compile "org.apache.opennlp:opennlp-tools:1.6.0"
-}
-
-distributions {
-    main {
-        baseName = 'entityEnrichment'
-    }
-}
