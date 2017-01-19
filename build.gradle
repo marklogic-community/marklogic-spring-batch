@@ -47,9 +47,11 @@ subprojects {
      */
 
     apply plugin: "java"
-    apply plugin: "com.jfrog.bintray"
-    apply plugin: "maven-publish"
 
+    if (!it.name.startsWith('samples')) {
+        apply plugin: "com.jfrog.bintray"
+        apply plugin: 'maven-publish'
+    }
 
     ext {
         springVersionDefault = '3.0.7.RELEASE'
@@ -57,10 +59,12 @@ subprojects {
     }
 
     dependencies {
+        compile 'ch.qos.logback:logback-classic:1.1.8'
+        compile 'org.slf4j:slf4j-api:1.7.21'
         compile "org.springframework.batch:spring-batch-core:$springVersion"
         compile "com.marklogic:java-client-api:4.0.0-EA3"
-        compile "com.marklogic:ml-javaclient-util:2.11.0-dev"
-        compile 'org.slf4j:slf4j-api:1.7.21'
+        compile "com.marklogic:ml-javaclient-util:2.11.0"
+
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
         testCompile "com.marklogic:ml-junit:2.6.0"
 }
@@ -73,32 +77,36 @@ subprojects {
         toolVersion = '7.1.2'
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        baseName = artifactId
-        version = project.version
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
+    if (!it.name.startsWith('samples')) {
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            baseName = artifactId
+            version = project.version
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
 
-    jar {
-        baseName = artifactId
-        version = project.version
-    }
+        jar {
+            baseName = artifactId
+            version = project.version
+        }
 
-    /*
-     * Assumes each project has a single publication.
-     */
-    publishing {
-        publications {
-            mainJavaWithSources(MavenPublication) {
-                groupId group
-                artifactId project.property("artifactId")
-                version project.version
-                from components.java
-                artifact sourcesJar
+        /*
+         * Assumes each project has a single publication.
+         */
+        publishing {
+            publications {
+                mainJavaWithSources(MavenPublication) {
+                    groupId group
+                    artifactId project.property("artifactId")
+                    version project.version
+                    from components.java
+                    artifact sourcesJar
+                }
             }
         }
     }
+
+
 }
 
 project(':core') {
@@ -122,7 +130,7 @@ project(':core') {
         runtime "org.springframework.batch:spring-batch-core:$springVersion"
 
         //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
-        runtime "com.marklogic:ml-javaclient-util:2.10.0-alpha"
+        runtime "com.marklogic:ml-javaclient-util:2.11.0"
 
         runtime "org.springframework:spring-jdbc:4.2.6.RELEASE"
 
@@ -140,6 +148,9 @@ project(':core') {
 
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
+    dependencies {
+        compile "com.marklogic:data-movement:1.0.0-EA3"
+    }
 
 }
 
@@ -149,6 +160,30 @@ project(':test') {
         compile "org.springframework.batch:spring-batch-test:$springVersion"
         compile "com.marklogic:ml-junit:2.6.0"
     }
+}
+
+project(':samples') {
+    apply plugin: "application"
+
+    dependencies {
+        compile project(':core')
+        testCompile project(':test')
+        compile "org.apache.opennlp:opennlp-tools:1.6.0"
+    }
+
+    distributions {
+        main {
+            baseName = "samples"
+        }
+    }
+
+    jar {
+        baseName = "samples"
+    }
+
+    mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
+    //mainClassName = "com.marklogic.spring.batch.Main"
+    applicationName = "samples"
 }
 
 
