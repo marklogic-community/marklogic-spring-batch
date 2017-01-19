@@ -3,7 +3,6 @@ package com.marklogic.spring.batch.item.tasklet;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.DeleteListener;
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.QueryBatcher;
@@ -27,8 +26,7 @@ public class DeleteDocumentsTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         final DataMovementManager dataMovementManager = databaseClient.newDataMovementManager();
         QueryBatcher qb = dataMovementManager.newQueryBatcher(queryDefinition)
-                .withBatchSize(5)
-                .withThreadCount(2)
+                .withBatchSize(2500)
                 .withConsistentSnapshot()
                 .onUrisReady(new DeleteListener())
                 .onQueryFailure(throwable -> throwable.printStackTrace());
