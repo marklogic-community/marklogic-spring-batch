@@ -37,7 +37,6 @@ public class DeleteDocumentsJobTest extends AbstractJobTest {
     //Ignoring this test for now, I'm using DMSDK for this test and for some reason,
     //DMSDK is ignoring the host name that I send to the DataManager.  It works if I put in the
     //host that it expects but fails on my CI build.
-    @Ignore
     @Test
     public void deleteMonsterCollectionTest() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();

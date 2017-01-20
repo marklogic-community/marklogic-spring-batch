@@ -62,7 +62,7 @@ subprojects {
         compile 'ch.qos.logback:logback-classic:1.1.8'
         compile 'org.slf4j:slf4j-api:1.7.21'
         compile "org.springframework.batch:spring-batch-core:$springVersion"
-        compile "com.marklogic:java-client-api:4.0.0-EA3"
+        compile "com.marklogic:java-client-api:4.0.0-EA4"
         compile "com.marklogic:ml-javaclient-util:2.11.0"
 
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
@@ -149,8 +149,6 @@ project(':core') {
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
     dependencies {
-        compile "com.marklogic:data-movement:1.0.0-EA3"
-
         // For importing RDF
         compile('org.apache.jena:jena-arq:2.13.0') {
             exclude(group: 'org.slf4j')
@@ -171,7 +169,6 @@ project(":infrastructure") {
             exclude(group: 'log4j')
             exclude(group: 'ch.qos.logback')
         }
-
     }
 
 }
