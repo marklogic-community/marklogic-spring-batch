@@ -2,10 +2,14 @@ package com.marklogic.spring.batch.item.tasklet;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.DeleteListener;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.QueryBatcher;
+import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.MatchDocumentSummary;
+import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -24,6 +28,15 @@ public class DeleteDocumentsTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        QueryManager qryMgr = databaseClient.newQueryManager();
+        GenericDocumentManager docMgr = databaseClient.newDocumentManager();
+        SearchHandle handle = qryMgr.search(queryDefinition, new SearchHandle());
+        MatchDocumentSummary[] results = handle.getMatchResults();
+        for (int i = 0; i < results.length; i++) {
+            docMgr.delete(results[i].getUri());
+        }
+
+    /*
         final DataMovementManager dataMovementManager = databaseClient.newDataMovementManager();
         QueryBatcher qb = dataMovementManager.newQueryBatcher(queryDefinition)
                 .withBatchSize(2500)
@@ -33,6 +46,7 @@ public class DeleteDocumentsTasklet implements Tasklet {
         JobTicket ticket = dataMovementManager.startJob(qb);
         qb.awaitCompletion();
         dataMovementManager.stopJob(ticket);
+     */
         return RepeatStatus.FINISHED;
     }
 
