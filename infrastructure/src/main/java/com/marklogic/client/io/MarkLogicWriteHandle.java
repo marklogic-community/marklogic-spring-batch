@@ -6,6 +6,12 @@ import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Use the Java Client DocumentWriteOperationImpl class instead.
+ *
+ * TODO Remove this before 1.0.0?
+ */
+@Deprecated
 public class MarkLogicWriteHandle implements DocumentWriteOperation {
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
