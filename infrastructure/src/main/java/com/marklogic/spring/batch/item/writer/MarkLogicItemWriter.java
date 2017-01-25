@@ -1,8 +1,11 @@
 package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.batch.BatchWriter;
+import com.marklogic.client.batch.RestBatchWriter;
 import com.marklogic.client.document.*;
 import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.Format;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
@@ -16,73 +19,61 @@ import org.springframework.scheduling.concurrent.ExecutorConfigurationSupport;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-/*
-The MarkLogicItemWriter is an ItemWriter used to write any type of document to MarkLogic.  It expects a
-<a href="http://docs.marklogic.com/javadoc/client/com/marklogic/client/document/DocumentWriteOperation.html">DocumentWriteOperation</a> class.
-
-@see <a href="">MarkLogicWriteHandle</a>
+/**
+ * The MarkLogicItemWriter is an ItemWriter used to write any type of document to MarkLogic. It expects a list of
+ * <a href="http://docs.marklogic.com/javadoc/client/com/marklogic/client/document/DocumentWriteOperation.html">DocumentWriteOperation</a>
+ * instances, each of which encapsulates a write operation to MarkLogic.
+ *
+ * It depends on an instance of BatchWriter from the ml-javaclient-util. This allows for either the REST API - a
+ * DatabaseClient instance or set of instances - or XCC to be used for writing documents.
+ *
+ * A UriTransformer can be optionally set to transform the URI of each incoming DocumentWriteOperation.
  */
 public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<DocumentWriteOperation>, ItemStream {
 
-    private List<DatabaseClient> databaseClients;
-    private int clientIndex = 0;
-
-    private TaskExecutor taskExecutor;
-    private List<Future<?>> futures = new ArrayList<>();
-    private int threadCount = 16;
-
     private UriTransformer uriTransformer;
-    private ServerTransform serverTransform;
-    private Format returnFormat;
-    
+    private BatchWriter batchWriter;
+
     public MarkLogicItemWriter(DatabaseClient client) {
-        databaseClients = new ArrayList<>();
-        databaseClients.add(client);
-        //Add a default uri transformer
-        uriTransformer = new UriTransformer(null, null, null);
+        this(Arrays.asList(client));
     }
 
     public MarkLogicItemWriter(List<DatabaseClient> databaseClients) {
-        this.databaseClients = databaseClients;
-        uriTransformer = new UriTransformer(null, null, null);
+        this(new RestBatchWriter(databaseClients));
     }
-    
+
+    public MarkLogicItemWriter(BatchWriter batchWriter) {
+        this.batchWriter = batchWriter;
+    }
+
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
-        DatabaseClient client = databaseClients.get(clientIndex);
-        clientIndex++;
-        if (clientIndex >= databaseClients.size()) {
-            clientIndex = 0;
-        }
-
-        BatchWriter r = new BatchWriter(client, items, uriTransformer, serverTransform, returnFormat);
-
-        if (taskExecutor instanceof AsyncTaskExecutor) {
-            futures.add(((AsyncTaskExecutor) taskExecutor).submit(r));
+        if (uriTransformer != null) {
+            List<DocumentWriteOperation> newItems = new ArrayList<>();
+            for (DocumentWriteOperation op : items) {
+                String newUri = uriTransformer.transform(op.getUri());
+                newItems.add(new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                    newUri, op.getMetadata(), op.getContent()));
+            }
+            batchWriter.write(newItems);
         } else {
-            taskExecutor.execute(r);
+            batchWriter.write(items);
         }
     }
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        if (threadCount > 1) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Initializing thread pool with a count of " + threadCount);
-            }
-            ThreadPoolTaskExecutor tpte = new ThreadPoolTaskExecutor();
-            tpte.setCorePoolSize(threadCount);
-            tpte.afterPropertiesSet();
-            this.taskExecutor = tpte;
-        } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("Thread count is 1, so using a synchronous TaskExecutor");
-            }
-            this.taskExecutor = new SyncTaskExecutor();
+        if (logger.isInfoEnabled()) {
+            logger.info("On stream open, initializing BatchWriter");
+        }
+        batchWriter.initialize();
+        if (logger.isInfoEnabled()) {
+            logger.info("On stream open, finished initializing BatchWriter");
         }
     }
 
@@ -93,46 +84,17 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     @Override
     public void close() throws ItemStreamException {
-        int size = futures.size();
-        for (int i = 0; i < size; i++) {
-            Future<?> f = futures.get(i);
-            if (f.isDone() || f.isCancelled()) {
-                continue;
-            }
-            try {
-                // Wait up to 1 hour for a write to ML to finish (should never happen)
-                f.get(1, TimeUnit.HOURS);
-            } catch (Exception ex) {
-                logger.warn("Unable to wait for last task future to finish: " + ex.getMessage(), ex);
-            }
+        if (logger.isInfoEnabled()) {
+            logger.info("On stream close, waiting for BatchWriter to complete");
         }
-
-        if (taskExecutor instanceof ExecutorConfigurationSupport) {
-            ((ExecutorConfigurationSupport)taskExecutor).shutdown();
-        } else if (taskExecutor instanceof DisposableBean) {
-            try {
-                ((DisposableBean) taskExecutor).destroy();
-            } catch (Exception ex) {
-                logger.warn("Unexpected exception while calling destroy() on taskExecutor: " + ex.getMessage(), ex);
-            }
+        batchWriter.waitForCompletion();
+        if (logger.isInfoEnabled()) {
+            logger.info("On stream close, finished waiting for BatchWriter to complete");
         }
-
-    }
-
-    public void setThreadCount(int threadCount) {
-        this.threadCount = threadCount;
     }
 
     public void setUriTransformer(UriTransformer uriTransformer) {
         this.uriTransformer = uriTransformer;
-    }
-
-    public void setServerTransform(ServerTransform serverTransform) {
-        this.serverTransform = serverTransform;
-    }
-
-    public void setReturnFormat(Format returnFormat) {
-        this.returnFormat = returnFormat;
     }
 }
 
