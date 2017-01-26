@@ -119,7 +119,6 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         writeOps.add(writeOp);
         try {
             itemWriter.write(writeOps);
-            itemWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
