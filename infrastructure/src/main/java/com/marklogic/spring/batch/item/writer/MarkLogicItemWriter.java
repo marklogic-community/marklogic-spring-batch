@@ -6,23 +6,14 @@ import com.marklogic.client.batch.RestBatchWriter;
 import com.marklogic.client.document.*;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
-import com.marklogic.client.io.Format;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.core.task.SyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ExecutorConfigurationSupport;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The MarkLogicItemWriter is an ItemWriter used to write any type of document to MarkLogic. It expects a list of
