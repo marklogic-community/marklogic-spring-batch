@@ -1,14 +1,18 @@
 package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.batch.RestBatchWriter;
 import com.marklogic.client.document.*;
+import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.*;
+import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.batch.item.ExecutionContext;
@@ -25,43 +29,46 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
 public class MarkLogicItemWriterTest extends AbstractSpringTest implements ApplicationContextAware {
 
-    @Autowired
-    private DatabaseClientProvider databaseClientProvider;
+    public MarkLogicItemWriterTest() {
+        super();
+    }
 
+    @Autowired
+    private DatabaseClientConfig databaseClientConfig;
+
+    private ClientTestHelper clientTestHelper;
     private MarkLogicItemWriter itemWriter;
-    private RestBatchWriter restBatchWriter;
-    List<DocumentWriteOperation> handles;
+    private TempRestBatchWriter restBatchWriter;
     public String xml = "<hello>world</hello>";
     public String transformName = "simple";
-    DatabaseClient databaseClient;
-    TransformExtensionsManager transMgr;
+    DatabaseClient testDatabaseClient;
+
     XMLDocumentManager docMgr;
-    private ApplicationContext ctx;
-    private ClientTestHelper clientTestHelper;
 
     @Before
     public void setup() throws IOException {
-        clientTestHelper = new ClientTestHelper();
-        clientTestHelper.setDatabaseClientProvider(databaseClientProvider);
-        databaseClient = databaseClientProvider.getDatabaseClient();
-
-        restBatchWriter = new RestBatchWriter(Arrays.asList(databaseClient));
-
+        restBatchWriter = new TempRestBatchWriter(Arrays.asList(getClient()));
         itemWriter = new MarkLogicItemWriter(restBatchWriter);
         itemWriter.open(new ExecutionContext());
 
-        Resource transform = ctx.getResource("classpath:/transforms/simple.xqy");
-        TransformExtensionsManager transMgr = databaseClient.newServerConfigManager().newTransformExtensionsManager();
+        clientTestHelper = new ClientTestHelper();
+        SimpleDatabaseClientProvider dbConfig = new SimpleDatabaseClientProvider(databaseClientConfig);
+        clientTestHelper.setDatabaseClientProvider(dbConfig);
+
+        testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(), databaseClientConfig.getPort(), databaseClientConfig.getUsername(), databaseClientConfig.getPassword(), DatabaseClientFactory.Authentication.DIGEST);
+        docMgr = testDatabaseClient.newXMLDocumentManager();
+        Resource transform = getApplicationContext().getResource("classpath:/transforms/simple.xqy");
+        TransformExtensionsManager transMgr = testDatabaseClient.newServerConfigManager().newTransformExtensionsManager();
         FileHandle fileHandle = new FileHandle(transform.getFile());
         fileHandle.setFormat(Format.XML);
         transMgr.writeXQueryTransform(transformName, fileHandle);
+    }
 
-        handles = new ArrayList<DocumentWriteOperation>();
+    public List<DocumentWriteOperation> getDocuments() {
+        List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
 
         MarkLogicWriteHandle handle = new MarkLogicWriteHandle();
         handle.setUri("abc.xml");
@@ -75,12 +82,13 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         handle2.setHandle(new StringHandle("<hello2 />"));
         handles.add(handle2);
 
-        docMgr = databaseClient.newXMLDocumentManager();
+        return handles;
     }
     
     @Test
     public void writeTwoDocumentsTest() throws Exception {
-        itemWriter.write(handles);
+        itemWriter.write(getDocuments());
+        itemWriter.close();
         clientTestHelper.assertInCollections("abc.xml", "raw");
         clientTestHelper.assertCollectionSize("Expecting two items in raw collection", "raw", 2);
     }
@@ -89,7 +97,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
     public void writeDocumentWithTransformNoParametersTest() {
         ServerTransform transform = new ServerTransform(transformName);
         restBatchWriter.setServerTransform(transform);
-        //itemWriter.setReturnFormat(Format.XML);
+        restBatchWriter.setReturnFormat(Format.XML);
 
         DocumentWriteOperation writeOp = new MarkLogicWriteHandle("hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
@@ -97,6 +105,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
         try {
             itemWriter.write(writeOps);
+            itemWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,12 +122,13 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         serverTransform.addParameter("monster", "grover");
         serverTransform.addParameter("trash-can", "oscar");
         restBatchWriter.setServerTransform(serverTransform);
-        //itemWriter.setReturnFormat(Format.XML);
+        restBatchWriter.setReturnFormat(Format.XML);
         DocumentWriteOperation writeOp = new MarkLogicWriteHandle("hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
         writeOps.add(writeOp);
         try {
             itemWriter.write(writeOps);
+            itemWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,7 +141,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     @Test
     public void writeBatchDocumentsWithTransformTest() {
-        GenericDocumentManager docMgr = databaseClient.newDocumentManager();
+        GenericDocumentManager docMgr = testDatabaseClient.newDocumentManager();
         docMgr.setContentFormat(Format.XML);
         DocumentWriteSet batch = docMgr.newWriteSet();
         batch.add("hello.xml", new DocumentMetadataHandle(), new StringHandle("<hello />"));
@@ -146,7 +156,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         ServerTransform serverTransform = new ServerTransform(transformName);
         serverTransform.addParameter("monster", "grover");
         serverTransform.addParameter("trash-can", "oscar");
-        GenericDocumentManager genDocMgr = databaseClient.newDocumentManager();
+        GenericDocumentManager genDocMgr = testDatabaseClient.newDocumentManager();
         DocumentWriteSet writeSet = genDocMgr.newWriteSet();
         writeSet.add("aaa.xml", handle);
 
@@ -157,8 +167,4 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.ctx = applicationContext;
-    }
 }

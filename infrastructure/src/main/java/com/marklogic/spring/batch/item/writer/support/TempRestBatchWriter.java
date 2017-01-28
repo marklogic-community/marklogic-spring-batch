@@ -19,11 +19,15 @@ public class TempRestBatchWriter extends RestBatchWriter {
     private Format returnFormat;
 
     public TempRestBatchWriter(DatabaseClient databaseClient) {
+
         super(Arrays.asList(databaseClient));
+        setReleaseDatabaseClients(false);
     }
 
     public TempRestBatchWriter(List<DatabaseClient> databaseClients) {
+
         super(databaseClients);
+        setReleaseDatabaseClients(false);
     }
 
     @Override
