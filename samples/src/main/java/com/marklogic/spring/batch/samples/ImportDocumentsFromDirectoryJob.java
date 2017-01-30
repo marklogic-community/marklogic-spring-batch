@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.samples;
 
+import com.marklogic.client.batch.BatchWriter;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -8,6 +9,7 @@ import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import com.marklogic.spring.batch.item.processor.ResourceToDocumentWriteOperationItemProcessor;
 import com.marklogic.spring.batch.item.writer.UriTransformer;
+import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
 import com.marklogic.uri.DefaultUriGenerator;
 import com.marklogic.uri.UriGenerator;
 import org.springframework.batch.core.Job;
@@ -57,11 +59,13 @@ public class ImportDocumentsFromDirectoryJob {
             processor.setFormat(Format.valueOf(documentType.toUpperCase()));
         }
         processor.setMetadataHandle(metadata);
-        
-        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
+
+        TempRestBatchWriter batchWriter = new TempRestBatchWriter(databaseClientProvider.getDatabaseClient());
+        batchWriter.setReturnFormat(Format.valueOf(documentType.toUpperCase()));
+        batchWriter.setThreadCount(1);
+
+        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(batchWriter);
         itemWriter.setUriTransformer(new UriTransformer(outputUriPrefix, outputUriSuffix, outputUriReplace));
-        itemWriter.setReturnFormat(Format.valueOf(documentType.toUpperCase()));
-        itemWriter.setThreadCount(1);
 
         return stepBuilderFactory.get("step")
                 .<Resource, DocumentWriteOperation>chunk(10)
