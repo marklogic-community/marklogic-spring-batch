@@ -35,7 +35,9 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
     }
 
     public MarkLogicItemWriter(List<DatabaseClient> databaseClients) {
-        this(new RestBatchWriter(databaseClients));
+        RestBatchWriter rbw = new RestBatchWriter(databaseClients);
+        rbw.setReleaseDatabaseClients(false);
+        this.batchWriter = rbw;
     }
 
     public MarkLogicItemWriter(BatchWriter batchWriter) {

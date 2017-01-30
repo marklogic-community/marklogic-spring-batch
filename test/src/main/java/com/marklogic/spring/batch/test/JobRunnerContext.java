@@ -19,6 +19,7 @@ public class JobRunnerContext {
         ClientTestHelper clientTestHelper = new ClientTestHelper();
         DatabaseClientProvider databaseClientProvider = new SimpleDatabaseClientProvider(databaseClientConfig);
         clientTestHelper.setDatabaseClientProvider(databaseClientProvider);
+        clientTestHelper.setNamespaceProvider(new SpringBatchNamespaceProvider());
         return clientTestHelper;
     }
 

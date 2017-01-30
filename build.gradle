@@ -169,6 +169,8 @@ project(":infrastructure") {
             exclude(group: 'log4j')
             exclude(group: 'ch.qos.logback')
         }
+
+        testCompile project(':test')
     }
 
 }

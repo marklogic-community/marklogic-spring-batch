@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.test;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.spring.AbstractSpringTest;
@@ -40,6 +41,7 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
     @Autowired
     public void setClientTestHelper(ClientTestHelper clientTestHelper) {
         this.clientTestHelper = clientTestHelper;
+
     }
 
     @Autowired

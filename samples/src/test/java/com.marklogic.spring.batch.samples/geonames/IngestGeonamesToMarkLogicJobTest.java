@@ -1,18 +1,24 @@
 package com.marklogic.spring.batch.samples.geonames;
 
+import com.marklogic.client.helper.DatabaseClientConfig;
+import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.Options;
-import com.marklogic.spring.batch.test.AbstractJobTest;
+import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.samples.geonames.IngestGeonamesToMarkLogicJob.class})
-public class IngestGeonamesToMarkLogicJobTest extends AbstractJobTest {
+public class IngestGeonamesToMarkLogicJobTest extends AbstractJobRunnerTest {
+
+    @Autowired
+    private DatabaseClientConfig databaseClientConfig;
 
     public IngestGeonamesToMarkLogicJobTest() {
+        setDatabaseClientProvider(new SimpleDatabaseClientProvider(databaseClientConfig));
         setNamespaceProvider(new SpringBatchNamespaceProvider());
     }
 
@@ -21,7 +27,7 @@ public class IngestGeonamesToMarkLogicJobTest extends AbstractJobTest {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addLong("chunk", 10L);
         jpb.addString("input_file_path", "src/test/resources/geonames/cities10.txt");
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
 
         String xquery = "xquery version \"1.0-ml\";\n" +
                 "declare namespace g = \"http://geonames.org\";\n" +
