@@ -4,7 +4,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.spring.batch.test.AbstractJobTest;
+import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,7 +15,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.samples.DeleteDocumentsJob.class} )
-public class DeleteDocumentsJobTest extends AbstractJobTest {
+public class DeleteDocumentsJobTest extends AbstractJobRunnerTest {
 
     public void insertDocument(String uri, String collections, String xml) {
         DatabaseClient client = getClient();
@@ -41,7 +41,7 @@ public class DeleteDocumentsJobTest extends AbstractJobTest {
     public void deleteMonsterCollectionTest() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("output_collections", "monster");
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
         getClientTestHelper().assertCollectionSize("Expecting zero documents in monster collection", "monster", 0);
     }

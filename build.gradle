@@ -63,7 +63,7 @@ subprojects {
         compile 'org.slf4j:slf4j-api:1.7.21'
         compile "org.springframework.batch:spring-batch-core:$springVersion"
         compile "com.marklogic:java-client-api:4.0.0-EA4"
-        compile "com.marklogic:ml-javaclient-util:2.11.0"
+        compile "com.marklogic:ml-javaclient-util:2.12.0"
 
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
         testCompile "com.marklogic:ml-junit:2.6.0"
@@ -130,7 +130,7 @@ project(':core') {
         runtime "org.springframework.batch:spring-batch-core:$springVersion"
 
         //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
-        runtime "com.marklogic:ml-javaclient-util:2.11.0"
+        runtime "com.marklogic:ml-javaclient-util:2.12.0"
 
         runtime "org.springframework:spring-jdbc:4.2.6.RELEASE"
 
@@ -169,6 +169,8 @@ project(":infrastructure") {
             exclude(group: 'log4j')
             exclude(group: 'ch.qos.logback')
         }
+
+        testCompile project(':test')
     }
 
 }

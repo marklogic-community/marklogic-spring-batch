@@ -1,14 +1,14 @@
 package com.marklogic.spring.batch.samples;
 
 import com.marklogic.junit.Fragment;
-import com.marklogic.spring.batch.test.AbstractJobTest;
+import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {ImportDocumentsFromDirectoryJob.class})
-public class ImportDocumentsFromDirectoryJobTest extends AbstractJobTest {
+public class ImportDocumentsFromDirectoryJobTest extends AbstractJobRunnerTest {
 
     private JobParametersBuilder jpb = new JobParametersBuilder();
 
@@ -18,7 +18,7 @@ public class ImportDocumentsFromDirectoryJobTest extends AbstractJobTest {
         jpb.addString("document_type", "xml");
         jpb.addString("input_file_pattern", "(elmo|grover).xml");
         jpb.addString("output_collections", "monster,sesameStreet");
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         thenDocumentsInMonsterCollection(2);
     }
 
@@ -29,7 +29,7 @@ public class ImportDocumentsFromDirectoryJobTest extends AbstractJobTest {
         jpb.addString("input_file_pattern", "(elmo|grover).xml");
         jpb.addString("output_uri_replace", ".*data/,/");
         jpb.addString("output_uri_prefix", "/monster");
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         Fragment frag = getClientTestHelper().parseUri("/monster/elmo.xml");
         frag.assertElementValue("/monster/name", "Elmo");
         thenDocumentsInMonsterCollection(0);
@@ -41,7 +41,7 @@ public class ImportDocumentsFromDirectoryJobTest extends AbstractJobTest {
         jpb.addString("input_file_pattern", "(elmo|grover).json");
         jpb.addString("document_type", "json");
         jpb.addString("output_collections", "monster,sesameStreet");
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         thenDocumentsInMonsterCollection(2);
     }
 /*
