@@ -13,6 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 
+@Deprecated
 @Configuration
 @PropertySource(value = "classpath:job.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:job.properties", ignoreResourceNotFound = true)
