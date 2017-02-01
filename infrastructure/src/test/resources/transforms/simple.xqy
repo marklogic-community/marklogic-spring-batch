@@ -7,13 +7,16 @@ declare function x:transform(
   $params as map:map,
   $content as document-node())
 as document-node() {
+(
+  xdmp:log(xdmp:quote($content)),
   document {
     element { fn:local-name($content/element()) } {
       $content/element(),
       element transform {},
       for $param in map:keys($params)
-      return element { $param } { map:get($params, $param) }
+      return (element { $param } { map:get($params, $param) }, xdmp:log(fn:concat($param, ": ", map:get($params, $param))) )
     }
   }
+)
 
 };

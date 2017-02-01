@@ -1,27 +1,33 @@
 package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
 public class MarkLogicPatchItemWriterTest extends AbstractSpringTest {
-    
+
+    DatabaseClient client;
     XMLDocumentManager docMgr;
+
+    @Autowired
+    DatabaseClientConfig databaseClientConfig;
     
     @Before
     public void setup() {
-        DatabaseClient client = getClient();
+        DatabaseClientFactory.SecurityContext securityContext = new DatabaseClientFactory.DigestAuthContext(databaseClientConfig.getUsername(), databaseClientConfig.getPassword());
+        client = DatabaseClientFactory.newClient(databaseClientConfig.getHost(), databaseClientConfig.getPort(), securityContext);
         docMgr = client.newXMLDocumentManager();
         StringHandle text1 = new StringHandle("<doc><text>Abbey D'Agostino finished the race Tuesday after helping Nikki Hamblin of New Zealand back up and urging her to finish. The two clipped heels during the late part of the race and tumbled to the ground. Hamblin has indicated she will run in the final.  Emma Coburn, who took bronze in the women's 3,000 steeplechase, becoming the first American woman to medal in the event, reacted Wednesday</text></doc>");
         docMgr.write("hello.xml", text1);
@@ -29,7 +35,7 @@ public class MarkLogicPatchItemWriterTest extends AbstractSpringTest {
     
     @Test
     public void patchItemWriterTest() throws Exception {
-        MarkLogicPatchItemWriter itemWriter = new MarkLogicPatchItemWriter(getClient());
+        MarkLogicPatchItemWriter itemWriter = new MarkLogicPatchItemWriter(client);
         String[] info = new String[2];
         info[0] = "hello.xml";
         info[1] = "<new>content</new>";

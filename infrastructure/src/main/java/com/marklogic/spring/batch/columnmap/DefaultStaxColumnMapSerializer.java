@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * COPY/PASTED from rowToDoc. Should probably live in marklogic-spring-batch.
+ * Simple implementation that uses StAX - https://docs.oracle.com/javase/tutorial/jaxp/stax/index.html - for generating
+ * an XML document from a Spring column map.
  */
 public class DefaultStaxColumnMapSerializer extends LoggingObject implements ColumnMapSerializer {
 

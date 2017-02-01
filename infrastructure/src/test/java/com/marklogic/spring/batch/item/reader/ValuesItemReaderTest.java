@@ -1,7 +1,9 @@
 package com.marklogic.spring.batch.item.reader;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.CountedDistinctValue;
@@ -9,6 +11,7 @@ import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
@@ -16,10 +19,15 @@ public class ValuesItemReaderTest extends AbstractSpringTest {
 
     private ValuesItemReader reader;
     ClientTestHelper helper;
-    
+    DatabaseClient client;
+
+    @Autowired
+    DatabaseClientConfig databaseClientConfig;
+
     @Before
     public void setup() {
-        DatabaseClient client = getClient();
+        DatabaseClientFactory.SecurityContext securityContext = new DatabaseClientFactory.DigestAuthContext(databaseClientConfig.getUsername(), databaseClientConfig.getPassword());
+        client = DatabaseClientFactory.newClient(databaseClientConfig.getHost(), databaseClientConfig.getPort(), securityContext);
         helper = new ClientTestHelper();
         helper.setDatabaseClientProvider(getClientProvider());
         XMLDocumentManager docMgr = client.newXMLDocumentManager();
@@ -40,7 +48,7 @@ public class ValuesItemReaderTest extends AbstractSpringTest {
     
     @Test
     public void getValuesFromItemReaderTest() throws Exception {
-        reader = new ValuesItemReader(getClient());
+        reader = new ValuesItemReader(client);
         reader.open(null);
         assertEquals("Expecting size of 5", reader.getLength(), 5);
         CountedDistinctValue val = reader.read();
