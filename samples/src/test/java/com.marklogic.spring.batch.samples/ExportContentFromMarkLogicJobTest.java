@@ -14,8 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.MarkLogicURIReaderJob.class})
-public class MarkLogicURIReaderJobTest extends AbstractJobTest {
+@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.ExportContentFromMarkLogicJob.class})
+public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
 
     public void insertDocument(String uri, String collections, String xml) {
         DatabaseClient client = getClient();

@@ -3,12 +3,8 @@ package com.marklogic.spring.batch.samples;
 import java.io.File;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.MarkLogicWriteHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
+
 import com.marklogic.spring.batch.item.reader.MarkLogicItemReader;
 
 import org.springframework.batch.core.Job;
@@ -17,7 +13,6 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
@@ -42,8 +37,7 @@ import org.springframework.util.Assert;
  */
 
 @EnableBatchProcessing
-//@Import( { MarkLogicBatchConfigurer.class } )
-public class MarkLogicURIReaderJob implements EnvironmentAware {
+public class ExportContentFromMarkLogicJob implements EnvironmentAware {
     
     private Environment env; 
     
