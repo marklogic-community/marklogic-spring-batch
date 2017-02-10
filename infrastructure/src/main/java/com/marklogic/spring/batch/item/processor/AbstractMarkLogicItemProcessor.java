@@ -5,9 +5,13 @@ import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.AbstractWriteHandle;
+import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItemProcessor<T> {
@@ -17,6 +21,9 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
     private String[] collections;
     private String type = "document";
     private Format format;
+    final private String ISO_DATE_PATTERN = "yyyy-MM-dd";
+    final private String ISO_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm'Z'";
+    protected UriGenerator uriGenerator;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -24,16 +31,25 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
         return String.format(s, args);
     }
 
+    public AbstractMarkLogicItemProcessor() {
+        uriGenerator = new UriGenerator() {
+            @Override
+            public String generateUri(Object o) {
+                return UUID.randomUUID().toString();
+            }
+        };
+    }
+
+    public AbstractMarkLogicItemProcessor(UriGenerator uriGenerator) {
+        this.uriGenerator = uriGenerator;
+    }
+
     public DocumentWriteOperation process(T item) throws Exception {
         return new DocumentWriteOperationImpl(
                 DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
-                getUri(item),
+                uriGenerator.generateUri(item),
                 getDocumentMetadata(item),
                 getContentHandle(item));
-    }
-
-    public String getUri(T item) {
-        return "/" + getType() + UUID.randomUUID().toString();
     }
 
     public abstract AbstractWriteHandle getContentHandle(T item) throws Exception;
@@ -51,6 +67,20 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
             }
         }
         return metadata;
+    }
+
+    public String transformDateTime(String dateTime, String dateTimeMask) {
+        SimpleDateFormat iso8601Formatter = new SimpleDateFormat(ISO_DATE_TIME_PATTERN);
+        SimpleDateFormat simpleDateTimeFormatter = new SimpleDateFormat(dateTimeMask);
+        Date date = simpleDateTimeFormatter.parse(dateTime, new ParsePosition(0));
+        return iso8601Formatter.format(date);
+    }
+
+    public String transformDate(String dateTime, String dateMask) {
+        SimpleDateFormat iso8601Formatter = new SimpleDateFormat(ISO_DATE_PATTERN);
+        SimpleDateFormat simpleDateFormatter = new SimpleDateFormat(dateMask);
+        Date date = simpleDateFormatter.parse(dateTime, new ParsePosition(0));
+        return iso8601Formatter.format(date);
     }
 
     public String[] getPermissions() {
@@ -83,5 +113,13 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
 
     public void setFormat(Format format) {
         this.format = format;
+    }
+
+    public UriGenerator getUriGenerator() {
+        return uriGenerator;
+    }
+
+    public void setUriGenerator(UriGenerator uriGenerator) {
+        this.uriGenerator = uriGenerator;
     }
 }

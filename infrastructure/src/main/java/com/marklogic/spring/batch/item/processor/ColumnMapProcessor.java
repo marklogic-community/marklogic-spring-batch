@@ -3,8 +3,10 @@ package com.marklogic.spring.batch.item.processor;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.spring.batch.columnmap.ColumnMapSerializer;
+import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class ColumnMapProcessor extends AbstractMarkLogicItemProcessor<Map<String, Object>> {
 
@@ -12,8 +14,23 @@ public class ColumnMapProcessor extends AbstractMarkLogicItemProcessor<Map<Strin
     private String rootLocalName = "CHANGEME";
 
     public ColumnMapProcessor(ColumnMapSerializer columnMapSerializer) {
+        super();
         this.columnMapSerializer = columnMapSerializer;
         setType(rootLocalName);
+        setUriGenerator(
+                new UriGenerator() {
+                    @Override
+                    public String generateUri(Object o) {
+                        String uuid = UUID.randomUUID().toString();
+                        String uri = "/" + rootLocalName + "/" + uuid + ".xml";
+                        return uri;
+                    }
+                });
+    }
+
+    public ColumnMapProcessor(ColumnMapSerializer columnMapSerializer, UriGenerator uriGenerator) {
+        super(uriGenerator);
+        this.columnMapSerializer = columnMapSerializer;
     }
 
     @Override
