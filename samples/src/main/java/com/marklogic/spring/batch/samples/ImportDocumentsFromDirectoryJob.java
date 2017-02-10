@@ -1,17 +1,14 @@
 package com.marklogic.spring.batch.samples;
 
-import com.marklogic.client.batch.BatchWriter;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
-import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import com.marklogic.spring.batch.item.processor.ResourceToDocumentWriteOperationItemProcessor;
 import com.marklogic.spring.batch.item.writer.UriTransformer;
 import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
-import com.marklogic.uri.DefaultUriGenerator;
-import com.marklogic.uri.UriGenerator;
+import com.marklogic.spring.batch.item.processor.support.DefaultUriGenerator;
+import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
@@ -19,7 +16,6 @@ import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
 import org.springframework.util.Assert;
@@ -49,16 +45,14 @@ public class ImportDocumentsFromDirectoryJob {
             @Value("#{jobParameters['output_collections']}") String outputCollections) {
 
         Assert.hasText(inputFilePath, "input_file_path cannot be null");
-    
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        if (outputCollections != null) {
-            metadata.withCollections(outputCollections.split(","));
-        }
+
         ResourceToDocumentWriteOperationItemProcessor processor = new ResourceToDocumentWriteOperationItemProcessor();
+        String[] collections = outputCollections == null ? null : outputCollections.split(",");
+        processor.setCollections(collections);
+
         if (documentType != null) {
             processor.setFormat(Format.valueOf(documentType.toUpperCase()));
         }
-        processor.setMetadataHandle(metadata);
 
         TempRestBatchWriter batchWriter = new TempRestBatchWriter(databaseClientProvider.getDatabaseClient());
         batchWriter.setReturnFormat(Format.valueOf(documentType.toUpperCase()));
