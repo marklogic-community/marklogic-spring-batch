@@ -49,16 +49,14 @@ public class ImportDocumentsFromDirectoryJob {
             @Value("#{jobParameters['output_collections']}") String outputCollections) {
 
         Assert.hasText(inputFilePath, "input_file_path cannot be null");
-    
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        if (outputCollections != null) {
-            metadata.withCollections(outputCollections.split(","));
-        }
+
         ResourceToDocumentWriteOperationItemProcessor processor = new ResourceToDocumentWriteOperationItemProcessor();
+        String[] collections = outputCollections == null ? null : outputCollections.split(",");
+        processor.setCollections(collections);
+
         if (documentType != null) {
             processor.setFormat(Format.valueOf(documentType.toUpperCase()));
         }
-        processor.setMetadataHandle(metadata);
 
         TempRestBatchWriter batchWriter = new TempRestBatchWriter(databaseClientProvider.getDatabaseClient());
         batchWriter.setReturnFormat(Format.valueOf(documentType.toUpperCase()));

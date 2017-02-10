@@ -3,7 +3,10 @@ package com.marklogic.spring.batch.item.processor;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.AbstractWriteHandle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
@@ -13,6 +16,13 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
     private String[] permissions;
     private String[] collections;
     private String type = "document";
+    private Format format;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    protected String format(String s, Object... args) {
+        return String.format(s, args);
+    }
 
     public DocumentWriteOperation process(T item) throws Exception {
         return new DocumentWriteOperationImpl(
@@ -30,7 +40,9 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
 
     protected DocumentMetadataHandle getDocumentMetadata(T item) {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        metadata.withCollections(collections);
+        if (collections != null) {
+            metadata.withCollections(collections);
+        }
         if (permissions != null) {
             for (int i = 0; i < permissions.length; i += 2) {
                 String role = permissions[i];
@@ -63,5 +75,13 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Format getFormat() {
+        return format;
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
     }
 }
