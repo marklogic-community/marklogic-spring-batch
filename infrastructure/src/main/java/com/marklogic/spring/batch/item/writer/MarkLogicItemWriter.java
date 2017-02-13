@@ -29,6 +29,8 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     private UriTransformer uriTransformer;
     private BatchWriter batchWriter;
+    protected long writeCount = 0;
+    protected long writeCalled = 0;
 
     public MarkLogicItemWriter(DatabaseClient client) {
         this(Arrays.asList(client));
@@ -46,6 +48,8 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
+        writeCalled += 1;
+        writeCount += items.size();
         if (uriTransformer != null) {
             List<DocumentWriteOperation> newItems = new ArrayList<>();
             for (DocumentWriteOperation op : items) {
@@ -56,6 +60,9 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
             batchWriter.write(newItems);
         } else {
             batchWriter.write(items);
+        }
+        if (writeCalled % 250 == 0) {
+            logger.info("Write Count: " + writeCount);
         }
     }
 
@@ -83,6 +90,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
         batchWriter.waitForCompletion();
         if (logger.isInfoEnabled()) {
             logger.info("On stream close, finished waiting for BatchWriter to complete");
+            logger.info("Final Write Count: " + writeCount);
         }
     }
 

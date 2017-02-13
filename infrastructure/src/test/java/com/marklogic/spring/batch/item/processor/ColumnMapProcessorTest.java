@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.item.processor;
 
+import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.io.MarkLogicWriteHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.columnmap.DefaultStaxColumnMapSerializer;
@@ -25,7 +26,7 @@ public class ColumnMapProcessorTest extends Assert {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("sample", "value");
 
-        MarkLogicWriteHandle handle = columnMapProcessor.process(map);
+        DocumentWriteOperation handle = columnMapProcessor.process(map);
         logger.info(handle.getUri());
         StringHandle strHandle = (StringHandle) handle.getContent();
         logger.info(strHandle.get());
