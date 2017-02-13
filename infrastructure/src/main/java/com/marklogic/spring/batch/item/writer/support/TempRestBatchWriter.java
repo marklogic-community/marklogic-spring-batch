@@ -11,9 +11,6 @@ import com.marklogic.client.io.Format;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by sstafford on 1/27/2017.
- */
 public class TempRestBatchWriter extends RestBatchWriter {
 
     private Format returnFormat;
