@@ -1,7 +1,5 @@
 package com.marklogic.spring.batch.test;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.SimpleDatabaseClientProvider;

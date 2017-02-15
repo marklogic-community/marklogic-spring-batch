@@ -21,8 +21,6 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
     private String[] collections;
     private String type = "document";
     private Format format;
-    final private String ISO_DATE_PATTERN = "yyyy-MM-dd";
-    final private String ISO_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm'Z'";
     protected UriGenerator uriGenerator;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -70,6 +68,7 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
     }
 
     public String transformDateTime(String dateTime, String dateTimeMask) {
+        String ISO_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm'Z'";
         SimpleDateFormat iso8601Formatter = new SimpleDateFormat(ISO_DATE_TIME_PATTERN);
         SimpleDateFormat simpleDateTimeFormatter = new SimpleDateFormat(dateTimeMask);
         Date date = simpleDateTimeFormatter.parse(dateTime, new ParsePosition(0));
@@ -77,6 +76,7 @@ public abstract class AbstractMarkLogicItemProcessor<T> implements MarkLogicItem
     }
 
     public String transformDate(String dateTime, String dateMask) {
+        String ISO_DATE_PATTERN = "yyyy-MM-dd";
         SimpleDateFormat iso8601Formatter = new SimpleDateFormat(ISO_DATE_PATTERN);
         SimpleDateFormat simpleDateFormatter = new SimpleDateFormat(dateMask);
         Date date = simpleDateFormatter.parse(dateTime, new ParsePosition(0));

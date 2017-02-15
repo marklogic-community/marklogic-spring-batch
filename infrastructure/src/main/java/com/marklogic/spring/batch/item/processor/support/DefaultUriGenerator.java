@@ -2,8 +2,6 @@ package com.marklogic.spring.batch.item.processor.support;
 
 import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 
-import java.util.UUID;
-
 public class DefaultUriGenerator implements UriGenerator<String> {
 
     public String getOutputUriPrefix() {

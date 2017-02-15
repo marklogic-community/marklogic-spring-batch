@@ -1,14 +1,11 @@
 package com.marklogic.client;
 
-import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.MarkLogicNamespaceProvider;
-import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Test;
 
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.junit.Fragment;
-import org.springframework.test.context.ContextConfiguration;
 
 /*
  * Used to test Java Client Api Issue 388

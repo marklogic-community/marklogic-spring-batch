@@ -2,13 +2,11 @@ package com.marklogic.spring.batch.item.columnmap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.spring.batch.columnmap.ColumnMapSerializer;
 import com.marklogic.spring.batch.columnmap.JacksonColumnMapSerializer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 public class JacksonColumnMapSerializerTest extends Assert {
