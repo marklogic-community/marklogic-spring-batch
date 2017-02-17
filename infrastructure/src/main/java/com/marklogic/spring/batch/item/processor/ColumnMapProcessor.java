@@ -22,7 +22,7 @@ public class ColumnMapProcessor extends AbstractMarkLogicItemProcessor<Map<Strin
                     @Override
                     public String generateUri(Object o) {
                         String uuid = UUID.randomUUID().toString();
-                        String uri = "/" + rootLocalName + "/" + uuid + ".xml";
+                        String uri = "/" + rootLocalName.replaceAll("[^A-Za-z0-9\\_\\-]", "") + "/" + uuid + ".xml";
                         return uri;
                     }
                 });
