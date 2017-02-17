@@ -5,6 +5,7 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.document.*;
 import com.marklogic.client.helper.DatabaseClientConfig;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.*;
 import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
@@ -64,16 +65,18 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
     public List<DocumentWriteOperation> getDocuments() {
         List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
 
-        MarkLogicWriteHandle handle = new MarkLogicWriteHandle();
-        handle.setUri("abc.xml");
-        handle.setMetadataHandle(new DocumentMetadataHandle().withCollections("raw"));
-        handle.setHandle(new StringHandle("<hello />"));
+        DocumentWriteOperation handle = new DocumentWriteOperationImpl(
+                DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                "abc.xml",
+                new DocumentMetadataHandle().withCollections("raw"),
+                new StringHandle("<hello />"));
         handles.add(handle);
 
-        MarkLogicWriteHandle handle2 = new MarkLogicWriteHandle();
-        handle2.setUri("abc2.xml");
-        handle2.setMetadataHandle(new DocumentMetadataHandle().withCollections("raw"));
-        handle2.setHandle(new StringHandle("<hello2 />"));
+        DocumentWriteOperation handle2 = new DocumentWriteOperationImpl(
+                DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                "abc2.xml",
+                new DocumentMetadataHandle().withCollections("raw"),
+                new StringHandle("<hello2 />"));
         handles.add(handle2);
 
         return handles;
@@ -93,7 +96,8 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         restBatchWriter.setServerTransform(transform);
         restBatchWriter.setReturnFormat(Format.XML);
 
-        DocumentWriteOperation writeOp = new MarkLogicWriteHandle("hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
+        DocumentWriteOperation writeOp = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                "hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
         writeOps.add(writeOp);
 
@@ -117,7 +121,8 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         serverTransform.addParameter("trash-can", "oscar");
         restBatchWriter.setServerTransform(serverTransform);
         restBatchWriter.setReturnFormat(Format.XML);
-        DocumentWriteOperation writeOp = new MarkLogicWriteHandle("hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
+        DocumentWriteOperation writeOp = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                "hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
         writeOps.add(writeOp);
         try {
