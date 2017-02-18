@@ -53,10 +53,14 @@ public class TempRestBatchWriter extends RestBatchWriter {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Writing " + count + " documents to MarkLogic");
                 }
-                if (serverTransform != null) {
-                    mgr.write(set, serverTransform);
-                } else {
-                    mgr.write(set);
+                try {
+                    if (serverTransform != null) {
+                        mgr.write(set, serverTransform);
+                    } else {
+                        mgr.write(set);
+                    }
+                } catch (Exception ex) {
+                    logger.warn(ex.getMessage());
                 }
                 if (logger.isDebugEnabled()) {
                     logger.debug("Wrote " + count + " documents to MarkLogic");
