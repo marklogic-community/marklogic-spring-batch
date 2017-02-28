@@ -1,9 +1,9 @@
 package com.marklogic.spring.batch.samples.geonames;
 
 import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.MarkLogicWriteHandle;
 import org.geonames.Geoname;
 import org.springframework.batch.item.ItemProcessor;
 import org.w3c.dom.Document;
@@ -42,7 +42,8 @@ public class GeonamesItemProcessor implements ItemProcessor<Geoname, DocumentWri
         String uri = "http://geonames.org/geoname/" + item.getId();
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.withCollections("geonames");
-        return new MarkLogicWriteHandle(uri, metadata, new DOMHandle(doc));
+        return new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                uri, metadata, new DOMHandle(doc));
     }
 
 }

@@ -19,18 +19,6 @@ public class MarkLogicSimpleJobRepositoryConfig {
 
     private ManageClient manageClient;
 
-    private final String DATABASE_JSON = "{\"database-name\": \"%s\",  " +
-            "\"maintain-last-modified\": true,  " +
-            "\"uri-lexicon\": true,  " +
-            "\"collection-lexicon\": true,   " +
-            "\"triple-index\": true,    " +
-            "\"range-element-index\": [" +
-            "{\"scalar-type\": \"dateTime\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"createDateTime\",\"collation\": \"\",\"range-value-positions\": false,\"invalid-values\": \"reject\"}, " +
-            "{\"scalar-type\": \"unsignedLong\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"id\",\"collation\": \"\",\"range-value-positions\": false,\"invalid-values\": \"reject\"  }, " +
-            "{\"scalar-type\": \"string\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"jobName\",\"collation\": \"http://marklogic.com/collation/\",\"range-value-positions\": false,\"invalid-values\": \"reject\"  }  ],  " +
-            "\"path-namespace\": [{\"prefix\": \"msb\",\"namespace-uri\": \"http://marklogic.com/spring-batch\"}],  " +
-            "\"range-path-index\": [{\"scalar-type\": \"unsignedLong\",\"collation\": \"\",\"path-expression\": \"/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id\",\"range-value-positions\": false,\"invalid-values\": \"reject\"}]}";
-
     public RestApi getRestApi(String name, int port) {
         RestApi restApi = api.restApi(name, port);
         restApi.setGroup("Default");
@@ -43,6 +31,17 @@ public class MarkLogicSimpleJobRepositoryConfig {
     }
 
     public String getDatabase(String name) {
+        String DATABASE_JSON = "{\"database-name\": \"%s\",  " +
+                "\"maintain-last-modified\": true,  " +
+                "\"uri-lexicon\": true,  " +
+                "\"collection-lexicon\": true,   " +
+                "\"triple-index\": true,    " +
+                "\"range-element-index\": [" +
+                "{\"scalar-type\": \"dateTime\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"createDateTime\",\"collation\": \"\",\"range-value-positions\": false,\"invalid-values\": \"reject\"}, " +
+                "{\"scalar-type\": \"unsignedLong\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"id\",\"collation\": \"\",\"range-value-positions\": false,\"invalid-values\": \"reject\"  }, " +
+                "{\"scalar-type\": \"string\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"jobName\",\"collation\": \"http://marklogic.com/collation/\",\"range-value-positions\": false,\"invalid-values\": \"reject\"  }  ],  " +
+                "\"path-namespace\": [{\"prefix\": \"msb\",\"namespace-uri\": \"http://marklogic.com/spring-batch\"}],  " +
+                "\"range-path-index\": [{\"scalar-type\": \"unsignedLong\",\"collation\": \"\",\"path-expression\": \"/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id\",\"range-value-positions\": false,\"invalid-values\": \"reject\"}]}";
         return String.format(DATABASE_JSON, name + "-content");
     }
 

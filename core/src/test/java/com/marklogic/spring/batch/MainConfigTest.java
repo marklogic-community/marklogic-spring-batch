@@ -4,24 +4,17 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.config.MarkLogicApplicationContext;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {MarkLogicApplicationContext.class})
-public class MainConfigTest extends Assert {
+public class MainConfigTest extends AbstractSpringBatchTest {
 
     @Autowired
     private DatabaseClientConfig databaseClientConfig;

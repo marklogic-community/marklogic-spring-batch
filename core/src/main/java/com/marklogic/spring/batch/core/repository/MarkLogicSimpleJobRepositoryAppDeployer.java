@@ -14,9 +14,6 @@ import com.marklogic.mgmt.security.RoleManager;
 
 import java.util.List;
 
-/**
- * Created by sstafford on 6/6/2016.
- */
 public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
 
     private List<Command> commands;

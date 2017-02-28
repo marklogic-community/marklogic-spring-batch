@@ -16,8 +16,6 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
 
     private String[] collections;
 
-    private String directory;
-
     // Comma-separated list of role,read,role,update, just like in Client API
     private String permissions;
 
@@ -42,7 +40,7 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
     }
 
     public void setDirectory(String directory) {
-        this.directory = directory;
+        String directory1 = directory;
     }
 
 }

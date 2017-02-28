@@ -1,8 +1,8 @@
-package com.marklogic.uri;
+package com.marklogic.spring.batch.item.processor.support;
 
-import java.util.UUID;
+import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 
-public class DefaultUriGenerator implements UriGenerator<String>{
+public class DefaultUriGenerator implements UriGenerator<String> {
 
     public String getOutputUriPrefix() {
         return outputUriPrefix;
@@ -45,7 +45,7 @@ public class DefaultUriGenerator implements UriGenerator<String>{
     }
 
     @Override
-    public String generateUri(String s, String id) {
+    public String generateUri(String s) {
         String uri = s;
         uri = (getOutputUriReplace() != null) ? applyOutputUriReplace(uri, getOutputUriReplace()) : uri;
         uri = (getOutputUriPrefix() != null) ? getOutputUriPrefix() + uri : uri;
@@ -53,8 +53,4 @@ public class DefaultUriGenerator implements UriGenerator<String>{
         return uri;
     }
 
-    @Override
-    public String generate() {
-        return UUID.randomUUID().toString();
-    }
 }

@@ -1,63 +1,45 @@
 package com.marklogic.spring.batch.item.processor;
 
-import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.MarkLogicWriteHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.spring.batch.columnmap.ColumnMapSerializer;
-import org.springframework.batch.item.ItemProcessor;
+import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 
 import java.util.Map;
 import java.util.UUID;
 
-public class ColumnMapProcessor extends LoggingObject implements ItemProcessor<Map<String, Object>, DocumentWriteOperation> {
+public class ColumnMapProcessor extends AbstractMarkLogicItemProcessor<Map<String, Object>> {
 
     private ColumnMapSerializer columnMapSerializer;
     private String rootLocalName = "CHANGEME";
 
-    // Expected to be role,capability,role,capability,etc.
-    private String[] permissions;
-
-    private String[] collections;
-
     public ColumnMapProcessor(ColumnMapSerializer columnMapSerializer) {
+        super();
+        this.columnMapSerializer = columnMapSerializer;
+        setType(rootLocalName);
+        setUriGenerator(
+                new UriGenerator() {
+                    @Override
+                    public String generateUri(Object o) {
+                        String uuid = UUID.randomUUID().toString();
+                        String uri = "/" + rootLocalName.replaceAll("[^A-Za-z0-9\\_\\-]", "") + "/" + uuid + ".xml";
+                        return uri;
+                    }
+                });
+    }
+
+    public ColumnMapProcessor(ColumnMapSerializer columnMapSerializer, UriGenerator uriGenerator) {
+        super(uriGenerator);
         this.columnMapSerializer = columnMapSerializer;
     }
 
     @Override
-    public MarkLogicWriteHandle process(Map<String, Object> item) throws Exception {
-        String content = columnMapSerializer.serializeColumnMap(item, rootLocalName);
-
-        // TODO Use UriGenerator
-        String uuid = UUID.randomUUID().toString();
-        String uri = "/" + rootLocalName + "/" + uuid + ".xml";
-
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        if (collections != null) {
-            metadata.withCollections(collections);
-        }
-
-        if (permissions != null) {
-            for (int i = 0; i < permissions.length; i += 2) {
-                String role = permissions[i];
-                DocumentMetadataHandle.Capability c = DocumentMetadataHandle.Capability.valueOf(permissions[i + 1].toUpperCase());
-                metadata.withPermission(role, c);
-            }
-        }
-
-        return new MarkLogicWriteHandle(uri, metadata, new StringHandle(content));
+    public AbstractWriteHandle getContentHandle(Map<String, Object> item) throws Exception {
+        return new StringHandle(columnMapSerializer.serializeColumnMap(item, getType()));
     }
 
-    public void setRootLocalName(String rootLocalName) {
-        this.rootLocalName = rootLocalName;
+    public void setRootLocalName(String rootName) {
+        setType(rootName);
     }
 
-    public void setCollections(String[] collections) {
-        this.collections = collections;
-    }
-
-    public void setPermissions(String[] permissions) {
-        this.permissions = permissions;
-    }
 }

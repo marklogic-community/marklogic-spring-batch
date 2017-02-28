@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.item.processor;
 
-import com.marklogic.client.io.MarkLogicWriteHandle;
+import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.columnmap.DefaultStaxColumnMapSerializer;
 import org.junit.Assert;
@@ -15,17 +15,15 @@ public class ColumnMapProcessorTest extends Assert {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private ColumnMapProcessor columnMapProcessor;
-
     @Test
     public void columnMapSimpleTest() throws Exception {
-        columnMapProcessor = new ColumnMapProcessor(new DefaultStaxColumnMapSerializer());
+        ColumnMapProcessor columnMapProcessor = new ColumnMapProcessor(new DefaultStaxColumnMapSerializer());
         columnMapProcessor.setRootLocalName("test");
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("sample", "value");
 
-        MarkLogicWriteHandle handle = columnMapProcessor.process(map);
+        DocumentWriteOperation handle = columnMapProcessor.process(map);
         logger.info(handle.getUri());
         StringHandle strHandle = (StringHandle) handle.getContent();
         logger.info(strHandle.get());

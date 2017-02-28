@@ -1,12 +1,8 @@
 package com.marklogic.spring.batch.item.tasklet;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.datamovement.DeleteListener;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.client.datamovement.DataMovementManager;
-import com.marklogic.client.datamovement.JobTicket;
-import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;

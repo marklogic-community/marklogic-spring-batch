@@ -1,10 +1,8 @@
 package com.marklogic.spring.batch.samples;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
 import com.marklogic.spring.batch.item.tasklet.DeleteDocumentsTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,7 +11,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
 @EnableBatchProcessing

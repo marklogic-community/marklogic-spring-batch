@@ -8,5 +8,5 @@ import joptsimple.OptionParser;
  */
 public interface OptionParserConfigurer {
 
-    public void configureOptionParser(OptionParser parser);
+    void configureOptionParser(OptionParser parser);
 }

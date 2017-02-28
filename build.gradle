@@ -112,9 +112,7 @@ subprojects {
 project(':core') {
 
     dependencies {
-
-        compile project(":infrastructure")
-
+        compile project(':infrastructure')
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
         compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
 
@@ -177,9 +175,12 @@ project(":infrastructure") {
 
 project(':test') {
     dependencies {
+        compile project(':infrastructure')
         compile project(':core')
         compile "org.springframework.batch:spring-batch-test:$springVersion"
         compile "com.marklogic:ml-junit:2.6.0"
+        // For detecting version of MarkLogic
+        compile "com.marklogic:ml-app-deployer:2.3.0"
     }
 }
 
@@ -188,6 +189,7 @@ project(':samples') {
 
     dependencies {
         compile project(':core')
+        compile project(':infrastructure')
         testCompile project(':test')
         compile "org.apache.opennlp:opennlp-tools:1.6.0"
     }

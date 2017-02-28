@@ -3,8 +3,8 @@ package com.marklogic.spring.batch.samples;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.MarkLogicWriteHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import org.springframework.batch.core.Job;
@@ -93,7 +93,8 @@ public class YourJob implements EnvironmentAware {
                 DocumentMetadataHandle metadata = new DocumentMetadataHandle();
                 metadata.withCollections(collections);
                 
-                return new MarkLogicWriteHandle(uri, metadata, handle);
+                return new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                        uri, metadata, handle);
             }
         };
         ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClient);
