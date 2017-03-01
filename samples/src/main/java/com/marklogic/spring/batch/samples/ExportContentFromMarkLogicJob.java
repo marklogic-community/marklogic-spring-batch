@@ -98,6 +98,7 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
 
             @Override
             public void writeHeader(Writer writer) throws IOException {
+                writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                 writer.write("<data>");
             }
         });
@@ -114,26 +115,26 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
             public String aggregate(DocumentRecord item) {
                 String content = "<record>\n";
                 content += "<uri>" + item.getUri() + "</uri>\n";
-                content += item.getContent(new StringHandle()) + "\n";
+                content += item.getContent(new StringHandle()).get().replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "") + "\n";
                 content += "</record>";
                 return content;
             }
         });
 
 
-        MultiResourceItemWriter<String> itemWriter = new MultiResourceItemWriter<String>();
+        MultiResourceItemWriter<DocumentRecord> itemWriter = new MultiResourceItemWriter<DocumentRecord>();
         itemWriter.setDelegate(fileItemWriter);
         itemWriter.setItemCountLimitPerResource(100);
         itemWriter.setResourceSuffixCreator(new ResourceSuffixCreator() {
             @Override
             public String getSuffix(int index) {
-                return "-" + Integer.toString(Math.floorDiv(index, 100)) + ".xml";
+                return "-" + index + ".xml";
             }
         });
         itemWriter.setResource(new FileSystemResource(outputFilePath + "/output"));
         
         return stepBuilderFactory.get("step1")
-                .<DocumentRecord, String>chunk(10)
+                .<DocumentRecord, DocumentRecord>chunk(10)
                 .reader(itemReader)
                 .writer(itemWriter)
                 .build();

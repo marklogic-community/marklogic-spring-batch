@@ -33,7 +33,7 @@ public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
 
     @Before
     public void setup() throws IOException {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 102; i++) {
             insertDocument("/sample/doc" + i, "test", "<hello>sample-" + i + "</hello>");
         }
         Resource r = new FileSystemResource("./output-0.xml");
@@ -44,15 +44,17 @@ public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
     }
     
     @Test
-    public void findURIsInDatabaseTest() throws Exception {
+    public void writeDocumentsToFileSystemTest() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("output_file_path", "./");
         jpb.addString("collection", "test");
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-        getClientTestHelper().assertCollectionSize("Expecting 10 uris in test collection", "test", 10);
-        Resource r = new FileSystemResource("./output-0.xml");
+        getClientTestHelper().assertCollectionSize("Expecting 102 uris in test collection", "test", 102);
+        Resource r = new FileSystemResource("./output-1.xml");
+        assertTrue(r.exists());
+        r = new FileSystemResource("./output-2.xml");
         assertTrue(r.exists());
     }
 

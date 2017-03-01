@@ -15,6 +15,8 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
     private GenericDocumentManager docMgr;
     private StructuredQueryDefinition queryDef;
     private DocumentPage page;
+    private long numberOfPages = 0;
+    private long start = 1L;
 
     public DocumentItemReader(DatabaseClientProvider databaseClientProvider, StructuredQueryDefinition queryDef) {
         this.databaseClientProvider = databaseClientProvider;
@@ -25,6 +27,10 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
     public DocumentRecord read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         if (page.hasNext()) {
             return page.next();
+        } else if (page.hasNextPage()) {
+            page = docMgr.search(queryDef, start);
+            start += page.getPageSize();
+            return page.next();
         } else {
             return null;
         }
@@ -34,7 +40,9 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
     public void open(ExecutionContext executionContext) throws ItemStreamException {
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
         docMgr = databaseClient.newDocumentManager();
-        page = docMgr.search(queryDef, 1L);
+        page = docMgr.search(queryDef, start);
+        start += page.getPageSize();
+        numberOfPages = page.getTotalPages();
         executionContext.put("PAGE_INDEX", page.getPageNumber());
     }
 
@@ -45,6 +53,7 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
 
     @Override
     public void close() throws ItemStreamException {
-
+        page.close();
     }
 }
+
