@@ -1,0 +1,46 @@
+dependencies {
+    compile "com.marklogic:ml-javaclient-util:2.9.1"
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+
+    compile "org.springframework:spring-jdbc:4.3.1.RELEASE"
+//    compile "org.hibernate:hibernate-core:5.2.3.Final"
+    compile "org.hibernate:hibernate-core:4.3.11.Final"
+    compile "org.slf4j:slf4j-simple:1.7.5"
+
+    testCompile "org.hsqldb:hsqldb:2.3.4"
+
+    runtime "org.hsqldb:hsqldb:2.3.4"
+}
+
+distributions {
+    main {
+        baseName = "hibernateImport"
+    }
+}
+
+task runManager(type: JavaExec) {
+    classpath = configurations.runtime
+    main = "org.hsqldb.util.DatabaseManagerSwing"
+    args = [
+            "--driver", "org.hsqldb.jdbc.JDBCDriver",
+            "--url", "jdbc:hsqldb:file:data/hr",
+            "--user", "SA"
+    ]
+}
+
+task importHumanResources(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.marklogic.spring.batch.Main"
+    args = [
+            "--host", "localhost",
+            "--port", "8200",
+            "--username", "admin",
+            "--password", "admin",
+            "--config", "example.ExtractHumanResourceDataToMarkLogicConfig",
+            "--jdbc_driver", "org.hsqldb.jdbc.JDBCDriver",
+            "--jdbc_url", "jdbc:hsqldb:file:C:\\Users\\mheckel\\workspace\\ml-spring-batch\\marklogic-spring-batch\\examples\\hibernateImport\\data\\hr",
+            "--jdbc_username", "sa",
+    ]
+}
+

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+      <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>  
+        <property name="hibernate.connection.url">jdbc:hsqldb:file:C:\Users\mheckel\workspace\ml-spring-batch\marklogic-spring-batch\examples\hibernateImport\data\hr</property>
+        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.connection.username">sa</property>
+   <!--     <property name="hibernate.default_catalog">hr</property>
+        <property name="hibernate.default_catalog"></property>  -->
+   <!--     <property name="hibernate.default_schema">hr</property>  -->
+        <property name="hibernate.default_schema">PUBLIC</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        
+        <!-- JDBC connection pool (use the built-in) -->
+        <property name="connection.pool_size">1</property>
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+         <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+        <!-- start annotated entity classes -->
+        
+        <!-- Is this property necessary?  -->
+        <property name="hbm2ddl.auto">update</property>
+        
+        
+        
+       <mapping class="example.entities.Regions"/>
+       <mapping class="example.entities.Countries"/>
+       <mapping class="example.entities.Departments"/>
+       <mapping class="example.entities.EmpDetailsView"/>
+       <mapping class="example.entities.Employee"/>
+       <mapping class="example.entities.JobHistory"/>
+       <mapping class="example.entities.Job"/>
+       <mapping class="example.entities.Locations"/>
+        
+    </session-factory>
+</hibernate-configuration>
