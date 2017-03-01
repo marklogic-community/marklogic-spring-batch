@@ -37,7 +37,7 @@ public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
     public void findURIsInDatabaseTest() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("output_file_path", "/temp");
-        jpb.addString("module_name", "/ext/corb/uris.xqy");
+        jpb.addString("collection", "test");
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());

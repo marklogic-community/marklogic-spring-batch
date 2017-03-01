@@ -3,8 +3,14 @@ package com.marklogic.spring.batch.samples;
 import java.io.File;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.helper.DatabaseClientProvider;
 
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawStructuredQueryDefinition;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.spring.batch.item.reader.DocumentItemReader;
 import com.marklogic.spring.batch.item.reader.MarkLogicItemReader;
 
 import org.springframework.batch.core.Job;
@@ -13,6 +19,10 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.file.MultiResourceItemReader;
+import org.springframework.batch.item.file.MultiResourceItemWriter;
+import org.springframework.batch.item.file.ResourceSuffixCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
@@ -25,6 +35,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.batch.item.file.transform.LineAggregator;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 /**
@@ -54,15 +65,15 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
      * @return Job bean
      */    
     @Bean
-    public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("step1") Step step1) {
-        return jobBuilderFactory.get(JOB_NAME).start(step1).build();
+    public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("step1") Step step) {
+        return jobBuilderFactory.get(JOB_NAME).start(step).build();
     }
     /**
      * The StepBuilderFactory and DatabaseClientProvider parameters are injected via Spring.  Custom parameters must be annotated with @Value.
      * @return Step
      * @param stepBuilderFactory injected from the @EnableBatchProcessing annotation
      * @param databaseClientProvider injected from the BasicConfig class
-     * @param collections This is an example of how user parameters could be injected via command line or a properties file
+     * @param collection This is an example of how user parameters could be injected via command line or a properties file
      * @see DatabaseClientProvider
      * @see com.marklogic.client.spring.BasicConfig
      * @see FlatFileItemWriter
@@ -75,17 +86,44 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
         StepBuilderFactory stepBuilderFactory,
         DatabaseClientProvider databaseClientProvider,
         @Value("#{jobParameters['output_file_path']}") String filePath,
-        @Value("#{jobParameters['module_name']}") String moduleName) throws Exception{
+        @Value("#{jobParameters['collection']}") String collection) throws Exception{
         
-        DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();                  
-        MarkLogicItemReader<String> reader = new MarkLogicItemReader<String>(databaseClient, moduleName); 
-        this.filePath = filePath;
-        Assert.hasText(moduleName, "module_name cannot be null");
+        DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
+        QueryManager qm = databaseClient.newQueryManager();
+
+        StructuredQueryBuilder qb = qm.newStructuredQueryBuilder();
+
+        StructuredQueryDefinition queryDef = qb.and(qb.collection(collection));
+        DocumentItemReader itemReader = new DocumentItemReader(databaseClientProvider, queryDef);
+
+        FlatFileItemWriter fileItemWriter = new FlatFileItemWriter<DocumentRecord>();
+        fileItemWriter.setEncoding("UTF-8");
+        fileItemWriter.setLineAggregator(new LineAggregator<DocumentRecord>() {
+            @Override
+            public String aggregate(DocumentRecord item) {
+                String content = "<record>";
+                content += "<uri>" + item.getUri() + "</uri>";
+                content += "</record>";
+                return content;
+            }
+        });
+
+
+        MultiResourceItemWriter<String> itemWriter = new MultiResourceItemWriter<String>();
+        itemWriter.setDelegate(fileItemWriter);
+        itemWriter.setItemCountLimitPerResource(100);
+        itemWriter.setResourceSuffixCreator(new ResourceSuffixCreator() {
+            @Override
+            public String getSuffix(int index) {
+                return Integer.toString(Math.floorDiv(index, 100));
+            }
+        });
+        itemWriter.setResource(new FileSystemResource("c:\\temp\\output"));
         
         return stepBuilderFactory.get("step1")
-                .<String, String>chunk(10)
-                .reader(reader)
-                .writer(jsonItemWriter())
+                .<DocumentRecord, String>chunk(10)
+                .reader(itemReader)
+                .writer(itemWriter)
                 .build();
     }     
     
