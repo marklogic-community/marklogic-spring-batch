@@ -1,13 +1,14 @@
 package com.marklogic.spring.batch.samples;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.helper.DatabaseClientProvider;
 
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.item.reader.DocumentItemReader;
@@ -19,23 +20,18 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.file.MultiResourceItemReader;
-import org.springframework.batch.item.file.MultiResourceItemWriter;
-import org.springframework.batch.item.file.ResourceSuffixCreator;
+import org.springframework.batch.item.file.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.core.io.FileSystemResource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.batch.item.file.transform.LineAggregator;
-import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 /**
@@ -97,6 +93,20 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
         DocumentItemReader itemReader = new DocumentItemReader(databaseClientProvider, queryDef);
 
         FlatFileItemWriter fileItemWriter = new FlatFileItemWriter<DocumentRecord>();
+        fileItemWriter.setHeaderCallback(new FlatFileHeaderCallback() {
+
+            @Override
+            public void writeHeader(Writer writer) throws IOException {
+                writer.write("<data>");
+            }
+        });
+        fileItemWriter.setFooterCallback(new FlatFileFooterCallback() {
+
+            @Override
+            public void writeFooter(Writer writer) throws IOException {
+                writer.write("</data>");
+            }
+        });
         fileItemWriter.setEncoding("UTF-8");
         fileItemWriter.setLineAggregator(new LineAggregator<DocumentRecord>() {
             @Override
@@ -115,7 +125,7 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
         itemWriter.setResourceSuffixCreator(new ResourceSuffixCreator() {
             @Override
             public String getSuffix(int index) {
-                return Integer.toString(Math.floorDiv(index, 100));
+                return "-" + Integer.toString(Math.floorDiv(index, 100)) + ".xml";
             }
         });
         itemWriter.setResource(new FileSystemResource("c:\\temp\\output"));
