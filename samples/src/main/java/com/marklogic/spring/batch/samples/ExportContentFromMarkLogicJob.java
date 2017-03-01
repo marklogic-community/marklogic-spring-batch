@@ -24,7 +24,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.file.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
@@ -33,7 +32,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.batch.item.file.transform.LineAggregator;
-import org.springframework.util.Assert;
 
 /**
  * Simple MarkLogicReader job, This job calls the MarkLogicItemReader to evaluate a module using the
@@ -45,15 +43,11 @@ import org.springframework.util.Assert;
  */
 
 @EnableBatchProcessing
-public class ExportContentFromMarkLogicJob implements EnvironmentAware {
+public class ExportContentFromMarkLogicJob {
     
     private Environment env; 
     
-    private final String JOB_NAME = "Sample ML Reader Job";
-    private final static String USER_HOME = "user.home";
-    private final static String FILE_NAME_PREFIX = "sampleOutput";
-    private final static String FILE_NAME_SUFFIX = ".txt";    
-    private String filePath = null;
+    private final String JOB_NAME = "WriteDocsToFileSystem";
     
     /**
      * The JobBuilderFactory and Step parameters are injected via Spring
@@ -139,36 +133,9 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
                 .reader(itemReader)
                 .writer(itemWriter)
                 .build();
-    }     
-    
-    @Bean
-    @JobScope
-    public FlatFileItemWriter<String> jsonItemWriter() throws Exception {    	
-        FlatFileItemWriter<String> itemWriter = new FlatFileItemWriter<>();
-
-        itemWriter.setLineAggregator(new StringLineAggregator());
-        Assert.notNull(filePath, "output_file_path must not be null");
-        //System.out.println(">>>> output file path [" + filePath + "]");
-        String sampleOutputPath = File.createTempFile(FILE_NAME_PREFIX, FILE_NAME_SUFFIX, createDirectory(filePath)).getAbsolutePath();
-        //System.out.println(">>> Output Path: " + sampleOutputPath);
-        itemWriter.setResource(new FileSystemResource(sampleOutputPath));
-        itemWriter.afterPropertiesSet();
-
-        return itemWriter;
     }
-           
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.env = environment;
-    }
-    
-    public File createDirectory(String directoryName) {
-    	String path = System.getProperty(USER_HOME);
-    	File dir=new File(path + File.separator + directoryName);
-    	dir.mkdir();
-    	return dir;
-    };
-    
+
+    /*
     private class StringLineAggregator implements LineAggregator<String> {
     	private ObjectMapper objectMapper = new ObjectMapper();
     	@Override
@@ -181,5 +148,6 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
     		}
     	}
     }
+    */
     
 }

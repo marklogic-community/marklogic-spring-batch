@@ -9,7 +9,6 @@ import com.marklogic.client.io.StringHandle;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
