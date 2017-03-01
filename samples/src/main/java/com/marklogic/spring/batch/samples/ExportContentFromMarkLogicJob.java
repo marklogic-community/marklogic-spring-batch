@@ -8,6 +8,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.helper.DatabaseClientProvider;
 
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
@@ -81,7 +82,7 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
     public Step step1(
         StepBuilderFactory stepBuilderFactory,
         DatabaseClientProvider databaseClientProvider,
-        @Value("#{jobParameters['output_file_path']}") String filePath,
+        @Value("#{jobParameters['output_file_path']}") String outputFilePath,
         @Value("#{jobParameters['collection']}") String collection) throws Exception{
         
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
@@ -111,8 +112,9 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
         fileItemWriter.setLineAggregator(new LineAggregator<DocumentRecord>() {
             @Override
             public String aggregate(DocumentRecord item) {
-                String content = "<record>";
-                content += "<uri>" + item.getUri() + "</uri>";
+                String content = "<record>\n";
+                content += "<uri>" + item.getUri() + "</uri>\n";
+                content += item.getContent(new StringHandle()) + "\n";
                 content += "</record>";
                 return content;
             }
@@ -128,7 +130,7 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
                 return "-" + Integer.toString(Math.floorDiv(index, 100)) + ".xml";
             }
         });
-        itemWriter.setResource(new FileSystemResource("c:\\temp\\output"));
+        itemWriter.setResource(new FileSystemResource(outputFilePath + "/output"));
         
         return stepBuilderFactory.get("step1")
                 .<DocumentRecord, String>chunk(10)
