@@ -6,7 +6,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
-import org.junit.After;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -36,7 +35,12 @@ public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
         for (int i = 0; i < 102; i++) {
             insertDocument("/sample/doc" + i, "test", "<hello>sample-" + i + "</hello>");
         }
-        Resource r = new FileSystemResource("./output-0.xml");
+        Resource r = new FileSystemResource("./output-1.xml");
+        if (r.exists()) {
+            r.getFile().delete();
+        }
+
+        r = new FileSystemResource("./output-2.xml");
         if (r.exists()) {
             r.getFile().delete();
         }

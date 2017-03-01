@@ -115,6 +115,7 @@ public class ExportContentFromMarkLogicJob implements EnvironmentAware {
             public String aggregate(DocumentRecord item) {
                 String content = "<record>\n";
                 content += "<uri>" + item.getUri() + "</uri>\n";
+                content += "<metadata>" + item.getMetadata(new StringHandle()).get().replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "") + "</metadata>\n";
                 content += item.getContent(new StringHandle()).get().replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "") + "\n";
                 content += "</record>";
                 return content;

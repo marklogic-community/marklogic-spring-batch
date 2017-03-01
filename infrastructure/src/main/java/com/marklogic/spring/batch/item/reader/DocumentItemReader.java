@@ -2,6 +2,7 @@ package com.marklogic.spring.batch.item.reader;
 
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentManager;
 import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
@@ -40,6 +41,7 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
     public void open(ExecutionContext executionContext) throws ItemStreamException {
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
         docMgr = databaseClient.newDocumentManager();
+        docMgr.setMetadataCategories(DocumentManager.Metadata.ALL);
         page = docMgr.search(queryDef, start);
         start += page.getPageSize();
         numberOfPages = page.getTotalPages();
