@@ -32,16 +32,32 @@ public class ValuesItemReader extends AbstractItemStreamItemReader<CountedDistin
     private List<CountedDistinctValue> values;
     private ListIterator<CountedDistinctValue> itr;
 
+    public ValuesItemReader(DatabaseClient client, String searchOptionsName, String valueName, QueryDefinition queryDef) {
+        this.databaseClient = client;
+        this.searchOptionsName = searchOptionsName;
+        this.valueName = valueName;
+        this.queryDefinition = queryDef;
+    }
+
     public ValuesItemReader(DatabaseClient client, String searchOptionsName, String valueName) {
         this.databaseClient = client;
         this.searchOptionsName = searchOptionsName;
         this.valueName = valueName;
+        this.queryDefinition = new StructuredQueryBuilder().and();
     }
 
     public ValuesItemReader(DatabaseClient client, QueryOptionsWriteHandle searchOptions, String valueName) {
         this(client, "temp", valueName);
         this.searchOptions = searchOptions;
         loadTempSearchOptions();
+        this.queryDefinition = new StructuredQueryBuilder().and();
+    }
+
+    public ValuesItemReader(DatabaseClient client, QueryOptionsWriteHandle searchOptions, String valueName, QueryDefinition queryDef) {
+        this(client, "temp", valueName);
+        this.searchOptions = searchOptions;
+        loadTempSearchOptions();
+        this.queryDefinition = queryDef;
     }
 
     private void loadTempSearchOptions() {
@@ -61,8 +77,8 @@ public class ValuesItemReader extends AbstractItemStreamItemReader<CountedDistin
         QueryManager queryMgr = databaseClient.newQueryManager();
         
         ValuesDefinition vdef = queryMgr.newValuesDefinition(valueName, searchOptionsName);
-        //ValueQueryDefinition vqd = (ValueQueryDefinition) queryDefinition;
-        //vdef.setQueryDefinition(vqd);
+        ValueQueryDefinition vqd = (ValueQueryDefinition) queryDefinition;
+        vdef.setQueryDefinition(vqd);
         
         ValuesHandle results = queryMgr.values(vdef, new ValuesHandle(), 1);
         values = new ArrayList<CountedDistinctValue>(Arrays.asList(results.getValues()));

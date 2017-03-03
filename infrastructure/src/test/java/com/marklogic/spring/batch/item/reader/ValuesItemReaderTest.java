@@ -7,6 +7,8 @@ import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.CountedDistinctValue;
+import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import org.junit.Before;
@@ -18,7 +20,6 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
 public class ValuesItemReaderTest extends AbstractSpringTest {
 
-    private ValuesItemReader reader;
     ClientTestHelper helper;
     DatabaseClient client;
 
@@ -51,15 +52,7 @@ public class ValuesItemReaderTest extends AbstractSpringTest {
     
     @Test
     public void getUriValuesFromItemReaderTest() throws Exception {
-        String uriQueryOptions =
-                "<options xmlns=\"http://marklogic.com/appservices/search\">\n" +
-                        "    <search-option>unfiltered</search-option>\n" +
-                        "    <quality-weight>0</quality-weight>\n" +
-                        "    <values name=\"uris\">\n" +
-                        "        <uri/>\n" +
-                        "    </values>\n" +
-                        "</options>";
-        reader = new ValuesItemReader(client, new StringHandle(uriQueryOptions), "uris");
+        ValuesItemReader reader = new ValuesItemReader(client, getQueryOptions(), "uris");
         reader.open(new ExecutionContext());
         assertEquals("Expecting size of 600", reader.getLength(), 600);
         CountedDistinctValue val = reader.read();
@@ -70,5 +63,34 @@ public class ValuesItemReaderTest extends AbstractSpringTest {
         uri = val.get("xs:string", String.class);
         assertTrue(uri.equals("hello1.xml"));
         reader.close();
+    }
+
+    @Test
+    public void getUriValuesWithQueryFromItemReaderTest() throws Exception {
+        QueryDefinition qd = new StructuredQueryBuilder().collection("a");
+        ValuesItemReader reader = new ValuesItemReader(client, getQueryOptions(), "uris", qd);
+        reader.open(new ExecutionContext());
+        assertEquals("Expecting size of 300", reader.getLength(), 300);
+        CountedDistinctValue val;
+        String uri;
+        for (int i = 0; i < 600; i++) {
+            if (i % 2 == 0) {
+                val = reader.read();
+                uri = val.get("xs:string", String.class);
+                helper.assertInCollections(uri, "a");
+            }
+
+        }
+        reader.close();
+    }
+
+    public StringHandle getQueryOptions() {
+        return new StringHandle("<options xmlns=\"http://marklogic.com/appservices/search\">\n" +
+                "    <search-option>unfiltered</search-option>\n" +
+                "    <quality-weight>0</quality-weight>\n" +
+                "    <values name=\"uris\">\n" +
+                "        <uri/>\n" +
+                "    </values>\n" +
+                "</options>");
     }
 }
