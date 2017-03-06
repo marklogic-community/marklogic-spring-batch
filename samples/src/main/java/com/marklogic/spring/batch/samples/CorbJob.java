@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.samples;
 
-
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.item.reader.InvokeModuleItemReader;
 import com.marklogic.spring.batch.item.writer.InvokeModuleItemWriter;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +39,8 @@ public class CorbJob {
     public Step corbStep(StepBuilderFactory stepBuilderFactory,
                         DatabaseClientProvider databaseClientProvider,
                         @Value("#{jobParameters['URIS-MODULE']}") String urisModule,
-                        @Value("#{jobParameters['PROCESS-MODULE']}") String processModule) {
+                        @Value("#{jobParameters['PROCESS-MODULE']}") String processModule,
+                         @Value("#{jobParameters['BATCH-SIZE']}") int batchSize) {
         ItemReader itemReader = new InvokeModuleItemReader<String>(databaseClientProvider.getDatabaseClient(), urisModule);
         ItemProcessor<String, Map<String, String>> itemProcessor = new ItemProcessor<String, Map<String, String>>() {
 
@@ -55,7 +54,7 @@ public class CorbJob {
         ItemWriter itemWriter = new InvokeModuleItemWriter(databaseClientProvider.getDatabaseClient(), processModule);
 
         return stepBuilderFactory.get("step")
-                .<String, Map<String, String>>chunk(100)
+                .<String, Map<String, String>>chunk(batchSize)
                 .reader(itemReader)
                 .processor(itemProcessor)
                 .writer(itemWriter)

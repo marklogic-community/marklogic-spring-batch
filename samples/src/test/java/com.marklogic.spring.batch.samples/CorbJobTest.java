@@ -50,10 +50,11 @@ public class CorbJobTest extends AbstractJobRunnerTest {
     }
 
     @Test
-    public void writeDocumentsToFileSystemTest() throws Exception {
+    public void runSimpleCorbJob() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();
         jpb.addString("URIS-MODULE", URIS_MODULE);
         jpb.addString("PROCESS-MODULE", PROCESS_MODULE);
+        jpb.addLong("BATCH-SIZE", 50L);
 
         JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());

@@ -21,6 +21,7 @@ public class InvokeModuleItemReader<T> implements ItemReader<T>, ItemStreamReade
     private DatabaseClient client;
     private EvalResultIterator resultIterator;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private long counter = 0;
 
     public InvokeModuleItemReader(DatabaseClient client, String module) {
         this.client = client;
@@ -34,7 +35,8 @@ public class InvokeModuleItemReader<T> implements ItemReader<T>, ItemStreamReade
 
     @Override
     public void update(ExecutionContext executionContext) throws ItemStreamException {
-        //logger.info();
+        counter++;
+        logger.info("Still processing: " + counter);
     }
 
     @Override
