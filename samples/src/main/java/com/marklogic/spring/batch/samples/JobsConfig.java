@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Import;
 @Import({ com.marklogic.spring.batch.config.MarkLogicApplicationContext.class,
         DeleteDocumentsJob.class,
         ImportDocumentsFromDirectoryJob.class,
+        CorbJob.class,
+        ExportContentFromMarkLogicJob.class,
         YourJob.class})
 public class JobsConfig {
 }

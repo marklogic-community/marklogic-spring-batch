@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.samples;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -13,7 +12,6 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.item.reader.DocumentItemReader;
-import com.marklogic.spring.batch.item.reader.MarkLogicItemReader;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -27,9 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.batch.item.file.transform.LineAggregator;
 
@@ -68,7 +63,6 @@ public class ExportContentFromMarkLogicJob {
      * @see DatabaseClientProvider
      * @see com.marklogic.client.spring.BasicConfig
      * @see FlatFileItemWriter
-     * @see MarkLogicItemReader
      */
     
     @Bean
