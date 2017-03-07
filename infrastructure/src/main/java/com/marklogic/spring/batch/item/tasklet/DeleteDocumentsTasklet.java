@@ -11,8 +11,6 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.mgmt.admin.AdminConfig;
-import com.marklogic.mgmt.admin.AdminManager;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
