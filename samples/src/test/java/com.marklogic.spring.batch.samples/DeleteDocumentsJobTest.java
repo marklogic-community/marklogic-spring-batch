@@ -27,15 +27,23 @@ public class DeleteDocumentsJobTest extends AbstractJobRunnerTest {
 
     @Before
     public void setup() {
-        Assume.assumeTrue(isMarkLogic9());
         for (int i = 0; i < 10; i++) {
             insertDocument("doc" + i, "monster", "<hello />");
         }
     }
 
-    //Ignoring this test for now, I'm using DMSDK for this test and for some reason,
-    //DMSDK is ignoring the host name that I send to the DataManager.  It works if I put in the
-    //host that it expects but fails on my CI build.
+    @Test
+    public void deleteMonsterCollectionWithDmsdkTest() throws Exception {
+        Assume.assumeTrue(isMarkLogic9());
+        JobParametersBuilder jpb = new JobParametersBuilder();
+        jpb.addString("output_collections", "monster");
+        jpb.addString("marklogic_version", "9");
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+        getClientTestHelper().assertCollectionSize("Expecting zero documents in monster collection", "monster", 0);
+    }
+
+
     @Test
     public void deleteMonsterCollectionTest() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();
