@@ -168,6 +168,8 @@ project(":infrastructure") {
             exclude(group: 'ch.qos.logback')
         }
 
+        compile "org.springframework:spring-jdbc:4.3.5.RELEASE"
+
         testCompile project(':test')
     }
 
