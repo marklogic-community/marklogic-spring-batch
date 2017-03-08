@@ -2,45 +2,70 @@ package com.marklogic.spring.batch.item.reader;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.QueryOptionsManager;
-import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.ValuesHandle;
+import com.marklogic.client.io.marker.QueryOptionsWriteHandle;
 import com.marklogic.client.query.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.*;
+import org.springframework.batch.item.support.AbstractItemStreamItemReader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
-public class ValuesItemReader extends LoggingObject implements ItemReader<CountedDistinctValue>, ItemStream {
+public class ValuesItemReader extends AbstractItemStreamItemReader<CountedDistinctValue> {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    protected String searchOptionsName;
+    protected String valueName;
+    protected QueryOptionsWriteHandle searchOptions;
+    protected QueryDefinition queryDefinition;
+
+
+    protected String TEMP_OPTIONS_NAME = "temp";
     private DatabaseClient databaseClient;
     private List<CountedDistinctValue> values;
-    private QueryManager queryMgr;
     private ListIterator<CountedDistinctValue> itr;
-    private int start;
-    private String uriQuery;
-    
-    public int getLength() {
-        return values.size();
-    }
-    
-    public ValuesItemReader(DatabaseClient client) {
+
+    public ValuesItemReader(DatabaseClient client, String searchOptionsName, String valueName, QueryDefinition queryDef) {
         this.databaseClient = client;
-        start = 1;
-        String uriQueryOptions =
-                "<options xmlns=\"http://marklogic.com/appservices/search\">\n" +
-                        "    <search-option>unfiltered</search-option>\n" +
-                        "    <quality-weight>0</quality-weight>\n" +
-                        "    <values name=\"uris\">\n" +
-                        "        <uri/>\n" +
-                        "    </values>\n" +
-                        "</options>";
+        this.searchOptionsName = searchOptionsName;
+        this.valueName = valueName;
+        this.queryDefinition = queryDef;
+    }
+
+    public ValuesItemReader(DatabaseClient client, String searchOptionsName, String valueName) {
+        this.databaseClient = client;
+        this.searchOptionsName = searchOptionsName;
+        this.valueName = valueName;
+        this.queryDefinition = new StructuredQueryBuilder().and();
+    }
+
+    public ValuesItemReader(DatabaseClient client, QueryOptionsWriteHandle searchOptions, String valueName) {
+        this(client, "temp", valueName);
+        this.searchOptions = searchOptions;
+        loadTempSearchOptions();
+        this.queryDefinition = new StructuredQueryBuilder().and();
+    }
+
+    public ValuesItemReader(DatabaseClient client, QueryOptionsWriteHandle searchOptions, String valueName, QueryDefinition queryDef) {
+        this(client, "temp", valueName);
+        this.searchOptions = searchOptions;
+        loadTempSearchOptions();
+        this.queryDefinition = queryDef;
+    }
+
+    private void loadTempSearchOptions() {
         QueryOptionsManager qoManager=
                 databaseClient.newServerConfigManager().newQueryOptionsManager();
-        qoManager.writeOptions("uris", new StringHandle(uriQueryOptions));
+        qoManager.writeOptions("temp", searchOptions);
     }
+
     
     @Override
     public CountedDistinctValue read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
@@ -49,14 +74,13 @@ public class ValuesItemReader extends LoggingObject implements ItemReader<Counte
     
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        queryMgr = databaseClient.newQueryManager();
+        QueryManager queryMgr = databaseClient.newQueryManager();
         
-        ValuesDefinition vdef = queryMgr.newValuesDefinition("uris", "uris");
-        StructuredQueryBuilder qb = new StructuredQueryBuilder();
-        ValueQueryDefinition qDef = qb.collection("sourceXML");
-        vdef.setQueryDefinition(qDef);
+        ValuesDefinition vdef = queryMgr.newValuesDefinition(valueName, searchOptionsName);
+        ValueQueryDefinition vqd = (ValueQueryDefinition) queryDefinition;
+        vdef.setQueryDefinition(vqd);
         
-        ValuesHandle results = queryMgr.values(vdef, new ValuesHandle(), start);
+        ValuesHandle results = queryMgr.values(vdef, new ValuesHandle(), 1);
         values = new ArrayList<CountedDistinctValue>(Arrays.asList(results.getValues()));
         itr = values.listIterator();
         return;
@@ -64,11 +88,21 @@ public class ValuesItemReader extends LoggingObject implements ItemReader<Counte
     
     @Override
     public void update(ExecutionContext executionContext) throws ItemStreamException {
-        
+        int index = itr.nextIndex();
+        executionContext.put("iterator-index", itr.nextIndex());
+        if (index % 250 == 0) {
+            logger.info("#" + index + " of " + getLength() + ": " + values.get(index));
+        }
     }
     
     @Override
     public void close() throws ItemStreamException {
-        
+        QueryOptionsManager qoManager=
+                databaseClient.newServerConfigManager().newQueryOptionsManager();
+        qoManager.deleteOptions(TEMP_OPTIONS_NAME);
+    }
+
+    public int getLength() {
+        return values.size();
     }
 }

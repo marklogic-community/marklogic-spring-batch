@@ -31,9 +31,11 @@ public class DeleteDocumentsJob  {
     @JobScope
     public Step deleteDocumentsStep(StepBuilderFactory stepBuilderFactory,
                      DatabaseClientProvider databaseClientProvider,
-                     @Value("#{jobParameters['output_collections']}") String[] collections) {
+                     @Value("#{jobParameters['output_collections']}") String[] collections,
+                     @Value("#{jobParameters['marklogic_version'] ?: \"8\"}") String marklogicVersion) {
         StructuredQueryDefinition query = new StructuredQueryBuilder().collection(collections);
-        Tasklet deleteDocumentsTasklet = new DeleteDocumentsTasklet(databaseClientProvider, query);
+        DeleteDocumentsTasklet deleteDocumentsTasklet = new DeleteDocumentsTasklet(databaseClientProvider, query);
+        deleteDocumentsTasklet.setMarklogicVersion(marklogicVersion);
         return stepBuilderFactory.get("Delete Documents").tasklet(deleteDocumentsTasklet).build();
     }
 }

@@ -7,12 +7,12 @@ buildscript {
     }
     dependencies {
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
-        classpath "com.marklogic:ml-gradle:2.4.0"
+        classpath "com.marklogic:ml-gradle:2.5.0"
     }
 }
 
 plugins {
-    id "com.marklogic.ml-gradle" version "2.4.0"
+    id "com.marklogic.ml-gradle" version "2.5.0"
     id "java"
     id "eclipse"
     id "idea"
@@ -63,7 +63,7 @@ subprojects {
         compile 'org.slf4j:slf4j-api:1.7.21'
         compile "org.springframework.batch:spring-batch-core:$springVersion"
         compile "com.marklogic:java-client-api:4.0.0-EA4"
-        compile "com.marklogic:ml-javaclient-util:2.12.0"
+        compile "com.marklogic:ml-javaclient-util:2.13.0"
 
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
         testCompile "com.marklogic:ml-junit:2.6.0"
@@ -114,13 +114,13 @@ project(':core') {
     dependencies {
         compile project(':infrastructure')
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
-        compile "org.springframework:spring-jdbc:4.2.6.RELEASE"
+        compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
 
         // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
-        compile "org.springframework:spring-oxm:4.2.6.RELEASE"
+        compile "org.springframework:spring-oxm:4.3.7.RELEASE"
 
         // For deploying the ML Job Repo
-        compile "com.marklogic:ml-app-deployer:2.3.0"
+        compile "com.marklogic:ml-app-deployer:2.5.0"
 
         // For the CLI
         compile "net.sf.jopt-simple:jopt-simple:5.0.1"
@@ -128,9 +128,9 @@ project(':core') {
         runtime "org.springframework.batch:spring-batch-core:$springVersion"
 
         //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
-        runtime "com.marklogic:ml-javaclient-util:2.12.0"
+        runtime "com.marklogic:ml-javaclient-util:2.13.0"
 
-        runtime "org.springframework:spring-jdbc:4.2.6.RELEASE"
+        runtime "org.springframework:spring-jdbc:4.3.7.RELEASE"
 
         runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
     }
@@ -168,6 +168,8 @@ project(":infrastructure") {
             exclude(group: 'ch.qos.logback')
         }
 
+        compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
+
         testCompile project(':test')
     }
 
@@ -180,7 +182,7 @@ project(':test') {
         compile "org.springframework.batch:spring-batch-test:$springVersion"
         compile "com.marklogic:ml-junit:2.6.0"
         // For detecting version of MarkLogic
-        compile "com.marklogic:ml-app-deployer:2.3.0"
+        compile "com.marklogic:ml-app-deployer:2.5.0"
     }
 }
 

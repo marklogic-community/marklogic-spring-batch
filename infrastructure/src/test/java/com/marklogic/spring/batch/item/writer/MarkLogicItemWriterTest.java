@@ -166,4 +166,21 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     }
 
+    @Test
+    public void conflictingUpdateTest() throws Exception {
+        List<DocumentWriteOperation> handles = getDocuments();
+
+        //Add a document with a replica uri
+        DocumentWriteOperation handle = new DocumentWriteOperationImpl(
+                DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                "abc.xml",
+                new DocumentMetadataHandle().withCollections("raw"),
+                new StringHandle("<hello />"));
+        handles.add(handle);
+
+        itemWriter.write(handles);
+        itemWriter.close();
+        clientTestHelper.assertCollectionSize("Expecting zero items in raw collection", "raw", 0);
+    }
+
 }
