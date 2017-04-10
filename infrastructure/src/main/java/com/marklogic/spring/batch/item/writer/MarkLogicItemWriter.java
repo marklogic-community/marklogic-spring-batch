@@ -6,10 +6,7 @@ import com.marklogic.client.batch.RestBatchWriter;
 import com.marklogic.client.document.*;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +45,9 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
+        if (items == null) {
+            throw new NullPointerException("items are null");
+        }
         writeCalled += 1;
         writeCount += items.size();
         if (uriTransformer != null) {

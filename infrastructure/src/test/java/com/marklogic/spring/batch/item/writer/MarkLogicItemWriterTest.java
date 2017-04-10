@@ -183,4 +183,9 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         clientTestHelper.assertCollectionSize("Expecting zero items in raw collection", "raw", 0);
     }
 
+    @Test(expected=NullPointerException.class)
+    public void writeWithNullDataTest() throws Exception {
+        itemWriter.write(null);
+    }
+
 }
