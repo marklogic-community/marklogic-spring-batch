@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.samples;
+package com.marklogic.spring.batch.item.rdf;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.test.AbstractJobTest;

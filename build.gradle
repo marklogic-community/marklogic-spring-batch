@@ -147,6 +147,25 @@ project(':core') {
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
     dependencies {
+        compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
+        compile "org.apache.commons:commons-lang3:3.5"
+
+        testCompile project(':test')
+    }
+    sourceSets {
+        main {
+            java {
+                exclude 'com/marklogic/spring/batch/item/reader/RdfTripleItemReader.java'
+                exclude 'com/marklogic/spring/batch/item/writer/RdfTripleItemWriter.java'
+            }
+        }
+    }
+
+}
+
+project(":rdf") {
+    description = 'MarkLogic Spring Batch Infrastructure: Triples'
+    dependencies {
         // For importing RDF
         compile('org.apache.jena:jena-arq:2.13.0') {
             exclude(group: 'org.slf4j')
