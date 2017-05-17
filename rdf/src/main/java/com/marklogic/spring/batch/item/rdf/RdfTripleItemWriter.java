@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.writer;
+package com.marklogic.spring.batch.item.rdf;
 
 import java.util.List;
 import java.util.Map;

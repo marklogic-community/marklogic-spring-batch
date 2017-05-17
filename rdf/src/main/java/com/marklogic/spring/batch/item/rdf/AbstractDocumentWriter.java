@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.writer;
+package com.marklogic.spring.batch.item.rdf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
