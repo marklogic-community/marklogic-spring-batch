@@ -16,13 +16,13 @@ Figure 1 depicts a high-level diagram of a Spring Batch program.  The green APPL
   
 ![Spring Batch Architecture](http://docs.spring.io/spring-batch/trunk/reference/html/images/spring-batch-layers.png.pagespeed.ce.sMqaNr3V1Z.png)
 
-Figure 1
+*Figure 1*
 
 Figure 2 shows the key concepts that make up the domain language of Spring Batch.  The boxes in blue represent concepts from the CORE component and yellow from the INFRASTRUCTURE component.  A Job has one to many steps, which has exactly one ItemReader, ItemProcessor, and ItemWriter. A job needs to be launched (JobLauncher), and meta data about the currently running process needs to be stored (JobRepository).
 
 ![Spring Batch Stereotypes](http://docs.spring.io/spring-batch/trunk/reference/html/images/spring-batch-reference-model.png.pagespeed.ce.TrtTC751hI.png)
 
-Figure 2
+*Figure 2*
 
 # Why use Spring Batch?
 
