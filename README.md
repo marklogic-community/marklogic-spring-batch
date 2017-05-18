@@ -7,13 +7,47 @@
 
 # What is Spring Batch?
 
-[Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) is an open source framework for batch processing. It is a lightweight, comprehensive solution designed to enable the development of robust batch applications, often found in modern enterprise systems.  Spring Batch is a sub-project of the Spring Framework.  It provides reusable functions that are essential in processing large volumes of records, including logging/tracing, transaction management, job processing statistics, job restart, skip, and resource management. It also provides more advanced technical services and features that will enable extremely high-volume and high performance batch jobs though optimization and partitioning techniques.
+[Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/) is an open source framework for batch processing based on the [Spring Framework](http://projects.spring.io/spring-framework/).
+
+Figure 1 depicts a high-level diagram of a Spring Batch program.  The green APPLICATION box represents the batch processing program that gets executed by a user.  This is usually a command line based application but it could also be triggered by an external source like a user interface.  Spring Batch provides two components, CORE and INFRASTRUCTURE, that enables the boilerplate code for creating an APPLICATION.  
+  
+  * CORE - contains the core runtime classes necessary to launch and control a batch job
+  * INFRASTRUCTURE - contains common readers and writers, and services which are used by APPLICATION and CORE
+  
+![Spring Batch Architecture](http://docs.spring.io/spring-batch/trunk/reference/html/images/spring-batch-layers.png.pagespeed.ce.sMqaNr3V1Z.png)
+
+Figure 1
+
+Figure 2 shows the key concepts that make up the domain language of Spring Batch.  The boxes in blue represent concepts from the CORE component and yellow from the INFRASTRUCTURE component.  A Job has one to many steps, which has exactly one ItemReader, ItemProcessor, and ItemWriter. A job needs to be launched (JobLauncher), and meta data about the currently running process needs to be stored (JobRepository).
+
+![Spring Batch Stereotypes](http://docs.spring.io/spring-batch/trunk/reference/html/images/spring-batch-reference-model.png.pagespeed.ce.TrtTC751hI.png)
+
+Figure 2
+
+# Why use Spring Batch?
+
+ * If you need to migrate data from a relational database, mainframe, or other external source to MarkLogic.
+ * If you have a batch processing job that is outside the scope of other batch processing tools like MLCP or CORB 
+ * If you find that you need 'boilerplate' code to provide failover capability,  performance, and extensibility for a custom batch processing job. 
+ * If you are a Java shop running MarkLogic 8+
 
 # What is MarkLogic Spring Batch?
 
-The vision of the MarkLogic Spring Batch (MSB) project is to provide a comprehensive and robust solution for building custom batch processing jobs for the MarkLogic platform.  The MSB project extends the Spring Batch architecture to provide reusable classes and components to quickly build batch processing applications.
-  
-![Spring Batch Architecture](http://docs.spring.io/spring-batch/trunk/reference/html/images/spring-batch-layers.png.pagespeed.ce.sMqaNr3V1Z.png)
+MarkLogic Spring Batch (MSB) extends the CORE and INFRASTRUCTURE components of Spring Batch. Please read the 
+
+# What are the main features of MarkLogic Spring Batch?
+
+ * Extends the [INFRASTRUCTURE]() classes to facilitate reading, writing, and processing documents for MarkLogic.  
+ * A sample [APPLICATION]() that provides a template program to create your own Spring Batch program
+ * (Beta) MarkLogic implementation of a JobRepository
+
+# How can I get started using MarkLogic Spring Batch?
+
+Check out the [Getting Started Wiki](), review the sample application, and check out other batch processing applications using Spring Batch
+
+ * [ml-migration-starter]() - Migrate data from a relational database into MarkLogic
+ * [Hector]() - Ingest CSV files into MarkLogic
+ * [Penny]() - Use Apache Natural Language Processing library to perform named entity recognition over documents
 
 # What are the goals for the MarkLogic Spring Batch project?
 
@@ -21,46 +55,9 @@ The vision of the MarkLogic Spring Batch (MSB) project is to provide a comprehen
   * Reduce the amount of time it takes to build, operate, and maintain batch processing jobs with MarkLogic
   * Minimize complexity of batch processing applications
 
-# Why use MarkLogic Spring Batch?
-
- * Have you written a 'boilerplate' code to build in failover capability,  performance, and extensibility for a custom batch processing job? 
- * Have you ever migrated data from a relational database to MarkLogic and wondered why someone has not invented a generic tool to do this work?
- * Have you ever orchestrated a multi-step batch process which requires any combination of a multi-step INGEST, TRANSFORM, or EXPORT process? 
-
-There are common themes when writing batch processing jobs which get addressed with a framework like Spring Batch.  The motivation for using Spring is to outsource the boilerplate code and concentrate on business logic.  The idea of MarkLogic Spring Batch is to continue that theme where developers can concentrate on business logic and less on the common MarkLogic boilerplate activities.  
-
-## What are the main features of MarkLogic Spring Batch?
-
-### Provide a Sample Spring Batch Application
-
-The top layer of the Spring Batch architecture is the application layer.  The application contains all batch jobs and custom code written by developers using Spring Batch. Look under the [samples](./samples/README.md) project for an example application.   
-
-Here are some batch processing applications using Spring Batch
-
- * [rowToDoc](https://github.com/sastafford/rowToDoc)
-
-### Extend the Spring Batch Core
-
-The Batch Core contains the core runtime classes necessary to launch and control a batch job. It includes things such as a [JobLauncher](), [Job](), and [Step]() implementations. The MSB project extends several batch core classes intended for specific use for MarkLogic.  MSB core extensions can be found under the [core subproject](./core/README.md).  
-
-### Extend the Spring Batch Infrastructure  
-
-Both Application and Core are built on top of a common infrastructure.  The Spring Batch infrastructure contains common [readers](http://docs.spring.io/spring-batch/trunk/reference/html/listOfReadersAndWriters.html#itemReadersAppendix), [writers](http://docs.spring.io/spring-batch/trunk/reference/html/listOfReadersAndWriters.html#itemWritersAppendix), and services which are used both by application developers and the core framework itself.  MarkLogic Spring Batch extends the infrastructure base classes to facilitate reading, writing, and processing documents for MarkLogic.  These classes can be found under the [infrastructure subproject](./infrastructure/README.md).  
-
 # How can I contribute to the project?
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute code to this project and the process for submitting pull requests to us.
-
-# What does each version represent? 
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-# Who are the masterminds behind this project?
-
-* **Scott A. Stafford** - [sastafford](https://github.com/sastafford)
-* **Rob Rudin** - [rjrudin](https://github.com/rjrudin)
-* **Venu Iyengar** - [venuiyengar](https://github.com/iyengar)
-* **Sanju Thomas** - [sanjuthomas](https://github.com/sanjuthomas)
 
 # What license does MarkLogic Spring Batch use?
 
