@@ -2,6 +2,7 @@ package com.marklogic.spring.batch.test;
 
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.junit.ClientTestHelper;
+import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -46,6 +47,12 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
     @Autowired
     public void setDatabaseClientConfig(DatabaseClientConfig databaseClientConfig) {
         this.databaseClientConfig = databaseClientConfig;
+    }
+
+    @Override
+    protected NamespaceProvider getNamespaceProvider() {
+
+        return new SpringBatchNamespaceProvider();
     }
 
 }

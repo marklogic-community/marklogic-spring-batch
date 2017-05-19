@@ -9,7 +9,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.LoadImagesFromDirectoryJob.class} )
+@ContextConfiguration(classes = {LoadImagesFromDirectoryJob.class} )
 public class LoadImagesFromDirectoryJobTest extends AbstractJobRunnerTest {
 
     @Test
@@ -21,7 +21,7 @@ public class LoadImagesFromDirectoryJobTest extends AbstractJobRunnerTest {
 
         XMLDocumentManager docMgr = getClient().newXMLDocumentManager();
         StringHandle handle = new StringHandle();
-        docMgr.read("Penguins.jpg", handle);
+        docMgr.read("Penguins.jpg.xml", handle);
         Fragment frag = new Fragment(handle.toString(), getNamespaceProvider().getNamespaces());
         frag.assertElementExists("/html:html/html:head/html:meta[1][@content = 'Corbis']");
         frag.assertElementExists("/html:html/html:head/html:meta[1][@name = 'Artist']");

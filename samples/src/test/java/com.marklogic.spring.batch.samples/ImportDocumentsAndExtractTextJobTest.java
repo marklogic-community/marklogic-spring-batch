@@ -21,7 +21,7 @@ public class ImportDocumentsAndExtractTextJobTest extends AbstractJobRunnerTest 
 
         XMLDocumentManager docMgr = getClient().newXMLDocumentManager();
         StringHandle handle = new StringHandle();
-        docMgr.read("Hello.docx", handle);
+        docMgr.read("Hello.docx.xml", handle);
         Fragment frag = new Fragment(handle.toString(), getNamespaceProvider().getNamespaces());
         String value = frag.getElementValue("/html:html/html:body/html:p");
         frag.assertElementValue("/html:html/html:body/html:p", value);

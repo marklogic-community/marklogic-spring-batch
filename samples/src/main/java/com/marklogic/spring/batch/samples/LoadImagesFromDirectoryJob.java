@@ -33,7 +33,7 @@ import java.io.StringReader;
 public class LoadImagesFromDirectoryJob {
 
     @Bean
-    public Job loadImagesFromDirectoryJob(
+    public Job job(
         JobBuilderFactory jobBuilderFactory,
         @Qualifier("loadImagesFromDirectoryJobStep1") Step step1) {
         return jobBuilderFactory.get("loadImagesFromDirectoryJob").start(step1).build();
@@ -63,7 +63,11 @@ public class LoadImagesFromDirectoryJob {
                  * TODO Need to expand this to have more options for setting the URI.
                  */
                 document.setDocumentURI(item.getFilename());
-                return new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, item.getFilename(), new DocumentMetadataHandle(), new DOMHandle(document));
+                return new DocumentWriteOperationImpl(
+                        DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                        item.getFilename() + ".xml",
+                        new DocumentMetadataHandle(),
+                        new DOMHandle(document));
             }
         };
 
