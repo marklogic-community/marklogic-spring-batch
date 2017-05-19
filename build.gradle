@@ -62,8 +62,8 @@ subprojects {
         compile 'ch.qos.logback:logback-classic:1.1.8'
         compile 'org.slf4j:slf4j-api:1.7.21'
         compile "org.springframework.batch:spring-batch-core:$springVersion"
-        compile "com.marklogic:java-client-api:4.0.0-EA4"
-        compile "com.marklogic:ml-javaclient-util:2.13.0"
+        compile "com.marklogic:java-client-api:4.0.1"
+        compile "com.marklogic:ml-javaclient-util:2.14.0"
 
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
         testCompile "com.marklogic:ml-junit:2.6.0"
@@ -120,7 +120,7 @@ project(':core') {
         compile "org.springframework:spring-oxm:4.3.7.RELEASE"
 
         // For deploying the ML Job Repo
-        compile "com.marklogic:ml-app-deployer:2.5.0"
+        compile "com.marklogic:ml-app-deployer:2.7.0"
 
         // For the CLI
         compile "net.sf.jopt-simple:jopt-simple:5.0.1"
@@ -128,7 +128,7 @@ project(':core') {
         runtime "org.springframework.batch:spring-batch-core:$springVersion"
 
         //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
-        runtime "com.marklogic:ml-javaclient-util:2.13.0"
+        runtime "com.marklogic:ml-javaclient-util:2.14.0"
 
         runtime "org.springframework:spring-jdbc:4.3.7.RELEASE"
 
@@ -153,7 +153,7 @@ project(':test') {
         compile "org.springframework.batch:spring-batch-test:$springVersion"
         compile "com.marklogic:ml-junit:2.6.0"
         // For detecting version of MarkLogic
-        compile "com.marklogic:ml-app-deployer:2.5.0"
+        compile "com.marklogic:ml-app-deployer:2.7.0"
     }
 }
 
