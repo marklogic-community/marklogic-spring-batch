@@ -134,14 +134,7 @@ project(':core') {
 
         runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
     }
-/*
-    task testExamples(type: GradleBuild) {
-        buildFile = '../examples/build.gradle'
-        tasks = [ 'test' ]
-    }
 
-    test.dependsOn testExamples
-*/
 }
 
 project(":infrastructure") {
@@ -149,18 +142,8 @@ project(":infrastructure") {
     dependencies {
         compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
         compile "org.apache.commons:commons-lang3:3.5"
-
         testCompile project(':test')
     }
-    sourceSets {
-        main {
-            java {
-                exclude 'com/marklogic/spring/batch/item/reader/RdfTripleItemReader.java'
-                exclude 'com/marklogic/spring/batch/item/writer/RdfTripleItemWriter.java'
-            }
-        }
-    }
-
 }
 
 project(':test') {
