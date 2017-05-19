@@ -5,7 +5,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
 import org.junit.Test;
 
-
 public class LoadBinariesFromDirectoryTest extends AbstractFileImportTest {
 
     @Test

@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Import;
         ImportDocumentsFromDirectoryJob.class,
         CorbJob.class,
         ExportContentFromMarkLogicJob.class,
+        ImportDocumentsAndExtractTextJob.class,
+        LoadImagesFromDirectoryJob.class,
         YourJob.class})
 public class JobsConfig {
 }
