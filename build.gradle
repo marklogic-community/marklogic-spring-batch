@@ -164,7 +164,8 @@ project(':samples') {
         compile project(':core')
         compile project(':infrastructure')
         testCompile project(':test')
-        // For importing images
+
+        // For importing images and extracting text from binaries
         compile "org.apache.tika:tika-parsers:1.13"
     }
 
@@ -206,8 +207,6 @@ project(":rdf") {
             exclude(group: 'log4j')
             exclude(group: 'ch.qos.logback')
         }
-
-        compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
 
         testCompile project(':test')
     }
