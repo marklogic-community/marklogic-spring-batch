@@ -134,14 +134,7 @@ project(':core') {
 
         runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
     }
-/*
-    task testExamples(type: GradleBuild) {
-        buildFile = '../examples/build.gradle'
-        tasks = [ 'test' ]
-    }
 
-    test.dependsOn testExamples
-*/
 }
 
 project(":infrastructure") {
@@ -149,18 +142,46 @@ project(":infrastructure") {
     dependencies {
         compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
         compile "org.apache.commons:commons-lang3:3.5"
-
         testCompile project(':test')
     }
-    sourceSets {
+}
+
+project(':test') {
+    dependencies {
+        compile project(':infrastructure')
+        compile project(':core')
+        compile "org.springframework.batch:spring-batch-test:$springVersion"
+        compile "com.marklogic:ml-junit:2.6.0"
+        // For detecting version of MarkLogic
+        compile "com.marklogic:ml-app-deployer:2.5.0"
+    }
+}
+
+project(':samples') {
+    apply plugin: "application"
+
+    dependencies {
+        compile project(':core')
+        compile project(':infrastructure')
+        testCompile project(':test')
+
+        // For importing images and extracting text from binaries
+        compile "org.apache.tika:tika-parsers:1.13"
+    }
+
+    distributions {
         main {
-            java {
-                exclude 'com/marklogic/spring/batch/item/reader/RdfTripleItemReader.java'
-                exclude 'com/marklogic/spring/batch/item/writer/RdfTripleItemWriter.java'
-            }
+            baseName = "samples"
         }
     }
 
+    jar {
+        baseName = "samples"
+    }
+
+    mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
+    //mainClassName = "com.marklogic.spring.batch.Main"
+    applicationName = "samples"
 }
 
 project(":rdf") {
@@ -187,47 +208,17 @@ project(":rdf") {
             exclude(group: 'ch.qos.logback')
         }
 
-        compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
-
         testCompile project(':test')
     }
 
 }
 
-project(':test') {
-    dependencies {
-        compile project(':infrastructure')
-        compile project(':core')
-        compile "org.springframework.batch:spring-batch-test:$springVersion"
-        compile "com.marklogic:ml-junit:2.6.0"
-        // For detecting version of MarkLogic
-        compile "com.marklogic:ml-app-deployer:2.5.0"
-    }
-}
-
-project(':samples') {
-    apply plugin: "application"
+project (':shapefiles') {
 
     dependencies {
-        compile project(':core')
+        compile "org.apache.httpcomponents:httpmime:4.5.2"
         compile project(':infrastructure')
         testCompile project(':test')
-        compile "org.apache.opennlp:opennlp-tools:1.6.0"
     }
 
-    distributions {
-        main {
-            baseName = "samples"
-        }
-    }
-
-    jar {
-        baseName = "samples"
-    }
-
-    mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
-    //mainClassName = "com.marklogic.spring.batch.Main"
-    applicationName = "samples"
 }
-
-
