@@ -6,17 +6,6 @@ jar {
     }
 }
 
-ext {
-    mlAppConfig {
-        createTriggersDatabase = false
-    }
-
-    mlInstallAdmin {
-        adminUsername = "admin"
-        adminPassword = "admin"
-    }
-}
-
 task deployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.Main'
