@@ -3,6 +3,8 @@ package com.marklogic.spring.batch.item.writer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.batch.BatchWriter;
 import com.marklogic.client.batch.RestBatchWriter;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.*;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
@@ -25,22 +27,14 @@ import java.util.List;
 public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<DocumentWriteOperation>, ItemStream {
 
     private UriTransformer uriTransformer;
-    private BatchWriter batchWriter;
     protected long writeCount = 0;
     protected long writeCalled = 0;
+    protected DataMovementManager dataMovementManager;
+    private int BATCH_SIZE = 100;
+    private int THREAD_COUNT = 4;
 
     public MarkLogicItemWriter(DatabaseClient client) {
-        this(Arrays.asList(client));
-    }
-
-    public MarkLogicItemWriter(List<DatabaseClient> databaseClients) {
-        RestBatchWriter rbw = new RestBatchWriter(databaseClients);
-        rbw.setReleaseDatabaseClients(false);
-        this.batchWriter = rbw;
-    }
-
-    public MarkLogicItemWriter(BatchWriter batchWriter) {
-        this.batchWriter = batchWriter;
+        dataMovementManager = client.newDataMovementManager();
     }
 
     @Override
@@ -48,33 +42,37 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
         if (items == null) {
             throw new NullPointerException("items are null");
         }
-        writeCalled += 1;
-        writeCount += items.size();
-        if (uriTransformer != null) {
-            List<DocumentWriteOperation> newItems = new ArrayList<>();
-            for (DocumentWriteOperation op : items) {
-                String newUri = uriTransformer.transform(op.getUri());
-                newItems.add(new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
-                    newUri, op.getMetadata(), op.getContent()));
+
+        WriteBatcher batcher = dataMovementManager.newWriteBatcher();
+        batcher
+            .withBatchSize(getBatchSize())
+            .withThreadCount(getThreadCount());
+
+
+        for (DocumentWriteOperation item : items) {
+            if (uriTransformer != null) {
+                String newUri = uriTransformer.transform(item.getUri());
+                batcher.add(newUri, item.getMetadata(), item.getContent());
+            } else {
+                batcher.add(item.getUri(), item.getMetadata(), item.getContent());
             }
-            batchWriter.write(newItems);
-        } else {
-            batchWriter.write(items);
         }
-        if (writeCalled % 250 == 0) {
-            logger.info("Write Count: " + writeCount);
-        }
+
+        batcher.flushAndWait();
+
+    }
+
+    public int getBatchSize() {
+        return BATCH_SIZE;
+    }
+
+    public int getThreadCount() {
+        return THREAD_COUNT;
     }
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream open, initializing BatchWriter");
-        }
-        batchWriter.initialize();
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream open, finished initializing BatchWriter");
-        }
+
     }
 
     @Override
@@ -84,14 +82,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     @Override
     public void close() throws ItemStreamException {
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream close, waiting for BatchWriter to complete");
-        }
-        batchWriter.waitForCompletion();
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream close, finished waiting for BatchWriter to complete");
-            logger.info("Final Write Count: " + writeCount);
-        }
+        dataMovementManager.release();
     }
 
     public void setUriTransformer(UriTransformer uriTransformer) {

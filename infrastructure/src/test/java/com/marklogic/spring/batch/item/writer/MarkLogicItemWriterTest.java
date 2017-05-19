@@ -36,7 +36,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     private ClientTestHelper clientTestHelper;
     private MarkLogicItemWriter itemWriter;
-    private TempRestBatchWriter restBatchWriter;
+
     public String xml = "<hello>world</hello>";
     public String transformName = "simple";
     DatabaseClient testDatabaseClient;
@@ -45,8 +45,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     @Before
     public void setup() throws IOException {
-        restBatchWriter = new TempRestBatchWriter(Arrays.asList(getClient()));
-        itemWriter = new MarkLogicItemWriter(restBatchWriter);
+        itemWriter = new MarkLogicItemWriter(getClient());
         itemWriter.open(new ExecutionContext());
 
         clientTestHelper = new ClientTestHelper();
@@ -93,8 +92,6 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
     @Test
     public void writeDocumentWithTransformNoParametersTest() {
         ServerTransform transform = new ServerTransform(transformName);
-        restBatchWriter.setServerTransform(transform);
-        restBatchWriter.setReturnFormat(Format.XML);
 
         DocumentWriteOperation writeOp = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
                 "hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
@@ -119,8 +116,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         ServerTransform serverTransform = new ServerTransform(transformName);
         serverTransform.addParameter("monster", "grover");
         serverTransform.addParameter("trash-can", "oscar");
-        restBatchWriter.setServerTransform(serverTransform);
-        restBatchWriter.setReturnFormat(Format.XML);
+
         DocumentWriteOperation writeOp = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
                 "hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
