@@ -33,7 +33,7 @@ Figure 2 shows the key concepts that make up the domain language of Spring Batch
 
 # What is MarkLogic Spring Batch?
 
-MarkLogic Spring Batch (MSB) extends the CORE and INFRASTRUCTURE components of Spring Batch and provides sample templates for getting started writing a batch processing APPLICATION.
+MarkLogic Spring Batch (MSB) extends the CORE and INFRASTRUCTURE components of Spring Batch to make it easier to work with data and MarkLogic.  Sample code templates are included for developers getting started writing a batch processing APPLICATION.
 
 ## What are the main features of MarkLogic Spring Batch?
 
