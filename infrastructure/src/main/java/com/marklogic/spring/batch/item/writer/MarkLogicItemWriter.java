@@ -3,6 +3,7 @@ package com.marklogic.spring.batch.item.writer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.batch.BatchWriter;
 import com.marklogic.client.batch.RestBatchWriter;
+import com.marklogic.client.datamovement.Batcher;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.*;
@@ -32,6 +33,8 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
     protected DataMovementManager dataMovementManager;
     private int BATCH_SIZE = 100;
     private int THREAD_COUNT = 4;
+    private String transformName = "";
+    private WriteBatcher batcher;
 
     public MarkLogicItemWriter(DatabaseClient client) {
         dataMovementManager = client.newDataMovementManager();
@@ -43,11 +46,14 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
             throw new NullPointerException("items are null");
         }
 
-        WriteBatcher batcher = dataMovementManager.newWriteBatcher();
+        batcher = dataMovementManager.newWriteBatcher();
         batcher
             .withBatchSize(getBatchSize())
             .withThreadCount(getThreadCount());
 
+        if (!transformName.isEmpty()) {
+            batcher.withTransform(new ServerTransform(transformName));
+        }
 
         for (DocumentWriteOperation item : items) {
             if (uriTransformer != null) {
@@ -58,8 +64,6 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
             }
         }
 
-        batcher.flushAndWait();
-
     }
 
     public int getBatchSize() {
@@ -68,6 +72,10 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     public int getThreadCount() {
         return THREAD_COUNT;
+    }
+
+    public void setTransform(String transformName) {
+        this.transformName = transformName;
     }
 
     @Override
@@ -82,6 +90,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     @Override
     public void close() throws ItemStreamException {
+        batcher.flushAndWait();
         dataMovementManager.release();
     }
 
