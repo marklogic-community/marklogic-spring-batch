@@ -91,7 +91,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     @Test
     public void writeDocumentWithTransformNoParametersTest() {
-        itemWriter.setTransform(transformName);
+        itemWriter.setServerTransform(new ServerTransform(transformName));
 
         DocumentWriteOperation writeOp = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
                 "hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
@@ -116,6 +116,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         ServerTransform serverTransform = new ServerTransform(transformName);
         serverTransform.addParameter("monster", "grover");
         serverTransform.addParameter("trash-can", "oscar");
+        itemWriter.setServerTransform(serverTransform);
 
         DocumentWriteOperation writeOp = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
                 "hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));

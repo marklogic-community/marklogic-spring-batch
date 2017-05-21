@@ -33,7 +33,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
     protected DataMovementManager dataMovementManager;
     private int BATCH_SIZE = 100;
     private int THREAD_COUNT = 4;
-    private String transformName = "";
+    private ServerTransform serverTransform;
     private WriteBatcher batcher;
 
     public MarkLogicItemWriter(DatabaseClient client) {
@@ -51,8 +51,8 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
             .withBatchSize(getBatchSize())
             .withThreadCount(getThreadCount());
 
-        if (!transformName.isEmpty()) {
-            batcher.withTransform(new ServerTransform(transformName));
+        if (serverTransform != null) {
+            batcher.withTransform(serverTransform);
         }
 
         for (DocumentWriteOperation item : items) {
@@ -74,10 +74,6 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
         return THREAD_COUNT;
     }
 
-    public void setTransform(String transformName) {
-        this.transformName = transformName;
-    }
-
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
 
@@ -92,6 +88,10 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
     public void close() throws ItemStreamException {
         batcher.flushAndWait();
         dataMovementManager.release();
+    }
+
+    public void setServerTransform(ServerTransform serverTransform) {
+        this.serverTransform = serverTransform;
     }
 
     public void setUriTransformer(UriTransformer uriTransformer) {
