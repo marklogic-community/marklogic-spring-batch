@@ -70,11 +70,7 @@ public class ImportDocumentsAndExtractTextJob {
                         handle);
             }
         };
-        TempRestBatchWriter batchWriter = new TempRestBatchWriter(databaseClientProvider.getDatabaseClient());
-        batchWriter.setReturnFormat(Format.XML);
-        MarkLogicItemWriter writer = new MarkLogicItemWriter(batchWriter);
-
-
+        MarkLogicItemWriter writer = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
         return stepBuilderFactory.get("step1")
                 .<Resource, DocumentWriteOperation>chunk(10)
                 .reader(new EnhancedResourcesItemReader(inputFilePath, inputFilePattern))
