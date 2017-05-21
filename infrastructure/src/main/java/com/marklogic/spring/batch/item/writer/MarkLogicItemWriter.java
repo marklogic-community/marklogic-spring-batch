@@ -40,21 +40,24 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
         dataMovementManager = client.newDataMovementManager();
     }
 
+    public MarkLogicItemWriter(DatabaseClient client, UriTransformer uriTransformer) {
+        dataMovementManager = client.newDataMovementManager();
+        this.uriTransformer = uriTransformer;
+    }
+
+    public MarkLogicItemWriter(DatabaseClient client, ServerTransform serverTransform) {
+        dataMovementManager = client.newDataMovementManager();
+        this.serverTransform = serverTransform;
+    }
+
+    public MarkLogicItemWriter(DatabaseClient client, UriTransformer uriTransformer, ServerTransform serverTransform) {
+        this(client, uriTransformer);
+        this.serverTransform = serverTransform;
+    }
+
+
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
-        if (items == null) {
-            throw new NullPointerException("items are null");
-        }
-
-        batcher = dataMovementManager.newWriteBatcher();
-        batcher
-            .withBatchSize(getBatchSize())
-            .withThreadCount(getThreadCount());
-
-        if (serverTransform != null) {
-            batcher.withTransform(serverTransform);
-        }
-
         for (DocumentWriteOperation item : items) {
             if (uriTransformer != null) {
                 String newUri = uriTransformer.transform(item.getUri());
@@ -63,7 +66,6 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
                 batcher.add(item.getUri(), item.getMetadata(), item.getContent());
             }
         }
-
     }
 
     public int getBatchSize() {
@@ -76,7 +78,14 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
+        batcher = dataMovementManager.newWriteBatcher();
+        batcher
+          .withBatchSize(getBatchSize())
+          .withThreadCount(getThreadCount());
 
+        if (serverTransform != null) {
+            batcher.withTransform(serverTransform);
+        }
     }
 
     @Override

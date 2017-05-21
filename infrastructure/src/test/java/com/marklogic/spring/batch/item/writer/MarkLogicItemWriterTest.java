@@ -45,9 +45,6 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     @Before
     public void setup() throws IOException {
-        itemWriter = new MarkLogicItemWriter(getClient());
-        itemWriter.open(new ExecutionContext());
-
         clientTestHelper = new ClientTestHelper();
         SimpleDatabaseClientProvider dbConfig = new SimpleDatabaseClientProvider(databaseClientConfig);
         clientTestHelper.setDatabaseClientProvider(dbConfig);
@@ -59,6 +56,9 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         FileHandle fileHandle = new FileHandle(transform.getFile());
         fileHandle.setFormat(Format.XML);
         transMgr.writeXQueryTransform(transformName, fileHandle);
+
+        itemWriter = new MarkLogicItemWriter(getClient());
+        itemWriter.open(new ExecutionContext());
     }
 
     public List<DocumentWriteOperation> getDocuments() {
@@ -91,8 +91,9 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     @Test
     public void writeDocumentWithTransformNoParametersTest() {
-        itemWriter.setServerTransform(new ServerTransform(transformName));
-
+        itemWriter = new MarkLogicItemWriter(getClient(), new ServerTransform(transformName));
+        itemWriter.open(new ExecutionContext());
+        
         DocumentWriteOperation writeOp = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
                 "hello.xml", new DocumentMetadataHandle(), new StringHandle(xml));
         List<DocumentWriteOperation> writeOps = new ArrayList<DocumentWriteOperation>();
