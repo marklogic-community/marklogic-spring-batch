@@ -11,7 +11,6 @@ import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
-import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
 import org.junit.*;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +38,18 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
 
     public String xml = "<hello>world</hello>";
     public String transformName = "simple";
+
+    DatabaseClient client;
     DatabaseClient testDatabaseClient;
 
     XMLDocumentManager docMgr;
 
     @Before
     public void setup() throws IOException {
+        client = testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(),
+                databaseClientConfig.getPort(), databaseClientConfig.getUsername(),
+                databaseClientConfig.getPassword(), DatabaseClientFactory.Authentication.DIGEST);
+
         clientTestHelper = new ClientTestHelper();
         SimpleDatabaseClientProvider dbConfig = new SimpleDatabaseClientProvider(databaseClientConfig);
         clientTestHelper.setDatabaseClientProvider(dbConfig);
@@ -56,7 +61,6 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         FileHandle fileHandle = new FileHandle(transform.getFile());
         fileHandle.setFormat(Format.XML);
         transMgr.writeXQueryTransform(transformName, fileHandle);
-
     }
 
     public List<DocumentWriteOperation> getDocuments() {
@@ -87,9 +91,8 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
     
     @Test
     public void writeTwoDocumentsTest() throws Exception {
-        itemWriter = new MarkLogicItemWriter(getClient());
+        itemWriter = new MarkLogicItemWriter(client);
         write(getDocuments());
-
         clientTestHelper.assertInCollections("abc.xml", "raw");
         clientTestHelper.assertCollectionSize("Expecting two items in raw collection", "raw", 2);
     }
@@ -102,7 +105,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         writeOps.add(writeOp);
 
         try {
-            itemWriter = new MarkLogicItemWriter(getClient(), new ServerTransform(transformName));
+            itemWriter = new MarkLogicItemWriter(client, new ServerTransform(transformName));
             write(writeOps);
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,7 +127,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
             ServerTransform serverTransform = new ServerTransform(transformName);
             serverTransform.addParameter("monster", "grover");
             serverTransform.addParameter("trash-can", "oscar");
-            itemWriter = new MarkLogicItemWriter(getClient(), serverTransform);
+            itemWriter = new MarkLogicItemWriter(client, serverTransform);
             write(writeOps);
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,7 +147,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
         batch.add("hello.xml", new DocumentMetadataHandle(), new StringHandle("<hello />"));
         batch.add("hello2.xml", new DocumentMetadataHandle(), new StringHandle("<hello2 />"));
         ServerTransform serverTransform = new ServerTransform("simple");
-        itemWriter = new MarkLogicItemWriter(getClient(), new ServerTransform(transformName));
+        itemWriter = new MarkLogicItemWriter(client, new ServerTransform(transformName));
         docMgr.write(batch, serverTransform);
     }
 
@@ -176,15 +179,15 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
                 new DocumentMetadataHandle().withCollections("raw"),
                 new StringHandle("<hello />"));
         handles.add(handle);
-        itemWriter = new MarkLogicItemWriter(getClient());
+        itemWriter = new MarkLogicItemWriter(client);
         write(handles);
         clientTestHelper.assertCollectionSize("Expecting zero items in raw collection", "raw", 0);
     }
 
     @Test(expected=NullPointerException.class)
     public void writeWithNullDataTest() throws Exception {
+        itemWriter = new MarkLogicItemWriter(client);
         write(null);
     }
-
 
 }
