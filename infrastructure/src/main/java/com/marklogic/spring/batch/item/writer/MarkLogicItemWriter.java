@@ -9,6 +9,7 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.*;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
+import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
 import org.springframework.batch.item.*;
 
@@ -34,6 +35,8 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
     private int BATCH_SIZE = 100;
     private int THREAD_COUNT = 4;
     private ServerTransform serverTransform;
+
+    private Format contentFormat;
 
     //Used for MarkLogic 9
     private WriteBatcher batcher;
@@ -118,6 +121,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
             batchWriter = new TempRestBatchWriter(client);
             if (serverTransform != null) {
                 batchWriter.setServerTransform(serverTransform);
+                batchWriter.setContentFormat(contentFormat);
             }
             batchWriter.initialize();
         }
@@ -146,6 +150,10 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     public void setUriTransformer(UriTransformer uriTransformer) {
         this.uriTransformer = uriTransformer;
+    }
+
+    public void setContentFormat(Format format) {
+        this.contentFormat = format;
     }
 }
 
