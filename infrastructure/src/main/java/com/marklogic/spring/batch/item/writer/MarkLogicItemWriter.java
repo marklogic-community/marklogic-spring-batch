@@ -70,6 +70,11 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
         this.serverTransform = serverTransform;
     }
 
+    public MarkLogicItemWriter(DatabaseClient client, ServerTransform serverTransform, Format format) {
+        this(client, serverTransform);
+        this.contentFormat = format;
+    }
+
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
         if (marklogicVersion9) {
@@ -121,7 +126,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
             batchWriter = new TempRestBatchWriter(client);
             if (serverTransform != null) {
                 batchWriter.setServerTransform(serverTransform);
-                batchWriter.setContentFormat(contentFormat);
+                batchWriter.setContentFormat(contentFormat == null ? Format.XML : contentFormat);
             }
             batchWriter.initialize();
         }

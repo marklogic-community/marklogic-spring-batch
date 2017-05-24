@@ -127,7 +127,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringTest implements Appli
             ServerTransform serverTransform = new ServerTransform(transformName);
             serverTransform.addParameter("monster", "grover");
             serverTransform.addParameter("trash-can", "oscar");
-            itemWriter = new MarkLogicItemWriter(client, serverTransform);
+            itemWriter = new MarkLogicItemWriter(client, serverTransform, Format.XML);
             write(writeOps);
         } catch (Exception e) {
             e.printStackTrace();
