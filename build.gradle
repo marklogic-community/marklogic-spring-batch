@@ -112,7 +112,6 @@ subprojects {
 project(':core') {
 
     dependencies {
-        compile project(':infrastructure')
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
         compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
 
