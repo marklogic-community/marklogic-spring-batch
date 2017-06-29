@@ -14,8 +14,8 @@ task deployMarkLogicJobRepository(type: JavaExec) {
 
 task undeployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'com.marklogic.spring.batch.Main'
-    args = ["--undeploy_job_repo", "--jr_name", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
+    main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
+    args = ["--undeploy", "--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
 }
 
 // Setup the Job Repo in our test application so it's available for use by tests.
