@@ -48,7 +48,7 @@ subprojects {
 
     apply plugin: "java"
 
-    if (!it.name.startsWith('samples')) {
+    if (it.name in ["core", "infrastructure", "test"]) {
         apply plugin: "com.jfrog.bintray"
         apply plugin: 'maven-publish'
     }
@@ -67,7 +67,7 @@ subprojects {
 
         testCompile "org.springframework.batch:spring-batch-test:$springVersion"
         testCompile "com.marklogic:ml-junit:2.6.0"
-}
+    }
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -77,7 +77,7 @@ subprojects {
         toolVersion = '7.1.2'
     }
 
-    if (!it.name.startsWith('samples')) {
+    if (it.name in ["core", "infrastructure", "test"])  {
         task sourcesJar(type: Jar, dependsOn: classes) {
             baseName = artifactId
             version = project.version
