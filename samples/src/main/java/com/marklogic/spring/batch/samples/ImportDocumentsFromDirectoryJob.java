@@ -54,11 +54,7 @@ public class ImportDocumentsFromDirectoryJob {
             processor.setFormat(Format.valueOf(documentType.toUpperCase()));
         }
 
-        TempRestBatchWriter batchWriter = new TempRestBatchWriter(databaseClientProvider.getDatabaseClient());
-        batchWriter.setReturnFormat(Format.valueOf(documentType.toUpperCase()));
-        batchWriter.setThreadCount(1);
-
-        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(batchWriter);
+        MarkLogicItemWriter itemWriter = new MarkLogicItemWriter(databaseClientProvider.getDatabaseClient());
         itemWriter.setUriTransformer(new UriTransformer(outputUriPrefix, outputUriSuffix, outputUriReplace));
 
         return stepBuilderFactory.get("step")

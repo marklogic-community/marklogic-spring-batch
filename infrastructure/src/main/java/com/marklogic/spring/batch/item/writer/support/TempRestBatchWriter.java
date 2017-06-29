@@ -13,39 +13,23 @@ import java.util.List;
 
 public class TempRestBatchWriter extends RestBatchWriter {
 
-    private Format returnFormat;
-
-    public TempRestBatchWriter(DatabaseClient databaseClient) {
-
-        super(Arrays.asList(databaseClient));
-        setReleaseDatabaseClients(false);
+    public TempRestBatchWriter(DatabaseClient client) {
+        super(client);
     }
 
-    public TempRestBatchWriter(List<DatabaseClient> databaseClients) {
+    private Format contentFormat;
 
-        super(databaseClients);
-        setReleaseDatabaseClients(false);
+    public void setContentFormat(Format contentFormat) {
+        this.contentFormat = contentFormat;
     }
 
-    @Override
-    public void write(final List<? extends DocumentWriteOperation> items) {
-        int clientIndex = getClientIndex();
-
-        List<DatabaseClient> databaseClients = getDatabaseClients();
-        ServerTransform serverTransform = getServerTransform();
-
-        if (clientIndex >= databaseClients.size()) {
-            clientIndex = 0;
-        }
-        final DatabaseClient client = databaseClients.get(clientIndex);
-        clientIndex++;
-
-        getTaskExecutor().execute(new Runnable() {
+    protected Runnable buildRunnable(final DatabaseClient client, final List<? extends DocumentWriteOperation> items) {
+        return new Runnable() {
             @Override
             public void run() {
                 DocumentManager<?, ?> mgr = buildDocumentManager(client);
+                mgr.setContentFormat(contentFormat);
                 DocumentWriteSet set = mgr.newWriteSet();
-                mgr.setContentFormat(returnFormat);
                 for (DocumentWriteOperation item : items) {
                     set.add(item);
                 }
@@ -53,23 +37,15 @@ public class TempRestBatchWriter extends RestBatchWriter {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Writing " + count + " documents to MarkLogic");
                 }
-                try {
-                    if (serverTransform != null) {
-                        mgr.write(set, serverTransform);
-                    } else {
-                        mgr.write(set);
-                    }
-                } catch (Exception ex) {
-                    logger.warn(ex.getMessage());
+                if (getServerTransform() != null) {
+                    mgr.write(set, getServerTransform());
+                } else {
+                    mgr.write(set);
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Wrote " + count + " documents to MarkLogic");
+                if (logger.isInfoEnabled()) {
+                    logger.info("Wrote " + count + " documents to MarkLogic");
                 }
             }
-        });
-    }
-
-    public void setReturnFormat(Format returnFormat) {
-        this.returnFormat = returnFormat;
+        };
     }
 }
