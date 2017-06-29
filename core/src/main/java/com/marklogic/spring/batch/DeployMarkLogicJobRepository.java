@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class DeployMarkLogicJobRepository {
 
     private String HELP = "help";
-    private String NAME = "job-repository";
+    private String NAME = "name";
     private String HOST = "host";
     private String PORT = "port";
     private String USERNAME = "username";
@@ -67,7 +67,7 @@ public class DeployMarkLogicJobRepository {
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
         parser.acceptsAll(Arrays.asList("h", Options.HELP), "Show help").forHelp();
-        parser.accepts(NAME, "Name of the MarkLogic Job Repository").withOptionalArg().defaultsTo("job-repository");
+        parser.accepts(NAME, "Name of the MarkLogic Job Repository").withRequiredArg();
         parser.accepts(HOST, "Hostname of the destination MarkLogic Server").withRequiredArg().defaultsTo("localhost");
         parser.accepts(PORT, "Port number of the destination MarkLogic Server. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8015);
         parser.accepts(USERNAME, "The MarkLogic user to authenticate as against the given host and port").withRequiredArg().defaultsTo("admin");
