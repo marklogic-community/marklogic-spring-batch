@@ -1,12 +1,8 @@
 package com.marklogic.spring.batch;
 
 import com.marklogic.client.helper.LoggingObject;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.spring.batch.config.ConfigTypeFilter;
 import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
-import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryAppDeployer;
-import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryConfig;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.springframework.batch.core.Job;
@@ -52,12 +48,6 @@ public class Main extends LoggingObject {
         if (options.has(Options.HELP)) {
             printHelp(parser, options, args);
         }
-        else if (options.has(Options.DEPLOY)) {
-            deployMarkLogicJobRepository(options);
-        }
-        else if (options.has(Options.UNDEPLOY)) {
-            undeployMarkLogicJobRepository(options);
-        }
         else if (options.has(Options.LIST)) {
             StringBuilder sb = new StringBuilder();
             listConfigs(options, sb);
@@ -99,29 +89,6 @@ public class Main extends LoggingObject {
                 builder.append(def.getBeanClassName() + "\n");
             }
         }
-    }
-
-    protected void deployMarkLogicJobRepository(OptionSet options) {
-        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
-        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
-        buildAppDeployer(options).deploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
-    }
-
-    protected void undeployMarkLogicJobRepository(OptionSet options) {
-        String name = options.valueOf(Options.JOB_REPOSITORY_NAME).toString();
-        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
-        buildAppDeployer(options).undeploy(name, host, Integer.parseInt(options.valueOf(Options.JOB_REPOSITORY_PORT).toString()));
-    }
-
-    protected MarkLogicSimpleJobRepositoryAppDeployer buildAppDeployer(OptionSet options) {
-        String host = options.valueOf(Options.JOB_REPOSITORY_HOST).toString();
-        ManageConfig manageConfig = new ManageConfig(
-                host, 8002,
-                options.valueOf(Options.JOB_REPOSITORY_USERNAME).toString(),
-                options.valueOf(Options.JOB_REPOSITORY_PASSWORD).toString());
-        ManageClient manageClient = new ManageClient(manageConfig);
-        MarkLogicSimpleJobRepositoryConfig config = new MarkLogicSimpleJobRepositoryConfig(manageClient);
-        return new MarkLogicSimpleJobRepositoryAppDeployer(config);
     }
 
     protected void printHelp(OptionParser parser, OptionSet options, String[] args) throws IOException {

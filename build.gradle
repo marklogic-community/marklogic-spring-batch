@@ -118,9 +118,6 @@ project(':core') {
         // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
         compile "org.springframework:spring-oxm:4.3.7.RELEASE"
 
-        // For deploying the ML Job Repo
-        compile "com.marklogic:ml-app-deployer:2.7.0"
-
         // For the CLI
         compile "net.sf.jopt-simple:jopt-simple:5.0.1"
 
@@ -181,6 +178,21 @@ project(':samples') {
     mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
     //mainClassName = "com.marklogic.spring.batch.Main"
     applicationName = "samples"
+}
+
+project(':mlJobRepo') {
+    apply plugin: "application"
+
+    dependencies {
+        // For deploying the ML Job Repo
+        compile "com.marklogic:ml-app-deployer:2.8.0"
+
+        // For the CLI
+        compile "net.sf.jopt-simple:jopt-simple:5.0.1"
+    }
+
+    mainClassName = "com.marklogic.spring.batch.DeployMarkLogicJobRepository"
+
 }
 
 project(":rdf") {

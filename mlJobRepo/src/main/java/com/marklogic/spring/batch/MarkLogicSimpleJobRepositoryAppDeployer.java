@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.core.repository;
+package com.marklogic.spring.batch;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;

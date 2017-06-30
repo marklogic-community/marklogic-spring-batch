@@ -2,9 +2,6 @@ package com.marklogic.spring.batch;
 
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
-import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryAppDeployer;
-import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepositoryConfig;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -31,7 +28,7 @@ public class DeployMarkLogicJobRepository {
         OptionParser parser = buildOptionParser();
         OptionSet options = parser.parse(args);
         if (options.has(HELP)) {
-            printHelp(parser, options, args);
+            parser.printHelpOn(System.out);
         }
         else if (options.has(UNDEPLOY)) {
             undeployMarkLogicJobRepository(options);
@@ -44,13 +41,13 @@ public class DeployMarkLogicJobRepository {
     protected void deployMarkLogicJobRepository(OptionSet options) {
         String name = options.valueOf(NAME).toString();
         String host = options.valueOf(HOST).toString();
-        buildAppDeployer(options).deploy(name, host, Integer.parseInt(options.valueOf(Options.PORT).toString()));
+        buildAppDeployer(options).deploy(name, host, Integer.parseInt(options.valueOf(PORT).toString()));
     }
 
     protected void undeployMarkLogicJobRepository(OptionSet options) {
         String name = options.valueOf(NAME).toString();
         String host = options.valueOf(HOST).toString();
-        buildAppDeployer(options).undeploy(name, host, Integer.parseInt(options.valueOf(Options.PORT).toString()));
+        buildAppDeployer(options).undeploy(name, host, Integer.parseInt(options.valueOf(PORT).toString()));
     }
 
     protected MarkLogicSimpleJobRepositoryAppDeployer buildAppDeployer(OptionSet options) {
@@ -66,7 +63,7 @@ public class DeployMarkLogicJobRepository {
 
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
-        parser.acceptsAll(Arrays.asList("h", Options.HELP), "Show help").forHelp();
+        parser.acceptsAll(Arrays.asList("h", HELP), "Show help").forHelp();
         parser.accepts(NAME, "Name of the MarkLogic Job Repository").withRequiredArg();
         parser.accepts(HOST, "Hostname of the destination MarkLogic Server").withRequiredArg().defaultsTo("localhost");
         parser.accepts(PORT, "Port number of the destination MarkLogic Server. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8015);
@@ -78,25 +75,5 @@ public class DeployMarkLogicJobRepository {
         parser.allowsUnrecognizedOptions();
         return parser;
     }
-
-    protected void printHelp(OptionParser parser, OptionSet options, String[] args) throws IOException {
-        parser.printHelpOn(System.out);
-        if (options.has(Options.CONFIG)) {
-            String config = (String) options.valueOf(Options.CONFIG);
-            try {
-                Object o = Class.forName(config).newInstance();
-                if (o instanceof OptionParserConfigurer) {
-                    parser = new OptionParser();
-                    ((OptionParserConfigurer) o).configureOptionParser(parser);
-                    System.out.println("\nOptions specific to config class: " + config);
-                    parser.printHelpOn(System.out);
-                }
-            } catch (Exception ex) {
-                // Ignore, don't try to print options for the config class if we can't create it
-            }
-        }
-    }
-
-
 
 }
