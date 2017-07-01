@@ -183,6 +183,23 @@ project(':samples') {
 project(':mlJobRepo') {
     apply plugin: "application"
 
+
+    task deployMarkLogicJobRepository(type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
+        args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
+    }
+
+    task undeployMarkLogicJobRepository(type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
+        args = ["--undeploy", "--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
+    }
+
+// Setup the Job Repo in our test application so it's available for use by tests.
+    mlPostDeploy.dependsOn deployMarkLogicJobRepository
+    mlUndeploy.dependsOn undeployMarkLogicJobRepository
+
     dependencies {
         // For deploying the ML Job Repo
         compile "com.marklogic:ml-app-deployer:2.8.0"
