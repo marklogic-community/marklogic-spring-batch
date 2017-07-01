@@ -109,9 +109,6 @@ subprojects {
 
 project(':core') {
 
-    //Needed for mlInit, mlInstallAdmin
-    apply plugin: "com.marklogic.ml-gradle"
-
     dependencies {
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
         compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
@@ -184,6 +181,8 @@ project(':samples') {
 project(':mlJobRepo') {
     apply plugin: "application"
 
+    //Needed for mlInit, mlInstallAdmin
+    apply plugin: "com.marklogic.ml-gradle"
 
     task deployMarkLogicJobRepository(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
