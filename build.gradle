@@ -21,7 +21,6 @@ plugins {
 }
 
 allprojects {
-
     repositories {
         jcenter()
         maven { url "http://repo.spring.io/milestone" }
@@ -29,7 +28,7 @@ allprojects {
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '3.5'
+        gradleVersion = '4.0'
     }
 
     sourceSets.test.resources.srcDir 'src/test/java'
