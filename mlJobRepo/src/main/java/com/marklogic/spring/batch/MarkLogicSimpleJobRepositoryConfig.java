@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.core.repository;
+package com.marklogic.spring.batch;
 
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;

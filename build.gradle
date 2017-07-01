@@ -21,7 +21,6 @@ plugins {
 }
 
 allprojects {
-    apply plugin: "com.marklogic.ml-gradle"
 
     repositories {
         jcenter()
@@ -111,16 +110,15 @@ subprojects {
 
 project(':core') {
 
+    //Needed for mlInit, mlInstallAdmin
+    apply plugin: "com.marklogic.ml-gradle"
+
     dependencies {
-        compile project(':infrastructure')
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
         compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
 
         // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
         compile "org.springframework:spring-oxm:4.3.7.RELEASE"
-
-        // For deploying the ML Job Repo
-        compile "com.marklogic:ml-app-deployer:2.7.0"
 
         // For the CLI
         compile "net.sf.jopt-simple:jopt-simple:5.0.1"
@@ -182,6 +180,38 @@ project(':samples') {
     mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
     //mainClassName = "com.marklogic.spring.batch.Main"
     applicationName = "samples"
+}
+
+project(':mlJobRepo') {
+    apply plugin: "application"
+
+
+    task deployMarkLogicJobRepository(type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
+        args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
+    }
+
+    task undeployMarkLogicJobRepository(type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
+        args = ["--undeploy", "--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
+    }
+
+// Setup the Job Repo in our test application so it's available for use by tests.
+    mlPostDeploy.dependsOn deployMarkLogicJobRepository
+    mlUndeploy.dependsOn undeployMarkLogicJobRepository
+
+    dependencies {
+        // For deploying the ML Job Repo
+        compile "com.marklogic:ml-app-deployer:2.8.0"
+
+        // For the CLI
+        compile "net.sf.jopt-simple:jopt-simple:5.0.1"
+    }
+
+    mainClassName = "com.marklogic.spring.batch.DeployMarkLogicJobRepository"
+
 }
 
 project(":rdf") {

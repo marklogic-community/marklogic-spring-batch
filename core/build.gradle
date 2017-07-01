@@ -6,21 +6,6 @@ jar {
     }
 }
 
-task deployMarkLogicJobRepository(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'com.marklogic.spring.batch.Main'
-    args = ["--deploy_job_repo", "--jr_name", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
-}
-
-task undeployMarkLogicJobRepository(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'com.marklogic.spring.batch.Main'
-    args = ["--undeploy_job_repo", "--jr_name", mlJobRepositoryName, "--jr_host", mlHost, "--jr_port", mlRestPort, "--jr_username", mlManageUsername, "--jr_password", mlManagePassword]
-}
-
-// Setup the Job Repo in our test application so it's available for use by tests.
-mlPostDeploy.dependsOn deployMarkLogicJobRepository
-mlUndeploy.dependsOn undeployMarkLogicJobRepository
 
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')

@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch;
 
-import com.marklogic.client.spring.BasicConfig;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
