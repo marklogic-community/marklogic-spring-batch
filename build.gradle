@@ -21,7 +21,6 @@ plugins {
 }
 
 allprojects {
-    apply plugin: "com.marklogic.ml-gradle"
 
     repositories {
         jcenter()
@@ -110,6 +109,9 @@ subprojects {
 }
 
 project(':core') {
+
+    //Needed for mlInit, mlInstallAdmin
+    apply plugin: "com.marklogic.ml-gradle"
 
     dependencies {
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
