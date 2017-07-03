@@ -38,7 +38,7 @@ public class CorbJobTest extends AbstractJobRunnerTest {
         }
 
         ExtensionLibrariesManager libMgr = client.newServerConfigManager().newExtensionLibrariesManager();
-        StringHandle handle = new StringHandle("cts:uris()").withFormat(Format.TEXT);
+        StringHandle handle = new StringHandle("cts:uris('', (), cts:collection-query('test'))").withFormat(Format.TEXT);
         libMgr.writeAs(URIS_MODULE, handle);
 
         StringBuilder process = new StringBuilder("xquery version '1.0-ml';\n");

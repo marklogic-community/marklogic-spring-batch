@@ -9,11 +9,9 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.item.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +27,6 @@ import org.springframework.core.env.Environment;
  */
 
 @EnableBatchProcessing
-//@Import( { MarkLogicBatchConfigurer.class } )
 public class YourJob implements EnvironmentAware {
     
     private Environment env;

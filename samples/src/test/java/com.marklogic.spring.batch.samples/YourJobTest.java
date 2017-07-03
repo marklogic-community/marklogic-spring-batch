@@ -11,7 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = { YourJob.class })
 public class YourJobTest extends AbstractJobRunnerTest {
 
-
     @Test
     public void findOneMonsterInDatabaseTest() throws Exception {
         JobParametersBuilder jpb = new JobParametersBuilder();
