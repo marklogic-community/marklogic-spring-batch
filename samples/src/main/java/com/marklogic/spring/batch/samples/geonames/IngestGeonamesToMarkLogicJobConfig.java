@@ -18,12 +18,14 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 
 @EnableBatchProcessing
-public class IngestGeonamesToMarkLogicJob implements OptionParserConfigurer{
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+public class IngestGeonamesToMarkLogicJobConfig implements OptionParserConfigurer{
 
     @Override
     public void configureOptionParser(OptionParser parser) {

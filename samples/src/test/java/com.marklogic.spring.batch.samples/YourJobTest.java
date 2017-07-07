@@ -8,7 +8,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = { YourJob.class })
+@ContextConfiguration(classes = { YourJobConfig.class })
 public class YourJobTest extends AbstractJobRunnerTest {
 
     @Test

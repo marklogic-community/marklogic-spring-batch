@@ -9,7 +9,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.ImportDocumentsAndExtractTextJob.class} )
+@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.ImportDocumentsAndExtractTextJobConfig.class} )
 public class ImportDocumentsAndExtractTextJobTest extends AbstractJobRunnerTest {
 
     @Test

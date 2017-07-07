@@ -16,13 +16,14 @@ import com.marklogic.spring.batch.item.reader.EnhancedResourcesItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 
 import org.springframework.util.Assert;
 
 @EnableBatchProcessing
-//@Import( { MarkLogicBatchConfigurer.class } )
-public class ImportDocumentsFromDirectoryJob {
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+public class ImportDocumentsFromDirectoryJobConfig {
     
     @Bean(name = "importDocumentsFromDirectory")
     public Job importDocumentsFromDirectoryJob(

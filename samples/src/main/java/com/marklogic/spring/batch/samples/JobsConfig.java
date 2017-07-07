@@ -1,18 +1,15 @@
 package com.marklogic.spring.batch.samples;
 
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@EnableBatchProcessing
-@Import({ com.marklogic.spring.batch.config.MarkLogicApplicationContext.class,
-        DeleteDocumentsJob.class,
-        ImportDocumentsFromDirectoryJob.class,
-        CorbJob.class,
-        ExportContentFromMarkLogicJob.class,
-        ImportDocumentsAndExtractTextJob.class,
-        LoadImagesFromDirectoryJob.class,
-        YourJob.class})
+@Import({DeleteDocumentsJobConfig.class,
+        ImportDocumentsFromDirectoryJobConfig.class,
+        CorbJobConfig.class,
+        ExportContentFromMarkLogicJobConfig.class,
+        ImportDocumentsAndExtractTextJobConfig.class,
+        LoadImagesFromDirectoryJobConfig.class,
+        YourJobConfig.class})
 public class JobsConfig {
 }

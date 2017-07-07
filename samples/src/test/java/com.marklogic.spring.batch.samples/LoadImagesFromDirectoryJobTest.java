@@ -9,7 +9,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {LoadImagesFromDirectoryJob.class} )
+@ContextConfiguration(classes = {LoadImagesFromDirectoryJobConfig.class} )
 public class LoadImagesFromDirectoryJobTest extends AbstractJobRunnerTest {
 
     @Test

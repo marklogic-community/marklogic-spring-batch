@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.samples;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.spring.batch.config.MarkLogicApplicationContext;
 import com.marklogic.spring.batch.item.reader.InvokeModuleItemReader;
 import com.marklogic.spring.batch.item.writer.InvokeModuleItemWriter;
 import org.springframework.batch.core.Job;
@@ -16,12 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @EnableBatchProcessing
-public class CorbJob {
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class,
+        com.marklogic.spring.batch.config.JobRepositoryConfig.class})
+public class CorbJobConfig {
 
     @Autowired
     DatabaseClientProvider databaseClientProvider;

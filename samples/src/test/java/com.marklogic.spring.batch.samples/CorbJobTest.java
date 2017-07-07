@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.CorbJob.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.CorbJobConfig.class})
 public class CorbJobTest extends AbstractJobRunnerTest {
 
     DatabaseClient client;
