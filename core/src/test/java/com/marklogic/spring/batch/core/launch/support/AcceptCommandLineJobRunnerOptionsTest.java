@@ -12,7 +12,7 @@ public class AcceptCommandLineJobRunnerOptionsTest {
     public void supportCommandLineJobRunnerOptionsTest() {
         CommandLineJobRunner runner = new CommandLineJobRunner();
         OptionParser parser = runner.buildOptionParser();
-        OptionSet options = parser.parse("-options_file job.properties");
+        OptionSet options = parser.parse("-options_file job.properties -jobPath com.marklogic.JobConfig -jobId job123");
         assertTrue(options.has("options_file"));
     }
 }

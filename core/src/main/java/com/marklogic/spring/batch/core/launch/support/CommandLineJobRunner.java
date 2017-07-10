@@ -83,8 +83,8 @@ public class CommandLineJobRunner {
 
         parser.accepts("options_file", "Path to a Java-style properties file that defines additional options").withRequiredArg();
 
-        parser.accepts("jobPath", "application context containing a Job");
-        parser.accepts("jobId", "name of the job or the id of a job execution (for -stop, -abandon or -restart");
+        parser.accepts("jobPath", "application context containing a Job").withRequiredArg().defaultsTo("JobConfig");
+        parser.accepts("jobId", "name of the job or the id of a job execution (for -stop, -abandon or -restart").withRequiredArg().defaultsTo("job");
         //parser.accepts("restart", "restart the last failed execution").withOptionalArg();
         //parser.accepts("stop", "stop a running execution");
         //parser.accepts("abandon", "abandon a stopped execution");
@@ -97,7 +97,7 @@ public class CommandLineJobRunner {
         parser.accepts("host", "Hostname of the destination MarkLogic Server").withRequiredArg().defaultsTo("localhost");
         parser.accepts("port", "Port number of the destination MarkLogic Server. There should be an XDBC App Server on this port. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8000);
         parser.accepts("username", "The MarkLogic user to authenticate as against the given host and port").withRequiredArg().defaultsTo("admin");
-        parser.accepts("password", "The password for the MarkLogic user").withRequiredArg();
+        parser.accepts("password", "The password for the MarkLogic user").withRequiredArg().defaultsTo("admin");
 
 
 /*
