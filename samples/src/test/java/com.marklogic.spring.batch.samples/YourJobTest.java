@@ -8,7 +8,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = { YourJob.class })
+@ContextConfiguration(classes = { YourJobConfig.class })
 public class YourJobTest extends AbstractJobRunnerTest {
 
     @Test
@@ -17,8 +17,8 @@ public class YourJobTest extends AbstractJobRunnerTest {
         jpb.addString("output_collections", "monster");
         JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         Assert.assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-
         getClientTestHelper().assertCollectionSize("Expecting 1 items in monster collection", "monster", 1);
+        getClientTestHelper().assertCollectionSize("Expecting one job instance in JobRepo", "http://marklogic.com/spring-batch/job-instance", 1);
     }
 
 }

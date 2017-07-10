@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.core.env.Environment;
  */
 
 @EnableBatchProcessing
-public class YourJob implements EnvironmentAware {
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class,
+        com.marklogic.spring.batch.config.JobRepositoryConfig.class})
+public class YourJobConfig implements EnvironmentAware {
     
     private Environment env;
     

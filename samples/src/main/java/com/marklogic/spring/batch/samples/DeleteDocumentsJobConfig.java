@@ -11,11 +11,12 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
 @EnableBatchProcessing
-//@Import( MarkLogicBatchConfigurer.class )
-public class DeleteDocumentsJob  {
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+public class DeleteDocumentsJobConfig  {
     
     @Autowired
     DatabaseClientProvider databaseClientProvider;

@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.ExportContentFromMarkLogicJob.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.ExportContentFromMarkLogicJobConfig.class})
 public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
 
     public void insertDocument(String uri, String collections, String xml) {

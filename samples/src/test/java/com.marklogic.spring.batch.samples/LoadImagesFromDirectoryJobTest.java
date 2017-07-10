@@ -9,7 +9,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {LoadImagesFromDirectoryJob.class} )
+@ContextConfiguration(classes = {LoadImagesFromDirectoryJobConfig.class} )
 public class LoadImagesFromDirectoryJobTest extends AbstractJobRunnerTest {
 
     @Test
@@ -25,5 +25,6 @@ public class LoadImagesFromDirectoryJobTest extends AbstractJobRunnerTest {
         Fragment frag = new Fragment(handle.toString(), getNamespaceProvider().getNamespaces());
         frag.assertElementExists("/html:html/html:head/html:meta[1][@content = 'Corbis']");
         frag.assertElementExists("/html:html/html:head/html:meta[1][@name = 'Artist']");
+        getClientTestHelper().assertCollectionSize("Expecting no jobRepo docs", "http://marklogic.com/spring-batch/job-instance", 0);
     }
 }

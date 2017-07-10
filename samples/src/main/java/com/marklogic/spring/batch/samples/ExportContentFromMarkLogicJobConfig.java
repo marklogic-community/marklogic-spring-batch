@@ -23,6 +23,7 @@ import org.springframework.batch.item.file.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 
@@ -38,7 +39,8 @@ import org.springframework.batch.item.file.transform.LineAggregator;
  */
 
 @EnableBatchProcessing
-public class ExportContentFromMarkLogicJob {
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+public class ExportContentFromMarkLogicJobConfig {
     
     private Environment env; 
     

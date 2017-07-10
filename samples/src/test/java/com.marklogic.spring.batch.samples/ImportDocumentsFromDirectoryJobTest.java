@@ -7,7 +7,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {ImportDocumentsFromDirectoryJob.class})
+@ContextConfiguration(classes = {ImportDocumentsFromDirectoryJobConfig.class})
 public class ImportDocumentsFromDirectoryJobTest extends AbstractJobRunnerTest {
 
     private JobParametersBuilder jpb = new JobParametersBuilder();

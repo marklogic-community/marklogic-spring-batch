@@ -1,26 +1,14 @@
 package com.marklogic.spring.batch.samples.geonames;
 
-import com.marklogic.client.helper.DatabaseClientConfig;
-import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
-import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
 import org.junit.Test;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.geonames.IngestGeonamesToMarkLogicJob.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.geonames.IngestGeonamesToMarkLogicJobConfig.class})
 public class IngestGeonamesToMarkLogicJobTest extends AbstractJobRunnerTest {
-
-    @Autowired
-    private DatabaseClientConfig databaseClientConfig;
-
-    public IngestGeonamesToMarkLogicJobTest() {
-        setDatabaseClientProvider(new SimpleDatabaseClientProvider(databaseClientConfig));
-        setNamespaceProvider(new SpringBatchNamespaceProvider());
-    }
 
     @Test
     public void ingestCitiesTest() throws Exception {
@@ -37,7 +25,5 @@ public class IngestGeonamesToMarkLogicJobTest extends AbstractJobRunnerTest {
         assertEquals(10, Integer.parseInt(result));
         Fragment frag = getClientTestHelper().parseUri("http://geonames.org/geoname/4140963", "geonames");
         frag.assertElementValue("//geo:population", "601723");
-        
-            
     }
 }

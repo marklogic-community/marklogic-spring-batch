@@ -15,10 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Map;
 
-@ContextConfiguration(classes = {
-        com.marklogic.spring.batch.test.JobRunnerContext.class,
-        com.marklogic.spring.batch.config.JobRepositoryConfig.class,
-        com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.test.JobRunnerContext.class})
 public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
 
     private JobLauncherTestUtils jobLauncherTestUtils;
