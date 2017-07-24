@@ -3,6 +3,8 @@ package com.marklogic.spring.batch;
 /**
  * Defines all recognized command-line options for the Main program.
  */
+
+@Deprecated
 public interface Options {
 
     String HELP = "help";

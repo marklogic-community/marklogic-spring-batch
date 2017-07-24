@@ -30,6 +30,7 @@ import java.util.*;
  * This is designed so that if an application isn't happy with it, it can at least be subclassed and methods can be
  * overridden to adjust its behavior, thus creating a new command line program.
  */
+@Deprecated
 public class Main extends LoggingObject {
 
     public static void main(String[] args) throws Exception {

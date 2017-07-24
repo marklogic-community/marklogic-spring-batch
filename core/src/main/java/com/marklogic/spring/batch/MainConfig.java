@@ -17,6 +17,7 @@ import org.springframework.core.env.Environment;
  * should all be based on constants defined in the Options class, which defines all of the recognized
  * command line options.
  */
+@Deprecated
 @Configuration
 public class MainConfig extends LoggingObject {
 
