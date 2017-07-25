@@ -4,6 +4,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.junit.Ignore;

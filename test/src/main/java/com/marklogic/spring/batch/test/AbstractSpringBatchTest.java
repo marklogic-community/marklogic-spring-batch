@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch;
+package com.marklogic.spring.batch.test;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.junit.NamespaceProvider;

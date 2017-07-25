@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch;
 
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
