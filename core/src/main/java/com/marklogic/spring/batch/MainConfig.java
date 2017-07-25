@@ -46,7 +46,7 @@ public class MainConfig extends LoggingObject {
 
         String auth = env.getProperty(Options.AUTHENTICATION);
         if (auth != null) {
-            config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(auth));
+            //config.setSecurityContext(new DatabaseClientFactory.DigestAuthContext());
         }
 
         logger.info("Connecting to MarkLogic via: " + config);
@@ -78,7 +78,7 @@ public class MainConfig extends LoggingObject {
 
         String auth = env.getProperty(Options.JOB_REPOSITORY_AUTHENTICATION);
         if (auth != null) {
-            config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(auth));
+            //config.setAuthentication(DatabaseClientFactory.Authentication.valueOfUncased(auth));
         }
 
         logger.info("Connecting to MarkLogic JobRepository via: " + config);

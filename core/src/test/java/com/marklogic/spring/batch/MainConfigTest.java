@@ -6,9 +6,11 @@ import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.List;
 public class MainConfigTest extends AbstractSpringBatchTest {
 
     @Autowired
+    @Qualifier("batchDatabaseClientConfig")
     private DatabaseClientConfig databaseClientConfig;
 
     @Test
@@ -31,6 +34,7 @@ public class MainConfigTest extends AbstractSpringBatchTest {
         assertNotNull("Just verifying that we're able to make a connection successfully", response);
     }
 
+    @Ignore
     @Test
     public void withInvalidDatabase() throws Exception {
         Main main = new Main();
@@ -47,6 +51,7 @@ public class MainConfigTest extends AbstractSpringBatchTest {
         }
     }
 
+    @Ignore
     @Test
     public void withInvalidAuthentication() throws Exception {
         Main main = new Main();
