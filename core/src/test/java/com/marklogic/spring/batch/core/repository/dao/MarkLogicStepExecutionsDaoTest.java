@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,11 +17,12 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 
+import org.springframework.batch.core.job.AbstractJob;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 import com.marklogic.spring.batch.core.step.StepSupport;
 
-public class MarkLogicStepExecutionsDaoTest extends AbstractSpringBatchTest {
+public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	
 	protected JobInstance jobInstance;
 	protected JobExecution jobExecution;
