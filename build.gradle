@@ -110,6 +110,9 @@ subprojects {
 project(':core') {
 
     dependencies {
+        //core doesn't depend on infrastructure but want to grab both jars when importing MSB
+        compile project(":infrastructure")
+
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
         compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
 
@@ -136,8 +139,6 @@ project(':core') {
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
     dependencies {
-        compile project(":core")
-
         compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
         compile "org.apache.commons:commons-lang3:3.5"
         testCompile project(':test')
