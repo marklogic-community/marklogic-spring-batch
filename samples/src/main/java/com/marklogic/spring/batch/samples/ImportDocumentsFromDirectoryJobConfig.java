@@ -22,7 +22,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public class ImportDocumentsFromDirectoryJobConfig {
     
     @Bean(name = "importDocumentsFromDirectory")

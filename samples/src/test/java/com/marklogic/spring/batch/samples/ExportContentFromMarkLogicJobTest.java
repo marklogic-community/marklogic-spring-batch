@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.samples;
 
-import com.marklogic.spring.batch.test.AbstractJobTest;
+import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.io.IOException;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.samples.ExportContentFromMarkLogicJobConfig.class})
-public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
+public class ExportContentFromMarkLogicJobTest extends AbstractJobRunnerTest {
 
     public void insertDocument(String uri, String collections, String xml) {
         DatabaseClient client = getClient();
@@ -52,7 +52,7 @@ public class ExportContentFromMarkLogicJobTest extends AbstractJobTest {
         jpb.addString("output_file_path", "./");
         jpb.addString("collection", "test");
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jpb.toJobParameters());
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
         getClientTestHelper().assertCollectionSize("Expecting 102 uris in test collection", "test", 102);
         Resource r = new FileSystemResource("./output-1.xml");

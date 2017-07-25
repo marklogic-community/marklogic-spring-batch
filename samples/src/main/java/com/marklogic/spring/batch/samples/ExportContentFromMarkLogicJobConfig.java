@@ -39,7 +39,7 @@ import org.springframework.batch.item.file.transform.LineAggregator;
  */
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public class ExportContentFromMarkLogicJobConfig {
     
     private Environment env; 

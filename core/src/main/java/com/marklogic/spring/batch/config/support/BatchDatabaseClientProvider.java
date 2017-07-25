@@ -10,6 +10,7 @@ import org.springframework.beans.factory.DisposableBean;
  * TODO Move this to ml-javaclient-util. The Simple implementation there is problematic because it
  * only allows for setting a DatabaseClientConfig via an Autowired annotation.
  */
+@Deprecated
 public class BatchDatabaseClientProvider implements DatabaseClientProvider, DisposableBean {
 
     private DatabaseClientConfig config;

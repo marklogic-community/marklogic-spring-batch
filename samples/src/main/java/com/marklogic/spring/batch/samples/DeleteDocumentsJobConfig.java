@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public class DeleteDocumentsJobConfig  {
     
     @Autowired

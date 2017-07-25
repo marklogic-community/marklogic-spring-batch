@@ -24,7 +24,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public class IngestGeonamesToMarkLogicJobConfig implements OptionParserConfigurer{
 
     @Override
