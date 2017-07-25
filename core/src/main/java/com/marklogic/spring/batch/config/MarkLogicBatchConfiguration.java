@@ -21,18 +21,18 @@ public class MarkLogicBatchConfiguration {
     @Bean(name = "batchDatabaseClientConfig")
     public DatabaseClientConfig batchDatabaseClientConfig(
             @Value("#{'${marklogic.host}'.split(',')}") List<String> hosts,
-            @Value("${marklogic.port}") int port,
-            @Value("${marklogic.username}") String username,
-            @Value("${marklogic.password}") String password) {
+            @Value("${marklogic.port:8000}") int port,
+            @Value("${marklogic.username:admin}") String username,
+            @Value("${marklogic.password:admin}") String password) {
         return new DatabaseClientConfig(hosts, port, username, password);
     }
 
     @Bean(name = "markLogicJobRepositoryDatabaseClientConfig")
     public DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig (
-            @Value("#{'${marklogic.jobrepo.host}'.split(',')}") List<String> hosts,
-            @Value("${marklogic.jobrepo.port}") int port,
-            @Value("${marklogic.jobrepo.username}") String username,
-            @Value("${marklogic.jobrepo.password}") String password) {
+            @Value("#{'${marklogic.jobrepo.host:localhost}'.split(',')}") List<String> hosts,
+            @Value("${marklogic.jobrepo.port:8000}") int port,
+            @Value("${marklogic.jobrepo.username:admin}") String username,
+            @Value("${marklogic.jobrepo.password:admin}") String password) {
         return new DatabaseClientConfig(hosts, port, username, password);
     }
 
@@ -68,7 +68,7 @@ public class MarkLogicBatchConfiguration {
     @Bean
     @Qualifier("batchDatabaseClientConfig")
     public XccTemplate xccTemplate(DatabaseClientConfig batchDatabaseClientConfig,
-                                   @Value("${marklogic.database}") String databaseName) {
+                                   @Value("${marklogic.database:Documents}") String databaseName) {
         return new XccTemplate(
                 String.format("xcc://%s:%s@%s:8000/%s",
                         batchDatabaseClientConfig.getUsername(),
@@ -80,7 +80,7 @@ public class MarkLogicBatchConfiguration {
     @Bean
     @Qualifier("markLogicJobRepositoryDatabaseClientConfig")
     public XccTemplate jobRepoXccTemplate(DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig,
-                                          @Value("${marklogic.jobrepo.database}") String databaseName) {
+                                          @Value("${marklogic.jobrepo.database:spring-batch}") String databaseName) {
         return new XccTemplate(
                 String.format("xcc://%s:%s@%s:8000/%s",
                         markLogicJobRepositoryDatabaseClientConfig.getUsername(),
