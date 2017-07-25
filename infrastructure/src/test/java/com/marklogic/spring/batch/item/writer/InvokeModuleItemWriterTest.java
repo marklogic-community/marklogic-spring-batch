@@ -8,22 +8,20 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
-import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class })
-public class InvokeModuleItemWriterTest extends AbstractSpringTest {
+public class InvokeModuleItemWriterTest extends AbstractSpringBatchTest {
 
     InvokeModuleItemWriter itemWriter;
     ExtensionLibrariesManager libMgr;
