@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
+@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class })
 public class InvokeModuleItemWriterTest extends AbstractSpringTest {
 
     InvokeModuleItemWriter itemWriter;
@@ -30,6 +31,7 @@ public class InvokeModuleItemWriterTest extends AbstractSpringTest {
     ClientTestHelper clientTestHelper;
 
     @Autowired
+    @Qualifier("batchDatabaseClientConfig")
     public void setClientTestHelper(DatabaseClientConfig databaseClientConfig) {
         clientTestHelper = new ClientTestHelper();
         DatabaseClientProvider databaseClientProvider = new SimpleDatabaseClientProvider(databaseClientConfig);

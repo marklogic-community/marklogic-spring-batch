@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
+@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class })
 public class MarkLogicPatchItemWriterTest extends AbstractSpringTest {
 
     DatabaseClient client;

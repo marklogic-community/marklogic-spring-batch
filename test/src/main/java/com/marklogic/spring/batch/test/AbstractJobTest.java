@@ -32,7 +32,7 @@ import java.util.List;
  */
 @ContextConfiguration(classes = {
         com.marklogic.spring.batch.test.JobRunnerContext.class,
-        com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+        com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public abstract class AbstractJobTest extends AbstractSpringTest {
 
     @Autowired
