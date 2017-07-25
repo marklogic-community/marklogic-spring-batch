@@ -35,7 +35,7 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        setDatabaseClientProvider(applicationContext.getBean("batchDatabaseClientProvider", DatabaseClientProvider.class));
+        setDatabaseClientProvider(applicationContext.getBean("databaseClientProvider", DatabaseClientProvider.class));
         setXccTemplate(applicationContext.getBean("xccTemplate", XccTemplate.class));
     }
 

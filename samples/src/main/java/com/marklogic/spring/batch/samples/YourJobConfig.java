@@ -64,7 +64,7 @@ public class YourJobConfig implements EnvironmentAware {
     @JobScope
     public Step step(
         StepBuilderFactory stepBuilderFactory,
-        @Qualifier("batchDatabaseClientProvider") DatabaseClientProvider databaseClientProvider,
+        DatabaseClientProvider databaseClientProvider,
         @Value("#{jobParameters['output_collections']}") String[] collections) {
         
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
