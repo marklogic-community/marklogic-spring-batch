@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.item.rdf;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.spring.batch.config.MarkLogicBatchConfiguration;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -10,10 +11,13 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
+import javax.ws.rs.core.Context;
 import java.util.Map;
 
 @EnableBatchProcessing
+@Import(MarkLogicBatchConfiguration.class)
 public class ImportRdfFromFileJob {
 
     @Bean

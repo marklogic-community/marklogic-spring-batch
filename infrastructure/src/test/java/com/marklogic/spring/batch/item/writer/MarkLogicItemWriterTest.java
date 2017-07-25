@@ -11,26 +11,27 @@ import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.*;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
-public class MarkLogicItemWriterTest extends AbstractSpringTest implements ApplicationContextAware {
+public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements ApplicationContextAware {
 
     public MarkLogicItemWriterTest() {
         super();
     }
 
     @Autowired
+    @Qualifier("batchDatabaseClientConfig")
     private DatabaseClientConfig databaseClientConfig;
 
     private ClientTestHelper clientTestHelper;

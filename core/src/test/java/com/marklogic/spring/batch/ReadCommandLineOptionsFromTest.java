@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch;
 
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.junit.Test;

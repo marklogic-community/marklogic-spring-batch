@@ -5,7 +5,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -16,7 +17,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.transaction.annotation.Transactional;
 
-public class MarkLogicExecutionContextDaoTests extends AbstractSpringBatchTest {
+public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest {
 
 	private JobExecution jobExecution;
 

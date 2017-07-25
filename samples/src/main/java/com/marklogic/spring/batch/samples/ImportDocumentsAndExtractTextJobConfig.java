@@ -34,7 +34,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public class ImportDocumentsAndExtractTextJobConfig {
 
     @Bean

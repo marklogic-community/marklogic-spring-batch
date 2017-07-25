@@ -28,8 +28,7 @@ import org.springframework.core.env.Environment;
  */
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class,
-        com.marklogic.spring.batch.config.JobRepositoryConfig.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class })
 public class YourJobConfig implements EnvironmentAware {
     
     private Environment env;

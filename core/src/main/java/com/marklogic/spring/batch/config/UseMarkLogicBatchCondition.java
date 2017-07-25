@@ -10,7 +10,13 @@ public class UseMarkLogicBatchCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         Environment env = context.getEnvironment();
-        return env.getProperty("marklogic.jobrepo.enabled", Boolean.class);
+        Boolean enabled = env.getProperty("marklogic.batch.config.enabled", Boolean.class);
+        if (enabled == null) {
+            return false;
+        } else {
+            return enabled.booleanValue();
+        }
+
     }
 
 }

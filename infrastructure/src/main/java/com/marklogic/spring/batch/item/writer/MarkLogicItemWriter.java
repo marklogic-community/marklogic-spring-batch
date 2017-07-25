@@ -1,9 +1,6 @@
 package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.batch.BatchWriter;
-import com.marklogic.client.batch.RestBatchWriter;
-import com.marklogic.client.datamovement.Batcher;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.*;
@@ -14,7 +11,6 @@ import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
 import org.springframework.batch.item.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
