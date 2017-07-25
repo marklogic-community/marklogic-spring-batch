@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.samples;
 
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.config.MarkLogicApplicationContext;
 import com.marklogic.spring.batch.item.reader.InvokeModuleItemReader;
 import com.marklogic.spring.batch.item.writer.InvokeModuleItemWriter;
 import org.springframework.batch.core.Job;
@@ -23,8 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicApplicationContext.class,
-        com.marklogic.spring.batch.config.JobRepositoryConfig.class})
+@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class })
 public class CorbJobConfig {
 
     @Autowired
