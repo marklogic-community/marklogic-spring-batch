@@ -38,7 +38,7 @@ public class MarkLogicBatchConfiguration {
 
     @Bean
     @Qualifier("batchDatabaseClientProvider")
-    public DatabaseClientProvider batchDatabaseClientProvider(
+    public DatabaseClientProvider databaseClientProvider(
             @Qualifier("batchDatabaseClientConfig") DatabaseClientConfig batchDatabaseClientConfig) {
         return new SimpleDatabaseClientProvider(batchDatabaseClientConfig);
 
