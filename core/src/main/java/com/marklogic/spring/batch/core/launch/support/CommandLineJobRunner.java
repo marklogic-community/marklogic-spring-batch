@@ -17,12 +17,9 @@
  */
 package com.marklogic.spring.batch.core.launch.support;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
-import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.logging.Log;
@@ -57,7 +54,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * <p>
@@ -536,8 +532,8 @@ public class CommandLineJobRunner {
         if (options.has(HELP)) {
             parser.printHelpOn(System.out);
         } else {
-            if (options.has(JOB_PATH) || options.has(JOB_ID)) {
-                String message = "At least 2 arguments are required: JobPath/JobClass and jobIdentifier.";
+            if (!options.has(JOB_PATH) || !options.has(JOB_ID)) {
+                String message = "At least 2 arguments are required: " + JOB_PATH + " and " + JOB_ID + ".";
                 logger.error(message);
                 CommandLineJobRunner.message = message;
                 this.exit(1);
@@ -571,7 +567,7 @@ public class CommandLineJobRunner {
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
         parser.acceptsAll(Arrays.asList("h", HELP), "Show help").forHelp();
-        parser.accepts(JOB_PATH, "The Java Config application context containing a Job").withRequiredArg().defaultsTo("JobConfig");
+        parser.accepts(JOB_PATH, "The Java Config application context containing a Job").withRequiredArg();
         parser.accepts(JOB_ID, "The name of the job or the id of a job execution (for -stop, -abandon or -restart)").withRequiredArg().defaultsTo("job");
         parser.accepts(CHUNK_SIZE, "The chunk size of the job").withRequiredArg().defaultsTo("10");
         parser.allowsUnrecognizedOptions();
