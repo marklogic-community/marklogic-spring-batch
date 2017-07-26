@@ -20,15 +20,7 @@ package com.marklogic.spring.batch.core.launch.support;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
@@ -289,7 +281,7 @@ public class CommandLineJobRunner {
      * job, if not ask the context for it.
      */
     @SuppressWarnings("resource")
-    int start(String jobPath, String jobIdentifier, String[] parameters, Set<String> opts) {
+    int start(String jobPath, String jobIdentifier, Properties parameters, Set<String> opts) {
 
         ConfigurableApplicationContext context = null;
 
@@ -311,9 +303,8 @@ public class CommandLineJobRunner {
 
             String jobName = jobIdentifier;
 
-            JobParameters jobParameters = jobParametersConverter.getJobParameters(StringUtils
-                    .splitArrayElementsIntoProperties(parameters, "="));
-            Assert.isTrue(parameters == null || parameters.length == 0 || !jobParameters.isEmpty(),
+            JobParameters jobParameters = jobParametersConverter.getJobParameters(parameters);
+            Assert.isTrue(parameters == null || parameters.size() == 0 || !jobParameters.isEmpty(),
                     "Invalid JobParameters " + Arrays.asList(parameters)
                             + ". If parameters are provided they should be in the form name=value (no whitespace).");
 
@@ -538,56 +529,33 @@ public class CommandLineJobRunner {
         new CommandLineJobRunner().execute(args);
     }
 
-    protected void execute(String[] args) {
+    protected void execute(String[] args) throws IOException {
         OptionParser parser = buildOptionParser();
         OptionSet options = parser.parse(args);
-        List<String> newargs = new ArrayList<String>(Arrays.asList(args));
 
-        Set<String> opts = new HashSet<String>();
-        List<String> params = new ArrayList<String>();
-
-        int count = 0;
-        String jobPath = null;
-        if (options.has(JOB_PATH)) {
-            jobPath = options.valueOf(JOB_PATH).toString();
+        if (options.has(HELP)) {
+            parser.printHelpOn(System.out);
         } else {
-            throw new RuntimeException("job_path is a required argument");
-        }
-        String jobIdentifier = null;
-
-        for (String arg : newargs) {
-            if (VALID_OPTS.contains(arg)) {
-                opts.add(arg);
+            if (options.has(JOB_PATH) || options.has(JOB_ID)) {
+                String message = "At least 2 arguments are required: JobPath/JobClass and jobIdentifier.";
+                logger.error(message);
+                CommandLineJobRunner.message = message;
+                this.exit(1);
+                return;
             }
-            else {
-                switch (count) {
-                    case 0:
-                        jobPath = arg;
-                        break;
-                    case 1:
-                        jobIdentifier = arg;
-                        break;
-                    default:
-                        params.add(arg);
-                        break;
-                }
-                count++;
+            String jobPath = options.valueOf(JOB_PATH).toString();
+            String jobIdentifier = options.valueOf(JOB_ID).toString();
+            List<?> params = options.nonOptionArguments();
+            Properties props = new Properties();
+            for (Iterator<?> itr = params.iterator(); itr.hasNext();) {
+                String key = itr.next().toString();
+                props.setProperty(key, options.valueOf(key).toString());
             }
-        }
-
-        if (jobPath == null || jobIdentifier == null) {
-            String message = "At least 2 arguments are required: JobPath/JobClass and jobIdentifier.";
-            logger.error(message);
-            CommandLineJobRunner.message = message;
-            this.exit(1);
+            Set<String> opts = new HashSet<String>();
+            int result = this.start(jobPath, jobIdentifier, props, opts);
+            this.exit(result);
             return;
         }
-
-        String[] parameters = params.toArray(new String[params.size()]);
-
-        int result = this.start(jobPath, jobIdentifier, parameters, opts);
-        this.exit(result);
-        return;
     }
 
     protected String HELP = "help";
@@ -603,8 +571,9 @@ public class CommandLineJobRunner {
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
         parser.acceptsAll(Arrays.asList("h", HELP), "Show help").forHelp();
-        parser.accepts(JOB_PATH, "the Java Config application context containing a Job").withRequiredArg().defaultsTo("JobConfig");
-        parser.accepts(CHUNK_SIZE, "The Spring Batch chunk size").withRequiredArg();
+        parser.accepts(JOB_PATH, "The Java Config application context containing a Job").withRequiredArg().defaultsTo("JobConfig");
+        parser.accepts(JOB_ID, "The name of the job or the id of a job execution (for -stop, -abandon or -restart)").withRequiredArg().defaultsTo("job");
+        parser.accepts(CHUNK_SIZE, "The chunk size of the job").withRequiredArg().defaultsTo("10");
         parser.allowsUnrecognizedOptions();
         return parser;
     }

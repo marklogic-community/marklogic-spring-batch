@@ -4,7 +4,7 @@ import org.junit.Test;
 
 public class CommandLineJobRunnerTests {
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void missingJobPathTest() throws Exception {
         String[] args = new String[] {};
         CommandLineJobRunner.main(args);
