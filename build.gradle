@@ -184,9 +184,10 @@ project(':samples') {
 
     task runYourJob(type: JavaExec) {
         main = 'com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner'
-        classpath = sourceSets.main.runtimeClasspath
+        classpath = sourceSets.test.runtimeClasspath
         args = ["--job_path", "com.marklogic.spring.batch.samples.JobsConfig",
-                "--job_id", "yourJob"]
+                "--job_id", "job",
+                "--output_collections", "runYourJob"]
     }
 }
 

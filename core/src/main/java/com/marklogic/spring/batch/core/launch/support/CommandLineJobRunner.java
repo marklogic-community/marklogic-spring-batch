@@ -20,6 +20,7 @@ package com.marklogic.spring.batch.core.launch.support;
 import java.io.IOException;
 import java.util.*;
 
+import joptsimple.NonOptionArgumentSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.logging.Log;
@@ -528,7 +529,6 @@ public class CommandLineJobRunner {
     protected void execute(String[] args) throws IOException {
         OptionParser parser = buildOptionParser();
         OptionSet options = parser.parse(args);
-
         if (options.has(HELP)) {
             parser.printHelpOn(System.out);
         } else {
@@ -541,12 +541,24 @@ public class CommandLineJobRunner {
             }
             String jobPath = options.valueOf(JOB_PATH).toString();
             String jobIdentifier = options.valueOf(JOB_ID).toString();
-            List<?> params = options.nonOptionArguments();
+
             Properties props = new Properties();
-            for (Iterator<?> itr = params.iterator(); itr.hasNext();) {
-                String key = itr.next().toString();
-                props.setProperty(key, options.valueOf(key).toString());
+            List<?> nonOptionArgs = options.nonOptionArguments();
+            int size = nonOptionArgs.size();
+            for (int i = 0; i < size; i++) {
+                String name = nonOptionArgs.get(i).toString();
+                i++;
+                if (i < size) {
+                    if (name.startsWith("--")) {
+                        name = name.substring(2);
+                    } else if (name.startsWith("-")) {
+                        name = name.substring(1);
+                    }
+                    String value = nonOptionArgs.get(i).toString();
+                    props.setProperty(name, value);
+                }
             }
+
             Set<String> opts = new HashSet<String>();
             int result = this.start(jobPath, jobIdentifier, props, opts);
             this.exit(result);
