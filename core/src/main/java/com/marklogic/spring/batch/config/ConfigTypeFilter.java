@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.spring.BasicConfig;
-import com.marklogic.spring.batch.MainConfig;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.filter.AbstractClassTestingTypeFilter;
 

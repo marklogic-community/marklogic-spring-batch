@@ -4,13 +4,10 @@ import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.spring.batch.item.shapefile.support.HttpClientOgreProxy;
 import com.marklogic.spring.batch.item.shapefile.support.OgreProxy;
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 

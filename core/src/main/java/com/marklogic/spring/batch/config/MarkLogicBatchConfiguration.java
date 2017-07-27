@@ -5,7 +5,6 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.xcc.template.XccTemplate;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;

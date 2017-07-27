@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -38,7 +37,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 	@Test
 	public void testSaveAndFindJobContext() {
 
-		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
+		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(jobExecution);
 
@@ -106,7 +105,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 	public void testUpdateContext() {
 
 		ExecutionContext ctx = new ExecutionContext(Collections
-				.<String, Object> singletonMap("key", "value"));
+				.singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(jobExecution);
 
@@ -122,7 +121,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 	@Test
 	public void testSaveAndFindStepContext() {
 
-		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
+		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(stepExecution);
 
@@ -146,7 +145,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 	@Test
 	public void testUpdateStepContext() {
 
-		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
+		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(stepExecution);
 

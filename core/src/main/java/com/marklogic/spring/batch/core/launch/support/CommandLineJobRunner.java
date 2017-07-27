@@ -20,7 +20,6 @@ package com.marklogic.spring.batch.core.launch.support;
 import java.io.IOException;
 import java.util.*;
 
-import joptsimple.NonOptionArgumentSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.logging.Log;
@@ -179,7 +178,7 @@ public class CommandLineJobRunner {
 
     private JobRepository jobRepository;
 
-    private final static List<String> VALID_OPTS = Arrays.asList(new String [] {"-restart", "-next", "-stop", "-abandon"});
+    private final static List<String> VALID_OPTS = Arrays.asList("-restart", "-next", "-stop", "-abandon");
 
     /**
      * Injection setter for the {@link JobLauncher}.

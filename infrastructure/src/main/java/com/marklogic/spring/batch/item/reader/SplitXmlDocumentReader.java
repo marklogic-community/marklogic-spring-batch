@@ -71,7 +71,7 @@ public class SplitXmlDocumentReader extends AbstractItemStreamItemReader<Documen
 
 
     @Override
-    public Document read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public Document read() throws Exception {
         if (cursor < nodeList.getLength()) {
             Node node = nodeList.item(cursor);
             Document newDocument = documentBuilder.newDocument();

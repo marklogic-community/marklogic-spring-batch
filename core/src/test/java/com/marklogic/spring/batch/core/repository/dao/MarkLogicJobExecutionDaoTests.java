@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
@@ -17,7 +16,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.job.AbstractJob;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;

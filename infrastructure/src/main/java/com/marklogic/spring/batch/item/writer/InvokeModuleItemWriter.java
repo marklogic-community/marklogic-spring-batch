@@ -4,7 +4,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.io.StringHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

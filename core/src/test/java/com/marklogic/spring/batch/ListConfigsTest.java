@@ -14,7 +14,7 @@ public class ListConfigsTest extends AbstractSpringBatchTest {
 	@Test
 	public void test() throws Exception {
 		OptionParser parser = main.buildOptionParser();
-		OptionSet options = parser.parse(new String[]{"--list", "--base-package", "com.marklogic.spring.batch"});
+		OptionSet options = parser.parse("--list", "--base-package", "com.marklogic.spring.batch");
 
 		StringBuilder sb = new StringBuilder();
 		main.listConfigs(options, sb);

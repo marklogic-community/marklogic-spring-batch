@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.core.job.JobSupport;
 import org.junit.Before;
 import org.junit.Test;

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import javax.ws.rs.core.Context;
 import java.util.Map;
 
 @EnableBatchProcessing

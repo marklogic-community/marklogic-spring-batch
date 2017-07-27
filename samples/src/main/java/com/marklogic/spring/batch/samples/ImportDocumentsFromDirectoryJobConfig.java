@@ -6,7 +6,6 @@ import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import com.marklogic.spring.batch.item.processor.ResourceToDocumentWriteOperationItemProcessor;
 import com.marklogic.spring.batch.item.writer.UriTransformer;
-import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
 import com.marklogic.spring.batch.item.processor.support.DefaultUriGenerator;
 import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 import org.springframework.batch.core.Job;

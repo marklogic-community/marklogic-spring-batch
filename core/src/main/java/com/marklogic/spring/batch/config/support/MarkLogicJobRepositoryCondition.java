@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.config.support;
 
-import com.marklogic.spring.batch.Options;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
