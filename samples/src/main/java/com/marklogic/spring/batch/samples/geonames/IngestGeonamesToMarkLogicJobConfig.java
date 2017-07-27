@@ -2,9 +2,7 @@ package com.marklogic.spring.batch.samples.geonames;
 
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.config.support.OptionParserConfigurer;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
-import joptsimple.OptionParser;
 import org.geonames.Geoname;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -25,12 +23,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 @EnableBatchProcessing
 @Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
-public class IngestGeonamesToMarkLogicJobConfig implements OptionParserConfigurer{
-
-    @Override
-    public void configureOptionParser(OptionParser parser) {
-        parser.accepts("input_file_path", "The path of the Geonames file to import").withRequiredArg();
-    }
+public class IngestGeonamesToMarkLogicJobConfig {
 
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory, @Qualifier("ingestGeonamesStep1") Step step1) {
