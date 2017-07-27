@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.core.explore;
 
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.JobParametersTestUtils;
 import org.junit.Before;
 import org.junit.Test;

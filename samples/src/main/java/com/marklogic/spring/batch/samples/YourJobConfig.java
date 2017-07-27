@@ -11,7 +11,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.item.*;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -72,7 +71,7 @@ public class YourJobConfig implements EnvironmentAware {
         ItemReader<String> reader = new ItemReader<String>() {
             int i = 0;
             @Override
-            public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+            public String read() throws Exception {
                 i++;
                 return i == 1 ? "hello" : null;
             }

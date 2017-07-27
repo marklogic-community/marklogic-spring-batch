@@ -66,7 +66,7 @@ public class ValuesItemReader extends AbstractItemStreamItemReader<CountedDistin
 
     
     @Override
-    public CountedDistinctValue read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public CountedDistinctValue read() throws Exception {
         return itr.hasNext() ? itr.next() : null;
     }
     

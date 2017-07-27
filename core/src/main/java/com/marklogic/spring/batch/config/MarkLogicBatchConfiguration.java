@@ -5,7 +5,6 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.SimpleDatabaseClientProvider;
 import com.marklogic.xcc.template.XccTemplate;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -24,7 +23,7 @@ public class MarkLogicBatchConfiguration {
             @Value("${marklogic.port:8000}") int port,
             @Value("${marklogic.username:admin}") String username,
             @Value("${marklogic.password:admin}") String password) {
-        return new DatabaseClientConfig(hosts, port, username, password);
+        return new DatabaseClientConfig(hosts.get(0), port, username, password);
     }
 
     @Bean(name = "markLogicJobRepositoryDatabaseClientConfig")
@@ -33,7 +32,7 @@ public class MarkLogicBatchConfiguration {
             @Value("${marklogic.jobrepo.port:8000}") int port,
             @Value("${marklogic.jobrepo.username:admin}") String username,
             @Value("${marklogic.jobrepo.password:admin}") String password) {
-        return new DatabaseClientConfig(hosts, port, username, password);
+        return new DatabaseClientConfig(hosts.get(0), port, username, password);
     }
 
     @Bean

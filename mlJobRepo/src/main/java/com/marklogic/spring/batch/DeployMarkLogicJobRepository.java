@@ -5,7 +5,6 @@ import com.marklogic.mgmt.ManageConfig;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public class DeployMarkLogicJobRepository {

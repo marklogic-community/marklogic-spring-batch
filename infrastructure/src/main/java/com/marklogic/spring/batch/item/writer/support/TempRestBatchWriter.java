@@ -5,10 +5,8 @@ import com.marklogic.client.batch.RestBatchWriter;
 import com.marklogic.client.document.DocumentManager;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class TempRestBatchWriter extends RestBatchWriter {

@@ -178,9 +178,17 @@ project(':samples') {
         baseName = "samples"
     }
 
-    mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
-    //mainClassName = "com.marklogic.spring.batch.Main"
+    mainClassName = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
+
     applicationName = "samples"
+
+    task runYourJob(type: JavaExec) {
+        main = 'com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner'
+        classpath = sourceSets.test.runtimeClasspath
+        args = ["--job_path", "com.marklogic.spring.batch.samples.JobsConfig",
+                "--job_id", "job",
+                "--output_collections", "runYourJob"]
+    }
 }
 
 project(':mlJobRepo') {

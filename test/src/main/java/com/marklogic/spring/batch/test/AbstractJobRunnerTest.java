@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Map;
-
 @ContextConfiguration(classes = {com.marklogic.spring.batch.test.JobRunnerContext.class})
 public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
 
