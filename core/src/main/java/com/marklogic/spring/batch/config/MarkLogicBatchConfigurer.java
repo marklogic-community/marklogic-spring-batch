@@ -14,7 +14,6 @@ import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -31,8 +30,7 @@ public class MarkLogicBatchConfigurer implements BatchConfigurer {
     private PlatformTransactionManager transactionManager;
     
     protected MarkLogicBatchConfigurer() {}
-    
-    @Autowired
+
     public MarkLogicBatchConfigurer(DatabaseClientProvider databaseClientProvider) {
         this.databaseClient = databaseClientProvider.getDatabaseClient();
     }

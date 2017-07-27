@@ -1,18 +1,16 @@
 package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.batch.BatchWriter;
-import com.marklogic.client.batch.RestBatchWriter;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.*;
 import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.ItemWriter;
+import com.marklogic.client.io.Format;
+import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
+import org.springframework.batch.item.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,53 +25,106 @@ import java.util.List;
  */
 public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<DocumentWriteOperation>, ItemStream {
 
-    private UriTransformer uriTransformer;
-    private BatchWriter batchWriter;
-    protected long writeCount = 0;
-    protected long writeCalled = 0;
+    protected UriTransformer uriTransformer;
+    protected DatabaseClient client;
+    protected DataMovementManager dataMovementManager;
+    private int BATCH_SIZE = 100;
+    private int THREAD_COUNT = 4;
+    private ServerTransform serverTransform;
+
+    private Format contentFormat;
+
+    //Used for MarkLogic 9
+    private WriteBatcher batcher;
+
+    //Used for MarkLogic 8
+    private TempRestBatchWriter batchWriter;
+
+    private boolean marklogicVersion9 = true;
 
     public MarkLogicItemWriter(DatabaseClient client) {
-        this(Arrays.asList(client));
+        this.client = client;
+        String version = client.newServerEval().xquery("xdmp:version()").evalAs(String.class);
+        logger.info("MarkLogic v" + version);
+        if (!version.startsWith("9")) {
+            marklogicVersion9 = false;
+        }
     }
 
-    public MarkLogicItemWriter(List<DatabaseClient> databaseClients) {
-        RestBatchWriter rbw = new RestBatchWriter(databaseClients);
-        rbw.setReleaseDatabaseClients(false);
-        this.batchWriter = rbw;
+    public MarkLogicItemWriter(DatabaseClient client, UriTransformer uriTransformer) {
+        this(client);
+        this.uriTransformer = uriTransformer;
     }
 
-    public MarkLogicItemWriter(BatchWriter batchWriter) {
-        this.batchWriter = batchWriter;
+    public MarkLogicItemWriter(DatabaseClient client, ServerTransform serverTransform) {
+        this(client);
+        this.serverTransform = serverTransform;
+    }
+
+    public MarkLogicItemWriter(DatabaseClient client, UriTransformer uriTransformer, ServerTransform serverTransform) {
+        this(client, uriTransformer);
+        this.serverTransform = serverTransform;
+    }
+
+    public MarkLogicItemWriter(DatabaseClient client, ServerTransform serverTransform, Format format) {
+        this(client, serverTransform);
+        this.contentFormat = format;
     }
 
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
-        writeCalled += 1;
-        writeCount += items.size();
-        if (uriTransformer != null) {
-            List<DocumentWriteOperation> newItems = new ArrayList<>();
-            for (DocumentWriteOperation op : items) {
-                String newUri = uriTransformer.transform(op.getUri());
-                newItems.add(new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
-                    newUri, op.getMetadata(), op.getContent()));
+        if (marklogicVersion9) {
+            for (DocumentWriteOperation item : items) {
+                if (uriTransformer != null) {
+                    String newUri = uriTransformer.transform(item.getUri());
+                    batcher.add(newUri, item.getMetadata(), item.getContent());
+                } else {
+                    batcher.add(item.getUri(), item.getMetadata(), item.getContent());
+                }
             }
-            batchWriter.write(newItems);
         } else {
-            batchWriter.write(items);
+            if (uriTransformer != null) {
+                List<DocumentWriteOperation> newItems = new ArrayList<>();
+                for (DocumentWriteOperation op : items) {
+                    String newUri = uriTransformer.transform(op.getUri());
+                    newItems.add(new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                            newUri, op.getMetadata(), op.getContent()));
+                }
+                batchWriter.write(newItems);
+            } else {
+                batchWriter.write(items);
+            }
         }
-        if (writeCalled % 250 == 0) {
-            logger.info("Write Count: " + writeCount);
-        }
+
+    }
+
+    public int getBatchSize() {
+        return BATCH_SIZE;
+    }
+
+    public int getThreadCount() {
+        return THREAD_COUNT;
     }
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream open, initializing BatchWriter");
-        }
-        batchWriter.initialize();
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream open, finished initializing BatchWriter");
+        if (marklogicVersion9) {
+            dataMovementManager = client.newDataMovementManager();
+            batcher = dataMovementManager.newWriteBatcher();
+            batcher
+              .withBatchSize(getBatchSize())
+              .withThreadCount(getThreadCount());
+
+            if (serverTransform != null) {
+                batcher.withTransform(serverTransform);
+            }
+        } else {
+            batchWriter = new TempRestBatchWriter(client);
+            if (serverTransform != null) {
+                batchWriter.setServerTransform(serverTransform);
+                batchWriter.setContentFormat(contentFormat == null ? Format.XML : contentFormat);
+            }
+            batchWriter.initialize();
         }
     }
 
@@ -84,18 +135,26 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
 
     @Override
     public void close() throws ItemStreamException {
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream close, waiting for BatchWriter to complete");
+        if (marklogicVersion9) {
+            batcher.flushAndWait();
+            dataMovementManager.release();
+        } else {
+            batchWriter.waitForCompletion();
         }
-        batchWriter.waitForCompletion();
-        if (logger.isInfoEnabled()) {
-            logger.info("On stream close, finished waiting for BatchWriter to complete");
-            logger.info("Final Write Count: " + writeCount);
-        }
+        //client.release();
+
+    }
+
+    public void setServerTransform(ServerTransform serverTransform) {
+        this.serverTransform = serverTransform;
     }
 
     public void setUriTransformer(UriTransformer uriTransformer) {
         this.uriTransformer = uriTransformer;
+    }
+
+    public void setContentFormat(Format format) {
+        this.contentFormat = format;
     }
 }
 

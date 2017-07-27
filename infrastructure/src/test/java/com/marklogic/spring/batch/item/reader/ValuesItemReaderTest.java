@@ -10,20 +10,22 @@ import com.marklogic.client.query.CountedDistinctValue;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.junit.ClientTestHelper;
-import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
-public class ValuesItemReaderTest extends AbstractSpringTest {
+@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class })
+public class ValuesItemReaderTest extends AbstractSpringBatchTest {
 
     ClientTestHelper helper;
     DatabaseClient client;
 
     @Autowired
+    @Qualifier("batchDatabaseClientConfig")
     DatabaseClientConfig databaseClientConfig;
 
     @Before

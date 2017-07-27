@@ -4,14 +4,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import com.marklogic.spring.batch.core.job.JobSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.NoSuchJobException;
 
-public class SimpleJobExplorerTests extends AbstractSpringBatchTest {
+public class SimpleJobExplorerTests extends AbstractJobRepositoryTest {
     
     private JobSupport job = new JobSupport("SimpleJobExplorerTestsJob");
 

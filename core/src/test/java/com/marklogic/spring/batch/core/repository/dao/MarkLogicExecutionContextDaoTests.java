@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -16,7 +16,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.transaction.annotation.Transactional;
 
-public class MarkLogicExecutionContextDaoTests extends AbstractSpringBatchTest {
+public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest {
 
 	private JobExecution jobExecution;
 
@@ -37,7 +37,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringBatchTest {
 	@Test
 	public void testSaveAndFindJobContext() {
 
-		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
+		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(jobExecution);
 
@@ -105,7 +105,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringBatchTest {
 	public void testUpdateContext() {
 
 		ExecutionContext ctx = new ExecutionContext(Collections
-				.<String, Object> singletonMap("key", "value"));
+				.singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(jobExecution);
 
@@ -121,7 +121,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringBatchTest {
 	@Test
 	public void testSaveAndFindStepContext() {
 
-		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
+		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(stepExecution);
 
@@ -145,7 +145,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractSpringBatchTest {
 	@Test
 	public void testUpdateStepContext() {
 
-		ExecutionContext ctx = new ExecutionContext(Collections.<String, Object> singletonMap("key", "value"));
+		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
 		getExecutionContextDao().saveExecutionContext(stepExecution);
 

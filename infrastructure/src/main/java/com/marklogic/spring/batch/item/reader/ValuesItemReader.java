@@ -2,8 +2,6 @@ package com.marklogic.spring.batch.item.reader;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.QueryOptionsManager;
-import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.ValuesHandle;
 import com.marklogic.client.io.marker.QueryOptionsWriteHandle;
 import com.marklogic.client.query.*;
@@ -68,7 +66,7 @@ public class ValuesItemReader extends AbstractItemStreamItemReader<CountedDistin
 
     
     @Override
-    public CountedDistinctValue read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public CountedDistinctValue read() throws Exception {
         return itr.hasNext() ? itr.next() : null;
     }
     

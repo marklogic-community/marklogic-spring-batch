@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.core.explore;
 
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import com.marklogic.spring.batch.JobParametersTestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 
 import java.util.List;
 
-public class GetJobInstancesTest extends AbstractSpringBatchTest {
+public class GetJobInstancesTest extends AbstractJobRepositoryTest {
 
     private final String JOB_NAME = "testJob";
     private final String JOB_NAME_2 = JOB_NAME + "2";
