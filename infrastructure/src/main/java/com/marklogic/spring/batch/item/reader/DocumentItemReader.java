@@ -25,7 +25,7 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
     }
 
     @Override
-    public DocumentRecord read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public DocumentRecord read() throws Exception {
         if (page.hasNext()) {
             return page.next();
         } else if (page.hasNextPage()) {

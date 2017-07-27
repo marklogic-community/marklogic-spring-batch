@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
 
 import com.marklogic.client.eval.ServerEvaluationCall;
 
-public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
+public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
 	
 	protected JobInstance jobInstance;
 	protected JobExecution execution;

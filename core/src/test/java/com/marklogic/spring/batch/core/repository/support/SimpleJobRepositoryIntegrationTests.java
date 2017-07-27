@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.core.repository.support;
 
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Date;
 
-public class SimpleJobRepositoryIntegrationTests extends AbstractSpringBatchTest {
+public class SimpleJobRepositoryIntegrationTests extends AbstractJobRepositoryTest {
 
 	private JobSupport job = new JobSupport("SimpleJobRepositoryIntegrationTestsJob");
 

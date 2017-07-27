@@ -6,22 +6,22 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.Fragment;
-import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextConfiguration(classes = { com.marklogic.spring.batch.config.MarkLogicApplicationContext.class })
-public class MarkLogicPatchItemWriterTest extends AbstractSpringTest {
+public class MarkLogicPatchItemWriterTest extends AbstractSpringBatchTest {
 
     DatabaseClient client;
     XMLDocumentManager docMgr;
 
     @Autowired
+    @Qualifier("batchDatabaseClientConfig")
     DatabaseClientConfig databaseClientConfig;
     
     @Before

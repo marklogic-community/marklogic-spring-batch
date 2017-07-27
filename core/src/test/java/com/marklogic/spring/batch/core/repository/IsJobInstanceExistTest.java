@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.core.repository;
 
-import com.marklogic.spring.batch.AbstractSpringBatchTest;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobParameters;
@@ -9,7 +9,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 
-public class IsJobInstanceExistTest extends AbstractSpringBatchTest {
+public class IsJobInstanceExistTest extends AbstractJobRepositoryTest {
 
     private final String jobName = "job";
     private JobParameters params;

@@ -16,7 +16,7 @@ public class EvaluateServerSideStringTasklet implements Tasklet {
     private String evalString;
     private ServerSideLanguage language;
 
-    public static enum ServerSideLanguage { JAVASCRIPT, XQUERY };
+    public enum ServerSideLanguage { JAVASCRIPT, XQUERY }
 
     public EvaluateServerSideStringTasklet(
             DatabaseClient databaseClient,

@@ -1,13 +1,9 @@
 package com.marklogic.spring.batch;
 
-import static org.junit.Assert.*;
-
+import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -17,6 +13,7 @@ import com.marklogic.client.helper.DatabaseClientProvider;
 public class MarkLogicSpringBatchConfigTests extends AbstractSpringBatchTest {
 	
 	@Autowired
+	@Qualifier("batchDatabaseClientProvider")
 	DatabaseClientProvider databaseClientProvider;
 	
 	@Test
