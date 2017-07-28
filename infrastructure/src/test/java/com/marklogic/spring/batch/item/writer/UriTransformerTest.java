@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.item.writer;
 
+import com.marklogic.spring.batch.item.writer.support.UriTransformer;
 import org.junit.Assert;
 import org.junit.Test;
 
