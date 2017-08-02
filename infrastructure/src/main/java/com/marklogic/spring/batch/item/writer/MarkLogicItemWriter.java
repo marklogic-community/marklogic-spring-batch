@@ -8,6 +8,7 @@ import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
+import com.marklogic.spring.batch.item.writer.support.UriTransformer;
 import org.springframework.batch.item.*;
 
 import java.util.ArrayList;
