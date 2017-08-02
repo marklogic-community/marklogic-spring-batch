@@ -284,6 +284,11 @@ public class CommandLineJobRunner {
         try {
             try {
                 context = new AnnotationConfigApplicationContext(Class.forName(jobPath));
+                String[] jobNames = context.getBeanNamesForType(org.springframework.batch.core.Job.class);
+                logger.info("JOB NAMES");
+                for (int i = 0; i < jobNames.length; i++) {
+                    logger.info(jobNames[i]);
+                }
             } catch (ClassNotFoundException cnfe) {
                 context = new ClassPathXmlApplicationContext(jobPath);
             }
@@ -343,7 +348,7 @@ public class CommandLineJobRunner {
                 try {
                     job = jobLocator.getJob(jobName);
                 } catch (NoSuchJobException e) {
-                    throw new NoSuchJobException(jobName);
+
                 }
             }
             if (job == null) {
