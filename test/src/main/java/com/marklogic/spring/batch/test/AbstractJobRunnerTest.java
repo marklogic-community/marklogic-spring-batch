@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.test;
 
+import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.helper.DatabaseClientConfig;
 import com.marklogic.client.helper.DatabaseClientProvider;
 import com.marklogic.client.spring.SimpleDatabaseClientProvider;
@@ -9,6 +10,7 @@ import com.marklogic.junit.spring.AbstractSpringTest;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.xcc.template.XccTemplate;
+import org.junit.Before;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +25,9 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
     private DatabaseClientConfig databaseClientConfig;
     private ApplicationContext applicationContext;
 
+    private DatabaseClientProvider batchDatabaseClientProvider;
+    private DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider;
+
     protected boolean isMarkLogic9() {
         AdminConfig config = new AdminConfig(databaseClientConfig.getHost(), databaseClientConfig.getPassword());
         AdminManager mgr = new AdminManager(config);
@@ -36,6 +41,18 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
     @Autowired
     public void setJobLauncherTestUtils(JobLauncherTestUtils jobLauncherTestUtils) {
         this.jobLauncherTestUtils = jobLauncherTestUtils;
+    }
+
+    @Autowired
+    public void setBatchDatabaseClientProvider(
+            DatabaseClientProvider databaseClientProvider) {
+        this.batchDatabaseClientProvider = databaseClientProvider;
+    }
+
+    @Autowired
+    public void setMarkLogicJobRepositoryDatabaseClientProvider(
+            DatabaseClientProvider databaseClientProvider) {
+        this.markLogicJobRepositoryDatabaseClientProvider = databaseClientProvider;
     }
 
     public ClientTestHelper getClientTestHelper() {
@@ -65,6 +82,17 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
         this.applicationContext = applicationContext;
         setDatabaseClientProvider(applicationContext.getBean("databaseClientProvider", DatabaseClientProvider.class));
         setXccTemplate(applicationContext.getBean("xccTemplate", XccTemplate.class));
+    }
+
+    @Before
+    public void deleteDocumentsBeforeTestRuns() {
+        ServerEvaluationCall evalCall = batchDatabaseClientProvider.getDatabaseClient().newServerEval();
+        evalCall.xquery(getClearDatabaseXquery());
+        evalCall.eval();
+
+        evalCall = markLogicJobRepositoryDatabaseClientProvider.getDatabaseClient().newServerEval();
+        evalCall.xquery(getClearDatabaseXquery());
+        evalCall.eval();
     }
 
 }
