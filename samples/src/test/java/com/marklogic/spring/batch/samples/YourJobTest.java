@@ -21,4 +21,17 @@ public class YourJobTest extends AbstractJobRunnerTest {
         getClientTestHelper().assertCollectionSize("Expecting one job instance in JobRepo", "http://marklogic.com/spring-batch/job-instance", 1);
     }
 
+    @Test
+    public void runJobTwiceTest() throws Exception {
+        JobParametersBuilder jpb = new JobParametersBuilder();
+        jpb.addString("output_collections", "monster", false);
+        jpb.addLong("run_id", 1L, true);
+        JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
+        jpb.addLong("run_id", 2L);
+        JobExecution jobExecution2 = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
+        Assert.assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+        Assert.assertEquals(BatchStatus.COMPLETED, jobExecution2.getStatus());
+    }
+
+
 }

@@ -187,7 +187,8 @@ project(':samples') {
         classpath = sourceSets.test.runtimeClasspath
         args = ["--job_path", "com.marklogic.spring.batch.samples.JobsConfig",
                 "--job_id", "job",
-                "--output_collections", "runYourJob"]
+                "--output_collections", "runYourJob",
+                "--next"]
     }
 }
 
