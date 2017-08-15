@@ -277,7 +277,7 @@ public class CommandLineJobRunner {
      * job, if not ask the context for it.
      */
     @SuppressWarnings("resource")
-    int start(String jobPath, String jobIdentifier, Properties parameters, Set<String> opts) {
+    int start(String jobPath, String jobIdentifier, Properties parameters, OptionSet options) {
 
         ConfigurableApplicationContext context = null;
 
@@ -297,7 +297,7 @@ public class CommandLineJobRunner {
                     AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 
             Assert.state(launcher != null, "A JobLauncher must be provided.  Please add one to the configuration.");
-            if (opts.contains("-restart") || opts.contains("-next")) {
+            if (options.has(RESTART) || options.has(NEXT)) {
                 Assert.state(jobExplorer != null,
                         "A JobExplorer must be provided for a restart or start next operation.  Please add one to the configuration.");
             }
@@ -309,7 +309,7 @@ public class CommandLineJobRunner {
                     "Invalid JobParameters " + Arrays.asList(parameters)
                             + ". If parameters are provided they should be in the form name=value (no whitespace).");
 
-            if (opts.contains("-stop")) {
+            if (options.has(STOP)) {
                 List<JobExecution> jobExecutions = getRunningJobExecutions(jobIdentifier);
                 if (jobExecutions == null) {
                     throw new JobExecutionNotRunningException("No running execution found for job=" + jobIdentifier);
@@ -321,7 +321,7 @@ public class CommandLineJobRunner {
                 return exitCodeMapper.intValue(ExitStatus.COMPLETED.getExitCode());
             }
 
-            if (opts.contains("-abandon")) {
+            if (options.has(ABANDON)) {
                 List<JobExecution> jobExecutions = getStoppedJobExecutions(jobIdentifier);
                 if (jobExecutions == null) {
                     throw new JobExecutionNotStoppedException("No stopped execution found for job=" + jobIdentifier);
@@ -333,7 +333,7 @@ public class CommandLineJobRunner {
                 return exitCodeMapper.intValue(ExitStatus.COMPLETED.getExitCode());
             }
 
-            if (opts.contains("-restart")) {
+            if (options.has(RESTART)) {
                 JobExecution jobExecution = getLastFailedJobExecution(jobIdentifier);
                 if (jobExecution == null) {
                     throw new JobExecutionNotFailedException("No failed or stopped execution found for job="
@@ -355,7 +355,7 @@ public class CommandLineJobRunner {
                 job = (Job) context.getBean(jobName);
             }
 
-            if (opts.contains("-next")) {
+            if (options.has(NEXT)) {
                 JobParameters nextParameters = getNextJobParameters(job);
                 Map<String, JobParameter> map = new HashMap<String, JobParameter>(nextParameters.getParameters());
                 map.putAll(jobParameters.getParameters());
@@ -565,14 +565,13 @@ public class CommandLineJobRunner {
             }
 
             Set<String> opts = new HashSet<String>();
-            int result = this.start(jobPath, jobIdentifier, props, opts);
+            int result = this.start(jobPath, jobIdentifier, props, options);
             this.exit(result);
             return;
         }
     }
 
     protected String HELP = "help";
-    protected String JOB_PROPERTIES = "job_properties";
     protected String JOB_PATH = "job_path";
     protected String RESTART = "restart";
     protected String STOP = "stop";
@@ -586,6 +585,10 @@ public class CommandLineJobRunner {
         parser.acceptsAll(Arrays.asList("h", HELP), "Show help").forHelp();
         parser.accepts(JOB_PATH, "The Java Config application context containing a Job").withRequiredArg();
         parser.accepts(JOB_ID, "The name of the job or the id of a job execution (for -stop, -abandon or -restart)").withRequiredArg().defaultsTo("job");
+        parser.accepts(ABANDON, "(optional) to abandon a stopped execution");
+        parser.accepts(NEXT, "(optional) Start the next in a sequence according to the JobParametersIncrementer in the Job");
+        parser.accepts(RESTART, "(optional) to restart the last failed execution");
+        parser.accepts(STOP, " (optional) to stop a running execution");
         parser.accepts(CHUNK_SIZE, "The chunk size of the job").withRequiredArg().defaultsTo("10");
         parser.allowsUnrecognizedOptions();
         return parser;

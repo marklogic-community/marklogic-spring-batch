@@ -7,15 +7,14 @@ import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
+
 
 /**
  * YourJobConfig.java - a sample Spring Batch configuration class for demonstrating the use of creating a SpringBatch job
@@ -28,10 +27,8 @@ import org.springframework.core.env.Environment;
 
 @EnableBatchProcessing
 @Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class })
-public class YourJobConfig implements EnvironmentAware {
-    
-    private Environment env;
-    
+public class YourJobConfig {
+
     //Rename this private variable
     private final String JOB_NAME = "yourJob";
     
@@ -43,7 +40,10 @@ public class YourJobConfig implements EnvironmentAware {
      */
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory, Step step) {
-        return jobBuilderFactory.get(JOB_NAME).start(step).build();
+        return jobBuilderFactory.get(JOB_NAME)
+                .start(step)
+                .incrementer(new RunIdIncrementer())
+                .build();
     }
     
     /**
@@ -64,7 +64,7 @@ public class YourJobConfig implements EnvironmentAware {
     public Step step(
         StepBuilderFactory stepBuilderFactory,
         DatabaseClientProvider databaseClientProvider,
-        @Value("#{jobParameters['output_collections']}") String[] collections) {
+        @Value("#{jobParameters['output_collections'] ?: 'yourJob'}") String[] collections) {
         
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
             
@@ -104,10 +104,4 @@ public class YourJobConfig implements EnvironmentAware {
                 .build();
     }
 
-        
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.env = environment;
-    }
-    
 }
