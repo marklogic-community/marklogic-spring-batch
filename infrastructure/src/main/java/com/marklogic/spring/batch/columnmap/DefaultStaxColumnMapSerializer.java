@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.columnmap;
 
-import com.marklogic.client.helper.LoggingObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -13,7 +14,9 @@ import java.util.Map;
  * Simple implementation that uses StAX - https://docs.oracle.com/javase/tutorial/jaxp/stax/index.html - for generating
  * an XML document from a Spring column map.
  */
-public class DefaultStaxColumnMapSerializer extends LoggingObject implements ColumnMapSerializer {
+public class DefaultStaxColumnMapSerializer implements ColumnMapSerializer {
+
+    private final static Logger logger = LoggerFactory.getLogger(DefaultStaxColumnMapSerializer.class);
 
     private XMLOutputFactory xmlOutputFactory;
 

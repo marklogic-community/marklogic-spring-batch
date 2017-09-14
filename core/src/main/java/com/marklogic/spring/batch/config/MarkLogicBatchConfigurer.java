@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.core.explore.support.MarkLogicJobExplorerFactoryBean;
 import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryFactoryBean;
 import org.slf4j.Logger;

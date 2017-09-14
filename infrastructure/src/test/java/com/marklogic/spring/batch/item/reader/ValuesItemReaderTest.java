@@ -3,7 +3,7 @@ package com.marklogic.spring.batch.item.reader;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.helper.DatabaseClientConfig;
+import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.CountedDistinctValue;

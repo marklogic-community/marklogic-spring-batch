@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.admin.ServerConfigurationManager.UpdatePolicy;
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 
 public class MarkLogicSpringBatchConfigTests extends AbstractSpringBatchTest {
 	

@@ -1,12 +1,11 @@
 package com.marklogic.spring.batch.item.reader;
 
-
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentManager;
 import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import org.springframework.batch.item.*;
 

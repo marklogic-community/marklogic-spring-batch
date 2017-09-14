@@ -2,11 +2,11 @@ package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.ExtensionLibrariesManager;
-import com.marklogic.client.helper.DatabaseClientConfig;
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.DatabaseClientConfig;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.spring.SimpleDatabaseClientProvider;
+import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import com.marklogic.spring.batch.test.SpringBatchNamespaceProvider;
