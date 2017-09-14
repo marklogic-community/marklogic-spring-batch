@@ -23,6 +23,7 @@ plugins {
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
         maven { url "http://repo.spring.io/release" }
         maven { url "http://developer.marklogic.com/maven2/" }
     }
@@ -60,7 +61,7 @@ subprojects {
         compile 'ch.qos.logback:logback-classic:1.1.8'
         compile 'org.slf4j:slf4j-api:1.7.21'
         compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
-        compile "com.marklogic:java-client-api:4.0.1"
+        compile "com.marklogic:marklogic-client-api:4.0.2"
         compile "com.marklogic:ml-javaclient-util:3.0.0"
 
         testCompile "org.springframework.batch:spring-batch-test:$springBatchVersion"
