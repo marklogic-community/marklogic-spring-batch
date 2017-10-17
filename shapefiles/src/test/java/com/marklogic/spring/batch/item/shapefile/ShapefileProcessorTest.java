@@ -1,17 +1,20 @@
 package com.marklogic.spring.batch.item.shapefile;
 
 import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.spring.batch.item.shapefile.support.HttpClientOgreProxy;
 import com.marklogic.spring.batch.item.shapefile.support.OgreProxy;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 
 import static org.junit.Assert.assertTrue;
 
-public class ShapefileProcessorTest extends LoggingObject {
+public class ShapefileProcessorTest {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final static String MOCK_OGRE_RESPONSE = "{\n" +
             "  \"type\": \"FeatureCollection\",\n" +

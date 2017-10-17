@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.samples;
 
 import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;

@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.samples.geonames;
 
 import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import org.geonames.Geoname;
 import org.springframework.batch.core.Job;

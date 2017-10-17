@@ -2,15 +2,18 @@ package com.marklogic.spring.batch.item.writer;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.helper.LoggingObject;
 
 /**
  * Simple writer that expects a list of URIs, and then uses the Client API to delete those URIs.
  */
-public class DeleteUriWriter extends LoggingObject implements ItemWriter<String> {
+public class DeleteUriWriter implements ItemWriter<String> {
+
+    private final static Logger logger = LoggerFactory.getLogger(DeleteUriWriter.class);
 
     private DatabaseClient client;
 

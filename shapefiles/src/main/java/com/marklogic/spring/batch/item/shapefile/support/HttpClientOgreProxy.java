@@ -1,11 +1,12 @@
 package com.marklogic.spring.batch.item.shapefile.support;
 
-import com.marklogic.client.helper.LoggingObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
@@ -14,7 +15,9 @@ import java.io.IOException;
 /**
  * Using HttpClient, had trouble getting this to work with Spring's RestTemplate.
  */
-public class HttpClientOgreProxy extends LoggingObject implements OgreProxy {
+public class HttpClientOgreProxy implements OgreProxy {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String url;
     private HttpClient httpClient;
