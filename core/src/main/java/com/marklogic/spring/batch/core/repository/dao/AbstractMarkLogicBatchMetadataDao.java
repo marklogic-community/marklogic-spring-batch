@@ -1,11 +1,10 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import com.marklogic.client.helper.LoggingObject;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 import com.marklogic.client.DatabaseClient;
 
-public abstract class AbstractMarkLogicBatchMetadataDao extends LoggingObject {
+public abstract class AbstractMarkLogicBatchMetadataDao {
 
     protected DatabaseClient databaseClient;
 

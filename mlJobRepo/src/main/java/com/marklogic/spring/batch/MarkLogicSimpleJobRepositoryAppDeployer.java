@@ -2,19 +2,18 @@ package com.marklogic.spring.batch;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.client.*;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
-import com.marklogic.client.helper.LoggingObject;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.mgmt.api.security.User;
-import com.marklogic.mgmt.databases.DatabaseManager;
-import com.marklogic.mgmt.restapis.RestApiManager;
-import com.marklogic.mgmt.security.RoleManager;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import com.marklogic.mgmt.resource.restapis.RestApiManager;
+import com.marklogic.mgmt.resource.security.RoleManager;
 
 import java.util.List;
 
-public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
+public class MarkLogicSimpleJobRepositoryAppDeployer {
 
     private List<Command> commands;
     private MarkLogicSimpleJobRepositoryConfig config;
@@ -41,7 +40,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer extends LoggingObject {
         config.getProtectedCollection().save();
 
         if (new RestApiManager(config.getManageClient()).restApiServerExists(name)) {
-            logger.debug("REST API server with name " + name + " already exists, not creating");
+            //logger.debug("REST API server with name " + name + " already exists, not creating");
         } else {
             config.getRestApi(name, port).save();
         }

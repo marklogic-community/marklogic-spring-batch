@@ -4,11 +4,12 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.*;
-import com.marklogic.client.helper.LoggingObject;
+import com.marklogic.client.ext.batch.RestBatchWriter;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.Format;
-import com.marklogic.spring.batch.item.writer.support.TempRestBatchWriter;
 import com.marklogic.spring.batch.item.writer.support.UriTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.*;
 
 import java.util.ArrayList;
@@ -24,7 +25,9 @@ import java.util.List;
  *
  * A UriTransformer can be optionally set to transform the URI of each incoming DocumentWriteOperation.
  */
-public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<DocumentWriteOperation>, ItemStream {
+public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, ItemStream {
+
+    private final static Logger logger = LoggerFactory.getLogger(MarkLogicItemWriter.class);
 
     protected UriTransformer uriTransformer;
     protected DatabaseClient client;
@@ -39,7 +42,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
     private WriteBatcher batcher;
 
     //Used for MarkLogic 8
-    private TempRestBatchWriter batchWriter;
+    private RestBatchWriter batchWriter;
 
     private boolean marklogicVersion9 = true;
 
@@ -120,7 +123,7 @@ public class MarkLogicItemWriter extends LoggingObject implements ItemWriter<Doc
                 batcher.withTransform(serverTransform);
             }
         } else {
-            batchWriter = new TempRestBatchWriter(client);
+            batchWriter = new RestBatchWriter(client);
             if (serverTransform != null) {
                 batchWriter.setServerTransform(serverTransform);
                 batchWriter.setContentFormat(contentFormat == null ? Format.XML : contentFormat);

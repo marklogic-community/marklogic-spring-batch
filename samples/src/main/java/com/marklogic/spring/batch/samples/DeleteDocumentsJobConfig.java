@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.samples;
 
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.item.tasklet.DeleteDocumentsTasklet;
