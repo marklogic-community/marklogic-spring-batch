@@ -5,7 +5,7 @@ import java.io.Writer;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentRecord;
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;

@@ -7,12 +7,12 @@ buildscript {
     }
     dependencies {
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
-        classpath "com.marklogic:ml-gradle:2.7.0"
+        classpath "com.marklogic:ml-gradle:3.0.0"
     }
 }
 
 plugins {
-    id "com.marklogic.ml-gradle" version "2.7.0"
+    id "com.marklogic.ml-gradle" version "3.0.0"
     id "java"
     id "eclipse"
     id "idea"
@@ -23,12 +23,13 @@ plugins {
 allprojects {
     repositories {
         jcenter()
-        maven { url "http://repo.spring.io/milestone" }
+        mavenCentral()
+        maven { url "http://repo.spring.io/release" }
         maven { url "http://developer.marklogic.com/maven2/" }
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '4.0'
+        gradleVersion = '4.1'
     }
 
     sourceSets.test.resources.srcDir 'src/test/java'
@@ -52,19 +53,19 @@ subprojects {
     }
 
     ext {
-        springVersionDefault = '3.0.7.RELEASE'
-        springVersion = project.hasProperty('springVersion') ? getProperty('springVersion') : springVersionDefault
+        springBatchVersion = '3.0.8.RELEASE'
+        springVersion = '4.3.9.RELEASE'
     }
 
     dependencies {
         compile 'ch.qos.logback:logback-classic:1.1.8'
         compile 'org.slf4j:slf4j-api:1.7.21'
-        compile "org.springframework.batch:spring-batch-core:$springVersion"
-        compile "com.marklogic:java-client-api:4.0.1"
-        compile "com.marklogic:ml-javaclient-util:2.14.0"
+        compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+        compile "com.marklogic:marklogic-client-api:4.0.2"
+        compile "com.marklogic:ml-javaclient-util:3.0.0"
 
-        testCompile "org.springframework.batch:spring-batch-test:$springVersion"
-        testCompile "com.marklogic:ml-junit:2.6.0"
+        testCompile "org.springframework.batch:spring-batch-test:$springBatchVersion"
+        testCompile "com.marklogic:ml-junit:3.0.0"
     }
 
     sourceCompatibility = 1.8
@@ -114,22 +115,19 @@ project(':core') {
         compile project(":infrastructure")
 
         // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
-        compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
+        compile "org.springframework:spring-jdbc:$springVersion"
 
         // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
-        compile "org.springframework:spring-oxm:4.3.7.RELEASE"
+        compile "org.springframework:spring-oxm:$springVersion"
 
         // For the CLI
         compile "net.sf.jopt-simple:jopt-simple:5.0.1"
 
         testCompile project(":test")
 
-        runtime "org.springframework.batch:spring-batch-core:$springVersion"
+        runtime "org.springframework.batch:spring-batch-core:$springBatchVersion"
 
-        //com.marklogic.spring.batch.Main extends com.marklogic.client.helper.LoggingObject
-        runtime "com.marklogic:ml-javaclient-util:2.14.0"
-
-        runtime "org.springframework:spring-jdbc:4.3.7.RELEASE"
+        runtime "org.springframework:spring-jdbc:$springVersion"
 
         runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
     }
@@ -139,7 +137,7 @@ project(':core') {
 project(":infrastructure") {
     description = 'MarkLogic Spring Batch Infrastructure'
     dependencies {
-        compile "org.springframework:spring-jdbc:4.3.7.RELEASE"
+        compile "org.springframework:spring-jdbc:$springVersion"
         compile "org.apache.commons:commons-lang3:3.5"
         testCompile project(':test')
     }
@@ -149,10 +147,10 @@ project(':test') {
     dependencies {
         compile project(':infrastructure')
         compile project(':core')
-        compile "org.springframework.batch:spring-batch-test:$springVersion"
-        compile "com.marklogic:ml-junit:2.6.0"
+        compile "org.springframework.batch:spring-batch-test:$springBatchVersion"
+        compile "com.marklogic:ml-junit:3.0.0"
         // For detecting version of MarkLogic
-        compile "com.marklogic:ml-app-deployer:2.7.0"
+        compile "com.marklogic:ml-app-deployer:3.0.0"
     }
 }
 
@@ -216,7 +214,7 @@ project(':mlJobRepo') {
 
     dependencies {
         // For deploying the ML Job Repo
-        compile "com.marklogic:ml-app-deployer:2.8.0"
+        compile "com.marklogic:ml-app-deployer:3.0.0"
 
         // For the CLI
         compile "net.sf.jopt-simple:jopt-simple:5.0.1"

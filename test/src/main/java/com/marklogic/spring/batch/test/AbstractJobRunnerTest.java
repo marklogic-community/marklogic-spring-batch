@@ -1,9 +1,9 @@
 package com.marklogic.spring.batch.test;
 
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.helper.DatabaseClientConfig;
-import com.marklogic.client.helper.DatabaseClientProvider;
-import com.marklogic.client.spring.SimpleDatabaseClientProvider;
+import com.marklogic.client.ext.DatabaseClientConfig;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;

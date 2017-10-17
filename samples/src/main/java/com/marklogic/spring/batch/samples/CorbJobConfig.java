@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.samples;
 
-import com.marklogic.client.helper.DatabaseClientProvider;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.item.reader.InvokeModuleItemReader;
 import com.marklogic.spring.batch.item.writer.InvokeModuleItemWriter;
 import org.springframework.batch.core.Job;

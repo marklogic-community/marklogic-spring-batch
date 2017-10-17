@@ -9,6 +9,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.marklogic.spring.batch.jdbc.support.incrementer.UriIncrementer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
@@ -25,7 +27,9 @@ import com.marklogic.spring.batch.core.AdaptedStepExecution;
 public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao implements StepExecutionDao {
 
 	private JobExecutionDao jobExecutionDao;
-	
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Autowired
 	public MarkLogicStepExecutionDao(DatabaseClient databaseClient, JobExecutionDao dao) {
 		this.databaseClient = databaseClient;
