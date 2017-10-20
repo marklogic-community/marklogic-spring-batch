@@ -8,6 +8,6 @@ public interface UriGenerator<T> {
      *
      * @return
      */
-    String generateUri(T t);
+    public String generateUri(T t) throws Exception;
 
 }
