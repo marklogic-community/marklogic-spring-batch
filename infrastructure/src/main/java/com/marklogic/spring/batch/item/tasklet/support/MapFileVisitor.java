@@ -3,6 +3,7 @@ package com.marklogic.spring.batch.item.tasklet.support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -19,12 +20,12 @@ public class MapFileVisitor extends SimpleFileVisitor<Path> {
     private int numberOfMatches = 0;
 
     public MapFileVisitor() {
-        this("*");
+        this("**.*");
     }
 
-    public MapFileVisitor(String pattern) {
+    public MapFileVisitor(String globPattern) {
         fileMap = new HashMap<String, Path>();
-        matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+        matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
     }
 
     public Map<String, Path> getFileMap() {
@@ -45,7 +46,7 @@ public class MapFileVisitor extends SimpleFileVisitor<Path> {
         if (match(file)) {
             numberOfMatches++;
             String fileName = file.getFileName().toString();
-            fileMap.put(fileName, file);
+            fileMap.put(file.getParent().toString() + File.separator + fileName, file);
             logger.debug(fileName);
         }
         return FileVisitResult.CONTINUE;
@@ -54,19 +55,15 @@ public class MapFileVisitor extends SimpleFileVisitor<Path> {
     // Invoke the pattern matching method on each directory.
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-        if (match(dir)) {
-            return FileVisitResult.CONTINUE;
-        } else {
-            return FileVisitResult.SKIP_SUBTREE;
-        }
+        match(dir);
+        return FileVisitResult.CONTINUE;
     }
 
     // Compares the glob pattern against the file or directory name.
     // https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob
     private boolean match(Path file) {
-        Path name = file.getFileName();
-        if (name != null && matcher.matches(name)) {
-            numberOfMatches++;
+        if (matcher.matches(file)) {
+            logger.debug("MATCH: " + file.getFileName());
             return true;
         } else {
             return false;
