@@ -63,7 +63,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
         DocumentMetadataHandle jobInstanceMetadata = new DocumentMetadataHandle();
         jobInstanceMetadata.getCollections().add(COLLECTION_JOB_INSTANCE);
 		xmlDocMgr.write(desc, jobInstanceMetadata, handle);
-		logger.info("insert JobExecution:" + uri + "," + desc.getVersion());
+		//logger.info("insert JobExecution:" + uri + "," + desc.getVersion());
 	}
 	
 	/**
@@ -114,7 +114,7 @@ public class MarkLogicJobExecutionDao extends AbstractMarkLogicBatchMetadataDao 
 	        DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
 	        jobExecutionMetadata.getCollections().add(COLLECTION_JOB_INSTANCE);
         	xmlDocMgr.write(desc, jobExecutionMetadata, handle);
-			logger.info("update JobExecution:" + uri + "," + desc.getVersion());
+			//logger.info("update JobExecution:" + uri + "," + desc.getVersion());
 		}
 	}
 	

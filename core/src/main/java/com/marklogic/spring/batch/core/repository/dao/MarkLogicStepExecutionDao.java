@@ -55,7 +55,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 		stepExecutions.add(stepExecution);
 		jobExecution.addStepExecutions(stepExecutions);
 		jobExecutionDao.updateJobExecution(jobExecution);
-		logger.info("insert step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
+		//logger.info("insert step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class MarkLogicStepExecutionDao extends AbstractMarkLogicBatchMetadataDao
 			List<StepExecution> steps = new ArrayList<>(stepExecutions);
 			stepExecution.getJobExecution().addStepExecutions(steps);
 			jobExecutionDao.updateJobExecution(jobExecution);
-			logger.info("update step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
+			//logger.info("update step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
 		}
 	}
 
