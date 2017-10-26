@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.tasklet.support;
+package com.marklogic.spring.batch.item.reader.support;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.*;
 import java.util.Map;
 

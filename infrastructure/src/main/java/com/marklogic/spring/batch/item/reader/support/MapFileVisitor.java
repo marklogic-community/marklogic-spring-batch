@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.tasklet.support;
+package com.marklogic.spring.batch.item.reader.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
