@@ -21,6 +21,9 @@ plugins {
 }
 
 allprojects {
+    apply plugin: "java"
+    apply plugin: "idea"
+
     repositories {
         jcenter()
         mavenCentral()
@@ -58,7 +61,7 @@ subprojects {
     }
 
     dependencies {
-        compile 'ch.qos.logback:logback-classic:1.1.8'
+        compile "org.apache.logging.log4j:log4j-api:2.9.1"
         compile 'org.slf4j:slf4j-api:1.7.21'
         compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
         compile "com.marklogic:marklogic-client-api:4.0.2"
