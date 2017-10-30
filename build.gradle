@@ -202,7 +202,7 @@ project(':mlJobRepo') {
     task deployMarkLogicJobRepository(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
         main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
-        args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
+        args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlJobRepositoryPort, "--username", mlManageUsername, "--password", mlManagePassword]
     }
 
     task undeployMarkLogicJobRepository(type: JavaExec) {
