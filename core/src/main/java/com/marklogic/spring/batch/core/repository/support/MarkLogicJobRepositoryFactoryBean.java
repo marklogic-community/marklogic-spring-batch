@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.core.repository.support;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.spring.batch.config.JobRepositoryProperties;
+import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
 public class MarkLogicJobRepositoryFactoryBean extends AbstractJobRepositoryFactoryBean implements InitializingBean {
 
     private DatabaseClient databaseClient;
-    private JobRepositoryProperties jobRepositoryProperties;
+    private BatchProperties batchProperties;
     private JobInstanceDao jobInstanceDao;
     private JobExecutionDao jobExecutionDao;
     private StepExecutionDao stepExecutionDao;
@@ -32,8 +32,8 @@ public class MarkLogicJobRepositoryFactoryBean extends AbstractJobRepositoryFact
         this.databaseClient = databaseClient;
     }
 
-    public void setJobRepositoryProperties(JobRepositoryProperties jobRepositoryProperties) {
-        this.jobRepositoryProperties = jobRepositoryProperties;
+    public void setJobRepositoryProperties(BatchProperties batchProperties) {
+        this.batchProperties = batchProperties;
     }
 
     @Override
@@ -59,8 +59,8 @@ public class MarkLogicJobRepositoryFactoryBean extends AbstractJobRepositoryFact
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(databaseClient, "DatabaseClient must not be null.");
-        jobInstanceDao = new MarkLogicJobInstanceDao(databaseClient, jobRepositoryProperties);
-        jobExecutionDao = new MarkLogicJobExecutionDao(databaseClient);
+        jobInstanceDao = new MarkLogicJobInstanceDao(databaseClient, batchProperties);
+        jobExecutionDao = new MarkLogicJobExecutionDao(databaseClient, batchProperties);
         stepExecutionDao = new MarkLogicStepExecutionDao(databaseClient, jobExecutionDao);
         executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao, stepExecutionDao);
         super.afterPropertiesSet();

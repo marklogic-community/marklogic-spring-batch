@@ -6,7 +6,7 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.*;
 import com.marklogic.client.query.*;
 import com.marklogic.spring.batch.bind.JobInstanceAdapter;
-import com.marklogic.spring.batch.config.JobRepositoryProperties;
+import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import org.slf4j.Logger;
@@ -37,12 +37,12 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
     private JobKeyGenerator<JobParameters> jobKeyGenerator = new DefaultJobKeyGenerator();
 
     private DatabaseClient databaseClient;
-    private JobRepositoryProperties properties;
+    private BatchProperties properties;
 
     @Autowired
-    public MarkLogicJobInstanceDao(DatabaseClient databaseClient, JobRepositoryProperties jobRepositoryProperties) {
+    public MarkLogicJobInstanceDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
         this.databaseClient = databaseClient;
-        this.properties = jobRepositoryProperties;
+        this.properties = batchProperties;
     }
 
     @Override
