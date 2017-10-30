@@ -6,8 +6,14 @@ import com.marklogic.mgmt.api.restapi.RestApi;
 import com.marklogic.mgmt.api.security.Permission;
 import com.marklogic.mgmt.api.security.ProtectedCollection;
 import com.marklogic.mgmt.api.security.User;
+import org.springframework.core.io.FileSystemResource;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MarkLogicSimpleJobRepositoryConfig {
 
@@ -31,17 +37,9 @@ public class MarkLogicSimpleJobRepositoryConfig {
     }
 
     public String getDatabase(String name) {
-        String DATABASE_JSON = "{\"database-name\": \"%s\",  " +
-                "\"maintain-last-modified\": true,  " +
-                "\"uri-lexicon\": true,  " +
-                "\"collection-lexicon\": true,   " +
-                "\"triple-index\": true,    " +
-                "\"range-element-index\": [" +
-                "{\"scalar-type\": \"dateTime\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"createDateTime\",\"collation\": \"\",\"range-value-positions\": false,\"invalid-values\": \"reject\"}, " +
-                "{\"scalar-type\": \"unsignedLong\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"id\",\"collation\": \"\",\"range-value-positions\": false,\"invalid-values\": \"reject\"  }, " +
-                "{\"scalar-type\": \"string\",\"namespace-uri\": \"http://marklogic.com/spring-batch\",\"localname\": \"jobName\",\"collation\": \"http://marklogic.com/collation/\",\"range-value-positions\": false,\"invalid-values\": \"reject\"  }  ],  " +
-                "\"path-namespace\": [{\"prefix\": \"msb\",\"namespace-uri\": \"http://marklogic.com/spring-batch\"}],  " +
-                "\"range-path-index\": [{\"scalar-type\": \"unsignedLong\",\"collation\": \"\",\"path-expression\": \"/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id\",\"range-value-positions\": false,\"invalid-values\": \"reject\"}]}";
+        InputStream in = getClass().getResourceAsStream("/content-database.json");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String DATABASE_JSON = reader.lines().collect(Collectors.joining());
         return String.format(DATABASE_JSON, name + "-content");
     }
 
