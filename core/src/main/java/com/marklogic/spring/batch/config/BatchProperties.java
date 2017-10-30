@@ -27,7 +27,7 @@ public class BatchProperties {
 
     public String getJobInstanceCollection() { return jobInstanceCollection; }
 
-    public String getJobExecutionCollection() { return jobInstanceCollection; }
+    public String getJobExecutionCollection() { return jobExecutionCollection; }
 
     @Autowired
     public void setSearchOptions(
@@ -54,7 +54,7 @@ public class BatchProperties {
     }
 
     @Autowired
-    public void setSpringBatchCollection(
+    public void setJobExecutionCollection(
             @Value("${batch.jobRepo.jobExecutionCollection:job-execution}") String collection) {
         this.jobExecutionCollection = collection;
     }
