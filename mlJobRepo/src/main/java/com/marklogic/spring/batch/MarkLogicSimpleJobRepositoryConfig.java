@@ -6,7 +6,8 @@ import com.marklogic.mgmt.api.restapi.RestApi;
 import com.marklogic.mgmt.api.security.Permission;
 import com.marklogic.mgmt.api.security.ProtectedCollection;
 import com.marklogic.mgmt.api.security.User;
-import org.springframework.core.io.FileSystemResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -17,13 +18,19 @@ import java.util.stream.Collectors;
 
 public class MarkLogicSimpleJobRepositoryConfig {
 
+    protected Logger logger = LoggerFactory.getLogger(MarkLogicSimpleJobRepositoryConfig.class);
+
     private API api;
+    private ManageClient manageClient;
+
+    public MarkLogicSimpleJobRepositoryConfig(ManageClient manageClient) {
+        this.manageClient = manageClient;
+        this.api = new API(manageClient);
+    }
 
     public ManageClient getManageClient() {
         return manageClient;
     }
-
-    private ManageClient manageClient;
 
     public RestApi getRestApi(String name, int port) {
         RestApi restApi = api.restApi(name, port);
@@ -41,11 +48,6 @@ public class MarkLogicSimpleJobRepositoryConfig {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String DATABASE_JSON = reader.lines().collect(Collectors.joining());
         return String.format(DATABASE_JSON, name + "-content");
-    }
-
-    public MarkLogicSimpleJobRepositoryConfig(ManageClient manageClient) {
-        this.manageClient = manageClient;
-        this.api = new API(manageClient);
     }
 
     public ProtectedCollection getProtectedCollection() {
@@ -88,83 +90,11 @@ public class MarkLogicSimpleJobRepositoryConfig {
     }
 
     public String getSpringBatchOptions() {
-        return "<options xmlns=\"http://marklogic.com/appservices/search\">\n" +
-                "    <constraint name=\"jobInstance\">\n" +
-                "        <element-query name=\"jobInstance\" ns=\"http://marklogic.com/spring-batch\" />\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"jobInstanceId\">\n" +
-                "        <value>\n" +
-                "            <element name=\"id\" ns=\"http://marklogic.com/spring-batch\" />\n" +
-                "        </value>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"jobName\">\n" +
-                "        <value>\n" +
-                "            <element name=\"jobName\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
-                "        </value>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"jobKey\">\n" +
-                "        <value>\n" +
-                "            <element name=\"jobKey\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
-                "        </value>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"jobParameter\">\n" +
-                "        <value>\n" +
-                "            <element name=\"jobParameter\" ns=\"http://marklogic.com/spring-batch/job-parameter\" />  \n" +
-                "        </value>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"status\">\n" +
-                "        <value>\n" +
-                "            <element name=\"status\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
-                "        </value>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"jobExecutionId\">\n" +
-                "        <range type=\"xs:unsignedLong\" facet=\"false\">\n" +
-                "              <path-index xmlns:msb=\"http://marklogic.com/spring-batch\">/msb:mlJobInstance/msb:jobExecutions/msb:jobExecution/msb:id</path-index>\n" +
-                "        </range>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"endDateTime\">\n" +
-                "        <container>\n" +
-                "            <element name=\"endDateTime\" ns=\"http://marklogic.com/spring-batch\" />  \n" +
-                "        </container>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"type\">\n" +
-                "        <collection prefix=\"http://marklogic.com/spring-batch/\" facet=\"false\" />\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"jobExecution-createDateTime\">\n" +
-                "        <range>\n" +
-                "            <element ns=\"http://marklogic.com/spring-batch\" name=\"createDateTime\"/>\n" +
-                "        </range>\n" +
-                "    </constraint>\n" +
-                "    <constraint name=\"jobInstance-createDateTime\">\n" +
-                "        <range>\n" +
-                "            <element ns=\"http://marklogic.com/spring-batch\" name=\"createDateTime\"/>\n" +
-                "        </range>\n" +
-                "    </constraint>\n" +
-                "    <values name=\"jobExecutionId\">\n" +
-                "        <range type=\"xs:unsignedLong\">\n" +
-                "              <element ns=\"http://marklogic.com/spring-batch\" name=\"id\" />\n" +
-                "        </range>\n" +
-                "      </values>\n" +
-                "    <values name=\"jobInstanceId\">\n" +
-                "        <range type=\"xs:unsignedLong\">\n" +
-                "              <element ns=\"http://marklogic.com/spring-batch\" name=\"id\" />\n" +
-                "        </range>\n" +
-                "      </values>\n" +
-                "      <values name=\"jobName\">\n" +
-                "        <range type=\"xs:string\">\n" +
-                "              <element ns=\"http://marklogic.com/spring-batch\" name=\"jobName\" />\n" +
-                "        </range>\n" +
-                "      </values>\n" +
-                "    <operator name=\"sort\">\n" +
-                "           <state name=\"date\">\n" +
-                "              <sort-order direction=\"descending\" type=\"xs:dateTime\">\n" +
-                "                 <element ns=\"http://marklogic.com/spring-batch\" name=\"createDateTime\"/>\n" +
-                "              </sort-order>\n" +
-                "        </state>\n" +
-                "     </operator>\n" +
-                "    <transform-results apply=\"raw\" />\n" +
-                "</options>";
-
+        InputStream in = getClass().getResourceAsStream("/options.xml");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String options = reader.lines().collect(Collectors.joining());
+        logger.info(options);
+        return options;
     }
 
 }
