@@ -28,7 +28,9 @@ public class JobInstanceAdapter extends XmlAdapter<AdaptedJobInstance, JobInstan
     @Override
     public AdaptedJobInstance marshal(JobInstance v) throws Exception {
         AdaptedJobInstance aji = new AdaptedJobInstance(v);
-        aji.setJobKey(jobParameters);
+        if (!(jobParameters == null)) {
+            aji.setJobKey(jobParameters);
+        }
         return aji;
     }
 
