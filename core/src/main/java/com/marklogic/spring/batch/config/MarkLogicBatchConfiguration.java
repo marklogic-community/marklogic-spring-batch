@@ -13,6 +13,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import java.util.List;
 
 @Configuration
+@ComponentScan("com.marklogic.spring.batch.config")
 @PropertySource(value = "classpath:job.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:job.properties", ignoreResourceNotFound = true)
 public class MarkLogicBatchConfiguration {

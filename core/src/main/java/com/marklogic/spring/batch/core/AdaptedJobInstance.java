@@ -3,7 +3,10 @@ package com.marklogic.spring.batch.core;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.springframework.batch.core.DefaultJobKeyGenerator;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobKeyGenerator;
+import org.springframework.batch.core.JobParameters;
 
 @XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 @XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
@@ -12,6 +15,9 @@ public class AdaptedJobInstance {
 	private Long id;
 	private Integer version = 0;
 	private String jobName;
+	private String jobKey;
+
+	private JobKeyGenerator<JobParameters> jobKeyGenerator = new DefaultJobKeyGenerator();
 	
 	public AdaptedJobInstance() { }
 	
@@ -24,10 +30,16 @@ public class AdaptedJobInstance {
 		}
 		this.jobName = jobInstance.getJobName();
 	}
+
+	public AdaptedJobInstance(JobInstance jobInstance, JobParameters jobParameters) {
+		this(jobInstance);
+		setJobKey(jobKeyGenerator.generateKey(jobParameters));
+	}
 	
 	public String getJobName() {
 		return jobName;
 	}
+
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
 	}
@@ -48,4 +60,13 @@ public class AdaptedJobInstance {
 		this.version = version;
 	}
 
+	public String getJobKey() { return jobKey; }
+
+	public void setJobKey(String jobKey) {
+		this.jobKey = jobKey;
+	}
+
+	public void setJobKey(JobParameters jobParameters) {
+		this.jobKey = jobKeyGenerator.generateKey(jobParameters);
+	}
 }
