@@ -1,7 +1,7 @@
 package com.marklogic.spring.batch.core.explore;
 
-import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import com.marklogic.spring.batch.JobParametersTestUtils;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobInstance;
@@ -14,7 +14,7 @@ public class GetJobInstancesTest extends AbstractJobRepositoryTest {
     private final String JOB_NAME = "testJob";
     private final String JOB_NAME_2 = JOB_NAME + "2";
     private final String JOB_NAME_3 = JOB_NAME + "3";
-    
+
     @Before
     public void initialize() {
         initializeJobRepository();

@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.test;
 
-import com.marklogic.spring.batch.config.JobRepositoryProperties;
+import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.repository.MarkLogicSimpleJobRepository;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
 import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
@@ -16,7 +16,7 @@ import org.springframework.batch.core.repository.dao.StepExecutionDao;
 
 public abstract class AbstractJobRepositoryTest extends AbstractSpringBatchTest {
 
-    private JobRepositoryProperties jobRepositoryProperties;
+    private BatchProperties batchProperties;
     private JobInstanceDao jobInstanceDao;
     private JobExecutionDao jobExecutionDao;
     private StepExecutionDao stepExecutionDao;
@@ -25,8 +25,8 @@ public abstract class AbstractJobRepositoryTest extends AbstractSpringBatchTest 
     private JobExplorer jobExplorer;
 
     protected void initializeJobRepository() {
-        jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), jobRepositoryProperties);
-        jobExecutionDao = new MarkLogicJobExecutionDao(getClient());
+        jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), batchProperties);
+        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), batchProperties);
         stepExecutionDao = new MarkLogicStepExecutionDao(getClient(), jobExecutionDao);
         executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao, stepExecutionDao);
         jobRepository = new MarkLogicSimpleJobRepository(jobInstanceDao, jobExecutionDao,

@@ -80,7 +80,7 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
         String uri = getUri(jobInstance.getInstanceId());
         //Set document metadata
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        metadata.withCollections(properties.getCollection());
+        metadata.withCollections(properties.getCollection(), properties.getJobInstanceCollection());
         xmlDocMgr.write(uri, metadata, handle);
         //xmlDocMgr.write(uri, handle);
         logger.trace("jobInstance: " + uri);
@@ -97,7 +97,7 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
                 qb.and(
                   qb.valueConstraint("jobKey", jobKeyGenerator.generateKey(jobParameters)),
                   qb.valueConstraint("jobName", jobName),
-                  qb.collection(properties.getCollection())
+                  qb.collection(properties.getJobInstanceCollection())
                 );
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
@@ -194,7 +194,7 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
         StructuredQueryDefinition querydef =
                 qb.and(
                         qb.valueConstraint("jobName", jobName),
-                        qb.collection(properties.getCollection())
+                        qb.collection(properties.getJobInstanceCollection())
                 );
         queryMgr.setPageLength((long) count);
         SearchHandle results = queryMgr.search(querydef, new SearchHandle(), start);
@@ -215,7 +215,7 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
         StructuredQueryDefinition querydef =
                 qb.and(
                         qb.valueConstraint("jobName", jobName),
-                        qb.collection(properties.getCollection())
+                        qb.collection(properties.getJobInstanceCollection())
                 );
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());

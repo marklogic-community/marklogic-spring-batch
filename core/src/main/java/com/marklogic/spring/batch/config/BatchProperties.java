@@ -9,6 +9,8 @@ public class BatchProperties {
 
     private String jobRepostioryDirectory;
     private String collection;
+    private String jobInstanceCollection;
+    private String jobExecutionCollection;
     private String searchOptions;
 
     public String getJobRepositoryDirectory() {
@@ -23,6 +25,10 @@ public class BatchProperties {
         return searchOptions;
     }
 
+    public String getJobInstanceCollection() { return jobInstanceCollection; }
+
+    public String getJobExecutionCollection() { return jobInstanceCollection; }
+
     @Autowired
     public void setSearchOptions(
             @Value("${batch.jobRepo.searchOptions:spring-batch}") String searchOptions) {
@@ -36,9 +42,21 @@ public class BatchProperties {
     }
 
     @Autowired
-    public void setSpringBatchCollection(
+    public void setCollection(
             @Value("${batch.jobRepo.collection:batch}") String collection) {
         this.collection = collection;
+    }
+
+    @Autowired
+    public void setJobInstanceCollection(
+            @Value("${batch.jobRepo.jobInstanceCollection:job-instance}") String collection) {
+        this.jobInstanceCollection = collection;
+    }
+
+    @Autowired
+    public void setSpringBatchCollection(
+            @Value("${batch.jobRepo.jobExecutionCollection:job-execution}") String collection) {
+        this.jobExecutionCollection = collection;
     }
 
 
