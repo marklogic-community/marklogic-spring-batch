@@ -8,7 +8,10 @@ import com.marklogic.xcc.template.XccTemplate;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -80,14 +83,12 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
             execs.add(exec);
             jobExecutionDao.saveJobExecution(exec);
         }
-
+        Collections.reverse(execs);
         List<JobExecution> retrieved = jobExecutionDao.findJobExecutions(jobInstance);
-        Collections.reverse(retrieved);
 
         for (int i = 0; i < 10; i++) {
             assertExecutionsAreEqual(execs.get(i), retrieved.get(i));
         }
-
     }
 
     /**
@@ -144,7 +145,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
         exec1.setCreateTime(new Date(0));
 
         JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
-        exec2.setCreateTime(new Date(1));
+        exec2.setCreateTime(new Date(10));
 
         jobExecutionDao.saveJobExecution(exec1);
         jobExecutionDao.saveJobExecution(exec2);
@@ -254,7 +255,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
         JobExecution exec1 = new JobExecution(jobInstance, jobParameters);
         jobExecutionDao.saveJobExecution(exec1);
 /*
-		JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
+        JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
 		exec2.setId(exec1.getId());
 
 		exec2.incrementVersion();

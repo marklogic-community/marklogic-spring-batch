@@ -38,11 +38,6 @@
     <constraint name="type">
         <collection prefix="http://marklogic.com/spring-batch/" facet="false" />
     </constraint>
-    <constraint name="endDateTime">
-        <container>
-            <element name="endDateTime" ns="http://marklogic.com/spring-batch" />
-        </container>
-    </constraint>
     <values name="id">
         <range type="xs:unsignedLong">
               <element ns="http://marklogic.com/spring-batch" name="id" />
@@ -58,12 +53,15 @@
               <element ns="http://marklogic.com/spring-batch" name="jobName" />
         </range>
     </values>
+    <sort-order type="xs:dateTime" direction="descending">
+        <element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
+    </sort-order>
     <operator name="sort">
-           <state name="date">
-              <sort-order direction="descending" type="xs:dateTime">
-                 <element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
-              </sort-order>
+        <state name="date">
+            <sort-order direction="descending" type="xs:dateTime">
+                <element ns="http://marklogic.com/spring-batch" name="createDateTime"/>
+            </sort-order>
         </state>
-     </operator>
+    </operator>
     <transform-results apply="raw" />
 </options>

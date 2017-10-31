@@ -55,8 +55,10 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         validateJobExecution(jobExecution);
 
         jobExecution.incrementVersion();
-        jobExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
 
+        if (jobExecution.getId() == null) {
+            jobExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
+        }
         AdaptedJobExecution aJobInstance;
         try {
             aJobInstance = adapter.marshal(jobExecution);
@@ -84,8 +86,6 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
      * @throws IllegalArgumentException
      */
     private void validateJobExecution(JobExecution jobExecution) {
-
-        Assert.notNull(jobExecution);
         Assert.notNull(jobExecution.getJobId(), "JobExecution Job-Id cannot be null.");
         Assert.notNull(jobExecution.getStatus(), "JobExecution status cannot be null.");
         Assert.notNull(jobExecution.getCreateTime(), "JobExecution create time cannot be null");
@@ -104,27 +104,9 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         if (je == null) {
             throw new NoSuchObjectException("JobExecution " + jobExecution.getJobInstance().getJobName() + " " + jobExecution.getId() + " not found");
         }
-
-
-        XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
-        String uri = getUri(jobExecution);
-
         synchronized (jobExecution) {
-            DocumentDescriptor desc = xmlDocMgr.exists(uri);
-
-            if (desc == null) {
-                throw new NoSuchObjectException("Invalid JobExecution, Document " + uri + " not found.");
-            }
             jobExecution.setVersion(jobExecution.getVersion() + 1);
-            JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<>(jaxbContext());
-            xmlDocMgr.read(uri, handle);
-            MarkLogicJobInstance mji = handle.get();
-            mji.updateJobExecution(jobExecution);
-            //Set document metadata
-            DocumentMetadataHandle jobExecutionMetadata = new DocumentMetadataHandle();
-            jobExecutionMetadata.withCollections(properties.getCollection(), properties.getJobExecutionCollection());
-            xmlDocMgr.write(desc, jobExecutionMetadata, handle);
-            //logger.info("update JobExecution:" + uri + "," + desc.getVersion());
+            saveJobExecution(jobExecution);
         }
     }
 
@@ -157,7 +139,8 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
     @Override
     public JobExecution getLastJobExecution(JobInstance jobInstance) {
         List<JobExecution> jobExecutions = findJobExecutions(jobInstance);
-        if (jobExecutions.size() > 0) {
+        int size = jobExecutions.size();
+        if (size > 0) {
             return jobExecutions.get(0);
         } else {
             return null;
