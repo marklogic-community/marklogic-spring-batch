@@ -191,6 +191,10 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
                 throw new RuntimeException(ex);
             }
         }
+
+
+        jobExec.addStepExecutions(null);
+
         return jobExec;
 
     }

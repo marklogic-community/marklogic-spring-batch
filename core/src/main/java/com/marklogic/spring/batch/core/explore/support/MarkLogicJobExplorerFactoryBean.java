@@ -70,7 +70,7 @@ public class MarkLogicJobExplorerFactoryBean extends AbstractJobExplorerFactoryB
         Assert.notNull(databaseClient, "DatabaseClient must not be null.");
         jobInstanceDao = new MarkLogicJobInstanceDao(databaseClient, batchProperties);
         jobExecutionDao = new MarkLogicJobExecutionDao(databaseClient, batchProperties);
-        stepExecutionDao = new MarkLogicStepExecutionDao(databaseClient, jobExecutionDao);
+        stepExecutionDao = new MarkLogicStepExecutionDao(databaseClient, jobExecutionDao, batchProperties);
         executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao, stepExecutionDao);
     }
 }

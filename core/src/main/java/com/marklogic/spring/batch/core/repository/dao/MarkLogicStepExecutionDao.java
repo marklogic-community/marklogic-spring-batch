@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
@@ -148,28 +149,22 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
     @Override
     public StepExecution getStepExecution(JobExecution jobExecution, Long stepExecutionId) {
-        JobExecution je = jobExecutionDao.getJobExecution(jobExecution.getId());
-        if (je == null) {
-            return null;
+        XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
+        String uri = properties.getJobRepositoryDirectory() + "/" +
+                jobExecution.getJobInstance().getId() + "/" +
+                jobExecution.getId() + "/" +
+                stepExecutionId + ".xml";
+        JAXBHandle<AdaptedStepExecution> jaxbHandle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
+        DocumentPage page = docMgr.read(uri);
+        AdaptedStepExecution ase = page.next().getContent(jaxbHandle).get();
+        StepExecution stepExecution = null;
+        try {
+            stepExecution = adapter.unmarshal(ase);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            throw new RuntimeException(ex);
         }
-        List<StepExecution> executions = new ArrayList<>(je.getStepExecutions());
-
-        if (executions.isEmpty()) {
-            return null;
-        }
-
-        StepExecution execution = null;
-        for (StepExecution se : executions) {
-            if (se.getId().equals(stepExecutionId)) {
-                execution = se;
-            }
-        }
-
-        if (execution == null) {
-            return null;
-        } else {
-            return execution;
-        }
+        return stepExecution;
     }
 
     @Override
