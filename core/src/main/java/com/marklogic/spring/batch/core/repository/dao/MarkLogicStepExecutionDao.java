@@ -60,15 +60,16 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
     @Override
     public void saveStepExecution(StepExecution stepExecution) {
 
+        Assert.isTrue(stepExecution.getId() == null);
+        Assert.isTrue(stepExecution.getVersion() == null);
+
         Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
         JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecution().getId());
         Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
         validateStepExecution(stepExecution);
 
-        if (stepExecution.getId() == null) {
-            stepExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
-        }
+        stepExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
         stepExecution.incrementVersion();
 
         AdaptedStepExecution adaptedStepExecution = null;
@@ -128,7 +129,25 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
         validateStepExecution(stepExecution);
-        saveStepExecution(stepExecution);
+        stepExecution.incrementVersion();
+
+        synchronized (stepExecution) {
+            XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
+            String uri = getUri(stepExecution);
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.withCollections(properties.getCollection(), properties.getStepExecutionCollection());
+            AdaptedStepExecution ase = null;
+            try {
+                ase = adapter.marshal(stepExecution);
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                throw new RuntimeException(ex);
+            }
+            JAXBHandle<AdaptedStepExecution> jaxbHandle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
+            jaxbHandle.set(ase);
+            docMgr.write(uri, metadata, jaxbHandle);
+        }
+
 
 
     }
