@@ -26,6 +26,7 @@ import org.springframework.util.Assert;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -153,7 +154,12 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
                                 qb.valueConstraint("jobName", jobName),
                                 qb.collection("job-execution")
                         ),
-                        qb.and()
+                        qb.range(
+                                qb.element(new QName(properties.getBatchNamespace(), "endDateTime")),
+                                "xs:dateTime",
+                                Operator.GT,
+                                "1917-01-01T00:00:00.0"
+                                )
                 );
         logger.info(querydef.serialize());
         QueryManager queryMgr = databaseClient.newQueryManager();
@@ -191,9 +197,6 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
                 throw new RuntimeException(ex);
             }
         }
-
-
-        jobExec.addStepExecutions(null);
 
         return jobExec;
 
