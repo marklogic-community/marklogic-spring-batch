@@ -14,14 +14,12 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
-import com.marklogic.spring.batch.core.AdaptedJobInstance;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,11 @@ import org.springframework.util.Assert;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import java.util.*;
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -39,17 +41,13 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private DatabaseClient databaseClient;
     private BatchProperties properties;
+    private JobExecutionAdapter adapter;
 
     @Autowired
     public MarkLogicJobExecutionDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
         this.databaseClient = databaseClient;
         this.properties = batchProperties;
-    }
-
-    private String getUri(JobExecution jobExecution) {
-        return properties.getJobRepositoryDirectory() + "/" +
-                jobExecution.getJobInstance().getInstanceId() + "/" +
-                jobExecution.getId() + ".xml";
+        this.adapter = new JobExecutionAdapter();
     }
 
     @Override
@@ -59,7 +57,6 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         jobExecution.incrementVersion();
         jobExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
 
-        JobExecutionAdapter adapter = new JobExecutionAdapter();
         AdaptedJobExecution aJobInstance;
         try {
             aJobInstance = adapter.marshal(jobExecution);
@@ -131,7 +128,6 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         }
     }
 
-
     @Override
     public List<JobExecution> findJobExecutions(JobInstance jobInstance) {
         String directory = properties.getJobRepositoryDirectory() + "/" + jobInstance.getId() + "/";
@@ -144,7 +140,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
         MatchDocumentSummary[] summaries = results.getMatchResults();
         List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
-        JobExecutionAdapter adapter = new JobExecutionAdapter();
+
         for (MatchDocumentSummary summary : summaries) {
             JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
             summary.getFirstSnippet(jaxbHandle);
@@ -171,19 +167,32 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
     @Override
     public Set<JobExecution> findRunningJobExecutions(String jobName) {
         StructuredQueryBuilder qb = new StructuredQueryBuilder(properties.getSearchOptions());
-        StructuredQueryDefinition querydef = qb.and(qb.valueConstraint("jobName", jobName));
+        StructuredQueryDefinition querydef =
+                qb.andNot(
+                        qb.and(
+                                qb.valueConstraint("jobName", jobName),
+                                qb.collection("job-execution")
+                        ),
+                        qb.and(
+                                qb.containerQuery(
+                                        qb.element(new QName(properties.getBatchNamespace(), "endDateTime")),
+                                        qb.and(null)
+                                )
+                        )
+                );
         logger.info(querydef.serialize());
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
-        Set<JobExecution> jobExecutions = new HashSet<>();
+        Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
         for (MatchDocumentSummary summary : results.getMatchResults()) {
-            JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<>(jaxbContext());
+            JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<>(jaxbContext());
             summary.getFirstSnippet(handle);
-            MarkLogicJobInstance mji = handle.get();
-            for (JobExecution je : mji.getJobExecutions()) {
-                if (je.getStatus().isRunning() && je.getEndTime() == null) {
-                    jobExecutions.add(je);
-                }
+            AdaptedJobExecution aje  = handle.get();
+            try {
+                jobExecutions.add(adapter.unmarshal(aje));
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                throw new RuntimeException(ex);
             }
         }
         return jobExecutions;
@@ -193,19 +202,18 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
     public JobExecution getJobExecution(Long executionId) {
         JobExecution jobExec = null;
         StructuredQueryBuilder qb = new StructuredQueryBuilder(properties.getSearchOptions());
-        StructuredQueryDefinition querydef = qb.rangeConstraint("jobExecutionId", Operator.EQ, executionId.toString());
+        StructuredQueryDefinition querydef = qb.rangeConstraint("id", Operator.EQ, executionId.toString());
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
         if (results.getTotalResults() > 0L) {
             MatchDocumentSummary[] summaries = results.getMatchResults();
-            JAXBHandle<MarkLogicJobInstance> handle = new JAXBHandle<>(jaxbContext());
-            MarkLogicJobInstance mji = summaries[0].getFirstSnippet(handle).get();
-            if (mji.getJobExecutions().size() >= 1) {
-                for (JobExecution je : mji.getJobExecutions()) {
-                    if (je.getId().equals(executionId)) {
-                        jobExec = je;
-                    }
-                }
+            JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<>(jaxbContext());
+            AdaptedJobExecution aje = summaries[0].getFirstSnippet(handle).get();
+            try {
+                jobExec = adapter.unmarshal(aje);
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                throw new RuntimeException(ex);
             }
         }
         return jobExec;
@@ -223,6 +231,13 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
             jobExecution.setVersion(currentVersion);
         }
     }
+
+    private String getUri(JobExecution jobExecution) {
+        return properties.getJobRepositoryDirectory() + "/" +
+                jobExecution.getJobInstance().getInstanceId() + "/" +
+                jobExecution.getId() + ".xml";
+    }
+
 
     protected JAXBContext jaxbContext() {
         JAXBContext jaxbContext;

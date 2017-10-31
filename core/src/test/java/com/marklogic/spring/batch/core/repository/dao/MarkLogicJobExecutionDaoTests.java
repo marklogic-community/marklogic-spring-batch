@@ -1,14 +1,17 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
+import com.marklogic.xcc.template.XccTemplate;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -25,14 +28,26 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
     @Autowired
     protected BatchProperties batchProperties;
 
+    @Autowired
+    protected DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        setDatabaseClientProvider(applicationContext.getBean("markLogicJobRepositoryDatabaseClientProvider", DatabaseClientProvider.class));
+        XccTemplate template = new XccTemplate("xcc://admin:admin@oscar:8201/mlJobRepo-content");
+        setXccTemplate(template);
+    }
+
     @Before
     public void onSetUp() throws Exception {
+        setDatabaseClientProvider(markLogicJobRepositoryDatabaseClientProvider);
         jobParameters = new JobParameters();
         jobInstance = new JobInstance(12345L, "execJob");
         execution = new JobExecution(jobInstance, new JobParameters());
         execution.setStartTime(new Date(System.currentTimeMillis()));
         execution.setLastUpdated(new Date(System.currentTimeMillis()));
-        execution.setExitStatus(ExitStatus.UNKNOWN);
+        //execution.setExitStatus(ExitStatus.UNKNOWN);
         execution.setEndTime(new Date(System.currentTimeMillis()));
         jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), batchProperties);
     }
@@ -43,9 +58,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
     @Transactional
     @Test
     public void testSaveAndFind() {
-
         jobExecutionDao.saveJobExecution(execution);
-
         List<JobExecution> executions = jobExecutionDao.findJobExecutions(jobInstance);
         assertEquals(1, executions.size());
         assertEquals(execution, executions.get(0));
@@ -168,11 +181,12 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
         exec.createStepExecution("step");
         jobExecutionDao.saveJobExecution(exec);
 /*
-        if (getStepExecutionDao() != null) {
-			for (StepExecution stepExecution : exec.getStepExecutions()) {
-				getStepExecutionDao().saveStepExecution(stepExecution);
-			}
-		}
+        StepExecutionDao stepExecutionDao = getStepExecutionDao();
+        if (stepExecutionDao != null) {
+            for (StepExecution stepExecution : exec.getStepExecutions()) {
+                stepExecutionDao.saveStepExecution(stepExecution);
+            }
+        }
 */
         Set<JobExecution> values = jobExecutionDao.findRunningJobExecutions(exec.getJobInstance().getJobName());
 
@@ -180,7 +194,6 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
         JobExecution value = values.iterator().next();
         assertEquals(exec, value);
         assertEquals(5L, value.getLastUpdated().getTime());
-
     }
 
     /**

@@ -12,6 +12,11 @@ public class BatchProperties {
     private String jobInstanceCollection;
     private String jobExecutionCollection;
     private String searchOptions;
+    private String batchNamespace;
+
+    public String getBatchNamespace() {
+        return batchNamespace;
+    }
 
     public String getJobRepositoryDirectory() {
         return jobRepostioryDirectory;
@@ -57,6 +62,12 @@ public class BatchProperties {
     public void setJobExecutionCollection(
             @Value("${batch.jobRepo.jobExecutionCollection:job-execution}") String collection) {
         this.jobExecutionCollection = collection;
+    }
+
+    @Autowired
+    public void setBatchNamespace(
+            @Value("${batch.jobRepo.namespace:http://marklogic.com/spring-batch}") String batchNamespace) {
+        this.batchNamespace = batchNamespace;
     }
 
 
