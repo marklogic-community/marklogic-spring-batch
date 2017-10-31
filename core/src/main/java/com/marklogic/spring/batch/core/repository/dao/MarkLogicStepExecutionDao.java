@@ -5,6 +5,11 @@ import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.MatchDocumentSummary;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.StepExecutionAdapter;
 import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
@@ -149,7 +154,6 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         }
 
 
-
     }
 
     @Override
@@ -174,10 +178,33 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
     @Override
     public void addStepExecutions(JobExecution jobExecution) {
-        Collection<StepExecution> stepExecutions = jobExecutionDao.getJobExecution(jobExecution.getId()).getStepExecutions();
-        List<StepExecution> stepExecutionList = new ArrayList<>(stepExecutions);
+        List<StepExecution> stepExecutionList = new ArrayList<StepExecution>();
+        StructuredQueryBuilder qb = new StructuredQueryBuilder(properties.getSearchOptions());
+        String directoryUri = properties.getJobRepositoryDirectory() + "/" +
+                jobExecution.getJobInstance().getId() + "/" +
+                jobExecution.getId() + "/";
+        StructuredQueryDefinition querydef = qb.and(
+                qb.collection(properties.getStepExecutionCollection()),
+                qb.directory(true, directoryUri)
+        );
+        QueryManager queryMgr = databaseClient.newQueryManager();
+        SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+        if (results.getTotalResults() > 0L) {
+            MatchDocumentSummary[] summaries = results.getMatchResults();
+            for (MatchDocumentSummary summary : summaries) {
+                JAXBHandle<AdaptedStepExecution> handle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
+                AdaptedStepExecution ase = summaries[0].getFirstSnippet(handle).get();
+                StepExecution stepExecution = null;
+                try {
+                    stepExecution = adapter.unmarshal(ase);
+                } catch (Exception ex) {
+                    logger.error(ex.getMessage());
+                    throw new RuntimeException(ex);
+                }
+                stepExecutionList.add(stepExecution);
+            }
+        }
         jobExecution.addStepExecutions(stepExecutionList);
-
     }
 
     private void validateStepExecution(StepExecution stepExecution) {
