@@ -82,7 +82,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
     @Test
     public void testSaveAndGetExecutions() {
 
-        List<StepExecution> stepExecutions = new ArrayList<>();
+        List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
         for (int i = 0; i < 3; i++) {
             StepExecution se = new StepExecution("step" + i, jobExecution);
             se.setStatus(BatchStatus.STARTED);

@@ -105,20 +105,12 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
             JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
             Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
-            List<StepExecution> stepExecutionList = new ArrayList<>();
-
             for (StepExecution stepExecution : stepExecutions) {
                 Assert.isTrue(stepExecution.getId() == null);
                 Assert.isTrue(stepExecution.getVersion() == null);
                 validateStepExecution(stepExecution);
-
-                //stepExecution.setId(incrementer.nextLongValue());
-                stepExecution.incrementVersion();
-                stepExecutionList.add(stepExecution);
+                saveStepExecution(stepExecution);
             }
-
-            jobExecution.addStepExecutions(stepExecutionList);
-            jobExecutionDao.updateJobExecution(jobExecution);
         }
     }
 
