@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.JobInstance;
