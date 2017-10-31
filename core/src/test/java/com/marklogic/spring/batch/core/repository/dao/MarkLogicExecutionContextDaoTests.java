@@ -1,47 +1,49 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.batch.core.*;
+import org.springframework.batch.core.repository.dao.ExecutionContextDao;
+import org.springframework.batch.core.repository.dao.JobExecutionDao;
+import org.springframework.batch.core.repository.dao.JobInstanceDao;
+import org.springframework.batch.core.repository.dao.StepExecutionDao;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.transaction.annotation.Transactional;
-
 public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest {
 
+	private ExecutionContextDao dao;
+	private JobInstanceDao jobInstanceDao;
+	private JobExecutionDao jobExecutionDao;
+	private StepExecutionDao stepExecutionDao;
 	private JobExecution jobExecution;
-
 	private StepExecution stepExecution;
 
 	@Before
 	public void setUp() {
-		initializeJobRepository();
-		JobInstance ji = getJobInstanceDao().createJobInstance("testJob", new JobParameters());
+		dao = new MarkLogicExecutionContextDao(null, null);
+		JobInstance ji = jobInstanceDao.createJobInstance("testJob", new JobParameters());
 		jobExecution = new JobExecution(ji, new JobParameters());
-		getJobExecutionDao().saveJobExecution(jobExecution);
+		jobExecutionDao.saveJobExecution(jobExecution);
 		stepExecution = new StepExecution("stepName", jobExecution);
-		getStepExecutionDao().saveStepExecution(stepExecution);
+		stepExecutionDao.saveStepExecution(stepExecution);
 
 	}
 
 	@Transactional
 	@Test
 	public void testSaveAndFindJobContext() {
-
 		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
-		getExecutionContextDao().saveExecutionContext(jobExecution);
+		dao.saveExecutionContext(jobExecution);
 
-		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(jobExecution);
+		ExecutionContext retrieved = dao.getExecutionContext(jobExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -51,9 +53,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 
 		List<StepExecution> stepExecutions = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
-			JobInstance ji = getJobInstanceDao().createJobInstance("testJob" + i, new JobParameters());
+			JobInstance ji = jobInstanceDao.createJobInstance("testJob" + i, new JobParameters());
 			JobExecution je = new JobExecution(ji, new JobParameters());
-			getJobExecutionDao().saveJobExecution(je);
+			jobExecutionDao.saveJobExecution(je);
 			StepExecution se = new StepExecution("step" + i, je);
 			se.setStatus(BatchStatus.STARTED);
 			se.setReadSkipCount(i);
@@ -67,11 +69,11 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 			se.setWriteCount(i);
 			stepExecutions.add(se);
 		}
-		getStepExecutionDao().saveStepExecutions(stepExecutions);
-		getExecutionContextDao().saveExecutionContexts(stepExecutions);
+		stepExecutionDao.saveStepExecutions(stepExecutions);
+		dao.saveExecutionContexts(stepExecutions);
 
 		for (int i = 0; i < 3; i++) {
-			ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecutions.get(i).getJobExecution());
+			ExecutionContext retrieved = dao.getExecutionContext(stepExecutions.get(i).getJobExecution());
 			assertEquals(stepExecutions.get(i).getExecutionContext(), retrieved);
 		}
 	}
@@ -79,13 +81,13 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 	@Transactional
 	@Test(expected = IllegalArgumentException.class)
 	public void testSaveNullExecutionContexts() {
-		getExecutionContextDao().saveExecutionContexts(null);
+		dao.saveExecutionContexts(null);
 	}
 
 	@Transactional
 	@Test
 	public void testSaveEmptyExecutionContexts() {
-		getExecutionContextDao().saveExecutionContexts(new ArrayList<StepExecution>());
+		dao.saveExecutionContexts(new ArrayList<StepExecution>());
 	}
 
 	@Transactional
@@ -94,9 +96,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 
 		ExecutionContext ctx = new ExecutionContext();
 		jobExecution.setExecutionContext(ctx);
-		getExecutionContextDao().saveExecutionContext(jobExecution);
+		dao.saveExecutionContext(jobExecution);
 
-		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(jobExecution);
+		ExecutionContext retrieved = dao.getExecutionContext(jobExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -107,12 +109,12 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 		ExecutionContext ctx = new ExecutionContext(Collections
 				.singletonMap("key", "value"));
 		jobExecution.setExecutionContext(ctx);
-		getExecutionContextDao().saveExecutionContext(jobExecution);
+		dao.saveExecutionContext(jobExecution);
 
 		ctx.putLong("longKey", 7);
-		getExecutionContextDao().updateExecutionContext(jobExecution);
+		dao.updateExecutionContext(jobExecution);
 
-		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(jobExecution);
+		ExecutionContext retrieved = dao.getExecutionContext(jobExecution);
 		assertEquals(ctx, retrieved);
 		assertEquals(7, retrieved.getLong("longKey"));
 	}
@@ -123,9 +125,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 
 		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
-		getExecutionContextDao().saveExecutionContext(stepExecution);
+		dao.saveExecutionContext(stepExecution);
 
-		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecution);
+		ExecutionContext retrieved = dao.getExecutionContext(stepExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -135,9 +137,9 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 
 		ExecutionContext ctx = new ExecutionContext();
 		stepExecution.setExecutionContext(ctx);
-		getExecutionContextDao().saveExecutionContext(stepExecution);
+		dao.saveExecutionContext(stepExecution);
 
-		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecution);
+		ExecutionContext retrieved = dao.getExecutionContext(stepExecution);
 		assertEquals(ctx, retrieved);
 	}
 
@@ -147,12 +149,12 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 
 		ExecutionContext ctx = new ExecutionContext(Collections.singletonMap("key", "value"));
 		stepExecution.setExecutionContext(ctx);
-		getExecutionContextDao().saveExecutionContext(stepExecution);
+		dao.saveExecutionContext(stepExecution);
 
 		ctx.putLong("longKey", 7);
-		getExecutionContextDao().updateExecutionContext(stepExecution);
+		dao.updateExecutionContext(stepExecution);
 
-		ExecutionContext retrieved = getExecutionContextDao().getExecutionContext(stepExecution);
+		ExecutionContext retrieved = dao.getExecutionContext(stepExecution);
 		assertEquals(ctx, retrieved);
 		assertEquals(7, retrieved.getLong("longKey"));
 	}
@@ -164,8 +166,8 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
 		ExecutionContext ec = new ExecutionContext();
 		ec.put("intValue", 343232);
 		stepExecution.setExecutionContext(ec);
-		getExecutionContextDao().saveExecutionContext(stepExecution);
-		ExecutionContext restoredEc = getExecutionContextDao().getExecutionContext(stepExecution);
+		dao.saveExecutionContext(stepExecution);
+		ExecutionContext restoredEc = dao.getExecutionContext(stepExecution);
 		assertEquals(ec, restoredEc);
 	}
 

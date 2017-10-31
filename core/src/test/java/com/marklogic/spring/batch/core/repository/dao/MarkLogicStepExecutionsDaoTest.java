@@ -17,6 +17,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 
+import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 import com.marklogic.spring.batch.core.step.StepSupport;
@@ -27,11 +28,11 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	protected JobExecution jobExecution;
 	protected Step step;
 	protected StepExecution stepExecution;
+	protected StepExecutionDao dao;
 
 	@Before
 	public void onSetUp() throws Exception {
-		initializeJobRepository();
-		jobExecution = getJobRepository().createJobExecution("job", new JobParameters());
+		jobExecution = new JobExecution(123L);
 		jobInstance = jobExecution.getJobInstance();
 		step = new StepSupport("foo");
 		stepExecution = new StepExecution(step.getName(), jobExecution);
@@ -43,7 +44,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 
 		assertNull(stepExecution.getId());
 		assertNull(stepExecution.getVersion());
-		getStepExecutionDao().saveStepExecution(stepExecution);
+		dao.saveStepExecution(stepExecution);
 		assertNotNull(stepExecution.getId());
 		assertNotNull(stepExecution.getVersion());
 	}
@@ -62,9 +63,9 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 		stepExecution.setReadCount(17);
 		stepExecution.setFilterCount(15);
 		stepExecution.setWriteCount(13);
-		getStepExecutionDao().saveStepExecution(stepExecution);
+		dao.saveStepExecution(stepExecution);
 
-		StepExecution retrieved = getStepExecutionDao().getStepExecution(jobExecution, stepExecution.getId());
+		StepExecution retrieved = dao.getStepExecution(jobExecution, stepExecution.getId());
 
 		assertStepExecutionsAreEqual(stepExecution, retrieved);
 		assertNotNull(retrieved.getVersion());
@@ -95,11 +96,11 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 			stepExecutions.add(se);
 		}
 		
-		getStepExecutionDao().saveStepExecutions(stepExecutions);
+		dao.saveStepExecutions(stepExecutions);
 
 		for (int i = 0; i < 3; i++) {
 
-			StepExecution retrieved = getStepExecutionDao().getStepExecution(jobExecution, stepExecutions.get(i).getId());
+			StepExecution retrieved = dao.getStepExecution(jobExecution, stepExecutions.get(i).getId());
 
 			assertStepExecutionsAreEqual(stepExecutions.get(i), retrieved);
 			assertNotNull(retrieved.getVersion());
@@ -113,19 +114,19 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	@Transactional
 	@Test(expected = IllegalArgumentException.class)
 	public void testSaveNullCollectionThrowsException() {
-		getStepExecutionDao().saveStepExecutions(null);
+		dao.saveStepExecutions(null);
 	}
 
 	@Transactional
 	@Test
 	public void testSaveEmptyCollection() {
-		getStepExecutionDao().saveStepExecutions(new ArrayList<StepExecution>());
+		dao.saveStepExecutions(new ArrayList<StepExecution>());
 	}
 
 	@Transactional
 	@Test
 	public void testSaveAndGetNonExistentExecution() {
-		assertNull(getStepExecutionDao().getStepExecution(jobExecution, 45677L));
+		assertNull(dao.getStepExecution(jobExecution, 45677L));
 	}
 
 	@Transactional
@@ -136,9 +137,9 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 		stepExecution.setReadSkipCount(7);
 		stepExecution.setWriteSkipCount(5);
 		stepExecution.setRollbackCount(3);
-		getStepExecutionDao().saveStepExecution(stepExecution);
+		dao.saveStepExecution(stepExecution);
 		
-		getStepExecutionDao().addStepExecutions(jobExecution);
+		dao.addStepExecutions(jobExecution);
 		Collection<StepExecution> retrieved = jobExecution.getStepExecutions();
 		assertStepExecutionsAreEqual(stepExecution, retrieved.iterator().next());
 	}
@@ -146,7 +147,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	@Transactional
 	@Test
 	public void testGetForNotExistingJobExecution() {
-		assertNull(getStepExecutionDao().getStepExecution(new JobExecution(jobInstance, (long) 777, new JobParameters(), null), 11L));
+		assertNull(dao.getStepExecution(new JobExecution(jobInstance, (long) 777, new JobParameters(), null), 11L));
 	}
 
 	/**
@@ -157,7 +158,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	public void testSaveExecutionWithIdAlreadySet() {
 		stepExecution.setId((long) 7);
 		try {
-			getStepExecutionDao().saveStepExecution(stepExecution);
+			dao.saveStepExecution(stepExecution);
 			fail();
 		}
 		catch (IllegalArgumentException e) {
@@ -173,7 +174,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	public void testSaveExecutionWithVersionAlreadySet() {
 		stepExecution.incrementVersion();
 		try {
-			getStepExecutionDao().saveStepExecution(stepExecution);
+			dao.saveStepExecution(stepExecution);
 			fail();
 		}
 		catch (IllegalArgumentException e) {
@@ -189,15 +190,15 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	@Test
 	public void testUpdateExecution() {
 		stepExecution.setStatus(BatchStatus.STARTED);
-		getStepExecutionDao().saveStepExecution(stepExecution);
+		dao.saveStepExecution(stepExecution);
 		Integer versionAfterSave = stepExecution.getVersion();
 
 		stepExecution.setStatus(BatchStatus.ABANDONED);
 		stepExecution.setLastUpdated(new Date(System.currentTimeMillis()));
-		getStepExecutionDao().updateStepExecution(stepExecution);
+		dao.updateStepExecution(stepExecution);
 		assertEquals(versionAfterSave + 1, stepExecution.getVersion().intValue());
 
-		StepExecution retrieved = getStepExecutionDao().getStepExecution(jobExecution, stepExecution.getId());
+		StepExecution retrieved = dao.getStepExecution(jobExecution, stepExecution.getId());
 		assertEquals(stepExecution, retrieved);
 		assertEquals(stepExecution.getLastUpdated(), retrieved.getLastUpdated());
 		assertEquals(BatchStatus.ABANDONED, retrieved.getStatus());
@@ -217,7 +218,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 		step = new StepSupport("foo");
 
 		StepExecution exec1 = new StepExecution(step.getName(), jobExecution);
-		getStepExecutionDao().saveStepExecution(exec1);
+		dao.saveStepExecution(exec1);
 
 		StepExecution exec2 = new StepExecution(step.getName(), jobExecution);
 		exec2.setId(exec1.getId());
@@ -226,11 +227,11 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 		assertEquals(new Integer(0), exec1.getVersion());
 		assertEquals(exec1.getVersion(), exec2.getVersion());
 		
-		getStepExecutionDao().updateStepExecution(exec1);
+		dao.updateStepExecution(exec1);
 		assertEquals(new Integer(1), exec1.getVersion());
 
 		try {
-			getStepExecutionDao().updateStepExecution(exec2);
+			dao.updateStepExecution(exec2);
 			fail();
 		}
 		catch (OptimisticLockingFailureException e) {
@@ -242,7 +243,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 	@Test
 	public void testGetStepExecutionsWhenNoneExist() throws Exception {
 		int count = jobExecution.getStepExecutions().size();
-		getStepExecutionDao().addStepExecutions(jobExecution);
+		dao.addStepExecutions(jobExecution);
 		assertEquals("Incorrect size of collection", count, jobExecution.getStepExecutions().size());
 	}
 

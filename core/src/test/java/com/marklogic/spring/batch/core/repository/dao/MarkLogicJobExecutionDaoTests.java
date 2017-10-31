@@ -1,10 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.ext.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.config.BatchProperties;
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
-import com.marklogic.xcc.template.XccTemplate;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,46 +10,28 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.*;
 
-public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
+public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
 
     protected JobInstance jobInstance;
     protected JobExecution execution;
     protected JobParameters jobParameters;
     protected JobExecutionDao jobExecutionDao;
 
-    @Autowired
-    protected BatchProperties batchProperties;
-
-    @Autowired
-    protected DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-        setDatabaseClientProvider(applicationContext.getBean("markLogicJobRepositoryDatabaseClientProvider", DatabaseClientProvider.class));
-        XccTemplate template = new XccTemplate("xcc://admin:admin@oscar:8201/mlJobRepo-content");
-        setXccTemplate(template);
-    }
-
     @Before
     public void onSetUp() throws Exception {
-        setDatabaseClientProvider(markLogicJobRepositoryDatabaseClientProvider);
         jobParameters = new JobParameters();
         jobInstance = new JobInstance(12345L, "execJob");
         execution = new JobExecution(jobInstance, new JobParameters());
         execution.setStartTime(new Date(System.currentTimeMillis()));
         execution.setLastUpdated(new Date(System.currentTimeMillis()));
-        //execution.setExitStatus(ExitStatus.UNKNOWN);
         execution.setEndTime(new Date(System.currentTimeMillis()));
-        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), batchProperties);
+        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
     }
 
     /**
@@ -337,7 +316,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractSpringBatchTest {
     }
 
 	/*
-	 * Check to make sure the executions are equal. Normally, comparing the id's
+     * Check to make sure the executions are equal. Normally, comparing the id's
 	 * is sufficient. However, for testing purposes, especially of a DAO, we
 	 * need to make sure all the fields are being stored/retrieved correctly.
 	 */

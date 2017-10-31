@@ -3,8 +3,10 @@ package com.marklogic.spring.batch.test;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.junit.NamespaceProvider;
 import com.marklogic.junit.spring.AbstractSpringTest;
+import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.config.MarkLogicBatchConfiguration;
 import com.marklogic.xcc.template.XccTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,10 +19,11 @@ import org.springframework.test.context.TestPropertySource;
 /**
  * Base class for any "core" test.
  */
-@ContextConfiguration(classes = { MarkLogicBatchConfiguration.class } )
+@ContextConfiguration(classes = { MarkLogicBatchConfiguration.class, AbstractSpringBatchTest.TestConfig.class } )
 public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
 
     protected ApplicationContext applicationContext;
+    protected BatchProperties batchProperties;
 
     @Override
     protected NamespaceProvider getNamespaceProvider() {
@@ -39,8 +42,17 @@ public abstract class AbstractSpringBatchTest extends AbstractSpringTest {
         setXccTemplate(applicationContext.getBean("xccTemplate", XccTemplate.class));
     }
 
+    public BatchProperties getBatchProperties() {
+        return batchProperties;
+    }
+
+    @Autowired
+    public void setBatchProperties(BatchProperties batchProperties) {
+        this.batchProperties = batchProperties;
+    }
+
     @Configuration
-    @ComponentScan(basePackages= { "com.marklogic.spring.batch"} )
+    @ComponentScan(basePackages= { "com.marklogic.spring.batch.config"} )
     @PropertySource(value = "classpath:job.properties")
     public static class TestConfig {
 

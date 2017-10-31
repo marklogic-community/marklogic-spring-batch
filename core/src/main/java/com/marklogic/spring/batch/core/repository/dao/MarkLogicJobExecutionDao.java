@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
@@ -14,7 +13,6 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
 import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
-import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -28,7 +26,6 @@ import org.springframework.util.Assert;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -156,12 +153,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
                                 qb.valueConstraint("jobName", jobName),
                                 qb.collection("job-execution")
                         ),
-                        qb.and(
-                                qb.containerQuery(
-                                        qb.element(new QName(properties.getBatchNamespace(), "endDateTime")),
-                                        qb.and(null)
-                                )
-                        )
+                        qb.and()
                 );
         logger.info(querydef.serialize());
         QueryManager queryMgr = databaseClient.newQueryManager();
@@ -170,7 +162,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         for (MatchDocumentSummary summary : results.getMatchResults()) {
             JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<>(jaxbContext());
             summary.getFirstSnippet(handle);
-            AdaptedJobExecution aje  = handle.get();
+            AdaptedJobExecution aje = handle.get();
             try {
                 jobExecutions.add(adapter.unmarshal(aje));
             } catch (Exception ex) {
