@@ -157,15 +157,19 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
                 stepExecutionId + ".xml";
         JAXBHandle<AdaptedStepExecution> jaxbHandle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
         DocumentPage page = docMgr.read(uri);
-        AdaptedStepExecution ase = page.next().getContent(jaxbHandle).get();
-        StepExecution stepExecution = null;
-        try {
-            stepExecution = adapter.unmarshal(ase);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            throw new RuntimeException(ex);
+        if (page.getTotalSize() == 0) {
+            return null;
+        } else {
+            AdaptedStepExecution ase = page.next().getContent(jaxbHandle).get();
+            StepExecution stepExecution = null;
+            try {
+                stepExecution = adapter.unmarshal(ase);
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                throw new RuntimeException(ex);
+            }
+            return stepExecution;
         }
-        return stepExecution;
     }
 
     @Override

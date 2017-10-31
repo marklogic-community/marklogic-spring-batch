@@ -149,7 +149,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
     @Transactional
     @Test
     public void testGetForNotExistingJobExecution() {
-        assertNull(dao.getStepExecution(new JobExecution(jobInstance, (long) 777, new JobParameters(), null), 11L));
+        assertNull(dao.getStepExecution(jobExecution, 11L));
     }
 
     /**
