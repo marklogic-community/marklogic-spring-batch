@@ -59,9 +59,6 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
     @Override
     public void saveStepExecution(StepExecution stepExecution) {
-        if (!(stepExecution.getId() == null) && !(stepExecution.getVersion() == null)) {
-            throw new RuntimeException("StepExecution not found: " + stepExecution.getStepName());
-        }
 
         Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
         JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecution().getId());
@@ -69,7 +66,9 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
         validateStepExecution(stepExecution);
 
-        stepExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
+        if (stepExecution.getId() == null) {
+            stepExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
+        }
         stepExecution.incrementVersion();
 
         AdaptedStepExecution adaptedStepExecution = null;
@@ -129,22 +128,9 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
         validateStepExecution(stepExecution);
-
-        Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
-        synchronized (stepExecution) {
+        saveStepExecution(stepExecution);
 
 
-            for (StepExecution se : stepExecutions) {
-                if (se.getId().equals(stepExecution.getId())) {
-                    stepExecution.incrementVersion();
-                    copy(stepExecution, se);
-                }
-            }
-            List<StepExecution> steps = new ArrayList<>(stepExecutions);
-            stepExecution.getJobExecution().addStepExecutions(steps);
-            jobExecutionDao.updateJobExecution(jobExecution);
-            //logger.info("update step execution: " + stepExecution.getId() + ",jobExecution:" + jobExecution.getId());
-        }
     }
 
     @Override
