@@ -1,6 +1,10 @@
 package com.marklogic.spring.batch.core.repository.support;
 
 import com.marklogic.spring.batch.core.job.JobSupport;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
 import com.marklogic.spring.batch.core.step.StepSupport;
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
@@ -10,6 +14,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.core.repository.support.SimpleJobRepository;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +31,12 @@ public class SimpleJobRepositoryIntegrationTests extends AbstractJobRepositoryTe
 
     @Before
     public void initialize() {
-
+        jobRepository = new SimpleJobRepository(
+                new MarkLogicJobInstanceDao(getClient(), getBatchProperties()),
+                new MarkLogicJobExecutionDao(getClient(), getBatchProperties()),
+                new MarkLogicStepExecutionDao(getClient(), getBatchProperties()),
+                new MarkLogicExecutionContextDao(getClient(), getBatchProperties())
+        );
     }
 
     /*
