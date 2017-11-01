@@ -1,20 +1,26 @@
 package com.marklogic.spring.batch.core.explore.support;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import com.marklogic.spring.batch.core.job.JobSupport;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicExecutionContextDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicJobInstanceDao;
+import com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao;
+import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.SimpleJobRepository;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class SimpleJobExplorerTests extends AbstractJobRepositoryTest {
-    
+
     private JobSupport job = new JobSupport("SimpleJobExplorerTestsJob");
 
     private JobExecution jobExecution;
@@ -26,7 +32,19 @@ public class SimpleJobExplorerTests extends AbstractJobRepositoryTest {
 
     @Before
     public void createJobExecution() throws Exception {
-        
+        jobRepository = new SimpleJobRepository(
+                new MarkLogicJobInstanceDao(getClient(), getBatchProperties()),
+                new MarkLogicJobExecutionDao(getClient(), getBatchProperties()),
+                new MarkLogicStepExecutionDao(getClient(), getBatchProperties()),
+                new MarkLogicExecutionContextDao(getClient(), getBatchProperties())
+        );
+        jobExplorer = new SimpleJobExplorer(
+                new MarkLogicJobInstanceDao(getClient(), getBatchProperties()),
+                new MarkLogicJobExecutionDao(getClient(), getBatchProperties()),
+                new MarkLogicStepExecutionDao(getClient(), getBatchProperties()),
+                new MarkLogicExecutionContextDao(getClient(), getBatchProperties())
+        );
+
         builder.addString("stringKey", "stringValue").addLong("longKey", 1L).addDouble("doubleKey", 1.1).addDate(
                 "dateKey", new Date(1L));
         JobParameters jobParams = builder.toJobParameters();
@@ -50,7 +68,7 @@ public class SimpleJobExplorerTests extends AbstractJobRepositoryTest {
 
     @Test
     public void testGetStepExecution() throws Exception {
-        
+
         StepExecution se = jobExplorer.getStepExecution(jobExecution.getId(), stepExecution.getId());
         assertNotNull(se);
         assertEquals(jobInstance,
@@ -117,7 +135,7 @@ public class SimpleJobExplorerTests extends AbstractJobRepositoryTest {
         assertEquals(3, jobExplorer.getJobInstanceCount(job.getName()));
     }
 
-    @Test(expected=NoSuchJobException.class)
+    @Test(expected = NoSuchJobException.class)
     public void testGetJobInstanceCountException() throws Exception {
         jobExplorer.getJobInstanceCount("throwException");
     }
