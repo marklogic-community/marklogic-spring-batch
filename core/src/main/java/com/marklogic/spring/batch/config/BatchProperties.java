@@ -12,6 +12,7 @@ public class BatchProperties {
     private String jobInstanceCollection;
     private String jobExecutionCollection;
     private String stepExecutionCollection;
+    private String executionContextCollection;
     private String searchOptions;
     private String batchNamespace;
 
@@ -38,6 +39,8 @@ public class BatchProperties {
     public String getStepExecutionCollection() {
         return stepExecutionCollection;
     }
+
+    public String getExecutionContextCollection() { return executionContextCollection; }
 
     @Autowired
     public void setSearchOptions(
@@ -79,5 +82,11 @@ public class BatchProperties {
     public void setStepExecutionCollection(
             @Value("${batch.jobRepo.stepExecutionCollection:step-execution}") String stepExecutionCollection) {
         this.stepExecutionCollection = stepExecutionCollection;
+    }
+
+    @Autowired
+    public void setExecutionContextCollection(
+            @Value("${batch.jobRepo.executionContextCollection:execution-context}") String executionContextCollection) {
+        this.executionContextCollection = executionContextCollection;
     }
 }

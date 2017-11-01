@@ -18,18 +18,20 @@ import java.util.List;
 
 public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest {
 
-    private ExecutionContextDao dao;
     private JobInstanceDao jobInstanceDao;
     private JobExecutionDao jobExecutionDao;
     private StepExecutionDao stepExecutionDao;
+    private ExecutionContextDao dao;
     private JobExecution jobExecution;
     private StepExecution stepExecution;
 
     @Before
     public void setUp() {
-        JobExecutionDao jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
-        StepExecutionDao stepExecutionDao = new MarkLogicStepExecutionDao(getClient(), jobExecutionDao, getBatchProperties());
-        dao = new MarkLogicExecutionContextDao(jobExecutionDao, stepExecutionDao);
+        jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), getBatchProperties());
+        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
+        stepExecutionDao = new MarkLogicStepExecutionDao(getClient(), jobExecutionDao, getBatchProperties());
+        dao = new MarkLogicExecutionContextDao(getClient(), getBatchProperties());
+
         JobInstance ji = jobInstanceDao.createJobInstance("testJob", new JobParameters());
         jobExecution = new JobExecution(ji, new JobParameters());
         jobExecutionDao.saveJobExecution(jobExecution);
