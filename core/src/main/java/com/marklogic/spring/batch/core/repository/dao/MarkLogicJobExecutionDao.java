@@ -112,7 +112,8 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         StructuredQueryBuilder qb = new StructuredQueryBuilder(properties.getSearchOptions());
         StructuredQueryDefinition querydef =
                 qb.and(
-                        qb.directory(true, directory)
+                        qb.directory(true, directory),
+                        qb.collection(properties.getJobExecutionCollection())
                 );
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
@@ -181,7 +182,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
     public JobExecution getJobExecution(Long executionId) {
         JobExecution jobExec = null;
         StructuredQueryBuilder qb = new StructuredQueryBuilder(properties.getSearchOptions());
-        StructuredQueryDefinition querydef = qb.rangeConstraint("id", Operator.EQ, executionId.toString());
+        StructuredQueryDefinition querydef = qb.valueConstraint("id", executionId.toString());
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
         if (results.getTotalResults() > 0L) {
