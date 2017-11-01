@@ -77,7 +77,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
         dao.saveExecutionContexts(stepExecutions);
 
         for (int i = 0; i < 3; i++) {
-            ExecutionContext retrieved = dao.getExecutionContext(stepExecutions.get(i).getJobExecution());
+            ExecutionContext retrieved = dao.getExecutionContext(stepExecutions.get(i));
             assertEquals(stepExecutions.get(i).getExecutionContext(), retrieved);
         }
     }
