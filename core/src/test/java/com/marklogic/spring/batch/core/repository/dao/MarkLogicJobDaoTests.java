@@ -22,7 +22,7 @@ public class MarkLogicJobDaoTests extends AbstractJobRepositoryTest {
     protected String jobName = "Job1";
 
     protected JobExecution jobExecution;
-    
+
     protected JobInstanceDao jobInstanceDao;
     protected JobExecutionDao jobExecutionDao;
 

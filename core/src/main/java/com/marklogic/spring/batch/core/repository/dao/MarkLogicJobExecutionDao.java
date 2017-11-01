@@ -97,11 +97,12 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
                 "JobExecution version cannot be null. JobExecution must be saved before it can be updated");
 
         JobExecution je = getJobExecution(jobExecution.getId());
+
         if (je == null) {
             throw new NoSuchObjectException("JobExecution " + jobExecution.getJobInstance().getJobName() + " " + jobExecution.getId() + " not found");
         }
         synchronized (jobExecution) {
-            jobExecution.setVersion(jobExecution.getVersion() + 1);
+            je.incrementVersion();
             saveJobExecution(jobExecution);
         }
     }
