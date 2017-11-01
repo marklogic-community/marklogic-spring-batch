@@ -29,7 +29,7 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
     public void setUp() {
         jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), getBatchProperties());
         jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
-        stepExecutionDao = new MarkLogicStepExecutionDao(getClient(), jobExecutionDao, getBatchProperties());
+        stepExecutionDao = new MarkLogicStepExecutionDao(getClient(), getBatchProperties());
         dao = new MarkLogicExecutionContextDao(getClient(), getBatchProperties());
 
         JobInstance ji = jobInstanceDao.createJobInstance("testJob", new JobParameters());

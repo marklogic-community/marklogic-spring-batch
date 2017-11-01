@@ -42,12 +42,6 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
         adapter = new ExecutionContextAdapter();
     }
 
-    @Autowired
-    public MarkLogicExecutionContextDao(JobExecutionDao jobExecDao, StepExecutionDao stepExecDao) {
-        this.jobExecutionDao = jobExecDao;
-        this.stepExecutionDao = stepExecDao;
-    }
-
     @Override
     public ExecutionContext getExecutionContext(JobExecution jobExecution) {
         return getExecutionContext(getUri(jobExecution));

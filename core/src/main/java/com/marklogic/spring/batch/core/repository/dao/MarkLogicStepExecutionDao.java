@@ -39,14 +39,12 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
     private DatabaseClient databaseClient;
     private BatchProperties properties;
-    private JobExecutionDao jobExecutionDao;
     private StepExecutionAdapter adapter;
 
     @Autowired
-    public MarkLogicStepExecutionDao(DatabaseClient databaseClient, JobExecutionDao dao, BatchProperties batchProperties) {
+    public MarkLogicStepExecutionDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
         this.databaseClient = databaseClient;
         this.properties = batchProperties;
-        this.jobExecutionDao = dao;
         adapter = new StepExecutionAdapter();
     }
 
@@ -69,8 +67,8 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         Assert.isTrue(stepExecution.getVersion() == null);
 
         Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
-        JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecution().getId());
-        Assert.notNull(jobExecution, "JobExecution must be saved already.");
+        //JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecution().getId());
+        //Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
         validateStepExecution(stepExecution);
 
@@ -102,8 +100,8 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
             Long jobExecutionId = stepExecutions.iterator().next().getJobExecutionId();
             Assert.notNull(jobExecutionId, "JobExecution must be saved already.");
-            JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
-            Assert.notNull(jobExecution, "JobExecution must be saved already.");
+            //JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
+            //Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
             for (StepExecution stepExecution : stepExecutions) {
                 Assert.isTrue(stepExecution.getId() == null);
@@ -122,8 +120,8 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
 
         Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
-        JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecutionId());
-        Assert.notNull(jobExecution, "JobExecution must be saved already.");
+        //JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecutionId());
+        //Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
         validateStepExecution(stepExecution);
         stepExecution.incrementVersion();
@@ -227,11 +225,4 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
                 stepExecution.getId() + ".xml";
     }
 
-    public JobExecutionDao getJobExecutionDao() {
-        return jobExecutionDao;
-    }
-
-    public void setJobExecutionDao(JobExecutionDao jobExecutionDao) {
-        this.jobExecutionDao = jobExecutionDao;
-    }
 }

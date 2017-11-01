@@ -61,8 +61,8 @@ public class MarkLogicJobRepositoryFactoryBean extends AbstractJobRepositoryFact
         Assert.notNull(databaseClient, "DatabaseClient must not be null.");
         jobInstanceDao = new MarkLogicJobInstanceDao(databaseClient, batchProperties);
         jobExecutionDao = new MarkLogicJobExecutionDao(databaseClient, batchProperties);
-        stepExecutionDao = new MarkLogicStepExecutionDao(databaseClient, jobExecutionDao, batchProperties);
-        executionContextDao = new MarkLogicExecutionContextDao(jobExecutionDao, stepExecutionDao);
+        stepExecutionDao = new MarkLogicStepExecutionDao(databaseClient, batchProperties);
+        executionContextDao = new MarkLogicExecutionContextDao(databaseClient, batchProperties);
         super.afterPropertiesSet();
     }
 }

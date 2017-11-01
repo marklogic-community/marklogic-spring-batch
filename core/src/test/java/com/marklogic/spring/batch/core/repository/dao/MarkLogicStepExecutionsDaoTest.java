@@ -37,7 +37,7 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
         step = new StepSupport("foo");
         stepExecution = new StepExecution(step.getName(), jobExecution);
 
-        dao = new MarkLogicStepExecutionDao(getClient(), jobExecutionDao, getBatchProperties());
+        dao = new MarkLogicStepExecutionDao(getClient(), getBatchProperties());
     }
 
     @Transactional
