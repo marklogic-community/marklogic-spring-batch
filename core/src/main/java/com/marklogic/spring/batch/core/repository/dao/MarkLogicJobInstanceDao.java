@@ -15,7 +15,6 @@ import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Component
 public class MarkLogicJobInstanceDao implements JobInstanceDao {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -38,6 +36,7 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
 
     private DatabaseClient databaseClient;
     private BatchProperties properties;
+    private JobInstanceAdapter adapter;
 
     @Autowired
     public MarkLogicJobInstanceDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
@@ -95,9 +94,9 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
         StructuredQueryBuilder qb = new StructuredQueryBuilder(properties.getSearchOptions());
         StructuredQueryDefinition querydef =
                 qb.and(
-                  qb.valueConstraint("jobKey", jobKeyGenerator.generateKey(jobParameters)),
-                  qb.valueConstraint("jobName", jobName),
-                  qb.collection(properties.getJobInstanceCollection())
+                        qb.valueConstraint("jobKey", jobKeyGenerator.generateKey(jobParameters)),
+                        qb.valueConstraint("jobName", jobName),
+                        qb.collection(properties.getJobInstanceCollection())
                 );
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
@@ -201,10 +200,16 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
         MatchDocumentSummary[] summaries = results.getMatchResults();
 
         for (MatchDocumentSummary summary : summaries) {
-            JAXBHandle<MarkLogicJobInstance> jaxbHandle = new JAXBHandle<>(jaxbContext());
+            JAXBHandle<AdaptedJobInstance> jaxbHandle = new JAXBHandle<AdaptedJobInstance>(jaxbContext());
             summary.getFirstSnippet(jaxbHandle);
-            MarkLogicJobInstance mji = jaxbHandle.get();
-            jobInstances.add(mji.getJobInstance());
+            AdaptedJobInstance aji = jaxbHandle.get();
+            JobInstance jobInstance = null;
+            try {
+                jobInstance = adapter.unmarshal(aji);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            jobInstances.add(jobInstance);
         }
         return jobInstances;
     }

@@ -21,7 +21,6 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.xml.bind.JAXBContext;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Component
 public class MarkLogicJobExecutionDao implements JobExecutionDao {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -159,7 +157,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
                                 "xs:dateTime",
                                 Operator.GT,
                                 "1917-01-01T00:00:00.0"
-                                )
+                        )
                 );
         logger.info(querydef.serialize());
         QueryManager queryMgr = databaseClient.newQueryManager();
