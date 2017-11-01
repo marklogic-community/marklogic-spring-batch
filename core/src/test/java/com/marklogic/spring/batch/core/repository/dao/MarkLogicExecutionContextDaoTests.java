@@ -166,7 +166,6 @@ public class MarkLogicExecutionContextDaoTests extends AbstractJobRepositoryTest
     @Transactional
     @Test
     public void testStoreInteger() {
-
         ExecutionContext ec = new ExecutionContext();
         ec.put("intValue", 343232);
         stepExecution.setExecutionContext(ec);

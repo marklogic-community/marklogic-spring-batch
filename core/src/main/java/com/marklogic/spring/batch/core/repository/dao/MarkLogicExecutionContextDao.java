@@ -50,8 +50,16 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 
 	@Override
 	public ExecutionContext getExecutionContext(JobExecution jobExecution) {
+		return getExecutionContext(getUri(jobExecution));
+	}
+
+	@Override
+	public ExecutionContext getExecutionContext(StepExecution stepExecution) {
+		return getExecutionContext(getUri(stepExecution));
+	}
+
+	private ExecutionContext getExecutionContext(String uri) {
 		XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
-		String uri = getUri(jobExecution);
 		JAXBHandle<AdaptedExecutionContext> handle = new JAXBHandle<AdaptedExecutionContext>(jaxbContext());
 		DocumentPage page = docMgr.read(uri);
 		AdaptedExecutionContext aec = page.next().getContent(handle).get();
@@ -66,21 +74,23 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 	}
 
 	@Override
-	public ExecutionContext getExecutionContext(StepExecution stepExecution) {
-		return stepExecutionDao.getStepExecution(stepExecution.getJobExecution(), stepExecution.getId()).getExecutionContext();
+	public void saveExecutionContext(JobExecution jobExecution) {
+		saveExecutionContext(getUri(jobExecution), jobExecution.getExecutionContext());
 	}
 
 	@Override
-	public void saveExecutionContext(JobExecution jobExecution) {
-		XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
+	public void saveExecutionContext(StepExecution stepExecution) {
+		saveExecutionContext(getUri(stepExecution), stepExecution.getExecutionContext());
 
-		String uri = getUri(jobExecution);
+	}
+
+	private void saveExecutionContext(String uri, ExecutionContext ec) {
+		XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
 
 		DocumentMetadataHandle metadata = new DocumentMetadataHandle();
 		metadata.withCollections(properties.getCollection(), properties.getExecutionContextCollection());
 
 		JAXBHandle<AdaptedExecutionContext> handle = new JAXBHandle<AdaptedExecutionContext>(jaxbContext());
-		ExecutionContext ec = jobExecution.getExecutionContext();
 		AdaptedExecutionContext aec = null;
 		try {
 			aec = adapter.marshal(ec);
@@ -93,13 +103,6 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 	}
 
 	@Override
-	public void saveExecutionContext(StepExecution stepExecution) {
-		stepExecution.incrementVersion();
-		stepExecutionDao.updateStepExecution(stepExecution);
-
-	}
-
-	@Override
 	public void saveExecutionContexts(Collection<StepExecution> stepExecutions) {
 		Assert.notNull(stepExecutions, "Attempt to save an null collection of step executions");
 		for (StepExecution stepExec : stepExecutions ) {
@@ -109,13 +112,13 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 
 	@Override
 	public void updateExecutionContext(JobExecution jobExecution) {
-		jobExecutionDao.updateJobExecution(jobExecution);
+		saveExecutionContext(getUri(jobExecution), jobExecution.getExecutionContext());
 
 	}
 
 	@Override
 	public void updateExecutionContext(StepExecution stepExecution) {
-		stepExecutionDao.updateStepExecution(stepExecution);
+		saveExecutionContext(getUri(stepExecution), stepExecution.getExecutionContext());
 	}
 
 	private String getUri(JobExecution jobExecution) {
@@ -125,7 +128,10 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 	}
 
 	private String getUri(StepExecution stepExecution) {
-		return "";
+		return properties.getJobRepositoryDirectory() + "/" +
+				stepExecution.getJobExecution().getJobInstance().getId() + "/" +
+				stepExecution.getJobExecution().getId() + "/" +
+				stepExecution.getId() + "/execution-context.xml";
 	}
 
 	protected JAXBContext jaxbContext() {
