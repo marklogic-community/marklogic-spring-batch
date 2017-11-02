@@ -14,7 +14,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.DeleteDocumentsJobConfig.class} )
+@ContextConfiguration(classes = {com.marklogic.spring.batch.samples.DeleteDocumentsJobConfig.class})
 public class DeleteDocumentsJobTest extends AbstractJobRunnerTest {
 
     public void insertDocument(String uri, String collections, String xml) {

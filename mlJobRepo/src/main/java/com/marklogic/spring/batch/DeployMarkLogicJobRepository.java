@@ -28,11 +28,9 @@ public class DeployMarkLogicJobRepository {
         OptionSet options = parser.parse(args);
         if (options.has(HELP)) {
             parser.printHelpOn(System.out);
-        }
-        else if (options.has(UNDEPLOY)) {
+        } else if (options.has(UNDEPLOY)) {
             undeployMarkLogicJobRepository(options);
-        }
-        else {
+        } else {
             deployMarkLogicJobRepository(options);
         }
     }

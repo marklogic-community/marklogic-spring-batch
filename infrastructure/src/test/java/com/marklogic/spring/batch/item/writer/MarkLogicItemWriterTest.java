@@ -5,13 +5,17 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.document.*;
 import com.marklogic.client.ext.DatabaseClientConfig;
-import com.marklogic.client.impl.DocumentWriteOperationImpl;
-import com.marklogic.client.io.*;
 import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,24 +28,20 @@ import java.util.List;
 
 public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements ApplicationContextAware {
 
-    public MarkLogicItemWriterTest() {
-        super();
-    }
-
+    public String xml = "<hello>world</hello>";
+    public String transformName = "simple";
+    DatabaseClient client;
+    DatabaseClient testDatabaseClient;
+    XMLDocumentManager docMgr;
     @Autowired
     @Qualifier("batchDatabaseClientConfig")
     private DatabaseClientConfig databaseClientConfig;
-
     private ClientTestHelper clientTestHelper;
     private MarkLogicItemWriter itemWriter;
 
-    public String xml = "<hello>world</hello>";
-    public String transformName = "simple";
-
-    DatabaseClient client;
-    DatabaseClient testDatabaseClient;
-
-    XMLDocumentManager docMgr;
+    public MarkLogicItemWriterTest() {
+        super();
+    }
 
     @Before
     public void setup() throws IOException {
@@ -87,7 +87,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
         itemWriter.write(items);
         itemWriter.close();
     }
-    
+
     @Test
     public void writeTwoDocumentsTest() throws Exception {
         itemWriter = new MarkLogicItemWriter(client);
@@ -183,7 +183,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
         clientTestHelper.assertCollectionSize("Expecting zero items in raw collection", "raw", 0);
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void writeWithNullDataTest() throws Exception {
         itemWriter = new MarkLogicItemWriter(client);
         write(null);

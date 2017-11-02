@@ -61,8 +61,10 @@ subprojects {
     }
 
     dependencies {
+        compile 'org.slf4j:slf4j-api:1.7.25'
+        compile "org.slf4j:log4j-over-slf4j:1.7.25"
         compile "org.apache.logging.log4j:log4j-api:2.9.1"
-        compile 'org.slf4j:slf4j-api:1.7.21'
+
         compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
         compile "com.marklogic:marklogic-client-api:4.0.2"
         compile "com.marklogic:ml-javaclient-util:3.0.0"
@@ -116,9 +118,6 @@ project(':core') {
     dependencies {
         //core doesn't depend on infrastructure but want to grab both jars when importing MSB
         compile project(":infrastructure")
-
-        // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
-        compile "org.springframework:spring-jdbc:$springVersion"
 
         // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
         compile "org.springframework:spring-oxm:$springVersion"
@@ -202,7 +201,7 @@ project(':mlJobRepo') {
     task deployMarkLogicJobRepository(type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
         main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
-        args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
+        args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlJobRepositoryPort, "--username", mlManageUsername, "--password", mlManagePassword]
     }
 
     task undeployMarkLogicJobRepository(type: JavaExec) {

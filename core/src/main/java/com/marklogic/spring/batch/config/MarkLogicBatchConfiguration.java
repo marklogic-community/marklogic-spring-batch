@@ -13,6 +13,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import java.util.List;
 
 @Configuration
+@ComponentScan("com.marklogic.spring.batch.config")
 @PropertySource(value = "classpath:job.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:job.properties", ignoreResourceNotFound = true)
 public class MarkLogicBatchConfiguration {
@@ -55,8 +56,9 @@ public class MarkLogicBatchConfiguration {
     @Qualifier("markLogicJobRepositoryDatabaseClientProvider")
     @Conditional(UseMarkLogicBatchCondition.class)
     public BatchConfigurer batchConfigurer(
-            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider) {
-        return new MarkLogicBatchConfigurer(databaseClientProvider);
+            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider,
+            BatchProperties batchProperties) {
+        return new MarkLogicBatchConfigurer(databaseClientProvider, batchProperties);
     }
 
     @Bean
