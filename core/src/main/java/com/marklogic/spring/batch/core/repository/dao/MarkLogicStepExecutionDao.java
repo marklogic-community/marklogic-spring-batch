@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -19,6 +20,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
@@ -64,13 +66,9 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         Assert.isTrue(stepExecution.getVersion() == null);
 
         Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
-        //JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecution().getId());
-        //Assert.notNull(jobExecution, "JobExecution must be saved already.");
 
         validateStepExecution(stepExecution);
-
         stepExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
-        stepExecution.incrementVersion();
 
         AdaptedStepExecution adaptedStepExecution = null;
         try {
@@ -79,14 +77,18 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
             throw new RuntimeException(ex);
         }
 
-        XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.withCollections(properties.getCollection(), properties.getStepExecutionCollection());
 
         JAXBHandle<AdaptedStepExecution> jaxbHandle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
         jaxbHandle.set(adaptedStepExecution);
 
-        docMgr.write(getUri(stepExecution), metadata, jaxbHandle);
+        XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
+        String uri = getUri(stepExecution);
+        docMgr.write(uri, metadata, jaxbHandle);
+
+        DocumentDescriptor desc = docMgr.exists(uri);
+        stepExecution.setVersion((int) desc.getVersion());
     }
 
     @Override
@@ -117,11 +119,6 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
 
 
         Assert.notNull(stepExecution.getJobExecutionId(), "JobExecution must be saved already.");
-        //JobExecution jobExecution = jobExecutionDao.getJobExecution(stepExecution.getJobExecutionId());
-        //Assert.notNull(jobExecution, "JobExecution must be saved already.");
-
-        validateStepExecution(stepExecution);
-        stepExecution.incrementVersion();
 
         synchronized (stepExecution) {
             XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
@@ -137,7 +134,14 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
             }
             JAXBHandle<AdaptedStepExecution> jaxbHandle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
             jaxbHandle.set(ase);
-            docMgr.write(uri, metadata, jaxbHandle);
+            DocumentDescriptor desc = docMgr.exists(uri);
+            if (desc == null) {
+                logger.error(uri + " does not exist and is attempting an update");
+                throw new RuntimeException(uri + " does not exist and is attempting an update");
+            } else if (stepExecution.getVersion() != (int) desc.getVersion()) {
+                throw new OptimisticLockingFailureException(uri);
+            }
+            docMgr.write(desc, metadata, jaxbHandle);
         }
 
 

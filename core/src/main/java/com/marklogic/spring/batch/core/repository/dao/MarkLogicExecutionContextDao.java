@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -91,7 +92,11 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
             throw new RuntimeException(e);
         }
         handle.set(aec);
-        docMgr.write(uri, metadata, handle);
+        DocumentDescriptor desc = docMgr.exists(uri);
+        if (desc == null) {
+            desc = docMgr.newDescriptor(uri);
+        }
+        docMgr.write(desc, metadata, handle);
     }
 
     @Override

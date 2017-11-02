@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
@@ -70,7 +71,11 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         jobInstanceMetadata.withCollections(properties.getCollection(), properties.getJobExecutionCollection());
         JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
         handle.set(aJobInstance);
-        xmlDocMgr.write(uri, jobInstanceMetadata, handle);
+        DocumentDescriptor desc = xmlDocMgr.exists(uri);
+        if (desc == null) {
+            desc = xmlDocMgr.newDescriptor(uri);
+        }
+        xmlDocMgr.write(desc, jobInstanceMetadata, handle);
         //logger.info("insert JobExecution:" + uri + "," + desc.getVersion());
     }
 
