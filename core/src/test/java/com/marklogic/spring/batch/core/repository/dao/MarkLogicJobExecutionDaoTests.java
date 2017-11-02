@@ -1,9 +1,7 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -160,14 +158,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
         exec.setLastUpdated(new Date(5L));
         exec.createStepExecution("step");
         jobExecutionDao.saveJobExecution(exec);
-/*
-        StepExecutionDao stepExecutionDao = getStepExecutionDao();
-        if (stepExecutionDao != null) {
-            for (StepExecution stepExecution : exec.getStepExecutions()) {
-                stepExecutionDao.saveStepExecution(stepExecution);
-            }
-        }
-*/
+
         Set<JobExecution> values = jobExecutionDao.findRunningJobExecutions(exec.getJobInstance().getJobName());
 
         assertEquals(1, values.size());
@@ -228,32 +219,24 @@ public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
      */
     @Transactional
     @Test
-    @Ignore
     public void testConcurrentModificationException() {
 
         JobExecution exec1 = new JobExecution(jobInstance, jobParameters);
         jobExecutionDao.saveJobExecution(exec1);
-/*
+
         JobExecution exec2 = new JobExecution(jobInstance, jobParameters);
-		exec2.setId(exec1.getId());
+        exec2.setId(exec1.getId());
+        exec2.setVersion(exec1.getVersion());
 
-		exec2.incrementVersion();
-		assertEquals((Integer) 0, exec1.getVersion());
-		assertEquals(exec1.getVersion(), exec2.getVersion());
-*/
+        exec2.incrementVersion();
+        //assertEquals((Integer) 0, exec1.getVersion());
+        //assertEquals(exec1.getVersion(), exec2.getVersion());
+
         jobExecutionDao.updateJobExecution(exec1);
-        assertEquals((Integer) 1, exec1.getVersion());
-
-        //change the content of the JobExecution
-        ServerEvaluationCall theCall = getClient().newServerEval();
-        String uri = "/projects.spring.io/spring-batch/" + exec1.getId().toString() + ".xml";
-        String query = "xdmp:document-insert('" + uri + "', <hello />)";
-        logger.info(query);
-        theCall.xquery(query);
-        theCall.eval();
+        //assertEquals((Integer) 1, exec1.getVersion());
 
         try {
-            jobExecutionDao.updateJobExecution(exec1);
+            jobExecutionDao.updateJobExecution(exec2);
             fail();
         } catch (OptimisticLockingFailureException e) {
             // expected

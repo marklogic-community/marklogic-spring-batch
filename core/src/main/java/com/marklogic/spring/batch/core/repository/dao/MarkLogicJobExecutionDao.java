@@ -2,6 +2,7 @@ package com.marklogic.spring.batch.core.repository.dao;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentDescriptor;
+import com.marklogic.client.document.DocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
@@ -22,6 +23,7 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
 
 import javax.xml.bind.JAXBContext;
@@ -51,8 +53,6 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
     public void saveJobExecution(JobExecution jobExecution) {
         validateJobExecution(jobExecution);
 
-        jobExecution.incrementVersion();
-
         if (jobExecution.getId() == null) {
             jobExecution.setId(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
         }
@@ -66,17 +66,16 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
 
         XMLDocumentManager xmlDocMgr = databaseClient.newXMLDocumentManager();
         String uri = getUri(jobExecution);
+
         //Set document metadata
         DocumentMetadataHandle jobInstanceMetadata = new DocumentMetadataHandle();
         jobInstanceMetadata.withCollections(properties.getCollection(), properties.getJobExecutionCollection());
         JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
         handle.set(aJobInstance);
+
+        xmlDocMgr.write(uri, jobInstanceMetadata, handle);
         DocumentDescriptor desc = xmlDocMgr.exists(uri);
-        if (desc == null) {
-            desc = xmlDocMgr.newDescriptor(uri);
-        }
-        xmlDocMgr.write(desc, jobInstanceMetadata, handle);
-        //logger.info("insert JobExecution:" + uri + "," + desc.getVersion());
+        jobExecution.setVersion((int) desc.getVersion());
     }
 
     /**
@@ -107,8 +106,29 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
             throw new NoSuchObjectException("JobExecution " + jobExecution.getJobInstance().getJobName() + " " + jobExecution.getId() + " not found");
         }
         synchronized (jobExecution) {
-            je.incrementVersion();
-            saveJobExecution(jobExecution);
+            AdaptedJobExecution aJobExecution;
+            try {
+                aJobExecution = adapter.marshal(jobExecution);
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                throw new RuntimeException(ex);
+            }
+
+            XMLDocumentManager docMgr = databaseClient.newXMLDocumentManager();
+            String uri = getUri(jobExecution);
+            DocumentDescriptor desc = docMgr.exists(uri);
+            if (jobExecution.getVersion() != (int) desc.getVersion()) {
+                throw new OptimisticLockingFailureException(uri);
+            }
+
+            //Set document metadata
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.withCollections(properties.getCollection(), properties.getJobExecutionCollection());
+            JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
+            handle.set(aJobExecution);
+            docMgr.write(desc, metadata, handle);
+            desc = docMgr.exists(uri);
+            jobExecution.setVersion((int) desc.getVersion());
         }
     }
 
@@ -126,12 +146,16 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         MatchDocumentSummary[] summaries = results.getMatchResults();
         List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
 
+        DocumentManager docMgr = databaseClient.newDocumentManager();
         for (MatchDocumentSummary summary : summaries) {
+            DocumentDescriptor desc = docMgr.exists(summary.getUri());
             JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
             summary.getFirstSnippet(jaxbHandle);
-            AdaptedJobExecution jobExecution = jaxbHandle.get();
+            AdaptedJobExecution aJobExecution = jaxbHandle.get();
             try {
-                jobExecutions.add(adapter.unmarshal(jobExecution));
+                JobExecution jobExecution = adapter.unmarshal(aJobExecution);
+                jobExecution.setVersion((int) desc.getVersion());
+                jobExecutions.add(jobExecution);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -191,6 +215,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         StructuredQueryDefinition querydef = qb.valueConstraint("id", executionId.toString());
         QueryManager queryMgr = databaseClient.newQueryManager();
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
+        DocumentDescriptor desc;
         if (results.getTotalResults() > 0L) {
             MatchDocumentSummary[] summaries = results.getMatchResults();
             JAXBHandle<AdaptedJobExecution> handle = new JAXBHandle<>(jaxbContext());
@@ -201,6 +226,8 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
                 logger.error(ex.getMessage());
                 throw new RuntimeException(ex);
             }
+            desc = databaseClient.newDocumentManager().exists(summaries[0].getUri());
+            jobExec.setVersion((int) desc.getVersion());
         }
 
         return jobExec;

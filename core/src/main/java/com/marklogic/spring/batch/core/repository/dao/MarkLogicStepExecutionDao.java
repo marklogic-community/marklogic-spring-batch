@@ -142,6 +142,8 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
                 throw new OptimisticLockingFailureException(uri);
             }
             docMgr.write(desc, metadata, jaxbHandle);
+            desc = docMgr.exists(uri);
+            stepExecution.setVersion((int) desc.getVersion());
         }
 
 
