@@ -32,7 +32,7 @@ public class MarkLogicJobRepositoryFactoryBean extends AbstractJobRepositoryFact
         this.databaseClient = databaseClient;
     }
 
-    public void setJobRepositoryProperties(BatchProperties batchProperties) {
+    public void setBatchProperties(BatchProperties batchProperties) {
         this.batchProperties = batchProperties;
     }
 

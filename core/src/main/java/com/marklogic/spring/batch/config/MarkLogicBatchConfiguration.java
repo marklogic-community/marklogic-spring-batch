@@ -56,8 +56,9 @@ public class MarkLogicBatchConfiguration {
     @Qualifier("markLogicJobRepositoryDatabaseClientProvider")
     @Conditional(UseMarkLogicBatchCondition.class)
     public BatchConfigurer batchConfigurer(
-            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider) {
-        return new MarkLogicBatchConfigurer(databaseClientProvider);
+            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider,
+            BatchProperties batchProperties) {
+        return new MarkLogicBatchConfigurer(databaseClientProvider, batchProperties);
     }
 
     @Bean
