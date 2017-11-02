@@ -18,7 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.test.JobRunnerContext.class})
-public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
+public abstract class AbstractJobRunnerTest extends AbstractSpringBatchTest {
 
     private JobLauncherTestUtils jobLauncherTestUtils;
     private ClientTestHelper clientTestHelper;
@@ -51,8 +51,8 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
 
     @Autowired
     public void setMarkLogicJobRepositoryDatabaseClientProvider(
-            DatabaseClientProvider databaseClientProvider) {
-        this.markLogicJobRepositoryDatabaseClientProvider = databaseClientProvider;
+            DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider) {
+        this.markLogicJobRepositoryDatabaseClientProvider = markLogicJobRepositoryDatabaseClientProvider;
     }
 
     public ClientTestHelper getClientTestHelper() {

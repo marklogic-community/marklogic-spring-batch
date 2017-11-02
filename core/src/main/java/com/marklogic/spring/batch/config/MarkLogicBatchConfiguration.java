@@ -67,7 +67,7 @@ public class MarkLogicBatchConfiguration {
     }
 
     @Bean
-    @Qualifier("batchDatabaseClientConfig")
+    @Qualifier("batchXccTemplate")
     public XccTemplate xccTemplate(DatabaseClientConfig batchDatabaseClientConfig,
                                    @Value("${marklogic.database:Documents}") String databaseName) {
         return new XccTemplate(
@@ -79,7 +79,7 @@ public class MarkLogicBatchConfiguration {
     }
 
     @Bean
-    @Qualifier("markLogicJobRepositoryDatabaseClientConfig")
+    @Qualifier("markLogicJobRepositoryXccTemplate")
     public XccTemplate jobRepoXccTemplate(DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig,
                                           @Value("${marklogic.jobrepo.database:spring-batch}") String databaseName) {
         return new XccTemplate(

@@ -2,7 +2,9 @@ package com.marklogic.spring.batch.bind;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.NamespaceProvider;
-import com.marklogic.spring.batch.*;
+import com.marklogic.spring.batch.JobExecutionTestUtils;
+import com.marklogic.spring.batch.JobParametersTestUtils;
+import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
 import com.marklogic.spring.batch.core.MarkLogicJobInstance;
