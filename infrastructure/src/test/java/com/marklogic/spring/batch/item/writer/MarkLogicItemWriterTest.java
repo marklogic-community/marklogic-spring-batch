@@ -46,14 +46,17 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
     @Before
     public void setup() throws IOException {
         client = testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(),
-                databaseClientConfig.getPort(), databaseClientConfig.getUsername(),
-                databaseClientConfig.getPassword(), DatabaseClientFactory.Authentication.DIGEST);
+                databaseClientConfig.getPort(), new DatabaseClientFactory.DigestAuthContext(databaseClientConfig.getUsername(),
+                databaseClientConfig.getPassword()));
 
         clientTestHelper = new ClientTestHelper();
         SimpleDatabaseClientProvider dbConfig = new SimpleDatabaseClientProvider(databaseClientConfig);
         clientTestHelper.setDatabaseClientProvider(dbConfig);
 
-        testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(), databaseClientConfig.getPort(), databaseClientConfig.getUsername(), databaseClientConfig.getPassword(), DatabaseClientFactory.Authentication.DIGEST);
+        testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(),
+                databaseClientConfig.getPort(),
+                new DatabaseClientFactory.DigestAuthContext(
+                        databaseClientConfig.getUsername(), databaseClientConfig.getPassword()));
         docMgr = testDatabaseClient.newXMLDocumentManager();
         Resource transform = getApplicationContext().getResource("classpath:/transforms/simple.xqy");
         TransformExtensionsManager transMgr = testDatabaseClient.newServerConfigManager().newTransformExtensionsManager();
@@ -91,6 +94,8 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
     @Test
     public void writeTwoDocumentsTest() throws Exception {
         itemWriter = new MarkLogicItemWriter(client);
+        itemWriter.setBatchSize(5);
+        itemWriter.setThreadCount(2);
         write(getDocuments());
         clientTestHelper.assertInCollections("abc.xml", "raw");
         clientTestHelper.assertCollectionSize("Expecting two items in raw collection", "raw", 2);
