@@ -1,5 +1,5 @@
 dependencies {
-    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+    compile project(':core')
 
     // For importing RDF
     compile('org.apache.jena:jena-arq:2.13.0') {
