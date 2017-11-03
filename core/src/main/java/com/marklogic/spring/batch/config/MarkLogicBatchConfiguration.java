@@ -80,7 +80,7 @@ public class MarkLogicBatchConfiguration {
 
     @Bean
     @Qualifier("markLogicJobRepositoryXccTemplate")
-    public XccTemplate jobRepoXccTemplate(DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig,
+    public XccTemplate markLogicJobRepositoryXccTemplate(DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig,
                                           @Value("${marklogic.jobrepo.database:spring-batch}") String databaseName) {
         return new XccTemplate(
                 String.format("xcc://%s:%s@%s:8000/%s",

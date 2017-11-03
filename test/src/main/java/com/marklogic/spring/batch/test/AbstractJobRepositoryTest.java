@@ -11,10 +11,7 @@ public abstract class AbstractJobRepositoryTest extends AbstractSpringBatchTest 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         setDatabaseClientProvider(applicationContext.getBean("markLogicJobRepositoryDatabaseClientProvider", DatabaseClientProvider.class));
-        DatabaseClientConfig config = applicationContext.getBean("markLogicJobRepositoryDatabaseClientConfig", DatabaseClientConfig.class);
-        String xccUrl = "xcc://" + config.getUsername() + ":" + config.getPassword() + "@" +
-                config.getHost() + ":" + config.getPort() + "/mlJobRepo-content";
-        setXccTemplate(new XccTemplate(xccUrl));
+		setXccTemplate(applicationContext.getBean("markLogicJobRepositoryXccTemplate", XccTemplate.class));
     }
 
 }
