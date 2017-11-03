@@ -22,9 +22,9 @@ test:
     #- git lfs pull
     - pwd
     - chmod +x gradlew
-    - ./gradlew :mlJobRepo:mlInit -PmlHost=localhost --info
-    - ./gradlew :mlJobRepo:mlInstallAdmin -PmlHost=localhost -PmlAdminPassword=admin -PmlAdminUsername=admin --info
-    - ./gradlew :mlJobRepo:mlDeploy -PmlHost=localhost --info
+    - ./gradlew mlInit -PmlHost=localhost --info
+    - ./gradlew mlInstallAdmin -PmlHost=localhost -PmlAdminPassword=admin -PmlAdminUsername=admin --info
+    - ./gradlew mlDeploy -PmlHost=localhost --info
     - ./gradlew test --info
 
   post:
