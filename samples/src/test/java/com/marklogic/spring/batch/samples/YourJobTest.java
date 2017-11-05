@@ -17,7 +17,7 @@ public class YourJobTest extends AbstractJobRunnerTest {
         jpb.addString("output_collections", "monster");
         JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         Assert.assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-        getClientTestHelper().assertCollectionSize("Expecting 1 items in monster collection", "monster", 100);
+        getClientTestHelper().assertCollectionSize("Expecting 100 items in monster collection", "monster", 100);
     }
 
     @Test

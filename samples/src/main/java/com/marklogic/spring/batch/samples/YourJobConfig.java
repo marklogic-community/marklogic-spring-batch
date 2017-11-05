@@ -14,6 +14,7 @@ import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.item.Chunk;
 import org.springframework.batch.item.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +50,7 @@ public class YourJobConfig {
     public Job job(JobBuilderFactory jobBuilderFactory, Step step) {
         return jobBuilderFactory.get(JOB_NAME)
                 .start(step)
+                .listener(new YourJobListener())
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
@@ -124,11 +126,17 @@ public class YourJobConfig {
         };
 
         ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClient);
+
+        StepExecutionListener stepListener = new YourJobListener();
+        ChunkListener chunkListener = new YourJobListener();
+
         return stepBuilderFactory.get("step1")
                 .<String, DocumentWriteOperation>chunk(10)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
+                .listener(chunkListener)
+                .listener(stepListener)
                 .build();
     }
 
