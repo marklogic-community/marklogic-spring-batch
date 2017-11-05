@@ -3,9 +3,6 @@ apply plugin: "application"
 dependencies {
     compile project(':core')
 
-    // For importing images and extracting text from binaries
-    compile "org.apache.tika:tika-parsers:1.13"
-
     testCompile project(':test')
     testCompile "com.marklogic:ml-junit:3.0.0"
 

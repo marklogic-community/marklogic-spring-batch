@@ -2,7 +2,10 @@ package com.marklogic.spring.batch.samples;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -11,7 +14,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.listener.ExecutionContextPromotionListener;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.List;
 
 @EnableBatchProcessing
-public class TwoStepJobConfig {
+public class YourTwoStepJobConfig {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -73,7 +75,7 @@ public class TwoStepJobConfig {
 
 
         ExecutionContextPromotionListener listener = new ExecutionContextPromotionListener();
-        listener.setKeys(new String[]{ "someKey" });
+        listener.setKeys(new String[]{"someKey"});
 
         return stepBuilderFactory.get("step1")
                 .<String, String>chunk(10)
