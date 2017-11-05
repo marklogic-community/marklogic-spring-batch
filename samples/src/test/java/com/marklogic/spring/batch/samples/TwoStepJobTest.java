@@ -8,7 +8,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = { TwoStepJobConfig.class })
+@ContextConfiguration(classes = { YourTwoStepJobConfig.class })
 public class TwoStepJobTest extends AbstractJobRunnerTest {
 
     @Test
