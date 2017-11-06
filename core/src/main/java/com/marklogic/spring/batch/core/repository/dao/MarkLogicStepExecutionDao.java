@@ -40,7 +40,6 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
     private BatchProperties properties;
     private StepExecutionAdapter adapter;
 
-    @Autowired
     public MarkLogicStepExecutionDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
         this.databaseClient = databaseClient;
         this.properties = batchProperties;

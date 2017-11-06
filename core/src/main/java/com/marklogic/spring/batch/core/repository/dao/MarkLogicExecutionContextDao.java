@@ -34,7 +34,6 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
     private BatchProperties properties;
     private ExecutionContextAdapter adapter;
 
-    @Autowired
     public MarkLogicExecutionContextDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
         this.properties = batchProperties;
         this.databaseClient = databaseClient;

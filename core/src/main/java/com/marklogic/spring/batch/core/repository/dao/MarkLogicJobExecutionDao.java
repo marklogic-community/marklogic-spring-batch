@@ -42,7 +42,6 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
     private BatchProperties properties;
     private JobExecutionAdapter adapter;
 
-    @Autowired
     public MarkLogicJobExecutionDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
         this.databaseClient = databaseClient;
         this.properties = batchProperties;
