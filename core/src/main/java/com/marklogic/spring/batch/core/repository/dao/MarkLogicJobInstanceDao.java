@@ -8,13 +8,11 @@ import com.marklogic.client.query.*;
 import com.marklogic.spring.batch.bind.JobInstanceAdapter;
 import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedJobInstance;
-import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.dao.JobInstanceDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 
@@ -38,7 +36,6 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
     private BatchProperties properties;
     private JobInstanceAdapter adapter;
 
-    @Autowired
     public MarkLogicJobInstanceDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
         this.databaseClient = databaseClient;
         this.properties = batchProperties;
