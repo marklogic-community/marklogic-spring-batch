@@ -22,7 +22,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
 
@@ -145,7 +144,7 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
         MatchDocumentSummary[] summaries = results.getMatchResults();
         List<JobExecution> jobExecutions = new ArrayList<JobExecution>();
 
-        DocumentManager docMgr = databaseClient.newDocumentManager();
+        DocumentManager docMgr = databaseClient.newXMLDocumentManager();
         for (MatchDocumentSummary summary : summaries) {
             DocumentDescriptor desc = docMgr.exists(summary.getUri());
             JAXBHandle<AdaptedJobExecution> jaxbHandle = new JAXBHandle<AdaptedJobExecution>(jaxbContext());
