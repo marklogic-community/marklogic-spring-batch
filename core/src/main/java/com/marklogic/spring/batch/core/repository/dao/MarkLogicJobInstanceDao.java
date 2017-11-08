@@ -147,7 +147,7 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
         QueryManager queryMgr = databaseClient.newQueryManager();
         StringQueryDefinition querydef = queryMgr.newStringDefinition(properties.getSearchOptions());
         querydef.setCriteria("jobName:" + jobName + " AND sort:date AND type:job-instance");
-        logger.info(querydef.getCriteria());
+        logger.debug(querydef.getCriteria());
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
         List<JobInstance> jobInstances = new ArrayList<>();
         MatchDocumentSummary[] summaries = results.getMatchResults();

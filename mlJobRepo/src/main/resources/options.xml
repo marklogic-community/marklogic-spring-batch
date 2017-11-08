@@ -36,7 +36,7 @@
         </range>
     </constraint>
     <constraint name="type">
-        <collection prefix="http://marklogic.com/spring-batch/" facet="false" />
+        <collection facet="false" />
     </constraint>
     <values name="id">
         <range type="xs:unsignedLong">

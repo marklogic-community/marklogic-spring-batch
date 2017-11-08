@@ -33,7 +33,7 @@ import java.util.UUID;
  * to utilize the MarkLogic JobRepository.
  *
  * @author Scott Stafford
- * @version 1.3
+ * @version 1.3.0
  * @see EnableBatchProcessing
  * @see com.marklogic.spring.batch.config.MarkLogicBatchConfiguration
  */
