@@ -120,6 +120,30 @@ public class CommandLineJobRunnerTests {
     }
 
     @Test
+    public void testWithChunkSize() throws Throwable {
+        String[] args = new String[] { jobPathKey, jobPath, jobNameKey, jobName, "--chunk_size", "25" };
+        CommandLineJobRunner.main(args);
+        assertEquals(0, StubSystemExiter.status);
+        assertEquals("25", StubJobLauncher.jobParameters.getString("chunk_size"));
+    }
+
+    @Test
+    public void testWithDefaultChunkSize() throws Throwable {
+        String[] args = new String[] { jobPathKey, jobPath, jobNameKey, jobName};
+        CommandLineJobRunner.main(args);
+        assertEquals(0, StubSystemExiter.status);
+        assertEquals("100", StubJobLauncher.jobParameters.getString("chunk_size"));
+    }
+
+    @Test
+    public void testWithThreadCount() throws Throwable {
+        String[] args = new String[] { jobPathKey, jobPath, jobNameKey, jobName, "--thread_count", "5" };
+        CommandLineJobRunner.main(args);
+        assertEquals(0, StubSystemExiter.status);
+        assertEquals("5", StubJobLauncher.jobParameters.getString("thread_count"));
+    }
+
+    @Test
     public void testWithInvalidStdin() throws Throwable {
         System.setIn(new InputStream() {
             @Override
