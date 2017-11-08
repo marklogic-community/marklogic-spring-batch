@@ -8,6 +8,8 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobKeyGenerator;
 import org.springframework.batch.core.JobParameters;
 
+import java.util.Date;
+
 @XmlRootElement(name = "jobInstance", namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 @XmlType(namespace=MarkLogicSpringBatch.JOB_NAMESPACE)
 public class AdaptedJobInstance {
@@ -16,6 +18,7 @@ public class AdaptedJobInstance {
 	private Integer version = 0;
 	private String jobName;
 	private String jobKey;
+	private Date createDateTime;
 
 	private JobKeyGenerator<JobParameters> jobKeyGenerator = new DefaultJobKeyGenerator();
 	
@@ -68,5 +71,13 @@ public class AdaptedJobInstance {
 
 	public void setJobKey(JobParameters jobParameters) {
 		this.jobKey = jobKeyGenerator.generateKey(jobParameters);
+	}
+
+	public Date getCreateDateTime() {
+		return createDateTime;
+	}
+
+	public void setCreateDateTime(Date createDateTime) {
+		this.createDateTime = createDateTime;
 	}
 }

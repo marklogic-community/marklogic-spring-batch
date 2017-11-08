@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -61,7 +62,9 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
             JAXBContext jc = JAXBContext.newInstance(AdaptedJobInstance.class);
             Marshaller marshaller = jc.createMarshaller();
             JobInstanceAdapter adapter = new JobInstanceAdapter(jobParameters);
-            marshaller.marshal(adapter.marshal(jobInstance), doc);
+            AdaptedJobInstance aji = adapter.marshal(jobInstance);
+            aji.setCreateDateTime(new Date());
+            marshaller.marshal(aji, doc);
         } catch (ParserConfigurationException | JAXBException e) {
             logger.error(e.getMessage());
             e.printStackTrace();
