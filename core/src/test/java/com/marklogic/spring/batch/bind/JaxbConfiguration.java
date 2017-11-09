@@ -15,8 +15,7 @@ public class JaxbConfiguration {
                 com.marklogic.spring.batch.core.AdaptedJobInstance.class,
                 com.marklogic.spring.batch.core.AdaptedJobParameters.class,
                 com.marklogic.spring.batch.core.AdaptedStepExecution.class,
-                com.marklogic.spring.batch.core.AdaptedExecutionContext.class,
-                com.marklogic.spring.batch.core.MarkLogicJobInstance.class);
+                com.marklogic.spring.batch.core.AdaptedExecutionContext.class);
         marshaller.setAdapters(
                 new ExecutionContextAdapter(),
                 new JobExecutionAdapter(),

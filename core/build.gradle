@@ -1,11 +1,24 @@
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'com.marklogic.spring.batch.Main'
-        )
-    }
-}
+dependencies {
+    //core doesn't depend on infrastructure but want to grab both jars when importing MSB
+    compile project(":infrastructure")
 
+    // For the CommandLineInterface main program
+    compile "net.sf.jopt-simple:jopt-simple:5.0.1"
+
+    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+    compile "com.marklogic:marklogic-client-api:4.0.3"
+    compile "com.marklogic:ml-javaclient-util:3.0.0"
+
+    testCompile "org.springframework.batch:spring-batch-test:$springBatchVersion"
+    testCompile "com.marklogic:ml-junit:3.0.0"
+
+    // Used by marshall/unmarshall tests, which depends on Jaxb2Marshaller
+    testCompile "org.springframework:spring-oxm:$springVersion"
+    testCompile project(":test")
+
+    runtime "org.springframework.batch:spring-batch-core:$springBatchVersion"
+    runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
+}
 
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
