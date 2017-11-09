@@ -1,0 +1,26 @@
+dependencies {
+    compile project(':core')
+
+    // For importing RDF
+    compile('org.apache.jena:jena-arq:2.13.0') {
+        exclude(group: 'org.slf4j')
+        exclude(group: 'ch.qos.logback')
+        exclude(group: 'log4j')
+    }
+    compile('org.apache.jena:jena-core:2.13.0') {
+        exclude(group: 'org.slf4j')
+        exclude(group: 'xerces')
+        exclude(group: 'commons-cli')
+    }
+    compile('com.hp.hpl.jena:jena:2.6.4') {
+        exclude(group: 'org.slf4j')
+    }
+    compile('com.marklogic:marklogic-jena:1.0.0'){
+        changing=true
+        exclude(group: 'org.slf4j')
+        exclude(group: 'log4j')
+        exclude(group: 'ch.qos.logback')
+    }
+
+    testCompile project(':test')
+}

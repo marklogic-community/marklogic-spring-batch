@@ -13,12 +13,10 @@ buildscript {
 
 plugins {
     id "com.marklogic.ml-gradle" version "3.0.0"
-    id "java"
-    id "eclipse"
-    id "idea"
-    id "checkstyle"
-    id "maven-publish"
 }
+
+mlPostDeploy.dependsOn ":mlJobRepo:deployMarkLogicJobRepository"
+mlUndeploy.dependsOn "mlJobRepo:undeployMarkLogicJobRepository"
 
 allprojects {
     repositories {
@@ -29,27 +27,26 @@ allprojects {
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '4.1'
+        gradleVersion = '4.3'
     }
-
-    sourceSets.test.resources.srcDir 'src/test/java'
 }
 
 
 subprojects {
 
+    apply plugin: "java"
+    apply plugin: "maven-publish"
+    apply plugin: "idea"
+    apply plugin: "checkstyle"
+
     /*
-     * Not applying the bintray plugin. Couldn't get it working properly when declared
-     * in subprojects, and when declared at root level of this script, it caused an httpcomponents
-     * classpath issue with ml-gradle in the core project. So for now, each project has to
-     * duplicate bintray publishing configuration.
+     *  multi project builds must apply the bintray plugin
+     *  and the plugin configuration to every project which
+     *  its artifacts you wish to publish to bintray.
      */
 
-    apply plugin: "java"
-
-    if (it.name in ["core", "infrastructure", "test"]) {
+    if (it.name in ["core", "infrastructure", "test", "http"]) {
         apply plugin: "com.jfrog.bintray"
-        apply plugin: 'maven-publish'
     }
 
     ext {
@@ -58,14 +55,11 @@ subprojects {
     }
 
     dependencies {
-        compile 'ch.qos.logback:logback-classic:1.1.8'
-        compile 'org.slf4j:slf4j-api:1.7.21'
-        compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
-        compile "com.marklogic:marklogic-client-api:4.0.2"
-        compile "com.marklogic:ml-javaclient-util:3.0.0"
+        compile "org.slf4j:slf4j-api:1.7.25"
+        compile "org.slf4j:slf4j-log4j12:1.7.25"
+        compile "org.apache.logging.log4j:log4j-api:2.9.1"
 
-        testCompile "org.springframework.batch:spring-batch-test:$springBatchVersion"
-        testCompile "com.marklogic:ml-junit:3.0.0"
+        testCompile "junit:junit:4.12"
     }
 
     sourceCompatibility = 1.8
@@ -76,7 +70,7 @@ subprojects {
         toolVersion = '7.1.2'
     }
 
-    if (it.name in ["core", "infrastructure", "test"])  {
+    if (it.name in ["core", "infrastructure", "test", "http"])  {
         task sourcesJar(type: Jar, dependsOn: classes) {
             baseName = artifactId
             version = project.version
@@ -104,161 +98,5 @@ subprojects {
             }
         }
     }
-
-
 }
 
-project(':core') {
-
-    dependencies {
-        //core doesn't depend on infrastructure but want to grab both jars when importing MSB
-        compile project(":infrastructure")
-
-        // Used by ML Job Repo implementation; depends on DataFieldMaxValueIncrementer
-        compile "org.springframework:spring-jdbc:$springVersion"
-
-        // Used by MarkLogicBatchConfiguration, which depends on Jaxb2Marshaller
-        compile "org.springframework:spring-oxm:$springVersion"
-
-        // For the CLI
-        compile "net.sf.jopt-simple:jopt-simple:5.0.1"
-
-        testCompile project(":test")
-
-        runtime "org.springframework.batch:spring-batch-core:$springBatchVersion"
-
-        runtime "org.springframework:spring-jdbc:$springVersion"
-
-        runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
-    }
-
-}
-
-project(":infrastructure") {
-    description = 'MarkLogic Spring Batch Infrastructure'
-    dependencies {
-        compile "org.springframework:spring-jdbc:$springVersion"
-        compile "org.apache.commons:commons-lang3:3.5"
-        testCompile project(':test')
-    }
-}
-
-project(':test') {
-    dependencies {
-        compile project(':infrastructure')
-        compile project(':core')
-        compile "org.springframework.batch:spring-batch-test:$springBatchVersion"
-        compile "com.marklogic:ml-junit:3.0.0"
-        // For detecting version of MarkLogic
-        compile "com.marklogic:ml-app-deployer:3.0.0"
-    }
-}
-
-project(':samples') {
-    apply plugin: "application"
-
-    dependencies {
-        compile project(':core')
-        compile project(':infrastructure')
-        testCompile project(':test')
-
-        // For importing images and extracting text from binaries
-        compile "org.apache.tika:tika-parsers:1.13"
-    }
-
-    distributions {
-        main {
-            baseName = "samples"
-        }
-    }
-
-    jar {
-        baseName = "samples"
-    }
-
-    mainClassName = "com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner"
-
-    applicationName = "samples"
-
-    task runYourJob(type: JavaExec) {
-        main = 'com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner'
-        classpath = sourceSets.test.runtimeClasspath
-        args = ["--job_path", "com.marklogic.spring.batch.samples.JobsConfig",
-                "--job_id", "job",
-                "--output_collections", "runYourJob",
-                "--next"]
-    }
-}
-
-project(':mlJobRepo') {
-    apply plugin: "application"
-
-    //Needed for mlInit, mlInstallAdmin
-    apply plugin: "com.marklogic.ml-gradle"
-
-    task deployMarkLogicJobRepository(type: JavaExec) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
-        args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
-    }
-
-    task undeployMarkLogicJobRepository(type: JavaExec) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
-        args = ["--undeploy", "--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
-    }
-
-// Setup the Job Repo in our test application so it's available for use by tests.
-    mlPostDeploy.dependsOn deployMarkLogicJobRepository
-    mlUndeploy.dependsOn undeployMarkLogicJobRepository
-
-    dependencies {
-        // For deploying the ML Job Repo
-        compile "com.marklogic:ml-app-deployer:3.0.0"
-
-        // For the CLI
-        compile "net.sf.jopt-simple:jopt-simple:5.0.1"
-    }
-
-    mainClassName = "com.marklogic.spring.batch.DeployMarkLogicJobRepository"
-
-}
-
-project(":rdf") {
-    description = 'MarkLogic Spring Batch Infrastructure: Triples'
-    dependencies {
-        // For importing RDF
-        compile('org.apache.jena:jena-arq:2.13.0') {
-            exclude(group: 'org.slf4j')
-            exclude(group: 'ch.qos.logback')
-            exclude(group: 'log4j')
-        }
-        compile('org.apache.jena:jena-core:2.13.0') {
-            exclude(group: 'org.slf4j')
-            exclude(group: 'xerces')
-            exclude(group: 'commons-cli')
-        }
-        compile('com.hp.hpl.jena:jena:2.6.4') {
-            exclude(group: 'org.slf4j')
-        }
-        compile('com.marklogic:marklogic-jena:1.0.0'){
-            changing=true
-            exclude(group: 'org.slf4j')
-            exclude(group: 'log4j')
-            exclude(group: 'ch.qos.logback')
-        }
-
-        testCompile project(':test')
-    }
-
-}
-
-project (':shapefiles') {
-
-    dependencies {
-        compile "org.apache.httpcomponents:httpmime:4.5.2"
-        compile project(':infrastructure')
-        testCompile project(':test')
-    }
-
-}

@@ -2,6 +2,7 @@ machine:
   services:
     - docker
   java:
+    version: oraclejdk8
 
 dependencies:
   override:
@@ -16,15 +17,15 @@ dependencies:
 
 test:
   override:
-    - docker run --hostname grover --name ml -d -p 8000:8000 -p 8001:8001 -p 8002:8002 -p 8200:8200 $DOCKER_MARKLOGIC_IMAGE
+    - docker run --hostname grover --name ml -d -p 8000:8000 -p 8001:8001 -p 8002:8002 -p 8200:8200 -p 8201:8201 $DOCKER_MARKLOGIC_IMAGE
     - sleep 10
     #- git lfs env
     #- git lfs pull
     - pwd
     - chmod +x gradlew
-    - ./gradlew :mlJobRepo:mlInit -PmlHost=localhost --info
-    - ./gradlew :mlJobRepo:mlInstallAdmin -PmlHost=localhost -PmlAdminPassword=admin -PmlAdminUsername=admin --info
-    - ./gradlew :mlJobRepo:mlDeploy -PmlHost=localhost --info
+    - ./gradlew mlInit -PmlHost=localhost --info
+    - ./gradlew mlInstallAdmin -PmlHost=localhost -PmlAdminPassword=admin -PmlAdminUsername=admin --info
+    - ./gradlew mlDeploy -PmlHost=localhost --info
     - ./gradlew test --info
 
   post:

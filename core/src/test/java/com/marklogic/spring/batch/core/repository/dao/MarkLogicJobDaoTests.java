@@ -1,265 +1,279 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.*;
+import org.springframework.batch.core.repository.dao.JobExecutionDao;
+import org.springframework.batch.core.repository.dao.JobInstanceDao;
 import org.springframework.batch.core.repository.dao.NoSuchObjectException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.List;
+
 public class MarkLogicJobDaoTests extends AbstractJobRepositoryTest {
-	
-	protected JobParameters jobParameters = new JobParametersBuilder().addString("job.key", "jobKey").addLong("long",
-			(long) 1).addDate("date", new Date(7)).addDouble("double", 7.7).toJobParameters();
 
-	protected JobInstance jobInstance;
+    protected JobParameters jobParameters = new JobParametersBuilder().addString("job.key", "jobKey").addLong("long",
+            (long) 1).addDate("date", new Date(7)).addDouble("double", 7.7).toJobParameters();
 
-	protected String jobName = "Job1";
+    protected JobInstance jobInstance;
 
-	protected JobExecution jobExecution;
+    protected String jobName = "Job1";
 
-	protected Date jobExecutionStartTime = new Date(System.currentTimeMillis());
-	
-	@Before
-	public void onSetUpInTransaction() throws Exception {
-		initializeJobRepository();
-		
-		// Create job.
-		jobInstance = getJobInstanceDao().createJobInstance(jobName, jobParameters);
+    protected JobExecution jobExecution;
 
-		// Create an execution
-		jobExecutionStartTime = new Date(System.currentTimeMillis());
-		jobExecution = new JobExecution(jobInstance, jobParameters);
-		jobExecution.setStartTime(jobExecutionStartTime);
-		jobExecution.setStatus(BatchStatus.STARTED);
-		getJobExecutionDao().saveJobExecution(jobExecution);
-	}
+    protected JobInstanceDao jobInstanceDao;
+    protected JobExecutionDao jobExecutionDao;
 
-	@Transactional @Test
-	public void testVersionIsNotNullForJob() throws Exception {
-		assertEquals(0, getJobInstanceDao().getJobInstance(jobInstance.getId()).getVersion().intValue());
-	}
+    protected Date jobExecutionStartTime = new Date(System.currentTimeMillis());
 
-	@Transactional @Test
-	public void testVersionIsNotNullForJobExecution() throws Exception {
-		assertEquals(0, getJobExecutionDao().getJobExecution(jobExecution.getId()).getVersion().intValue());
-	}
+    @Before
+    public void onSetUpInTransaction() throws Exception {
+        jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), getBatchProperties());
+        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
+        // Create job.
+        jobInstance = jobInstanceDao.createJobInstance(jobName, jobParameters);
 
-	@Transactional @Test
-	public void testFindNonExistentJob() {
-		// No job should be found since it hasn't been created.
-		JobInstance jobInstance = getJobInstanceDao().getJobInstance("nonexistentJob", jobParameters);
-		assertNull(jobInstance);
-	}
+        // Create an execution
+        jobExecutionStartTime = new Date(System.currentTimeMillis());
+        jobExecution = new JobExecution(jobInstance, jobParameters);
+        jobExecution.setStartTime(jobExecutionStartTime);
+        jobExecution.setStatus(BatchStatus.STARTED);
+        jobExecutionDao.saveJobExecution(jobExecution);
+    }
 
-	@Transactional @Test
-	public void testFindJob() {
-		JobInstance instance = getJobInstanceDao().getJobInstance(jobName, jobParameters);
-		assertNotNull(instance);
-		assertTrue(jobInstance.equals(instance));
-	}
+    @Transactional
+    @Test
+    public void testVersionIsNotNullForJob() throws Exception {
+        assertEquals(0, jobInstanceDao.getJobInstance(jobInstance.getId()).getVersion().intValue());
+    }
 
-	@Transactional @Test
-	public void testFindJobWithNullRuntime() {
+    @Transactional
+    @Test
+    public void testVersionIsNotNullForJobExecution() throws Exception {
+        int version = jobExecutionDao.getJobExecution(jobExecution.getId()).getVersion().intValue();
+        assertTrue((Integer.MIN_VALUE <= version) && (version <= Integer.MAX_VALUE));
+    }
 
-		try {
-			getJobInstanceDao().getJobInstance(null, null);
-			fail();
-		}
-		catch (IllegalArgumentException ex) {
-			// expected
-		}
-	}
+    @Transactional
+    @Test
+    public void testFindNonExistentJob() {
+        // No job should be found since it hasn't been created.
+        JobInstance jobInstance = jobInstanceDao.getJobInstance("nonexistentJob", jobParameters);
+        assertNull(jobInstance);
+    }
 
-	/**
-	 * Test that ensures that if you create a job with a given name, then find a
-	 * job with the same name, but other pieces of the identifier different, you
-	 * get no result, not the existing one.
-	 */
-	@Transactional @Test
-	public void testCreateJobWithExistingName() {
+    @Transactional
+    @Test
+    public void testFindJob() {
+        JobInstance instance = jobInstanceDao.getJobInstance(jobName, jobParameters);
+        assertNotNull(instance);
+        assertTrue(jobInstance.equals(instance));
+    }
 
-		String scheduledJob = "ScheduledJob";
-		getJobInstanceDao().createJobInstance(scheduledJob, jobParameters);
+    @Transactional
+    @Test
+    public void testFindJobWithNullRuntime() {
 
-		// Modifying the key should bring back a completely different
-		// JobInstance
-		JobParameters tempProps = new JobParametersBuilder().addString("job.key", "testKey1").toJobParameters();
+        try {
+            jobInstanceDao.getJobInstance(null, null);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
 
-		JobInstance instance;
-		instance = getJobInstanceDao().getJobInstance(scheduledJob, jobParameters);
-		assertNotNull(instance);
+    /**
+     * Test that ensures that if you create a job with a given name, then find a
+     * job with the same name, but other pieces of the identifier different, you
+     * get no result, not the existing one.
+     */
+    @Transactional
+    @Test
+    public void testCreateJobWithExistingName() {
 
-		instance = getJobInstanceDao().getJobInstance(scheduledJob, tempProps);
-		assertNull(instance);
+        String scheduledJob = "ScheduledJob";
+        jobInstanceDao.createJobInstance(scheduledJob, jobParameters);
 
-	}
+        // Modifying the key should bring back a completely different
+        // JobInstance
+        JobParameters tempProps = new JobParametersBuilder().addString("job.key", "testKey1").toJobParameters();
 
-	@Transactional @Test
-	public void testUpdateJobExecution() {
+        JobInstance instance;
+        instance = jobInstanceDao.getJobInstance(scheduledJob, jobParameters);
+        assertNotNull(instance);
 
-		jobExecution.setStatus(BatchStatus.COMPLETED);
-		jobExecution.setExitStatus(ExitStatus.COMPLETED);
-		jobExecution.setEndTime(new Date(System.currentTimeMillis()));
-		getJobExecutionDao().updateJobExecution(jobExecution);
+        instance = jobInstanceDao.getJobInstance(scheduledJob, tempProps);
+        assertNull(instance);
 
-		List<JobExecution> executions = getJobExecutionDao().findJobExecutions(jobInstance);
-		assertEquals(executions.size(), 1);
-		validateJobExecution(jobExecution, executions.get(0));
+    }
 
-	}
+    @Transactional
+    @Test
+    public void testUpdateJobExecution() {
 
-	@Transactional @Test
-	public void testSaveJobExecution() {
+        jobExecution.setStatus(BatchStatus.COMPLETED);
+        jobExecution.setExitStatus(ExitStatus.COMPLETED);
+        jobExecution.setEndTime(new Date(System.currentTimeMillis()));
+        jobExecutionDao.updateJobExecution(jobExecution);
 
-		List<JobExecution> executions = getJobExecutionDao().findJobExecutions(jobInstance);
-		assertEquals(executions.size(), 1);
-		validateJobExecution(jobExecution, executions.get(0));
-	}
+        List<JobExecution> executions = jobExecutionDao.findJobExecutions(jobInstance);
+        assertEquals(executions.size(), 1);
+        validateJobExecution(jobExecution, executions.get(0));
 
-	@Transactional @Test
-	public void testUpdateInvalidJobExecution() {
+    }
 
-		// id is invalid
-		JobExecution execution = new JobExecution(jobInstance, (long) 29432, jobParameters, null);
-		execution.incrementVersion();
-		try {
-			getJobExecutionDao().updateJobExecution(execution);
-			fail("Expected NoSuchBatchDomainObjectException");
-		}
-		catch (NoSuchObjectException ex) {
-			// expected
-		}
-	}
+    @Transactional
+    @Test
+    public void testSaveJobExecution() {
 
-	@Transactional @Test
-	public void testUpdateNullIdJobExection() {
+        List<JobExecution> executions = jobExecutionDao.findJobExecutions(jobInstance);
+        assertEquals(executions.size(), 1);
+        validateJobExecution(jobExecution, executions.get(0));
+    }
 
-		JobExecution execution = new JobExecution(jobInstance, jobParameters);
-		try {
-			getJobExecutionDao().updateJobExecution(execution);
-			fail();
-		}
-		catch (IllegalArgumentException ex) {
-			// expected
-		}
-	}
+    @Transactional
+    @Test
+    public void testUpdateInvalidJobExecution() {
+
+        // id is invalid
+        JobExecution execution = new JobExecution(jobInstance, (long) 29432, jobParameters, null);
+        execution.incrementVersion();
+        try {
+            jobExecutionDao.updateJobExecution(execution);
+            fail("Expected NoSuchBatchDomainObjectException");
+        } catch (NoSuchObjectException ex) {
+            // expected
+        }
+    }
+
+    @Transactional
+    @Test
+    public void testUpdateNullIdJobExection() {
+
+        JobExecution execution = new JobExecution(jobInstance, jobParameters);
+        try {
+            jobExecutionDao.updateJobExecution(execution);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
 
 
-	@Transactional @Test
-	public void testJobWithSimpleJobIdentifier() throws Exception {
+    @Transactional
+    @Test
+    public void testJobWithSimpleJobIdentifier() throws Exception {
 
-		String testJob = "test";
-		// Create job.
-		jobInstance = getJobInstanceDao().createJobInstance(testJob, jobParameters);
+        String testJob = "test";
+        // Create job.
+        jobInstance = jobInstanceDao.createJobInstance(testJob, jobParameters);
 
-		JobInstance jobInst = getJobInstanceDao().getJobInstance(jobInstance.getId());
-		
-		assertNotNull(jobInst);
-		assertEquals("test", jobInst.getJobName());
+        JobInstance jobInst = jobInstanceDao.getJobInstance(jobInstance.getId());
 
-	}
+        assertNotNull(jobInst);
+        assertEquals("test", jobInst.getJobName());
 
-	@Transactional @Test
-	public void testJobWithDefaultJobIdentifier() throws Exception {
+    }
 
-		String testDefaultJob = "testDefault";
-		// Create job.
-		jobInstance = getJobInstanceDao().createJobInstance(testDefaultJob, jobParameters);
+    @Transactional
+    @Test
+    public void testJobWithDefaultJobIdentifier() throws Exception {
 
-		JobInstance instance = getJobInstanceDao().getJobInstance(testDefaultJob, jobParameters);
+        String testDefaultJob = "testDefault";
+        // Create job.
+        jobInstance = jobInstanceDao.createJobInstance(testDefaultJob, jobParameters);
 
-		assertNotNull(instance);
-	}
+        JobInstance instance = jobInstanceDao.getJobInstance(testDefaultJob, jobParameters);
 
-	@Transactional @Test
-	public void testFindJobExecutions() {
+        assertNotNull(instance);
+    }
 
-		List<JobExecution> results = getJobExecutionDao().findJobExecutions(jobInstance);
-		assertEquals(results.size(), 1);
-		validateJobExecution(jobExecution, results.get(0));
-	}
+    @Transactional
+    @Test
+    public void testFindJobExecutions() {
 
-	private void validateJobExecution(JobExecution lhs, JobExecution rhs) {
+        List<JobExecution> results = jobExecutionDao.findJobExecutions(jobInstance);
+        assertEquals(results.size(), 1);
+        validateJobExecution(jobExecution, results.get(0));
+    }
 
-		// equals operator only checks id
-		assertEquals(lhs, rhs);
-		assertEquals(lhs.getStartTime(), rhs.getStartTime());
-		assertEquals(lhs.getEndTime(), rhs.getEndTime());
-		assertEquals(lhs.getStatus(), rhs.getStatus());
-		assertEquals(lhs.getExitStatus(), rhs.getExitStatus());
-	}
+    private void validateJobExecution(JobExecution lhs, JobExecution rhs) {
 
-	@Transactional 
-	@Test
-	public void testGetLastJobExecution() {
-		JobExecution lastExecution = new JobExecution(jobInstance, jobParameters);
-		lastExecution.setStatus(BatchStatus.STARTED);
+        // equals operator only checks id
+        assertEquals(lhs, rhs);
+        assertEquals(lhs.getStartTime(), rhs.getStartTime());
+        assertEquals(lhs.getEndTime(), rhs.getEndTime());
+        assertEquals(lhs.getStatus(), rhs.getStatus());
+        assertEquals(lhs.getExitStatus(), rhs.getExitStatus());
+    }
 
-		int JUMP_INTO_FUTURE = 1000; // makes sure start time is 'greatest'
-		lastExecution.setCreateTime(new Date(System.currentTimeMillis() + JUMP_INTO_FUTURE));
-		getJobExecutionDao().saveJobExecution(lastExecution);
+    @Transactional
+    @Test
+    public void testGetLastJobExecution() {
+        JobExecution lastExecution = new JobExecution(jobInstance, jobParameters);
+        lastExecution.setStatus(BatchStatus.STARTED);
 
-		assertEquals(lastExecution, getJobExecutionDao().getLastJobExecution(jobInstance));
-		assertNotNull(lastExecution.getJobParameters());
-		assertEquals("jobKey", lastExecution.getJobParameters().getString("job.key"));
-	}
+        int JUMP_INTO_FUTURE = 1000; // makes sure start time is 'greatest'
+        lastExecution.setCreateTime(new Date(System.currentTimeMillis() + JUMP_INTO_FUTURE));
+        jobExecutionDao.saveJobExecution(lastExecution);
 
-	/**
-	 * Trying to create instance twice for the same job+parameters causes error
-	 */
-	@Transactional @Test
-	public void testCreateDuplicateInstance() {
+        assertEquals(lastExecution, jobExecutionDao.getLastJobExecution(jobInstance));
+        assertNotNull(lastExecution.getJobParameters());
+        assertEquals("jobKey", lastExecution.getJobParameters().getString("job.key"));
+    }
 
-		jobParameters = new JobParameters();
-		
-		getJobInstanceDao().createJobInstance(jobName, jobParameters);
+    /**
+     * Trying to create instance twice for the same job+parameters causes error
+     */
+    @Transactional
+    @Test
+    public void testCreateDuplicateInstance() {
 
-		try {
-			getJobInstanceDao().createJobInstance(jobName, jobParameters);
-			fail();
-		}
-		catch (IllegalStateException e) {
-			// expected
-		}
-	}
+        jobParameters = new JobParameters();
 
-	@Transactional @Test
-	public void testCreationAddsVersion() {
+        jobInstanceDao.createJobInstance(jobName, jobParameters);
 
-		jobInstance = getJobInstanceDao().createJobInstance("testCreationAddsVersion", new JobParameters());
+        try {
+            jobInstanceDao.createJobInstance(jobName, jobParameters);
+            fail();
+        } catch (IllegalStateException e) {
+            // expected
+        }
+    }
 
-		assertNotNull(jobInstance.getVersion());
-	}
+    @Transactional
+    @Test
+    public void testCreationAddsVersion() {
 
-	@Transactional @Test
-	public void testSaveAddsVersionAndId() {
+        jobInstance = jobInstanceDao.createJobInstance("testCreationAddsVersion", new JobParameters());
 
-		JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
+        assertNotNull(jobInstance.getVersion());
+    }
 
-		assertNull(jobExecution.getId());
-		assertNull(jobExecution.getVersion());
+    @Transactional
+    @Test
+    public void testSaveAddsVersionAndId() {
 
-		getJobExecutionDao().saveJobExecution(jobExecution);
+        JobExecution jobExecution = new JobExecution(jobInstance, jobParameters);
 
-		assertNotNull(jobExecution.getId());
-		assertNotNull(jobExecution.getVersion());
-	}
+        assertNull(jobExecution.getId());
+        assertNull(jobExecution.getVersion());
 
-	@Transactional @Test
-	public void testUpdateIncrementsVersion() {
-		int version = jobExecution.getVersion();
+        jobExecutionDao.saveJobExecution(jobExecution);
 
-		getJobExecutionDao().updateJobExecution(jobExecution);
+        assertNotNull(jobExecution.getId());
+        assertNotNull(jobExecution.getVersion());
+    }
 
-		assertEquals(version + 1, jobExecution.getVersion().intValue());
-	}
+    @Transactional
+    @Test
+    public void testUpdateIncrementsVersion() {
+        int version = jobExecution.getVersion();
+
+        jobExecutionDao.updateJobExecution(jobExecution);
+
+        assertNotEquals(version, jobExecution.getVersion().intValue());
+    }
 }

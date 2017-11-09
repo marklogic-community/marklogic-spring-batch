@@ -13,6 +13,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import java.util.List;
 
 @Configuration
+@ComponentScan("com.marklogic.spring.batch.config")
 @PropertySource(value = "classpath:job.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:job.properties", ignoreResourceNotFound = true)
 public class MarkLogicBatchConfiguration {
@@ -55,8 +56,9 @@ public class MarkLogicBatchConfiguration {
     @Qualifier("markLogicJobRepositoryDatabaseClientProvider")
     @Conditional(UseMarkLogicBatchCondition.class)
     public BatchConfigurer batchConfigurer(
-            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider) {
-        return new MarkLogicBatchConfigurer(databaseClientProvider);
+            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider,
+            BatchProperties batchProperties) {
+        return new MarkLogicBatchConfigurer(databaseClientProvider, batchProperties);
     }
 
     @Bean
@@ -65,7 +67,7 @@ public class MarkLogicBatchConfiguration {
     }
 
     @Bean
-    @Qualifier("batchDatabaseClientConfig")
+    @Qualifier("batchXccTemplate")
     public XccTemplate xccTemplate(DatabaseClientConfig batchDatabaseClientConfig,
                                    @Value("${marklogic.database:Documents}") String databaseName) {
         return new XccTemplate(
@@ -77,8 +79,8 @@ public class MarkLogicBatchConfiguration {
     }
 
     @Bean
-    @Qualifier("markLogicJobRepositoryDatabaseClientConfig")
-    public XccTemplate jobRepoXccTemplate(DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig,
+    @Qualifier("markLogicJobRepositoryXccTemplate")
+    public XccTemplate markLogicJobRepositoryXccTemplate(DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig,
                                           @Value("${marklogic.jobrepo.database:spring-batch}") String databaseName) {
         return new XccTemplate(
                 String.format("xcc://%s:%s@%s:8000/%s",
@@ -89,3 +91,4 @@ public class MarkLogicBatchConfiguration {
     }
 
 }
+

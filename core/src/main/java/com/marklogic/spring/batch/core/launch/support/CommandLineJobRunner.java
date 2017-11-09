@@ -305,6 +305,7 @@ public class CommandLineJobRunner {
             String jobName = jobIdentifier;
 
             JobParameters jobParameters = jobParametersConverter.getJobParameters(parameters);
+
             Assert.isTrue(parameters == null || parameters.size() == 0 || !jobParameters.isEmpty(),
                     "Invalid JobParameters " + Arrays.asList(parameters)
                             + ". If parameters are provided they should be in the form name=value (no whitespace).");
@@ -548,6 +549,8 @@ public class CommandLineJobRunner {
             String jobIdentifier = options.valueOf(JOB_ID).toString();
 
             Properties props = new Properties();
+            props.setProperty(CHUNK_SIZE, options.valueOf(CHUNK_SIZE).toString());
+            props.setProperty(THREAD_COUNT, options.valueOf(THREAD_COUNT).toString());
             List<?> nonOptionArgs = options.nonOptionArguments();
             int size = nonOptionArgs.size();
             for (int i = 0; i < size; i++) {
@@ -579,6 +582,7 @@ public class CommandLineJobRunner {
     protected String NEXT = "next";
     protected String JOB_ID = "job_id";
     protected String CHUNK_SIZE = "chunk_size";
+    protected String THREAD_COUNT = "thread_count";
 
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
@@ -589,7 +593,8 @@ public class CommandLineJobRunner {
         parser.accepts(NEXT, "(optional) Start the next in a sequence according to the JobParametersIncrementer in the Job");
         parser.accepts(RESTART, "(optional) to restart the last failed execution");
         parser.accepts(STOP, " (optional) to stop a running execution");
-        parser.accepts(CHUNK_SIZE, "The chunk size of the job").withRequiredArg().defaultsTo("10");
+        parser.accepts(CHUNK_SIZE, "The chunk size of the job").withOptionalArg().defaultsTo("100");
+        parser.accepts(THREAD_COUNT, "The number of threads for the job").withOptionalArg().defaultsTo("4");
         parser.allowsUnrecognizedOptions();
         return parser;
     }

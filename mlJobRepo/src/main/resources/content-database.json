@@ -1,0 +1,47 @@
+{
+    "collection-lexicon": true,
+    "database-name": "%s",
+    "maintain-last-modified": true,
+    "path-namespace": [
+        {
+            "namespace-uri": "http://marklogic.com/spring-batch",
+            "prefix": "msb"
+        }
+    ],
+    "range-element-index": [
+        {
+            "collation": "",
+            "invalid-values": "reject",
+            "localname": "createDateTime",
+            "namespace-uri": "http://marklogic.com/spring-batch",
+            "range-value-positions": false,
+            "scalar-type": "dateTime"
+        },
+        {
+            "collation": "",
+            "invalid-values": "reject",
+            "localname": "endDateTime",
+            "namespace-uri": "http://marklogic.com/spring-batch",
+            "range-value-positions": false,
+            "scalar-type": "dateTime"
+        },
+        {
+            "collation": "",
+            "invalid-values": "reject",
+            "localname": "id",
+            "namespace-uri": "http://marklogic.com/spring-batch",
+            "range-value-positions": false,
+            "scalar-type": "unsignedLong"
+        },
+        {
+            "collation": "http://marklogic.com/collation/",
+            "invalid-values": "reject",
+            "localname": "jobName",
+            "namespace-uri": "http://marklogic.com/spring-batch",
+            "range-value-positions": false,
+            "scalar-type": "string"
+        }
+    ],
+    "triple-index": true,
+    "uri-lexicon": true
+}
