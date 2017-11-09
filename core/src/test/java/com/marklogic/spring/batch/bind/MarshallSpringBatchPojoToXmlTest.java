@@ -2,10 +2,11 @@ package com.marklogic.spring.batch.bind;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.junit.NamespaceProvider;
-import com.marklogic.spring.batch.*;
+import com.marklogic.spring.batch.JobExecutionTestUtils;
+import com.marklogic.spring.batch.JobParametersTestUtils;
+import com.marklogic.spring.batch.SpringBatchNamespaceProvider;
 import com.marklogic.spring.batch.core.AdaptedJobParameters;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
-import com.marklogic.spring.batch.core.MarkLogicJobInstance;
 import org.jdom2.input.DOMBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,20 +126,6 @@ public class MarshallSpringBatchPojoToXmlTest {
         frag.assertElementExists("/msb:executionContext/msb:map/entry/value[@xsi:type = 'xs:string'][text() = 'testValue']");
         frag.assertElementExists("/msb:executionContext/msb:map/entry/value[@xsi:type = 'xs:double'][text() = '123.0']");
         frag.assertElementExists("/msb:executionContext/msb:hashCode");
-    }
-
-    @Test
-    public void marshallMarkLogicJobInstanceTest() throws Exception {
-        JobExecution jobExecution = JobExecutionTestUtils.getJobExecution();
-        jobExecution.createStepExecution("stepA");
-        jobExecution.createStepExecution("stepB");
-        MarkLogicJobInstance mji = new MarkLogicJobInstance(jobExecution.getJobInstance());
-        mji.addJobExecution(jobExecution);
-        jaxb2Marshaller.marshal(mji, result);
-        Fragment frag = new Fragment(new DOMBuilder().build(doc));
-        frag.setNamespaces(getNamespaceProvider().getNamespaces());
-        frag.prettyPrint();
-
     }
 
     protected NamespaceProvider getNamespaceProvider() {

@@ -28,11 +28,9 @@ public class DeployMarkLogicJobRepository {
         OptionSet options = parser.parse(args);
         if (options.has(HELP)) {
             parser.printHelpOn(System.out);
-        }
-        else if (options.has(UNDEPLOY)) {
+        } else if (options.has(UNDEPLOY)) {
             undeployMarkLogicJobRepository(options);
-        }
-        else {
+        } else {
             deployMarkLogicJobRepository(options);
         }
     }
@@ -63,7 +61,7 @@ public class DeployMarkLogicJobRepository {
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
         parser.acceptsAll(Arrays.asList("h", HELP), "Show help").forHelp();
-        parser.accepts(NAME, "Name of the MarkLogic Job Repository").withRequiredArg();
+        parser.accepts(NAME, "Name of the MarkLogic Job Repository").withRequiredArg().defaultsTo("mlJobRepo");
         parser.accepts(HOST, "Hostname of the destination MarkLogic Server").withRequiredArg().defaultsTo("localhost");
         parser.accepts(PORT, "Port number of the destination MarkLogic Server. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8015);
         parser.accepts(USERNAME, "The MarkLogic user to authenticate as against the given host and port").withRequiredArg().defaultsTo("admin");

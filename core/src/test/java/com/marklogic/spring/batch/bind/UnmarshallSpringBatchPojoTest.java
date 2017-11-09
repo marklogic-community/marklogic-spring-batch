@@ -95,14 +95,4 @@ public class UnmarshallSpringBatchPojoTest extends Assert {
         assertEquals(683181905, executionContext.hashCode());
     }
 
-    @Test
-    public void unmarshallMarkLogicJobInstance() throws Exception {
-        Resource xml = ctx.getResource("classpath:/xml/ml-job-instance.xml");
-        MarkLogicJobInstance mji = (MarkLogicJobInstance) jaxb2Marshaller.unmarshal(new StreamSource(xml.getInputStream()));
-        assertNotNull(mji);
-        assertEquals(new Long(1930652603895744222L), mji.getJobInstance().getId());
-        assertEquals(1, mji.getJobExecutions().size());
-        assertEquals(1, mji.getJobExecutions().get(0).getStepExecutions().size());
-    }
-
 }
