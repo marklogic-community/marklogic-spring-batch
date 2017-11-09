@@ -116,7 +116,7 @@ public class CommandLineJobRunnerTests {
         String[] args = new String[] { jobPathKey, jobPath, jobNameKey, jobName };
         CommandLineJobRunner.main(args);
         assertEquals(0, StubSystemExiter.status);
-        assertEquals(new JobParameters(), StubJobLauncher.jobParameters);
+        assertEquals(2, StubJobLauncher.jobParameters.getParameters().size());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class CommandLineJobRunnerTests {
         });
         CommandLineJobRunner.main(new String[] { jobPathKey, jobPath, jobNameKey, jobName });
         assertEquals(0, StubSystemExiter.status);
-        assertEquals(0, StubJobLauncher.jobParameters.getParameters().size());
+        assertEquals(2, StubJobLauncher.jobParameters.getParameters().size());
     }
 
     @Ignore
@@ -357,7 +357,7 @@ public class CommandLineJobRunnerTests {
         CommandLineJobRunner.main(args);
         assertEquals(0, StubSystemExiter.status);
         jobParameters = new JobParametersBuilder().addString("foo", "spam").addString("bar", "foo").toJobParameters();
-        assertEquals(jobParameters, StubJobLauncher.jobParameters);
+        assertEquals(jobParameters.getString("bar"), StubJobLauncher.jobParameters.getString("bar"));
     }
 
     @Test
@@ -367,7 +367,7 @@ public class CommandLineJobRunnerTests {
         CommandLineJobRunner.main(args);
         assertEquals(0, StubSystemExiter.status);
         JobParameters jobParameters = new JobParametersBuilder().addString("foo", "spam").toJobParameters();
-        assertEquals(jobParameters, StubJobLauncher.jobParameters);
+        assertEquals(jobParameters.getString("foo"), StubJobLauncher.jobParameters.getString("foo"));
     }
 
     @Ignore
