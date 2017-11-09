@@ -8,6 +8,7 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.ext.batch.RestBatchWriter;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.Format;
+import com.marklogic.spring.batch.item.writer.support.DefaultUriTransformer;
 import com.marklogic.spring.batch.item.writer.support.UriTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,22 +58,20 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
         if (!version.startsWith("9")) {
             isMarklogicVersion9 = false;
         }
+        uriTransformer = new DefaultUriTransformer();
     }
 
-    public MarkLogicItemWriter(DatabaseClient client, UriTransformer uriTransformer) {
-        this(client);
-        this.uriTransformer = uriTransformer;
+    public MarkLogicItemWriter(DatabaseClient databaseClient, Format format) {
+        this(databaseClient);
+        this.contentFormat = format;
     }
+
 
     public MarkLogicItemWriter(DatabaseClient client, ServerTransform serverTransform) {
         this(client);
         this.serverTransform = serverTransform;
     }
 
-    public MarkLogicItemWriter(DatabaseClient client, UriTransformer uriTransformer, ServerTransform serverTransform) {
-        this(client, uriTransformer);
-        this.serverTransform = serverTransform;
-    }
 
     public MarkLogicItemWriter(DatabaseClient client, ServerTransform serverTransform, Format format) {
         this(client, serverTransform);
@@ -83,27 +82,21 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
         if (isMarklogicVersion9) {
             for (DocumentWriteOperation item : items) {
-                if (uriTransformer != null) {
-                    String newUri = uriTransformer.transform(item.getUri());
-                    batcher.add(newUri, item.getMetadata(), item.getContent());
-                } else {
-                    batcher.add(item.getUri(), item.getMetadata(), item.getContent());
-                }
+                batcher.add(uriTransformer.transform(item.getUri()), item.getMetadata(), item.getContent());
             }
         } else {
-            if (uriTransformer != null) {
-                List<DocumentWriteOperation> newItems = new ArrayList<>();
-                for (DocumentWriteOperation op : items) {
-                    String newUri = uriTransformer.transform(op.getUri());
-                    newItems.add(new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
-                            newUri, op.getMetadata(), op.getContent()));
-                }
-                batchWriter.write(newItems);
-            } else {
-                batchWriter.write(items);
+            List<DocumentWriteOperation> newItems = new ArrayList<>();
+            for (DocumentWriteOperation op : items) {
+                String newUri = uriTransformer.transform(op.getUri());
+                newItems.add(
+                        new DocumentWriteOperationImpl(
+                                DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                                newUri,
+                                op.getMetadata(),
+                                op.getContent()));
             }
+            batchWriter.write(newItems);
         }
-
     }
 
     @Override

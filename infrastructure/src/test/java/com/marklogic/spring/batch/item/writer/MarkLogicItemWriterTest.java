@@ -47,7 +47,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
     public void setup() throws IOException {
         client = testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(),
                 databaseClientConfig.getPort(), new DatabaseClientFactory.DigestAuthContext(databaseClientConfig.getUsername(),
-                databaseClientConfig.getPassword()));
+                        databaseClientConfig.getPassword()));
 
         clientTestHelper = new ClientTestHelper();
         SimpleDatabaseClientProvider dbConfig = new SimpleDatabaseClientProvider(databaseClientConfig);
