@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.reader;
+package com.marklogic.spring.batch.item.rdbms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +18,11 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- *
  * Spring Batch Reader that first queries for all the table names from the given DataSource, and then reads rows from
  * every table.
- *
+ * <p>
  * The excludeTableNames property can be used to exclude certain table names from processing.
- *
+ * <p>
  * The tableQueries property can be used to specify a custom SELECT query for a particular table name. By default,
  * "SELECT * FROM (table name)" is used.
  */

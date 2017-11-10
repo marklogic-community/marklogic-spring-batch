@@ -31,23 +31,12 @@ allprojects {
     }
 }
 
-
 subprojects {
 
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "idea"
     apply plugin: "checkstyle"
-
-    /*
-     *  multi project builds must apply the bintray plugin
-     *  and the plugin configuration to every project which
-     *  its artifacts you wish to publish to bintray.
-     */
-
-    if (it.name in ["core", "infrastructure", "test", "http"]) {
-        apply plugin: "com.jfrog.bintray"
-    }
 
     ext {
         springBatchVersion = '3.0.8.RELEASE'
@@ -69,34 +58,4 @@ subprojects {
         configFile = file("${project.rootDir}/dev-tools/checkstyle/checkstyle.xml")
         toolVersion = '7.1.2'
     }
-
-    if (it.name in ["core", "infrastructure", "test", "http"])  {
-        task sourcesJar(type: Jar, dependsOn: classes) {
-            baseName = artifactId
-            version = project.version
-            classifier = 'sources'
-            from sourceSets.main.allSource
-        }
-
-        jar {
-            baseName = artifactId
-            version = project.version
-        }
-
-        /*
-         * Assumes each project has a single publication.
-         */
-        publishing {
-            publications {
-                mainJavaWithSources(MavenPublication) {
-                    groupId group
-                    artifactId project.property("artifactId")
-                    version project.version
-                    from components.java
-                    artifact sourcesJar
-                }
-            }
-        }
-    }
 }
-
