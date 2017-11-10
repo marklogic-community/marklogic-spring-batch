@@ -4,7 +4,6 @@ dependencies {
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "com.marklogic:marklogic-client-api:4.0.3"
     compile "com.marklogic:ml-javaclient-util:3.0.0"
-    compile "org.springframework:spring-jdbc:$springVersion"
     compile "org.apache.commons:commons-lang3:3.5"
 
     testCompile "org.springframework.batch:spring-batch-test:$springBatchVersion"
