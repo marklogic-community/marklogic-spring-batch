@@ -1,3 +1,5 @@
+apply plugin: "com.jfrog.bintray"
+
 dependencies {
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "com.marklogic:marklogic-client-api:4.0.3"
@@ -13,13 +15,41 @@ dependencies {
     runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
 }
 
+ext {
+    artifact = "marklogic-spring-batch-infrastructure"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = artifact
+    version = project.version
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = artifact
+    version = project.version
+}
+
+publishing {
+    publications {
+        mainJavaWithSources(MavenPublication) {
+            groupId group
+            artifactId artifact
+            version project.version
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}
+
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
     publications = [bintrayPublicationName]
     pkg {
         repo = bintrayRepo
-        name = artifactId
+        name = artifact
         userOrg = bintrayUserOrg
         licenses = [bintrayLicense]
         vcsUrl = bintrayVcsUrl
