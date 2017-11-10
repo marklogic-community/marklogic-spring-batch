@@ -22,6 +22,7 @@ public class HttpXmlItemReader implements ItemStreamReader<Document> {
     private String aggregateRecordElement;
     private RestTemplate restTemplate;
     private Iterator<Element> aggregateRecordElementItr;
+    private int count = 0;
 
     public HttpXmlItemReader(RestTemplate restTemplate, URI uri, String aggregateRecordElement) {
         this.restTemplate = restTemplate;
@@ -35,6 +36,7 @@ public class HttpXmlItemReader implements ItemStreamReader<Document> {
         if (aggregateRecordElementItr.hasNext()) {
             Element elem = aggregateRecordElementItr.next();
             doc = new Document(elem.clone());
+            count++;
         }
         return doc;
     }
@@ -48,10 +50,10 @@ public class HttpXmlItemReader implements ItemStreamReader<Document> {
         ;
         MediaType type = response.getHeaders().getContentType();
         if (MediaType.APPLICATION_XML.equals(type) ||
-            MediaType.APPLICATION_ATOM_XML.equals(type) ||
-            MediaType.APPLICATION_XHTML_XML.equals(type) ||
-            MediaType.APPLICATION_RSS_XML.equals(type) ||
-            "text/xml".equals(type.toString())) {
+                MediaType.APPLICATION_ATOM_XML.equals(type) ||
+                MediaType.APPLICATION_XHTML_XML.equals(type) ||
+                MediaType.APPLICATION_RSS_XML.equals(type) ||
+                "text/xml".equals(type.toString())) {
             SAXBuilder jdomBuilder = new SAXBuilder();
             try {
                 Document document = jdomBuilder.build(new StringReader(response.getBody()));
@@ -65,7 +67,7 @@ public class HttpXmlItemReader implements ItemStreamReader<Document> {
 
     @Override
     public void update(ExecutionContext executionContext) throws ItemStreamException {
-
+        executionContext.putInt("count", count);
     }
 
     @Override
