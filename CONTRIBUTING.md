@@ -2,38 +2,40 @@
 
 Please read our [Vision Statement](https://github.com/sastafford/marklogic-spring-batch/wiki).  The reason for each task should ultimately come back to this statement. 
 
-Each contributor should be knowledgeable and proficient at the following projects and technologies. 
-* [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/)
+Each contributor should be knowledgeable and proficient at the following Java frameworks.
+
 * [Spring Framework](https://projects.spring.io/spring-framework/)
+* [Spring Batch](http://docs.spring.io/spring-batch/trunk/reference/html/)
+
+## Other Java Libraries
+* [MarkLogic Java Client API](http://developer.marklogic.com/products/java)
+* [MarkLogic Java Client Util](https://github.com/marklogic-community/ml-javaclient-util)
+* [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
+* [MarkLogic App Deployer](https://github.com/marklogic-community/ml-app-deployer)
+
+## Developer Tools
+
 * [Gradle](http://gradle.org/) 
   * [Java Plugin](https://docs.gradle.org/current/userguide/java_plugin.html)
-  * [MarkLogic Gradle Plugin](http://developer.marklogic.com/code/ml-gradle)
-* [MarkLogic Java Client API](http://developer.marklogic.com/products/java)
-* [MarkLogic Java Client Util](https://github.com/rjrudin/ml-javaclient-util)
-* [MarkLogic JUnit Library](https://github.com/rjrudin/ml-junit)
-* [MarkLogic App Deployer](https://github.com/rjrudin/ml-app-deployer)
+  * [MarkLogic Gradle Plugin](https://github.com/marklogic-community/ml-gradle)
+  * [Application Plugin](https://docs.gradle.org/current/userguide/application_plugin.html)
 * [Git](http://git-scm.com/doc)
-  * [Git Large File System](https://git-lfs.github.com/) - this is required to pull down large binary files used for the Entity Extraction examples
-
+ 
 # What software do I need?
 
 * [MarkLogic 8+](http://developer.marklogic.com/products)
 * [Java Development Kit 1.8+](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* (Recommended) [Gradle 3.+](http://gradle.org/gradle-download/)
 
 You will need to first install MarkLogic if you haven't already.  It is recommended to use a virtual machine or remote server to run MarkLogic to partition our resources (MarkLogic likes to use a lot of memory).  
 
-# Git Large File System
-
-Make sure that after you clone this repository that you also pull from Git LFS.  Otherwise your tests may not pass. 
-
 # What code baseline should I use?
-The dev branch contains the latest and greatest code, while master represents the latest published version.  **Always branch from DEV**.  If you issue a pull request, make sure to compare against the DEV branch.
 
-We use a [fork-and-Branch Git workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/).
+The dev branch contains the latest and greatest code, while master represents the latest published version.  **Always branch from DEV**.  If you issue a pull request, make sure to compare against the DEV branch.  All your development should be executed on a fork from the ml-community/marklogic-spring-batch project.  
+
+Use a [fork-and-Branch Git workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/).
 
 # Should I use an IDE? 
-Yes, it is recommended to use a Java friendly IDE to make one's life easier.  Of course, you can use a simple text editor if that is your preference.  The lead authors have a recent preference for [IntelliJ](https://www.jetbrains.com/idea/).  We also use Gradle for our swiss army knife of building, testing, deploying, etc.  One of the cool features of Gradle is the ability to create the project files for two popular IDE's, IntelliJ and Eclipse.    
+Yes, it is recommended to use a Java friendly IDE to make one's life easier.  Of course, you can use a simple text editor if that is your preference.  The lead authors have a recent preference for [IntelliJ](https://www.jetbrains.com/idea/).  Gradle is used for building, testing, deploying, and publishing.  One of the cool features of Gradle is the ability to create the project files for two popular IDE's, IntelliJ and Eclipse.    
 
 ```
 ./gradlew idea
@@ -47,12 +49,13 @@ The gradlew (or gradlew.bat on Windows) command is a Java program called the [Gr
 
 # What is the structure for the project?
 
-* [core](https://github.com/sastafford/marklogic-spring-batch/tree/master/core) - contains enhancements and helper classes to the Spring Batch framework.  This includes the following features
+* [core](https://github.com/sastafford/marklogic-spring-batch/tree/master/core)
     * A job repository that uses MarkLogic to persist job metadata
-    * Custom ItemReaders/Processors/Writers and tasklets that work with MarkLogic
-    * Configuration annotations for using MarkLogic and Spring Batch together 
+    * A custom CommandLineJobRunner used to execute a job
+    * Configuration annotations for wiring MarkLogic and Spring Batch together 
+* [infrastructure]() - reusable ItemReaders, ItemProcessors, ItemWriters, and Lsiteners used to construct a Spring Batch Job.
+* [samples](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) - Simple Job configuration code to help get jump started.  
 * [test](https://github.com/sastafford/marklogic-spring-batch/tree/master/test) - helper classes to assist in the testing of Spring Batch jobs written for MarkLogic.  
-* [examples](https://github.com/sastafford/marklogic-spring-batch/tree/master/examples) - A variety of recipes and examples to guide in the creation of your own MarkLogic batch processing jobs (i.e. migrating from a RDBMS) 
 
 # How do I set up my environment?  
 
@@ -60,29 +63,29 @@ The gradlew (or gradlew.bat on Windows) command is a Java program called the [Gr
 
 Check the following properties file to see if there is any conflicts with your existing system.
 
-    $PROJECT_ROOT/core/gradle.properties
+    $PROJECT_ROOT/gradle.properties
 
 The gradle.properties file indicates where to deploy a test database to test the core unit test.  The job.properties are used for testing the examples.  
 
 From the project root, run the following command.  This will create a test database that is configured as a MarkLogic Job Repository.  
 
-    gradlew :core:mlDeploy
+    gradlew mlDeploy
 
 ## Set your environment variables for running the examples
 
-Every example under the examples project relies on a properties file called job.properties that indicates the connection information for your MarkLogic database.  The default job.properties can be found for the project in the following location. 
+Each subproject relies on a properties file called job.properties that indicates the connection information for your MarkLogic database.  The default job.properties can be found in either one of the following locations. 
 
-    $PROJECT_ROOT/examples/job.properties
+    $PROJECT_ROOT/job.properties
+    ../src/main/resources/job.properties
+    ../src/test/resources/job.properties
 
-The directory location for the job.properties is indicated in the environment variable _job.home_.  Make sure that this environment variable (job.home) is set before running any of the example tests.  
+If your testing fails due to not finding a host, check your job.properties file.  
 
 To execute all of the automated unit tests, from the project root, run the following command.  
 
 ```
 gradlew test
 ```
-
-This will execute all the core and examples testing.  
 
 The policy is the dev branch tests are 100% passing.  If all tests run to completion and 100% passing then you are ready to start commiting code.    
 
