@@ -9,15 +9,15 @@ import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
 import com.marklogic.spring.batch.item.processor.MarkLogicItemProcessor;
 import com.marklogic.spring.batch.item.writer.MarkLogicItemWriter;
-import org.springframework.batch.core.ChunkListener;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecutionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -42,6 +42,8 @@ import java.util.UUID;
 @Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
 public class YourJobConfig {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     // This is the bean label for the name of your Job.  Pass this label into the job_id parameter
     // when using the CommandLineJobRunner
     private final String JOB_NAME = "yourJob";
@@ -55,9 +57,22 @@ public class YourJobConfig {
      */
     @Bean(name = JOB_NAME)
     public Job job(JobBuilderFactory jobBuilderFactory, Step step) {
+        JobExecutionListener listener = new JobExecutionListener() {
+            @Override
+            public void beforeJob(JobExecution jobExecution) {
+                logger.info("BEFORE JOB");
+                jobExecution.getExecutionContext().putString("random", "yourJob123");
+            }
+
+            @Override
+            public void afterJob(JobExecution jobExecution) {
+                logger.info("AFTER JOB");
+            }
+        };
+
         return jobBuilderFactory.get(JOB_NAME)
                 .start(step)
-                .listener(new YourJobListener())
+                .listener(listener)
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
@@ -72,7 +87,6 @@ public class YourJobConfig {
      * @see DatabaseClientProvider
      * @see ItemReader
      * @see ItemProcessor
-     * @see YourJobListener
      * @see DocumentWriteOperation
      * @see MarkLogicItemProcessor
      * @see MarkLogicItemWriter
@@ -138,8 +152,23 @@ public class YourJobConfig {
 
         ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClient);
 
-        StepExecutionListener stepListener = new YourJobListener();
-        ChunkListener chunkListener = new YourJobListener();
+        ChunkListener chunkListener = new ChunkListener() {
+
+            @Override
+            public void beforeChunk(ChunkContext context) {
+                logger.info("beforeChunk");
+            }
+
+            @Override
+            public void afterChunk(ChunkContext context) {
+                logger.info("afterChunk");
+            }
+
+            @Override
+            public void afterChunkError(ChunkContext context) {
+
+            }
+        };
 
         return stepBuilderFactory.get("step1")
                 .<String, DocumentWriteOperation>chunk(10)
@@ -147,7 +176,6 @@ public class YourJobConfig {
                 .processor(processor)
                 .writer(writer)
                 .listener(chunkListener)
-                .listener(stepListener)
                 .build();
     }
 
