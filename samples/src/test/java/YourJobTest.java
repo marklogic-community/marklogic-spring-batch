@@ -1,5 +1,3 @@
-package com.marklogic.spring.batch.samples;
-
 import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 import org.junit.Assert;
 import org.junit.Test;
