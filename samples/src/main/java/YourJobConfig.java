@@ -1,5 +1,3 @@
-package com.marklogic.spring.batch.samples;
-
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
@@ -20,7 +18,6 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -97,7 +94,8 @@ public class YourJobConfig {
     public Step step(
             StepBuilderFactory stepBuilderFactory,
             DatabaseClientProvider databaseClientProvider,
-            @Value("#{jobParameters['output_collections'] ?: 'yourJob'}") String[] collections) {
+            @Value("#{jobParameters['output_collections'] ?: 'yourJob'}") String[] collections,
+            @Value("#{jobParameters['chunk_size'] ?: 20}") int chunkSize) {
 
         DatabaseClient databaseClient = databaseClientProvider.getDatabaseClient();
 
@@ -150,7 +148,9 @@ public class YourJobConfig {
             }
         };
 
-        ItemWriter<DocumentWriteOperation> writer = new MarkLogicItemWriter(databaseClient);
+        MarkLogicItemWriter writer = new MarkLogicItemWriter(databaseClient);
+        writer.setBatchSize(chunkSize);
+
 
         ChunkListener chunkListener = new ChunkListener() {
 
@@ -171,7 +171,7 @@ public class YourJobConfig {
         };
 
         return stepBuilderFactory.get("step1")
-                .<String, DocumentWriteOperation>chunk(10)
+                .<String, DocumentWriteOperation>chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
