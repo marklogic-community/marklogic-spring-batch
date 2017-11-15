@@ -1,8 +1,12 @@
 dependencies {
     compile "org.springframework:spring-web:${springVersion}"
-    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+    compile "org.springframework.batch:spring-batch-core:${springBatchVersion}"
     compile "org.jdom:jdom2:2.0.6"
     testCompile "org.springframework:spring-test:${springVersion}"
+    compile 'log4j:log4j:1.2.17'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
+    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
 }
 
 bintray {
