@@ -35,10 +35,6 @@ public class HttpJsonItemReaserTest {
             "  \"lastScores\" : [ 2, 1, 3, 5, 0, 0, 1, 1 ]" +
             "}";
 
-
-    List<Map<String, Object>> listJson = new ArrayList<Map<String, Object>>();
-
-
     @Before
     public void before() {
 
