@@ -5,6 +5,10 @@ dependencies {
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "org.jdom:jdom2:2.0.6"
     testCompile "org.springframework:spring-test:$springVersion"
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
+    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.2'
 }
 
 ext {
