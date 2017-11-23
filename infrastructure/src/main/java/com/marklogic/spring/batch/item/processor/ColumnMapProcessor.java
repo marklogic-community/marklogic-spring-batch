@@ -16,7 +16,6 @@ public class ColumnMapProcessor extends AbstractMarkLogicItemProcessor<Map<Strin
     public ColumnMapProcessor(ColumnMapSerializer columnMapSerializer) {
         super();
         this.columnMapSerializer = columnMapSerializer;
-        setType(rootLocalName);
         setUriGenerator(
                 new UriGenerator() {
                     @Override
