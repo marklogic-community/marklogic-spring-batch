@@ -116,7 +116,7 @@ public class CommandLineJobRunnerTests {
         String[] args = new String[] { jobPathKey, jobPath, jobNameKey, jobName };
         CommandLineJobRunner.main(args);
         assertEquals(0, StubSystemExiter.status);
-        assertEquals(2, StubJobLauncher.jobParameters.getParameters().size());
+        assertEquals(4, StubJobLauncher.jobParameters.getParameters().size());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class CommandLineJobRunnerTests {
         });
         CommandLineJobRunner.main(new String[] { jobPathKey, jobPath, jobNameKey, jobName });
         assertEquals(0, StubSystemExiter.status);
-        assertEquals(2, StubJobLauncher.jobParameters.getParameters().size());
+        assertEquals(4, StubJobLauncher.jobParameters.getParameters().size());
     }
 
     @Ignore
