@@ -16,16 +16,13 @@ package com.marklogic.spring.batch.test;
  * limitations under the License.
  */
 
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.InitializingBean;
-
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.support.transaction.TransactionAwareProxyFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import java.util.List;
 
 /**
  * Mock {@link ItemWriter} that will throw an exception when a certain number of
@@ -33,14 +30,11 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class EmptyItemWriter<T> implements ItemWriter<T>, InitializingBean {
 
+    protected Logger logger = LoggerFactory.getLogger(EmptyItemWriter.class);
+    List<Object> list;
     private boolean failed = false;
-
     // point at which to fail...
     private int failurePoint = Integer.MAX_VALUE;
-
-    protected Log logger = LogFactory.getLog(EmptyItemWriter.class);
-
-    List<Object> list;
 
     @Override
     public void afterPropertiesSet() throws Exception {

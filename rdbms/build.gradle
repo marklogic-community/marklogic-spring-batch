@@ -1,10 +1,8 @@
 apply plugin: "com.jfrog.bintray"
 
 dependencies {
-    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "org.springframework:spring-jdbc:$springVersion"
-
-    runtime "org.springframework.batch:spring-batch-core:$springBatchVersion"
+    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
 }
 
 ext {
