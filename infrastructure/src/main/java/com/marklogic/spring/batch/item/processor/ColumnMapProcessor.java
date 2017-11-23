@@ -34,11 +34,12 @@ public class ColumnMapProcessor extends AbstractMarkLogicItemProcessor<Map<Strin
 
     @Override
     public AbstractWriteHandle getContentHandle(Map<String, Object> item) throws Exception {
-        return new StringHandle(columnMapSerializer.serializeColumnMap(item, getType()));
+        String rootElement = item.containsKey(rootLocalName) ? item.get(rootLocalName).toString() : rootLocalName;
+        return new StringHandle(columnMapSerializer.serializeColumnMap(item, rootElement));
     }
 
     public void setRootLocalName(String rootName) {
-        setType(rootName);
+        this.rootLocalName = rootName;
     }
 
 }

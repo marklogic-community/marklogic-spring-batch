@@ -34,6 +34,24 @@ public class ColumnMapProcessorTest extends Assert {
     }
 
     @Test
+    public void getRootNameFromMapTest() throws Exception {
+        ColumnMapProcessor columnMapProcessor = new ColumnMapProcessor(new DefaultStaxColumnMapSerializer());
+        columnMapProcessor.setRootLocalName("type");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("type", "junk");
+        map.put("sample", "value");
+
+        DocumentWriteOperation handle = columnMapProcessor.process(map);
+        logger.info(handle.getUri());
+        StringHandle strHandle = (StringHandle) handle.getContent();
+        logger.info(strHandle.get());
+        assertTrue("<junk><type>junk</type><sample>value</sample></junk>".equals(strHandle.get()));
+        assertNotNull(handle);
+
+    }
+
+    @Test
     public void columnMapSimpleJsonTest() throws Exception {
         ColumnMapProcessor columnMapProcessor = new ColumnMapProcessor(new JacksonColumnMapSerializer());
 
