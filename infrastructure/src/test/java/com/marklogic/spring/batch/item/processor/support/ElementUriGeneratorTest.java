@@ -1,11 +1,9 @@
 package com.marklogic.spring.batch.item.processor.support;
 
 import org.jdom2.Document;
-import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.StringReader;
 
 import static org.hamcrest.MatcherAssert.assertThat;

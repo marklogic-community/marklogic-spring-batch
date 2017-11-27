@@ -3,7 +3,6 @@ package com.marklogic.spring.batch.core.repository.dao;
 import com.marklogic.spring.batch.core.step.StepSupport;
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.repository.dao.JobExecutionDao;

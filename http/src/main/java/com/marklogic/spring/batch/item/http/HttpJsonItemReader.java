@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.item.http;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
