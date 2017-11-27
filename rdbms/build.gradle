@@ -3,8 +3,10 @@ apply plugin: "com.jfrog.bintray"
 dependencies {
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "org.springframework:spring-jdbc:$springVersion"
-
     runtime "org.springframework.batch:spring-batch-core:$springBatchVersion"
+    testCompile "com.h2database:h2:1.4.194"
+    testCompile "org.springframework:spring-test:$springVersion"
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
 }
 
 ext {
