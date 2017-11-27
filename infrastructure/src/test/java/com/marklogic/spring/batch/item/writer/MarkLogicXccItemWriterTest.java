@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.test.TestConfiguration.class})
 @PropertySource(value = "classpath:job.properties")
@@ -51,36 +52,41 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
     }
 
     @Test
-    public void writeSingleDocumentViaXccTest() throws Exception {
-        itemWriter.write(getDocuments());
+    public void writeOneDocumentWithXccTest() throws Exception {
+        List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
+        handles.add(getDocument());
+        itemWriter.write(handles);
     }
 
     @Test
-    public void writeSingleDocTest() throws Exception {
-        XccBatchWriter xccBatchWriter = new XccBatchWriter(contentSources);
-        xccBatchWriter.initialize();
-        xccBatchWriter.setDocumentWriteOperationAdapter(new DefaultDocumentWriteOperationAdapter());
-        xccBatchWriter.write(getDocuments());
-        xccBatchWriter.waitForCompletion();
+    public void writeTwoDocumentsWithXccTest() throws Exception {
+        List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
+        handles.add(getDocument());
+        itemWriter.write(handles);
+
+        handles = new ArrayList<DocumentWriteOperation>();
+        handles.add(getDocument());
+        itemWriter.write(handles);
     }
 
-    private List<DocumentWriteOperation> getDocuments() {
+    @Test
+    public void writeTwoDocumentBatchWithXccTest() throws Exception {
         List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
+        handles.add(getDocument());
+        handles.add(getDocument());
+        handles.add(getDocument());
+        itemWriter.write(handles);
 
+    }
+
+
+    private DocumentWriteOperation getDocument() {
         DocumentWriteOperation handle = new DocumentWriteOperationImpl(
                 DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
-                "abc.xml",
+                UUID.randomUUID().toString(),
                 new DocumentMetadataHandle().withCollections("raw"),
                 new StringHandle("<hello />"));
-        handles.add(handle);
 
-        DocumentWriteOperation handle2 = new DocumentWriteOperationImpl(
-                DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
-                "abc2.xml",
-                new DocumentMetadataHandle().withCollections("raw"),
-                new StringHandle("<hello2 />"));
-        handles.add(handle2);
-
-        return handles;
+        return handle;
     }
 }

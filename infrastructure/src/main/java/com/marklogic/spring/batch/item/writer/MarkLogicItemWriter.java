@@ -97,6 +97,7 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
         if (isXcc) {
+            xccBatchWriter.initialize();
             xccBatchWriter.write(items);
             xccBatchWriter.waitForCompletion();
         } else if (isDataMovementSdk) {
@@ -132,7 +133,6 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
             }
         } else if (isXcc){
             xccBatchWriter = new XccBatchWriter(contentSources);
-            xccBatchWriter.initialize();
         } else {
             batchWriter = new RestBatchWriter(client);
             if (serverTransform != null) {
