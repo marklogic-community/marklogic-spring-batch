@@ -1,6 +1,5 @@
-package com.marklogic.spring.batch.samples;
-
 import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
+import com.marklogic.spring.batch.test.TestConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -8,7 +7,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = { YourTwoStepJobConfig.class })
+@ContextConfiguration(classes = { YourTwoStepJobConfig.class, TestConfiguration.class })
 public class TwoStepJobTest extends AbstractJobRunnerTest {
 
     @Test
