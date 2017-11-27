@@ -18,14 +18,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@ContextConfiguration(classes = {com.marklogic.spring.batch.test.TestConfiguration.class})
 public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements ApplicationContextAware {
 
     public String xml = "<hello>world</hello>";
@@ -33,9 +34,9 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
     DatabaseClient client;
     DatabaseClient testDatabaseClient;
     XMLDocumentManager docMgr;
+
     @Autowired
-    @Qualifier("batchDatabaseClientConfig")
-    private DatabaseClientConfig databaseClientConfig;
+    private DatabaseClientConfig batchDatabaseClientConfig;
     private ClientTestHelper clientTestHelper;
     private MarkLogicItemWriter itemWriter;
 
@@ -45,18 +46,18 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
 
     @Before
     public void setup() throws IOException {
-        client = testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(),
-                databaseClientConfig.getPort(), new DatabaseClientFactory.DigestAuthContext(databaseClientConfig.getUsername(),
-                        databaseClientConfig.getPassword()));
+        client = testDatabaseClient = DatabaseClientFactory.newClient(batchDatabaseClientConfig.getHost(),
+                batchDatabaseClientConfig.getPort(), new DatabaseClientFactory.DigestAuthContext(batchDatabaseClientConfig.getUsername(),
+                        batchDatabaseClientConfig.getPassword()));
 
         clientTestHelper = new ClientTestHelper();
-        SimpleDatabaseClientProvider dbConfig = new SimpleDatabaseClientProvider(databaseClientConfig);
+        SimpleDatabaseClientProvider dbConfig = new SimpleDatabaseClientProvider(batchDatabaseClientConfig);
         clientTestHelper.setDatabaseClientProvider(dbConfig);
 
-        testDatabaseClient = DatabaseClientFactory.newClient(databaseClientConfig.getHost(),
-                databaseClientConfig.getPort(),
+        testDatabaseClient = DatabaseClientFactory.newClient(batchDatabaseClientConfig.getHost(),
+                batchDatabaseClientConfig.getPort(),
                 new DatabaseClientFactory.DigestAuthContext(
-                        databaseClientConfig.getUsername(), databaseClientConfig.getPassword()));
+                        batchDatabaseClientConfig.getUsername(), batchDatabaseClientConfig.getPassword()));
         docMgr = testDatabaseClient.newXMLDocumentManager();
         Resource transform = getApplicationContext().getResource("classpath:/transforms/simple.xqy");
         TransformExtensionsManager transMgr = testDatabaseClient.newServerConfigManager().newTransformExtensionsManager();

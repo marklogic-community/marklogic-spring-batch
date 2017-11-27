@@ -3,6 +3,7 @@ package com.marklogic.spring.batch.item.shapefile;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.spring.batch.item.shapefile.support.HttpClientOgreProxy;
 import com.marklogic.spring.batch.item.shapefile.support.OgreProxy;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class ShapefileProcessorTest {
             "  ]\n" +
             "}";
 
+    //Todo - mock the httpClientOgreProxy (Requires internet!!)
+    @Ignore
     @Test
     public void syriaCollegeShapefileProcessorTest() throws Exception {
         File shapefile = new ClassPathResource("./shapefiles/Colleges_Syria.zip").getFile();
