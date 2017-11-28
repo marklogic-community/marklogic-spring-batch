@@ -56,6 +56,8 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
         List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
         handles.add(getDocument());
         itemWriter.write(handles);
+
+        assertEquals(1, numberOfRawDocuments());
     }
 
     @Test
@@ -67,16 +69,26 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
         handles = new ArrayList<DocumentWriteOperation>();
         handles.add(getDocument());
         itemWriter.write(handles);
+
+        assertEquals(2, numberOfRawDocuments());
     }
 
     @Test
-    public void writeTwoDocumentBatchWithXccTest() throws Exception {
+    public void writeThreeDocumentBatchWithXccTest() throws Exception {
         List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
         handles.add(getDocument());
         handles.add(getDocument());
         handles.add(getDocument());
         itemWriter.write(handles);
+        assertEquals(3, numberOfRawDocuments());
 
+    }
+
+    private int numberOfRawDocuments() throws Exception {
+        Session session = contentSources.get(0).newSession();
+        Request request = session.newAdhocQuery("xdmp:estimate(fn:collection('raw'))");
+        ResultSequence rs = session.submitRequest(request);
+        return Integer.parseInt(rs.asString());
     }
 
 
