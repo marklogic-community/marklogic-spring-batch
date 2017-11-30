@@ -27,7 +27,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer {
      * @param host
      * @param port
      */
-    public void deploy(String name, String host, int port) {
+    public void deploy(String name, String host, int port, String group) {
         for (String role : config.getRoles()) {
             RoleManager roleMgr = new RoleManager(config.getManageClient());
             roleMgr.save(role);
@@ -42,7 +42,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer {
         if (new RestApiManager(config.getManageClient()).restApiServerExists(name)) {
             logger.warn("REST API server with name " + name + " already exists, not creating");
         } else {
-            config.getRestApi(name, port).save();
+            config.getRestApi(name, port, group).save();
         }
 
         // Update the database; it's assumed to have the same name as the one created via the REST API call
@@ -51,6 +51,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer {
 
         AppConfig appConfig = new AppConfig();
         appConfig.setHost(host);
+        appConfig.setGroupName(group);
         appConfig.setRestPort(port);
         appConfig.setRestAdminUsername(config.getManageClient().getManageConfig().getAdminUsername());
         appConfig.setRestAdminPassword(config.getManageClient().getManageConfig().getAdminPassword());
@@ -73,7 +74,7 @@ public class MarkLogicSimpleJobRepositoryAppDeployer {
         client.release();
     }
 
-    public void undeploy(String name, String host, int port) {
+    public void undeploy(String name, String host, int port, String group) {
         for (User user : config.getUsers()) {
             user.delete();
         }
@@ -85,6 +86,6 @@ public class MarkLogicSimpleJobRepositoryAppDeployer {
 
         config.getProtectedCollection().delete();
 
-        config.getRestApi(name, port).delete(true, true);
+        config.getRestApi(name, port, group).delete(true, true);
     }
 }

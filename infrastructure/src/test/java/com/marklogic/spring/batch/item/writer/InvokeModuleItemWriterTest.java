@@ -14,25 +14,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@ContextConfiguration(classes = {com.marklogic.spring.batch.test.TestConfiguration.class})
 public class InvokeModuleItemWriterTest extends AbstractSpringBatchTest {
 
+    final String MODULE_PATH = "/ext/test.xqy";
     InvokeModuleItemWriter itemWriter;
     ExtensionLibrariesManager libMgr;
-    final String MODULE_PATH = "/ext/test.xqy";
     ClientTestHelper clientTestHelper;
 
     @Autowired
-    @Qualifier("batchDatabaseClientConfig")
-    public void setClientTestHelper(DatabaseClientConfig databaseClientConfig) {
+    public void setClientTestHelper(DatabaseClientConfig batchDatabaseClientConfig) {
         clientTestHelper = new ClientTestHelper();
-        DatabaseClientProvider databaseClientProvider = new SimpleDatabaseClientProvider(databaseClientConfig);
+        DatabaseClientProvider databaseClientProvider = new SimpleDatabaseClientProvider(batchDatabaseClientConfig);
         clientTestHelper.setDatabaseClientProvider(databaseClientProvider);
         clientTestHelper.setNamespaceProvider(new SpringBatchNamespaceProvider());
         return;

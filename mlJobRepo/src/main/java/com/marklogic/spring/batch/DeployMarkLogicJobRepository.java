@@ -10,6 +10,7 @@ import java.util.Arrays;
 public class DeployMarkLogicJobRepository {
 
     private String HELP = "help";
+    private String GROUP = "group";
     private String NAME = "name";
     private String HOST = "host";
     private String PORT = "port";
@@ -38,13 +39,15 @@ public class DeployMarkLogicJobRepository {
     protected void deployMarkLogicJobRepository(OptionSet options) {
         String name = options.valueOf(NAME).toString();
         String host = options.valueOf(HOST).toString();
-        buildAppDeployer(options).deploy(name, host, Integer.parseInt(options.valueOf(PORT).toString()));
+        String group = options.valueOf(GROUP).toString();
+        buildAppDeployer(options).deploy(name, host, Integer.parseInt(options.valueOf(PORT).toString()), group);
     }
 
     protected void undeployMarkLogicJobRepository(OptionSet options) {
         String name = options.valueOf(NAME).toString();
         String host = options.valueOf(HOST).toString();
-        buildAppDeployer(options).undeploy(name, host, Integer.parseInt(options.valueOf(PORT).toString()));
+        String group = options.valueOf(GROUP).toString();
+        buildAppDeployer(options).undeploy(name, host, Integer.parseInt(options.valueOf(PORT).toString()), group);
     }
 
     protected MarkLogicSimpleJobRepositoryAppDeployer buildAppDeployer(OptionSet options) {
@@ -62,13 +65,14 @@ public class DeployMarkLogicJobRepository {
         OptionParser parser = new OptionParser();
         parser.acceptsAll(Arrays.asList("h", HELP), "Show help").forHelp();
         parser.accepts(NAME, "Name of the MarkLogic Job Repository").withRequiredArg().defaultsTo("mlJobRepo");
+        parser.accepts(GROUP, "Group where the destination host lives").withRequiredArg().defaultsTo("Default");
         parser.accepts(HOST, "Hostname of the destination MarkLogic Server").withRequiredArg().defaultsTo("localhost");
         parser.accepts(PORT, "Port number of the destination MarkLogic Server. The App Server must not be SSL-enabled.").withRequiredArg().ofType(Integer.class).defaultsTo(8015);
         parser.accepts(USERNAME, "The MarkLogic user to authenticate as against the given host and port").withRequiredArg().defaultsTo("admin");
         parser.accepts(PASSWORD, "The password for the MarkLogic user").withRequiredArg().defaultsTo("admin");
         parser.accepts(DATABASE, "The name of the destination database. Default: The database associated with the destination App Server identified by -host and -port.").withRequiredArg();
         parser.accepts(AUTHENTICATION, "The authentication to use for the app server on the given port").withRequiredArg();
-        parser.accepts(UNDEPLOY, "Include this parameter to undeploy a MarkLogicJobRepository.  Requires the jr_host, jr_port, jr_username, and jr_password parameters");
+        parser.accepts(UNDEPLOY, "Include this parameter to undeploy a MarkLogicJobRepository.  Requires the host, port, username, and password parameters");
         parser.allowsUnrecognizedOptions();
         return parser;
     }

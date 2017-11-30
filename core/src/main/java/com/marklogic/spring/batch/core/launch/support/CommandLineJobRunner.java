@@ -17,32 +17,17 @@
  */
 package com.marklogic.spring.batch.core.launch.support;
 
-import java.io.IOException;
-import java.util.*;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersIncrementer;
+import joptsimple.OptionSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.converter.DefaultJobParametersConverter;
 import org.springframework.batch.core.converter.JobParametersConverter;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobExecutionNotFailedException;
-import org.springframework.batch.core.launch.JobExecutionNotRunningException;
-import org.springframework.batch.core.launch.JobExecutionNotStoppedException;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.JobParametersNotFoundException;
-import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.launch.*;
 import org.springframework.batch.core.launch.support.ExitCodeMapper;
 import org.springframework.batch.core.launch.support.JvmSystemExiter;
 import org.springframework.batch.core.launch.support.SimpleJvmExitCodeMapper;
@@ -54,6 +39,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.Assert;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * <p>
@@ -67,7 +55,7 @@ import org.springframework.util.Assert;
  * restarted. However, a code of 10 might mean that something critical has
  * happened and the issue should be escalated.
  * </p>
- *
+ * <p>
  * <p>
  * With any launch of a batch job within Spring Batch, a Spring context
  * containing the {@link Job} and some execution context has to be created. This
@@ -82,7 +70,7 @@ import org.springframework.util.Assert;
  * exception is thrown by this class, it will be mapped to an integer and
  * returned.
  * </p>
- *
+ * <p>
  * <p>
  * Notice a property is available to set the {@link SystemExiter}. This class is
  * used to exit from the main method, rather than calling System.exit()
@@ -91,16 +79,16 @@ import org.springframework.util.Assert;
  * possible to do, however it is a complex solution, much more so than
  * strategizing the exiter.
  * </p>
- *
+ * <p>
  * <p>
  * The arguments to this class can be provided on the command line (separated by
  * spaces), or through stdin (separated by new line). They are as follows:
  * </p>
- *
+ * <p>
  * <code>
  * jobPath &lt;options&gt; jobIdentifier (jobParameters)*
  * </code>
- *
+ * <p>
  * <p>
  * The command line options are as follows
  * </p>
@@ -116,13 +104,13 @@ import org.springframework.util.Assert;
  * <li>jobParameters: 0 to many parameters that will be used to launch a job
  * specified in the form of <code>key=value</code> pairs.
  * </ul>
- *
+ * <p>
  * <p>
  * If the <code>-next</code> option is used the parameters on the command line
  * (if any) are appended to those retrieved from the incrementer, overriding any
  * with the same key.
  * </p>
- *
+ * <p>
  * <p>
  * The combined application context must contain only one instance of
  * {@link JobLauncher}. The job parameters passed in to the command line will be
@@ -133,14 +121,14 @@ import org.springframework.util.Assert;
  * application context (if there is one, or a
  * {@link DefaultJobParametersConverter} otherwise). Below is an example
  * arguments list: "</p>
- *
+ * <p>
  * <p>
  * <code>
  * java org.springframework.batch.core.launch.support.CommandLineJobRunner testJob.xml
  * testJob schedule.date=2008/01/24 vendor.id=3902483920
  * </code>
  * </p>
- *
+ * <p>
  * <p>
  * Once arguments have been successfully parsed, autowiring will be used to set
  * various dependencies. The {@link JobLauncher} for example, will be
@@ -159,26 +147,80 @@ import org.springframework.util.Assert;
  */
 public class CommandLineJobRunner {
 
-    protected static final Log logger = LogFactory.getLog(CommandLineJobRunner.class);
-
-    private ExitCodeMapper exitCodeMapper = new SimpleJvmExitCodeMapper();
-
-    private JobLauncher launcher;
-
-    private JobLocator jobLocator;
-
+    protected static final Logger logger = LoggerFactory.getLogger(CommandLineJobRunner.class);
+    private final static List<String> VALID_OPTS = Arrays.asList("-restart", "-next", "-stop", "-abandon");
     // Package private for unit test
     private static SystemExiter systemExiter = new JvmSystemExiter();
-
     private static String message = "";
-
+    protected String HELP = "help";
+    protected String JOB_PATH = "job_path";
+    protected String RESTART = "restart";
+    protected String STOP = "stop";
+    protected String ABANDON = "abandon";
+    protected String NEXT = "next";
+    protected String JOB_ID = "job_id";
+    protected String CHUNK_SIZE = "chunk_size";
+    protected String THREAD_COUNT = "thread_count";
+    private ExitCodeMapper exitCodeMapper = new SimpleJvmExitCodeMapper();
+    private JobLauncher launcher;
+    private JobLocator jobLocator;
     private JobParametersConverter jobParametersConverter = new DefaultJobParametersConverter();
-
     private JobExplorer jobExplorer;
-
     private JobRepository jobRepository;
 
-    private final static List<String> VALID_OPTS = Arrays.asList("-restart", "-next", "-stop", "-abandon");
+    /**
+     * Static setter for the {@link SystemExiter} so it can be adjusted before
+     * dependency injection. Typically overridden by
+     * {@link #setSystemExiter(SystemExiter)}.
+     *
+     * @param systemExiter
+     */
+    public static void presetSystemExiter(SystemExiter systemExiter) {
+        CommandLineJobRunner.systemExiter = systemExiter;
+    }
+
+    /**
+     * Retrieve the error message set by an instance of
+     * {@link CommandLineJobRunner} as it exits. Empty if the last job launched
+     * was successful.
+     *
+     * @return the error message
+     */
+    public static String getErrorMessage() {
+        return message;
+    }
+
+    /**
+     * Launch a batch job using a {@link CommandLineJobRunner}. Creates a new
+     * Spring context for the job execution, and uses a common parent for all
+     * such contexts. No exception are thrown from this method, rather
+     * exceptions are logged and an integer returned through the exit status in
+     * a {@link JvmSystemExiter} (which can be overridden by defining one in the
+     * Spring context).<br>
+     * Parameters can be provided in the form key=value, and will be converted
+     * using the injected {@link JobParametersConverter}.
+     *
+     * @param args <ul>
+     *             <li>-restart: (optional) if the job has failed or stopped and the most
+     *             should be restarted. If specified then the jobIdentifier parameter can be
+     *             interpreted either as the name of the job or the id of the job execution
+     *             that failed.</li>
+     *             <li>-next: (optional) if the job has a {@link JobParametersIncrementer}
+     *             that can be used to launch the next in a sequence</li>
+     *             <li>jobPath: the xml application context containing a {@link Job}
+     *             <li>jobIdentifier: the bean id of the job or id of the failed execution
+     *             in the case of a restart.
+     *             <li>jobParameters: 0 to many parameters that will be used to launch a
+     *             job.
+     *             </ul>
+     *             <p>
+     *             The options (<code>-restart, -next</code>) can occur anywhere in the
+     *             command line.
+     *             </p>
+     */
+    public static void main(String[] args) throws Exception {
+        new CommandLineJobRunner().execute(args);
+    }
 
     /**
      * Injection setter for the {@link JobLauncher}.
@@ -215,28 +257,6 @@ public class CommandLineJobRunner {
     }
 
     /**
-     * Static setter for the {@link SystemExiter} so it can be adjusted before
-     * dependency injection. Typically overridden by
-     * {@link #setSystemExiter(SystemExiter)}.
-     *
-     * @param systemExiter
-     */
-    public static void presetSystemExiter(SystemExiter systemExiter) {
-        CommandLineJobRunner.systemExiter = systemExiter;
-    }
-
-    /**
-     * Retrieve the error message set by an instance of
-     * {@link CommandLineJobRunner} as it exits. Empty if the last job launched
-     * was successful.
-     *
-     * @return the error message
-     */
-    public static String getErrorMessage() {
-        return message;
-    }
-
-    /**
      * Injection setter for the {@link SystemExiter}.
      *
      * @param systemExiter
@@ -265,6 +285,7 @@ public class CommandLineJobRunner {
 
     /**
      * {@link JobLocator} to find a job to run.
+     *
      * @param jobLocator a {@link JobLocator}
      */
     public void setJobLocator(JobLocator jobLocator) {
@@ -349,7 +370,7 @@ public class CommandLineJobRunner {
                 try {
                     job = jobLocator.getJob(jobName);
                 } catch (NoSuchJobException e) {
-
+                    logger.error(jobName + " does not exist");
                 }
             }
             if (job == null) {
@@ -366,14 +387,12 @@ public class CommandLineJobRunner {
             JobExecution jobExecution = launcher.run(job, jobParameters);
             return exitCodeMapper.intValue(jobExecution.getExitStatus().getExitCode());
 
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             String message = "Job Terminated in error: " + e.getMessage();
             logger.error(message, e);
             CommandLineJobRunner.message = message;
             return exitCodeMapper.intValue(ExitStatus.FAILED.getExitCode());
-        }
-        finally {
+        } finally {
             if (context != null) {
                 context.close();
             }
@@ -382,7 +401,7 @@ public class CommandLineJobRunner {
 
     /**
      * @param jobIdentifier a job execution id or job name
-     * @param minStatus the highest status to exclude from the result
+     * @param minStatus     the highest status to exclude from the result
      * @return
      */
     private List<JobExecution> getJobExecutionsWithStatusGreaterThan(String jobIdentifier, BatchStatus minStatus) {
@@ -463,8 +482,7 @@ public class CommandLineJobRunner {
     private Long getLongIdentifier(String jobIdentifier) {
         try {
             return new Long(jobIdentifier);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             // Not an ID - must be a name
             return null;
         }
@@ -491,45 +509,11 @@ public class CommandLineJobRunner {
                 throw new JobParametersNotFoundException("No bootstrap parameters found from incrementer for job="
                         + jobIdentifier);
             }
-        }
-        else {
+        } else {
             List<JobExecution> lastExecutions = jobExplorer.getJobExecutions(lastInstances.get(0));
             jobParameters = incrementer.getNext(lastExecutions.get(0).getJobParameters());
         }
         return jobParameters;
-    }
-
-    /**
-     * Launch a batch job using a {@link CommandLineJobRunner}. Creates a new
-     * Spring context for the job execution, and uses a common parent for all
-     * such contexts. No exception are thrown from this method, rather
-     * exceptions are logged and an integer returned through the exit status in
-     * a {@link JvmSystemExiter} (which can be overridden by defining one in the
-     * Spring context).<br>
-     * Parameters can be provided in the form key=value, and will be converted
-     * using the injected {@link JobParametersConverter}.
-     *
-     * @param args
-     * <ul>
-     * <li>-restart: (optional) if the job has failed or stopped and the most
-     * should be restarted. If specified then the jobIdentifier parameter can be
-     * interpreted either as the name of the job or the id of the job execution
-     * that failed.</li>
-     * <li>-next: (optional) if the job has a {@link JobParametersIncrementer}
-     * that can be used to launch the next in a sequence</li>
-     * <li>jobPath: the xml application context containing a {@link Job}
-     * <li>jobIdentifier: the bean id of the job or id of the failed execution
-     * in the case of a restart.
-     * <li>jobParameters: 0 to many parameters that will be used to launch a
-     * job.
-     * </ul>
-     * <p>
-     * The options (<code>-restart, -next</code>) can occur anywhere in the
-     * command line.
-     * </p>
-     */
-    public static void main(String[] args) throws Exception {
-        new CommandLineJobRunner().execute(args);
     }
 
     protected void execute(String[] args) throws IOException {
@@ -545,12 +529,22 @@ public class CommandLineJobRunner {
                 this.exit(1);
                 return;
             }
+
             String jobPath = options.valueOf(JOB_PATH).toString();
             String jobIdentifier = options.valueOf(JOB_ID).toString();
 
             Properties props = new Properties();
             props.setProperty(CHUNK_SIZE, options.valueOf(CHUNK_SIZE).toString());
             props.setProperty(THREAD_COUNT, options.valueOf(THREAD_COUNT).toString());
+
+            for (OptionSpec<?> spec : options.specs()) {
+                for (String name : spec.options()) {
+                    if (options.hasArgument(name)) {
+                        props.setProperty(name, options.valueOf(name).toString());
+                    }
+                }
+            }
+
             List<?> nonOptionArgs = options.nonOptionArguments();
             int size = nonOptionArgs.size();
             for (int i = 0; i < size; i++) {
@@ -567,22 +561,11 @@ public class CommandLineJobRunner {
                 }
             }
 
-            Set<String> opts = new HashSet<String>();
             int result = this.start(jobPath, jobIdentifier, props, options);
             this.exit(result);
             return;
         }
     }
-
-    protected String HELP = "help";
-    protected String JOB_PATH = "job_path";
-    protected String RESTART = "restart";
-    protected String STOP = "stop";
-    protected String ABANDON = "abandon";
-    protected String NEXT = "next";
-    protected String JOB_ID = "job_id";
-    protected String CHUNK_SIZE = "chunk_size";
-    protected String THREAD_COUNT = "thread_count";
 
     protected OptionParser buildOptionParser() {
         OptionParser parser = new OptionParser();
@@ -593,8 +576,8 @@ public class CommandLineJobRunner {
         parser.accepts(NEXT, "(optional) Start the next in a sequence according to the JobParametersIncrementer in the Job");
         parser.accepts(RESTART, "(optional) to restart the last failed execution");
         parser.accepts(STOP, " (optional) to stop a running execution");
-        parser.accepts(CHUNK_SIZE, "The chunk size of the job").withOptionalArg().defaultsTo("100");
-        parser.accepts(THREAD_COUNT, "The number of threads for the job").withOptionalArg().defaultsTo("4");
+        parser.accepts(CHUNK_SIZE, "The chunk size of the job").withRequiredArg().defaultsTo("100");
+        parser.accepts(THREAD_COUNT, "The number of threads for the job").withRequiredArg().defaultsTo("4");
         parser.allowsUnrecognizedOptions();
         return parser;
     }

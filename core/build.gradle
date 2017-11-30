@@ -1,3 +1,5 @@
+apply plugin: "com.jfrog.bintray"
+
 dependencies {
     //core doesn't depend on infrastructure but want to grab both jars when importing MSB
     compile project(":infrastructure")
@@ -7,7 +9,7 @@ dependencies {
 
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "com.marklogic:marklogic-client-api:4.0.3"
-    compile "com.marklogic:ml-javaclient-util:3.0.0"
+    compile "com.marklogic:ml-javaclient-util:3.1.0"
 
     testCompile "org.springframework.batch:spring-batch-test:$springBatchVersion"
     testCompile "com.marklogic:ml-junit:3.0.0"
@@ -20,13 +22,41 @@ dependencies {
     runtime "net.sf.jopt-simple:jopt-simple:5.0.1"
 }
 
+ext {
+    artifact = "marklogic-spring-batch-core"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = artifactId
+    version = project.version
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = artifact
+    version = project.version
+}
+
+publishing {
+    publications {
+        mainJavaWithSources(MavenPublication) {
+            groupId group
+            artifactId artifact
+            version project.version
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}
+
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
     publications = [bintrayPublicationName]
     pkg {
         repo = bintrayRepo
-        name = artifactId
+        name = artifact
         userOrg = bintrayUserOrg
         licenses = [bintrayLicense]
         vcsUrl = bintrayVcsUrl

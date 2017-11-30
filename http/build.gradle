@@ -1,8 +1,42 @@
+apply plugin: "com.jfrog.bintray"
+
 dependencies {
-    compile "org.springframework:spring-web:${springVersion}"
+    compile "org.springframework:spring-web:$springVersion"
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "org.jdom:jdom2:2.0.6"
-    testCompile "org.springframework:spring-test:${springVersion}"
+    testCompile "org.springframework:spring-test:$springVersion"
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
+    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.2'
+}
+
+ext {
+    artifact = "spring-batch-http"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = artifact
+    version = project.version
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = artifact
+    version = project.version
+}
+
+publishing {
+    publications {
+        mainJavaWithSources(MavenPublication) {
+            groupId group
+            artifactId artifact
+            version project.version
+            from components.java
+            artifact sourcesJar
+        }
+    }
 }
 
 bintray {
@@ -11,7 +45,7 @@ bintray {
     publications = [bintrayPublicationName]
     pkg {
         repo = bintrayRepo
-        name = artifactId
+        name = artifact
         userOrg = bintrayUserOrg
         licenses = [bintrayLicense]
         vcsUrl = bintrayVcsUrl

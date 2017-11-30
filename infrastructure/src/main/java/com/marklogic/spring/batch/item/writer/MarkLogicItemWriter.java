@@ -6,10 +6,14 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.ext.batch.RestBatchWriter;
+import com.marklogic.client.ext.batch.XccBatchWriter;
+import com.marklogic.client.ext.xcc.DefaultDocumentWriteOperationAdapter;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.writer.support.DefaultUriTransformer;
 import com.marklogic.spring.batch.item.writer.support.UriTransformer;
+import com.marklogic.xcc.ContentSource;
+import com.marklogic.xcc.template.XccTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ExecutionContext;
@@ -40,9 +44,15 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     private int batchSize = 100;
     private int threadCount = 4;
     private ServerTransform serverTransform;
-    private boolean isMarklogicVersion9 = true;
+    private boolean isXcc = false;
+    private boolean isDataMovementSdk = false;
+    private boolean isRestApi = false;
     private boolean isWriteAsync = true;
     private Format contentFormat;
+
+    //Used for XCC
+    private XccBatchWriter xccBatchWriter;
+    private List<ContentSource> contentSources;
 
     //Used for MarkLogic 9
     private WriteBatcher batcher;
@@ -50,13 +60,19 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     //Used for MarkLogic 8
     private RestBatchWriter batchWriter;
 
+    public MarkLogicItemWriter(List<ContentSource> contentSources) {
+        this.contentSources = contentSources;
+        this.isXcc = true;
+    }
 
     public MarkLogicItemWriter(DatabaseClient client) {
         this.client = client;
         String version = client.newServerEval().xquery("xdmp:version()").evalAs(String.class);
         logger.info("MarkLogic v" + version);
-        if (!version.startsWith("9")) {
-            isMarklogicVersion9 = false;
+        if (version.startsWith("9")) {
+            isDataMovementSdk = true;
+        } else {
+            isRestApi = true;
         }
         uriTransformer = new DefaultUriTransformer();
     }
@@ -80,7 +96,11 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
 
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
-        if (isMarklogicVersion9) {
+        if (isXcc) {
+            xccBatchWriter.initialize();
+            xccBatchWriter.write(items);
+            xccBatchWriter.waitForCompletion();
+        } else if (isDataMovementSdk) {
             for (DocumentWriteOperation item : items) {
                 batcher.add(uriTransformer.transform(item.getUri()), item.getMetadata(), item.getContent());
             }
@@ -101,7 +121,7 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        if (isMarklogicVersion9) {
+        if (isDataMovementSdk) {
             dataMovementManager = client.newDataMovementManager();
             batcher = dataMovementManager.newWriteBatcher();
             batcher
@@ -111,6 +131,8 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
             if (serverTransform != null) {
                 batcher.withTransform(serverTransform);
             }
+        } else if (isXcc){
+            xccBatchWriter = new XccBatchWriter(contentSources);
         } else {
             batchWriter = new RestBatchWriter(client);
             if (serverTransform != null) {
@@ -128,14 +150,13 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
 
     @Override
     public void close() throws ItemStreamException {
-        if (isMarklogicVersion9) {
+        if (isDataMovementSdk) {
             batcher.flushAndWait();
             dataMovementManager.release();
         } else {
             batchWriter.waitForCompletion();
         }
         //client.release();
-
     }
 
     public void setServerTransform(ServerTransform serverTransform) {

@@ -1,5 +1,7 @@
+apply plugin: "com.jfrog.bintray"
+
 dependencies {
-    compile project(':core')
+    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
 
     // For importing RDF
     compile('org.apache.jena:jena-arq:2.13.0') {
@@ -23,4 +25,50 @@ dependencies {
     }
 
     testCompile project(':test')
+}
+
+ext {
+    artifact = "spring-batch-rdf"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = artifact
+    version = project.version
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = artifact
+    version = project.version
+}
+
+publishing {
+    publications {
+        mainJavaWithSources(MavenPublication) {
+            groupId group
+            artifactId artifact
+            version project.version
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
+    publications = [bintrayPublicationName]
+    pkg {
+        repo = bintrayRepo
+        name = artifact
+        userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
+        vcsUrl = bintrayVcsUrl
+        version {
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+        }
+    }
 }

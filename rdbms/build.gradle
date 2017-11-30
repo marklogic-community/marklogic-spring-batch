@@ -1,0 +1,57 @@
+apply plugin: "com.jfrog.bintray"
+
+dependencies {
+    compile "org.springframework:spring-jdbc:$springVersion"
+    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+
+    testCompile "com.h2database:h2:1.4.194"
+    testCompile "org.springframework:spring-test:$springVersion"
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+
+}
+
+ext {
+    artifact = "spring-batch-rdbms"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = artifact
+    version = project.version
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    baseName = artifact
+    version = project.version
+}
+
+publishing {
+    publications {
+        mainJavaWithSources(MavenPublication) {
+            groupId group
+            artifactId artifact
+            version project.version
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
+    publications = [bintrayPublicationName]
+    pkg {
+        repo = bintrayRepo
+        name = artifact
+        userOrg = bintrayUserOrg
+        licenses = [bintrayLicense]
+        vcsUrl = bintrayVcsUrl
+        version {
+            name = project.version
+            released = new Date()
+            vcsTag = project.version
+        }
+    }
+}

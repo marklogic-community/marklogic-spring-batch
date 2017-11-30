@@ -32,9 +32,9 @@ public class MarkLogicSimpleJobRepositoryConfig {
         return manageClient;
     }
 
-    public RestApi getRestApi(String name, int port) {
+    public RestApi getRestApi(String name, int port, String group) {
         RestApi restApi = api.restApi(name, port);
-        restApi.setGroup("Default");
+        restApi.setGroup(group);
         restApi.setDatabase(name + "-content");
         restApi.setModulesDatabase(name + "-modules");
         restApi.setXdbcEnabled(true);
@@ -77,6 +77,7 @@ public class MarkLogicSimpleJobRepositoryConfig {
 
         return roles;
     }
+
     public List<User> getUsers() {
         User springBatchAdmin = api.user("spring-batch-admin");
         springBatchAdmin.setDescription("Admin user for Spring Batch application");

@@ -37,7 +37,7 @@ public class SplitXmlDocumentReader extends AbstractItemStreamItemReader<Documen
     public SplitXmlDocumentReader(String filePath, String aggregateRecordElement) {
         this.filePath = filePath;
         this.aggregateRecordElement = aggregateRecordElement;
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance().newInstance();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             documentBuilder = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
