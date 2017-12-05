@@ -16,7 +16,9 @@ import org.springframework.context.annotation.Import;
 import java.util.Map;
 
 @EnableBatchProcessing
-@Import(MarkLogicBatchConfiguration.class)
+@Import(value = {
+        com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class,
+        com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 public class ImportRdfFromFileJob {
 
     @Bean

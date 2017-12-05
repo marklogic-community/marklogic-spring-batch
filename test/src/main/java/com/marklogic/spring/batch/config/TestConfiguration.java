@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.test;
+package com.marklogic.spring.batch.config;
 
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
@@ -7,6 +7,8 @@ import com.marklogic.xcc.template.XccTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.List;
 
@@ -29,18 +31,5 @@ public class TestConfiguration {
         return new SimpleDatabaseClientProvider(batchDatabaseClientConfig);
 
     }
-
-    @Bean
-    @Qualifier("batchXccTemplate")
-    public XccTemplate xccTemplate(DatabaseClientConfig batchDatabaseClientConfig,
-                                   @Value("${marklogic.database:Documents}") String databaseName) {
-        return new XccTemplate(
-                String.format("xcc://%s:%s@%s:8000/%s",
-                        batchDatabaseClientConfig.getUsername(),
-                        batchDatabaseClientConfig.getPassword(),
-                        batchDatabaseClientConfig.getHost(),
-                        databaseName));
-    }
-
 
 }

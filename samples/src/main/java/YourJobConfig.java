@@ -30,13 +30,15 @@ import java.util.UUID;
  * to utilize the MarkLogic JobRepository.
  *
  * @author Scott Stafford
- * @version 1.3.0
+ * @version 1.4.0
  * @see EnableBatchProcessing
  * @see com.marklogic.spring.batch.config.MarkLogicBatchConfiguration
  */
 
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
+@Import(value = {
+        com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class,
+        com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 public class YourJobConfig {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -88,7 +90,6 @@ public class YourJobConfig {
      * @see MarkLogicItemProcessor
      * @see MarkLogicItemWriter
      */
-
     @Bean
     @JobScope
     public Step step(

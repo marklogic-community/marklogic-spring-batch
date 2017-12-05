@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.test.TestConfiguration.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 @PropertySource(value = "classpath:job.properties")
 public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
 

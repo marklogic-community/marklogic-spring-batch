@@ -11,35 +11,26 @@ import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
-import com.marklogic.xcc.template.XccTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {
-        com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class,
-        com.marklogic.spring.batch.test.TestConfiguration.class
-})
 public class ValuesItemReaderTest extends AbstractSpringBatchTest {
 
     ClientTestHelper helper;
     DatabaseClient client;
 
     @Autowired
-    DatabaseClientConfig batchDatabaseClientConfig;
+    DatabaseClientConfig databaseClientConfig;
 
     @Before
     public void setup() {
         DatabaseClientFactory.SecurityContext securityContext =
-                new DatabaseClientFactory.DigestAuthContext(batchDatabaseClientConfig.getUsername(),
-                        batchDatabaseClientConfig.getPassword());
-        client = DatabaseClientFactory.newClient(batchDatabaseClientConfig.getHost(),
-                batchDatabaseClientConfig.getPort(), securityContext);
+                new DatabaseClientFactory.DigestAuthContext(databaseClientConfig.getUsername(),
+                        databaseClientConfig.getPassword());
+        client = DatabaseClientFactory.newClient(databaseClientConfig.getHost(),
+                databaseClientConfig.getPort(), securityContext);
         helper = new ClientTestHelper();
         helper.setDatabaseClientProvider(getClientProvider());
 
@@ -48,10 +39,10 @@ public class ValuesItemReaderTest extends AbstractSpringBatchTest {
         StringHandle xml1 = new StringHandle("<hello />");
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.withCollections("a");
-    
+
         DocumentMetadataHandle metadata2 = new DocumentMetadataHandle();
         metadata2.withCollections("b");
-        
+
         for (int i = 0; i < 600; i++) {
             DocumentMetadataHandle h = (i % 2 == 0) ? metadata : metadata2;
             docMgr.write("hello" + i + ".xml", h, xml1);
@@ -59,7 +50,7 @@ public class ValuesItemReaderTest extends AbstractSpringBatchTest {
         helper.assertCollectionSize("a = 300", "a", 300);
         helper.assertCollectionSize("b = 300", "b", 300);
     }
-    
+
     @Test
     public void getUriValuesFromItemReaderTest() throws Exception {
         ValuesItemReader reader = new ValuesItemReader(client, getQueryOptions(), "uris");
@@ -102,18 +93,6 @@ public class ValuesItemReaderTest extends AbstractSpringBatchTest {
                 "        <uri/>\n" +
                 "    </values>\n" +
                 "</options>");
-    }
-
-    @Bean
-    @Qualifier("batchXccTemplate")
-    public XccTemplate xccTemplate(DatabaseClientConfig batchDatabaseClientConfig,
-                                   @Value("${marklogic.database:Documents}") String databaseName) {
-        return new XccTemplate(
-                String.format("xcc://%s:%s@%s:8000/%s",
-                        batchDatabaseClientConfig.getUsername(),
-                        batchDatabaseClientConfig.getPassword(),
-                        batchDatabaseClientConfig.getHost(),
-                        databaseName));
     }
 
 }
