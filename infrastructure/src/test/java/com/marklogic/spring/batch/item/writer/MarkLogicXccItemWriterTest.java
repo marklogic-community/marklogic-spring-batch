@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.test.TestConfiguration.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 @PropertySource(value = "classpath:job.properties")
 public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
 
@@ -34,6 +35,9 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
     @Autowired
     DatabaseClientConfig batchDatabaseClientConfig;
 
+    @Value("${marklogic.database:msb}")
+    private String databaseName;
+
     @Before
     public void setup() throws XccConfigException, URISyntaxException {
         contentSources = new ArrayList<ContentSource>();
@@ -42,7 +46,7 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
                 batchDatabaseClientConfig.getPassword(),
                 batchDatabaseClientConfig.getHost(),
                 batchDatabaseClientConfig.getPort(),
-                "marklogic-spring-batch-test-content");
+                databaseName);
         logger.info(connectionString);
         URI uri = new URI(connectionString);
         ContentSource contentSource = ContentSourceFactory.newContentSource(uri);

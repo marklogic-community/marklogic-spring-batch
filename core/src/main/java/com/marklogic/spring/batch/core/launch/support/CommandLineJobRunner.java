@@ -370,7 +370,7 @@ public class CommandLineJobRunner {
                 try {
                     job = jobLocator.getJob(jobName);
                 } catch (NoSuchJobException e) {
-                    logger.error(jobName + " does not exist");
+                    logger.debug("JobLocator could not find " + jobName);
                 }
             }
             if (job == null) {

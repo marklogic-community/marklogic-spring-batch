@@ -21,22 +21,27 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.UUID;
 
 /**
- * YourJobConfig.java - a sample Spring Batch configuration class for demonstrating the use of creating a SpringBatch job
- * running with MarkLogic.  By default it uses a in-memory JobRepository.  Remove the comment to import the MarkLogicBatchConfigurer
- * to utilize the MarkLogic JobRepository.
+ * YourJobConfig.java - a Spring Batch configuration template that demonstrates ingesting data into MarkLogic.  This
+ * job specification uses the MarkLogicBatchConfiguration that utilizes a MarkLogic implementation of a JobRepository.
  *
  * @author Scott Stafford
- * @version 1.3.0
+ * @version 1.4.0
  * @see EnableBatchProcessing
  * @see com.marklogic.spring.batch.config.MarkLogicBatchConfiguration
+ * @see com.marklogic.spring.batch.config.MarkLogicConfiguration
+ * @see com.marklogic.spring.batch.item.processor.MarkLogicItemProcessor
+ * @see com.marklogic.spring.batch.item.writer.MarkLogicItemWriter
  */
-
 @EnableBatchProcessing
-@Import(value = {com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class})
+@Import(value = {
+        com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class,
+        com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
+@PropertySource("classpath:job.properties")
 public class YourJobConfig {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -88,7 +93,6 @@ public class YourJobConfig {
      * @see MarkLogicItemProcessor
      * @see MarkLogicItemWriter
      */
-
     @Bean
     @JobScope
     public Step step(

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.test.TestConfiguration.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 public class InvokeModuleItemWriterTest extends AbstractSpringBatchTest {
 
     final String MODULE_PATH = "/ext/test.xqy";

@@ -2,12 +2,11 @@ package com.marklogic.spring.batch.item.rdf;
 
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
-import com.marklogic.spring.batch.test.TestConfiguration;
 import org.junit.Test;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {ImportRdfFromFileJob.class, TestConfiguration.class})
+@ContextConfiguration(classes = {ImportRdfFromFileJob.class} )
 public class ImportRdfFromFileJobTest extends AbstractJobRunnerTest {
 
     @Test

@@ -3,18 +3,18 @@ apply plugin: "application"
 task deployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
-    args = ["--name", mlJobRepositoryName, "--host", mlHost, "--port", mlJobRepositoryPort, "--username", mlManageUsername, "--password", mlManagePassword]
+    args = ["--name", "mlJobRepo", "--host", mlHost, "--port", mlJobRepoPort, "--username", mlUsername, "--password", mlPassword]
 }
 
 task undeployMarkLogicJobRepository(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.marklogic.spring.batch.DeployMarkLogicJobRepository'
-    args = ["--undeploy", "--name", mlJobRepositoryName, "--host", mlHost, "--port", mlRestPort, "--username", mlManageUsername, "--password", mlManagePassword]
+    args = ["--undeploy", "--name", "mlJobRepo", "--host", mlHost, "--port", mlJobRepoPort, "--username", mlUsername, "--password", mlPassword]
 }
 
 dependencies {
     // For deploying the ML Job Repo
-    compile "com.marklogic:ml-app-deployer:3.0.0"
+    compile "com.marklogic:ml-app-deployer:3.2.0"
 
     // For the CLI
     compile "net.sf.jopt-simple:jopt-simple:5.0.1"

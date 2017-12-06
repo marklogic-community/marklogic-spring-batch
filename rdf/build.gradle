@@ -1,7 +1,7 @@
 apply plugin: "com.jfrog.bintray"
 
 dependencies {
-    compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
+    compile "org.springframework.batch:spring-batch-core:${springBatchVersion}"
 
     // For importing RDF
     compile('org.apache.jena:jena-arq:2.13.0') {
@@ -54,7 +54,7 @@ publishing {
         }
     }
 }
-
+/*
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_KEY')
@@ -72,3 +72,4 @@ bintray {
         }
     }
 }
+*/

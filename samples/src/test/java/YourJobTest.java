@@ -1,5 +1,4 @@
 import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
-import com.marklogic.spring.batch.test.TestConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -7,7 +6,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = {YourJobConfig.class, TestConfiguration.class })
+@ContextConfiguration(classes = {YourJobConfig.class} )
 public class YourJobTest extends AbstractJobRunnerTest {
 
     @Test

@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextConfiguration(classes = {com.marklogic.spring.batch.test.TestConfiguration.class})
+@ContextConfiguration(classes = {com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements ApplicationContextAware {
 
     public String xml = "<hello>world</hello>";
@@ -37,6 +37,7 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
 
     @Autowired
     private DatabaseClientConfig batchDatabaseClientConfig;
+
     private ClientTestHelper clientTestHelper;
     private MarkLogicItemWriter itemWriter;
 
