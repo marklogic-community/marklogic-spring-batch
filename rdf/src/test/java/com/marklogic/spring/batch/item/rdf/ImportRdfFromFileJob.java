@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import java.util.Map;
 @Import(value = {
         com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class,
         com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
+@PropertySource("classpath:job.properties")
 public class ImportRdfFromFileJob {
 
     @Bean

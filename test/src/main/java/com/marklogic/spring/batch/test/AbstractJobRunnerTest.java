@@ -22,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.test.JobRunnerContext.class})
-@TestPropertySource("classpath:job.properties")
 public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
 
     private JobLauncherTestUtils jobLauncherTestUtils;
