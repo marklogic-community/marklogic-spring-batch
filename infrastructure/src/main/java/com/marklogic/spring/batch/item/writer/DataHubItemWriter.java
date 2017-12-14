@@ -3,36 +3,35 @@ package com.marklogic.spring.batch.item.writer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.ServerTransform;
 
+import java.util.Map;
+
 public class DataHubItemWriter extends MarkLogicItemWriter {
 
     protected final String TRANSFORM_NAME = "run-flow";
-    protected final String ENTITY_PARAM = "entity";
-    protected final String FLOW_PARAM = "flow";
-    protected final String FLOW_TYPE_PARAM = "flowType";
+    protected final String ENTITY_PARAM = "entity-name";
+    protected final String FLOW_PARAM = "flow-name";
     protected final String JOB_ID_PARAM = "job-id";
 
     protected String entity;
     protected String flow;
     protected String jobId;
-    protected FlowType flowType;
+    protected ServerTransform serverTransform;
 
-    public enum FlowType {
-        INPUT,
-        HARMONIZE
-    };
-
-    public DataHubItemWriter(DatabaseClient client, String entity, FlowType flowtype, String flow, String jobId) {
+    public DataHubItemWriter(DatabaseClient client, String entity, String flow, String jobId) {
         super(client);
+        this.entity = entity;
+        this.flow = flow;
         ServerTransform serverTransform = new ServerTransform(TRANSFORM_NAME);
         serverTransform.addParameter(ENTITY_PARAM, entity);
         serverTransform.addParameter(FLOW_PARAM, flow);
-        if (flowType == flowType.INPUT) {
-            serverTransform.addParameter(FLOW_TYPE_PARAM, "input");
-        } else if (flowType == flowType.HARMONIZE) {
-            serverTransform.addParameter(FLOW_TYPE_PARAM, "harmonize");
-        }
         serverTransform.addParameter(JOB_ID_PARAM, jobId);
-        setServerTransform(serverTransform);
+    }
+
+    public DataHubItemWriter(DatabaseClient client, String entity, String flow, String jobId, Map<String, String> transformParams) {
+        this(client, entity, flow, jobId);
+        for (String key : transformParams.keySet()) {
+            serverTransform.addParameter(key, transformParams.get(key));
+        }
     }
 
     public String getEntity() {
@@ -58,14 +57,5 @@ public class DataHubItemWriter extends MarkLogicItemWriter {
     public void setJobId(String jobId) {
         this.jobId = jobId;
     }
-
-    public FlowType getFlowType() {
-        return flowType;
-    }
-
-    public void setFlowType(FlowType flowType) {
-        this.flowType = flowType;
-    }
-
 
 }
