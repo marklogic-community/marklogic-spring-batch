@@ -3,6 +3,7 @@ package com.marklogic.spring.batch.item.writer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.TransformExtensionsManager;
+import com.marklogic.client.datamovement.WriteEvent;
 import com.marklogic.client.document.*;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
@@ -86,6 +87,26 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
 
         return handles;
     }
+    
+    public List<DocumentWriteOperation> getBadDocument() {
+        List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
+        
+        DocumentWriteOperation handle2 = new DocumentWriteOperationImpl(
+                DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                "good.xml",
+                new DocumentMetadataHandle().withCollections("raw"),
+                new StringHandle("<hello />"));
+        handles.add(handle2);
+
+        DocumentWriteOperation handle = new DocumentWriteOperationImpl(
+                DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+                "fail.xml",
+                new DocumentMetadataHandle().withCollections("raw"),
+                new StringHandle("<hello #&3; />"));
+        handles.add(handle);
+
+        return handles;
+    }
 
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
         itemWriter.open(new ExecutionContext());
@@ -101,6 +122,51 @@ public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements 
         write(getDocuments());
         clientTestHelper.assertInCollections("abc.xml", "raw");
         clientTestHelper.assertCollectionSize("Expecting two items in raw collection", "raw", 2);
+    }
+    
+    class LongHolder {
+    		public long writes = 0L;
+    }
+    
+    @Test
+    public void writeAndTrackTwoDocumentsTest() throws Exception {
+    		final LongHolder lh = new LongHolder();
+    		
+        itemWriter = new MarkLogicItemWriter(client);
+        itemWriter.setBatchSize(5);
+        itemWriter.setThreadCount(2);
+        itemWriter.setWriteBatchListener(batch -> {
+        		lh.writes = batch.getJobWritesSoFar();
+         });
+        itemWriter.setWriteFailureListener((batch, throwable) -> {
+    			ClientTestHelper.assertTrue("Should not get here, but will be set",false);
+        });
+        write(getDocuments());
+        clientTestHelper.assertInCollections("abc.xml", "raw");
+        clientTestHelper.assertCollectionSize("Expecting two items in raw collection", "raw", 2);
+        ClientTestHelper.assertTrue("Batcher wrote 2 docs", lh.writes == 2L);
+    }
+    
+    class StringHolder {
+    		public String msg = null;
+    }
+    
+    @Test
+    public void failWriteDocumentsTest() throws Exception {
+    		final StringHolder sh = new StringHolder();
+    	
+        itemWriter = new MarkLogicItemWriter(client);
+        itemWriter.setBatchSize(5);
+        itemWriter.setThreadCount(2);
+        itemWriter.setWriteFailureListener((batch, throwable) -> {
+        		sh.msg = throwable.getMessage();
+        });
+        itemWriter.setWriteBatchListener(batch -> {
+        		ClientTestHelper.assertTrue("Should not get here, but will be set",false);
+        });
+        write(getBadDocument());
+        clientTestHelper.assertCollectionSize("Expecting no items in raw collection", "raw", 0);
+        ClientTestHelper.assertTrue("Exception expected bad character ", sh.msg.contains("XDMP-DOCSTARTTAGCHAR"));
     }
 
     @Test
