@@ -203,14 +203,14 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     private WriteBatchListener writeBatchlistener = null;
     private WriteFailureListener writeFailureListener = null;
     
-    public void  onBatchFailure(WriteFailureListener listener) {
+    public void  setWriteFailureListener(WriteFailureListener listener) {
     	if (!this.isDataMovementSdk) {
 			throw new UnsupportedOperationException("Not using Data Movement SDK");
 		}
     		this.writeFailureListener = listener;
     }
     
-    public void  onBatchSuccess(WriteBatchListener listener) {
+    public void  setWriteBatchListener(WriteBatchListener listener) {
     	if (!this.isDataMovementSdk) {
 			throw new UnsupportedOperationException("Not using Data Movement SDK");
 		}
