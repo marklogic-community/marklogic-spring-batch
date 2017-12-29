@@ -18,6 +18,10 @@ public class DataHubItemWriter extends MarkLogicItemWriter {
     protected ServerTransform serverTransform;
 
     public DataHubItemWriter(DatabaseClient client, String entity, String flow, String jobId) {
+    	 	this(client, entity, flow, jobId, null);
+    }
+
+    public DataHubItemWriter(DatabaseClient client, String entity, String flow, String jobId, Map<String, String> transformParams) {
         super(client);
         this.entity = entity;
         this.flow = flow;
@@ -25,12 +29,11 @@ public class DataHubItemWriter extends MarkLogicItemWriter {
         serverTransform.addParameter(ENTITY_PARAM, entity);
         serverTransform.addParameter(FLOW_PARAM, flow);
         serverTransform.addParameter(JOB_ID_PARAM, jobId);
-    }
-
-    public DataHubItemWriter(DatabaseClient client, String entity, String flow, String jobId, Map<String, String> transformParams) {
-        this(client, entity, flow, jobId);
-        for (String key : transformParams.keySet()) {
-            serverTransform.addParameter(key, transformParams.get(key));
+        this.setServerTransform(serverTransform);
+        if (transformParams != null) {
+        		for (String key : transformParams.keySet()) {
+        			serverTransform.addParameter(key, transformParams.get(key));
+        		}
         }
     }
 
