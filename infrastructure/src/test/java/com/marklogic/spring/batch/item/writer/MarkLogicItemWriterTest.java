@@ -1,10 +1,25 @@
 package com.marklogic.spring.batch.item.writer;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.Resource;
+import org.springframework.test.context.ContextConfiguration;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.TransformExtensionsManager;
-import com.marklogic.client.datamovement.WriteEvent;
-import com.marklogic.client.document.*;
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.document.DocumentWriteSet;
+import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.ServerTransform;
+import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
@@ -15,17 +30,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit.ClientTestHelper;
 import com.marklogic.junit.Fragment;
 import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.Resource;
-import org.springframework.test.context.ContextConfiguration;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 public class MarkLogicItemWriterTest extends AbstractSpringBatchTest implements ApplicationContextAware {
