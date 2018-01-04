@@ -12,7 +12,7 @@ buildscript {
 }
 
 plugins {
-    id "com.marklogic.ml-gradle" version "3.2.0"
+    id "com.marklogic.ml-gradle" version "3.3.0"
 }
 
 mlPostDeploy.dependsOn ":mlJobRepo:deployMarkLogicJobRepository"
