@@ -39,8 +39,8 @@ subprojects {
     apply plugin: "checkstyle"
 
     ext {
-        springBatchVersion = '3.0.8.RELEASE'
-        springVersion = '4.3.9.RELEASE'
+        springBatchVersion = '4.0.0.RELEASE'
+        springVersion = '5.0.2.RELEASE'
     }
 
     dependencies {
