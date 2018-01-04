@@ -1,28 +1,27 @@
 package com.marklogic.spring.batch.item.writer;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.datamovement.DataMovementManager;
-import com.marklogic.client.datamovement.WriteBatcher;
-import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.ext.batch.RestBatchWriter;
-import com.marklogic.client.ext.batch.XccBatchWriter;
-import com.marklogic.client.ext.xcc.DefaultDocumentWriteOperationAdapter;
-import com.marklogic.client.impl.DocumentWriteOperationImpl;
-import com.marklogic.client.io.Format;
-import com.marklogic.spring.batch.item.writer.support.DefaultUriTransformer;
-import com.marklogic.spring.batch.item.writer.support.UriTransformer;
-import com.marklogic.xcc.ContentSource;
-import com.marklogic.xcc.template.XccTemplate;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemWriter;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.WriteBatchListener;
+import com.marklogic.client.datamovement.WriteBatcher;
+import com.marklogic.client.datamovement.WriteFailureListener;
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.document.ServerTransform;
+import com.marklogic.client.ext.batch.RestBatchWriter;
+import com.marklogic.client.ext.batch.XccBatchWriter;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
+import com.marklogic.client.io.Format;
+import com.marklogic.spring.batch.item.writer.support.DefaultUriTransformer;
+import com.marklogic.spring.batch.item.writer.support.UriTransformer;
+import com.marklogic.xcc.ContentSource;
 
 /**
  * The MarkLogicItemWriter is an ItemWriter used to write any type of document to MarkLogic. It expects a list of
@@ -127,9 +126,14 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
             batcher
                     .withBatchSize(getBatchSize())
                     .withThreadCount(getThreadCount());
-
             if (serverTransform != null) {
                 batcher.withTransform(serverTransform);
+            }
+            if (this.writeBatchlistener != null) {
+            		batcher.onBatchSuccess(this.writeBatchlistener);
+            }
+            if (this.writeFailureListener != null) {
+            		batcher.onBatchFailure(writeFailureListener);
             }
         } else if (isXcc){
             xccBatchWriter = new XccBatchWriter(contentSources);
@@ -194,5 +198,24 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     public void setWriteAsync(boolean writeAsync) {
         isWriteAsync = writeAsync;
     }
+    
+
+    private WriteBatchListener writeBatchlistener = null;
+    private WriteFailureListener writeFailureListener = null;
+    
+    public void  setWriteFailureListener(WriteFailureListener listener) {
+    	if (!this.isDataMovementSdk) {
+			throw new UnsupportedOperationException("Not using Data Movement SDK");
+		}
+    		this.writeFailureListener = listener;
+    }
+    
+    public void  setWriteBatchListener(WriteBatchListener listener) {
+    	if (!this.isDataMovementSdk) {
+			throw new UnsupportedOperationException("Not using Data Movement SDK");
+		}
+		this.writeBatchlistener = listener;
+    }
+    
 }
 
