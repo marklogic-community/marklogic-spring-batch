@@ -81,7 +81,7 @@ public class MarkLogicSimpleJobRepositoryConfig {
     public List<User> getUsers() {
         User springBatchAdmin = api.user("spring-batch-admin");
         springBatchAdmin.setDescription("Admin user for Spring Batch application");
-        springBatchAdmin.setPassword("password");
+        springBatchAdmin.setPassword("passworD_123#@");
         springBatchAdmin.addRole("spring-batch-admin");
 
         List<User> users = new ArrayList<User>();
