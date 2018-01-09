@@ -27,9 +27,9 @@ import java.util.UUID;
 
 @ContextConfiguration(classes = {com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 @PropertySource(value = "classpath:job.properties")
-public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
+public class XccItemWriterTest extends AbstractSpringBatchTest {
 
-    MarkLogicItemWriter itemWriter;
+    XccItemWriter itemWriter;
     List<ContentSource> contentSources;
 
     @Autowired
@@ -51,7 +51,7 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
         URI uri = new URI(connectionString);
         ContentSource contentSource = ContentSourceFactory.newContentSource(uri);
         contentSources.add(contentSource);
-        itemWriter = new MarkLogicItemWriter(contentSources);
+        itemWriter = new XccItemWriter(contentSources);
         itemWriter.open(new ExecutionContext());
     }
 
@@ -60,7 +60,7 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
         List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
         handles.add(getDocument());
         itemWriter.write(handles);
-
+        itemWriter.close();
         assertEquals(1, numberOfRawDocuments());
     }
 
@@ -69,7 +69,7 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
         List<DocumentWriteOperation> handles = new ArrayList<DocumentWriteOperation>();
         handles.add(getDocument());
         itemWriter.write(handles);
-
+        itemWriter.close();
         handles = new ArrayList<DocumentWriteOperation>();
         handles.add(getDocument());
         itemWriter.write(handles);
@@ -84,6 +84,7 @@ public class MarkLogicXccItemWriterTest extends AbstractSpringBatchTest {
         handles.add(getDocument());
         handles.add(getDocument());
         itemWriter.write(handles);
+        itemWriter.close();
         assertEquals(3, numberOfRawDocuments());
 
     }
