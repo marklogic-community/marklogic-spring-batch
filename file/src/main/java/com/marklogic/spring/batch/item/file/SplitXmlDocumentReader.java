@@ -80,7 +80,9 @@ public class SplitXmlDocumentReader extends AbstractItemStreamItemReader<Documen
             newDocument.setDocumentURI(aggregateRecordElement + "-" + cursor + ".xml");
             cursor++;
             return newDocument;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     public void setFilePath(String filePath) {
