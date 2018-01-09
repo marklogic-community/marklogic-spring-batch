@@ -18,6 +18,10 @@ ext {
     artifact = "marklogic-spring-batch-infrastructure"
 }
 
+javadoc {
+    destinationDir = new File("../sastafford.github.io/marklogic-spring-batch/javadoc/infrastructure")
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     baseName = artifact
     version = project.version

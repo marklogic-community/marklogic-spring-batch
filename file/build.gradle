@@ -9,6 +9,10 @@ ext {
     artifact = "spring-batch-file"
 }
 
+javadoc {
+    destinationDir = new File("../sastafford.github.io/marklogic-spring-batch/javadoc/http")
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     baseName = artifact
     version = project.version

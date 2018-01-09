@@ -31,6 +31,10 @@ ext {
     artifact = "spring-batch-rdf"
 }
 
+javadoc {
+    destinationDir = new File("../sastafford.github.io/marklogic-spring-batch/javadoc/rdf")
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     baseName = artifact
     version = project.version
