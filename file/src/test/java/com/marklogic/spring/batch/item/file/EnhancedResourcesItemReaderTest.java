@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.reader;
+package com.marklogic.spring.batch.item.file;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.reader.support;
+package com.marklogic.spring.batch.item.file.support;
 
 import org.junit.Before;
 import org.junit.Rule;

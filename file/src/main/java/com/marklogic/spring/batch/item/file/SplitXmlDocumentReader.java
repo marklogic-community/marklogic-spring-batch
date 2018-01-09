@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.item.reader;
+package com.marklogic.spring.batch.item.file;
 
 import org.springframework.batch.item.*;
 import org.springframework.batch.item.support.AbstractItemStreamItemReader;
