@@ -4,17 +4,17 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-public class ElementUriGenerator implements UriGenerator<Document> {
+public class DocumentUriGenerator implements UriGenerator<Document> {
 
     private String elementId;
     private String namespace;
 
-    public ElementUriGenerator(String namespace, String elementId) {
+    public DocumentUriGenerator(String namespace, String elementId) {
         this.namespace = namespace;
         this.elementId = elementId;
     }
 
-    public ElementUriGenerator(String elementId) {
+    public DocumentUriGenerator(String elementId) {
         this.elementId = elementId;
     }
 
