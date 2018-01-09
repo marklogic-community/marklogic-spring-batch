@@ -43,26 +43,19 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     private int batchSize = 100;
     private int threadCount = 4;
     private ServerTransform serverTransform;
-    private boolean isXcc = false;
     private boolean isDataMovementSdk = false;
     private boolean isRestApi = false;
     private boolean isWriteAsync = true;
     private Format contentFormat;
+    private WriteBatchListener writeBatchlistener = null;
+    private WriteFailureListener writeFailureListener = null;
 
-    //Used for XCC
-    private XccBatchWriter xccBatchWriter;
-    private List<ContentSource> contentSources;
 
     //Used for MarkLogic 9
     private WriteBatcher batcher;
 
     //Used for MarkLogic 8
     private RestBatchWriter batchWriter;
-
-    public MarkLogicItemWriter(List<ContentSource> contentSources) {
-        this.contentSources = contentSources;
-        this.isXcc = true;
-    }
 
     public MarkLogicItemWriter(DatabaseClient client) {
         this.client = client;
@@ -95,11 +88,7 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
 
     @Override
     public void write(List<? extends DocumentWriteOperation> items) throws Exception {
-        if (isXcc) {
-            xccBatchWriter.initialize();
-            xccBatchWriter.write(items);
-            xccBatchWriter.waitForCompletion();
-        } else if (isDataMovementSdk) {
+        if (isDataMovementSdk) {
             for (DocumentWriteOperation item : items) {
                 batcher.add(uriTransformer.transform(item.getUri()), item.getMetadata(), item.getContent());
             }
@@ -135,8 +124,6 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
             if (this.writeFailureListener != null) {
             		batcher.onBatchFailure(writeFailureListener);
             }
-        } else if (isXcc){
-            xccBatchWriter = new XccBatchWriter(contentSources);
         } else {
             batchWriter = new RestBatchWriter(client);
             if (serverTransform != null) {
@@ -198,19 +185,15 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     public void setWriteAsync(boolean writeAsync) {
         isWriteAsync = writeAsync;
     }
-    
 
-    private WriteBatchListener writeBatchlistener = null;
-    private WriteFailureListener writeFailureListener = null;
-    
-    public void  setWriteFailureListener(WriteFailureListener listener) {
+    public void setWriteFailureListener(WriteFailureListener listener) {
     	if (!this.isDataMovementSdk) {
 			throw new UnsupportedOperationException("Not using Data Movement SDK");
 		}
     		this.writeFailureListener = listener;
     }
     
-    public void  setWriteBatchListener(WriteBatchListener listener) {
+    public void setWriteBatchListener(WriteBatchListener listener) {
     	if (!this.isDataMovementSdk) {
 			throw new UnsupportedOperationException("Not using Data Movement SDK");
 		}
