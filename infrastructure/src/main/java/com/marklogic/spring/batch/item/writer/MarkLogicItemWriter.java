@@ -16,12 +16,10 @@ import com.marklogic.client.datamovement.WriteFailureListener;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.ext.batch.RestBatchWriter;
-import com.marklogic.client.ext.batch.XccBatchWriter;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.Format;
 import com.marklogic.spring.batch.item.writer.support.DefaultUriTransformer;
 import com.marklogic.spring.batch.item.writer.support.UriTransformer;
-import com.marklogic.xcc.ContentSource;
 
 /**
  * The MarkLogicItemWriter is an ItemWriter used to write any type of document to MarkLogic. It expects a list of

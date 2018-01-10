@@ -1,4 +1,3 @@
-import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 import com.marklogic.spring.batch.test.JobRunnerContext;
 import org.junit.Assert;
 import org.junit.Test;

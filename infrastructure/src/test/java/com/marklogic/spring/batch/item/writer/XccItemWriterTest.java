@@ -2,12 +2,9 @@ package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.ext.DatabaseClientConfig;
-import com.marklogic.client.ext.batch.XccBatchWriter;
-import com.marklogic.client.ext.xcc.DefaultDocumentWriteOperationAdapter;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
 import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import com.marklogic.xcc.*;
 import com.marklogic.xcc.exceptions.XccConfigException;

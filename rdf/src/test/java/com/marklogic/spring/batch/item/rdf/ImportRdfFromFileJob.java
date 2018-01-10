@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.item.rdf;
 
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
-import com.marklogic.spring.batch.config.MarkLogicBatchConfiguration;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
