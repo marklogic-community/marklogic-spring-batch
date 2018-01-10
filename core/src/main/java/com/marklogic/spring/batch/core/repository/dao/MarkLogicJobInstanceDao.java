@@ -154,7 +154,6 @@ public class MarkLogicJobInstanceDao implements JobInstanceDao {
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
         List<JobInstance> jobInstances = new ArrayList<>();
         MatchDocumentSummary[] summaries = results.getMatchResults();
-        JobInstance jobInstance;
         if (start + count > summaries.length) {
             return jobInstances;
         }

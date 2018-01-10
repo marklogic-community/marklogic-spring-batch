@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
-import org.springframework.batch.core.repository.dao.JobExecutionDao;
-import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.util.Assert;
 
@@ -27,8 +25,6 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private JobExecutionDao jobExecutionDao;
-    private StepExecutionDao stepExecutionDao;
     private DatabaseClient databaseClient;
     private BatchProperties properties;
     private ExecutionContextAdapter adapter;

@@ -45,18 +45,6 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         adapter = new StepExecutionAdapter();
     }
 
-    private static void copy(final StepExecution sourceExecution, final StepExecution targetExecution) {
-        // Cheaper than full serialization is a reflective field copy, which is
-        // fine for volatile storage
-        ReflectionUtils.doWithFields(StepExecution.class, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                field.setAccessible(true);
-                field.set(targetExecution, field.get(sourceExecution));
-            }
-        }, ReflectionUtils.COPYABLE_FIELDS);
-    }
-
     @Override
     public void saveStepExecution(StepExecution stepExecution) {
 

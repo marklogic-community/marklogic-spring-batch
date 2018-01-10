@@ -40,7 +40,7 @@ public class AdaptedStepExecution {
 	private String exitStatus = ExitStatus.EXECUTING.toString();
 	private boolean terminateOnly;
 	private int filterCount;
-	private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
+	//private List<Throwable> failureExceptions = new CopyOnWriteArrayList<>();
 	
 	public AdaptedStepExecution() { 
 		

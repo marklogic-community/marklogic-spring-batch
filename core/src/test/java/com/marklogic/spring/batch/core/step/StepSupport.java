@@ -1,5 +1,6 @@
 package com.marklogic.spring.batch.core.step;
 
+import org.springframework.batch.core.JobInterruptedException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.UnexpectedJobExecutionException;
