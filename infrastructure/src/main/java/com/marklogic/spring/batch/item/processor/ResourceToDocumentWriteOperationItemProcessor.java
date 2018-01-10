@@ -26,7 +26,6 @@ public class ResourceToDocumentWriteOperationItemProcessor extends AbstractMarkL
 
     @Override
     public AbstractWriteHandle getContentHandle(Resource item) throws Exception {
-        File file = item.getFile();
         String fileName = uriGenerator.generateUri(item);
         FileHandle handle = new FileHandle(item.getFile());
         int i = fileName.lastIndexOf('.');

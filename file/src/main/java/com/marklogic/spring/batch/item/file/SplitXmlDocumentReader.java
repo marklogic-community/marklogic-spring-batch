@@ -23,8 +23,6 @@ public class SplitXmlDocumentReader extends AbstractItemStreamItemReader<Documen
 
     private String filePath;
     private String aggregateRecordElement;
-    private String aggregateUriId;
-    private String aggregateRecordNamespace;
     private Resource xmlResource;
     private NodeList nodeList;
     private int cursor;
@@ -93,11 +91,4 @@ public class SplitXmlDocumentReader extends AbstractItemStreamItemReader<Documen
         this.aggregateRecordElement = aggregateRecordElement;
     }
 
-    public void setAggregateUriId(String aggregateUriId) {
-        this.aggregateUriId = aggregateUriId;
-    }
-
-    public void setAggregateRecordNamespace(String aggregateRecordNamespace) {
-        this.aggregateRecordNamespace = aggregateRecordNamespace;
-    }
 }

@@ -15,9 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.w3c.dom.Document;
 
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,9 +23,6 @@ import java.text.SimpleDateFormat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {JaxbConfiguration.class})
 public class UnmarshallSpringBatchPojoTest extends Assert {
-
-    private Document doc;
-    private DOMSource source;
 
     @Autowired
     private Jaxb2Marshaller jaxb2Marshaller;

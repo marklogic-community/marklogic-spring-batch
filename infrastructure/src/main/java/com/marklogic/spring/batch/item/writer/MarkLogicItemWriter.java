@@ -42,7 +42,6 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
     private int threadCount = 4;
     private ServerTransform serverTransform;
     private boolean isDataMovementSdk = false;
-    private boolean isRestApi = false;
     private boolean isWriteAsync = true;
     private Format contentFormat;
     private WriteBatchListener writeBatchlistener = null;
@@ -61,8 +60,6 @@ public class MarkLogicItemWriter implements ItemWriter<DocumentWriteOperation>, 
         logger.info("MarkLogic v" + version);
         if (version.startsWith("9")) {
             isDataMovementSdk = true;
-        } else {
-            isRestApi = true;
         }
         uriTransformer = new DefaultUriTransformer();
     }

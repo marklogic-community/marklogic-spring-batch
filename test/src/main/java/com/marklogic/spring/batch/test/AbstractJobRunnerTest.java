@@ -89,6 +89,10 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
         setDatabaseClientProvider(this.databaseClientProvider);
     }
 
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
     @Before
     public void deleteDocumentsBeforeTestRuns() {
         ServerEvaluationCall evalCall = databaseClientProvider.getDatabaseClient().newServerEval();

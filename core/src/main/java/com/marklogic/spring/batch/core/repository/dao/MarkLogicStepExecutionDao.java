@@ -174,18 +174,16 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
         if (results.getTotalResults() > 0L) {
             MatchDocumentSummary[] summaries = results.getMatchResults();
-            for (MatchDocumentSummary summary : summaries) {
-                JAXBHandle<AdaptedStepExecution> handle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
-                AdaptedStepExecution ase = summaries[0].getFirstSnippet(handle).get();
-                StepExecution stepExecution = null;
-                try {
-                    stepExecution = adapter.unmarshal(ase);
-                } catch (Exception ex) {
-                    logger.error(ex.getMessage());
-                    throw new RuntimeException(ex);
-                }
-                stepExecutionList.add(stepExecution);
+            JAXBHandle<AdaptedStepExecution> handle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
+            AdaptedStepExecution ase = summaries[0].getFirstSnippet(handle).get();
+            StepExecution stepExecution = null;
+            try {
+                stepExecution = adapter.unmarshal(ase);
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                throw new RuntimeException(ex);
             }
+            stepExecutionList.add(stepExecution);
         }
         jobExecution.addStepExecutions(stepExecutionList);
     }

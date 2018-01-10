@@ -15,7 +15,6 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
     private GenericDocumentManager docMgr;
     private StructuredQueryDefinition queryDef;
     private DocumentPage page;
-    private long numberOfPages = 0;
     private long start = 1L;
 
     public DocumentItemReader(DatabaseClientProvider databaseClientProvider, StructuredQueryDefinition queryDef) {
@@ -43,7 +42,6 @@ public class DocumentItemReader implements ItemStreamReader<DocumentRecord> {
         docMgr.setMetadataCategories(DocumentManager.Metadata.ALL);
         page = docMgr.search(queryDef, start);
         start += page.getPageSize();
-        numberOfPages = page.getTotalPages();
         executionContext.put("PAGE_INDEX", page.getPageNumber());
     }
 

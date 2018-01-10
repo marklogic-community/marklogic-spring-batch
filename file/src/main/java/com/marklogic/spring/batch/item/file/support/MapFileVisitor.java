@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class MapFileVisitor extends SimpleFileVisitor<Path> {
             String fileName = file.getFileName().toString();
             fileMap.put(file.getParent().toString() + File.separator + fileName, file);
             logger.debug(fileName);
-        }
+        } 
         return FileVisitResult.CONTINUE;
     }
 

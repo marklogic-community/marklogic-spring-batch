@@ -39,8 +39,4 @@ public abstract class AbstractDocumentWriter extends ItemStreamSupport {
         this.permissions = permissions;
     }
 
-    public void setDirectory(String directory) {
-        String directory1 = directory;
-    }
-
 }
