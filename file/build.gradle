@@ -1,10 +1,10 @@
 apply plugin: "com.jfrog.bintray"
 
 dependencies {
+    compile project(":core")
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "com.marklogic:marklogic-client-api:4.0.3"
     compile "org.apache.tika:tika-parsers:1.17"
-    compile project(":infrastructure")
 }
 
 ext {

@@ -1,7 +1,6 @@
 include "core"
 include "file"
 include "http"
-include "infrastructure"
 include "mlJobRepo"
 include "rdbms"
 include "rdf"
