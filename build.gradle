@@ -12,13 +12,16 @@ buildscript {
 }
 
 plugins {
-    id "com.marklogic.ml-gradle" version "3.2.0"
+    id "com.marklogic.ml-gradle" version "3.3.0"
 }
 
 mlPostDeploy.dependsOn ":mlJobRepo:deployMarkLogicJobRepository"
 mlUndeploy.dependsOn "mlJobRepo:undeployMarkLogicJobRepository"
 
 allprojects {
+    apply plugin: "checkstyle"
+    apply plugin: "pmd"
+
     repositories {
         jcenter()
         mavenCentral()
@@ -27,8 +30,18 @@ allprojects {
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '4.3'
+        gradleVersion = '4.4.1'
     }
+
+    pmd {
+        ruleSets = ["java-basic", "java-braces", "java-unusedcode"]
+    }
+
+    checkstyle {
+        configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+        toolVersion = '7.1.2'
+    }
+
 }
 
 subprojects {
@@ -36,11 +49,10 @@ subprojects {
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "idea"
-    apply plugin: "checkstyle"
 
     ext {
-        springBatchVersion = '3.0.8.RELEASE'
-        springVersion = '4.3.9.RELEASE'
+        springBatchVersion = '4.0.0.RELEASE'
+        springVersion = '5.0.2.RELEASE'
     }
 
     dependencies {
@@ -54,8 +66,9 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    checkstyle {
-        configFile = file("${project.rootDir}/dev-tools/checkstyle/checkstyle.xml")
-        toolVersion = '7.1.2'
+    task cleanJavaDocs(type: Delete) {
+        delete fileTree("../sastafford.github.io/marklogic-spring-batch/javadoc")
     }
+
+    javadoc.dependsOn cleanJavaDocs
 }

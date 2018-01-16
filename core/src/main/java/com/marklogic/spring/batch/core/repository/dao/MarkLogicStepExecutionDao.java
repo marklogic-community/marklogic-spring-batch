@@ -45,18 +45,6 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         adapter = new StepExecutionAdapter();
     }
 
-    private static void copy(final StepExecution sourceExecution, final StepExecution targetExecution) {
-        // Cheaper than full serialization is a reflective field copy, which is
-        // fine for volatile storage
-        ReflectionUtils.doWithFields(StepExecution.class, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                field.setAccessible(true);
-                field.set(targetExecution, field.get(sourceExecution));
-            }
-        }, ReflectionUtils.COPYABLE_FIELDS);
-    }
-
     @Override
     public void saveStepExecution(StepExecution stepExecution) {
 
@@ -186,18 +174,16 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
         SearchHandle results = queryMgr.search(querydef, new SearchHandle());
         if (results.getTotalResults() > 0L) {
             MatchDocumentSummary[] summaries = results.getMatchResults();
-            for (MatchDocumentSummary summary : summaries) {
-                JAXBHandle<AdaptedStepExecution> handle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
-                AdaptedStepExecution ase = summaries[0].getFirstSnippet(handle).get();
-                StepExecution stepExecution = null;
-                try {
-                    stepExecution = adapter.unmarshal(ase);
-                } catch (Exception ex) {
-                    logger.error(ex.getMessage());
-                    throw new RuntimeException(ex);
-                }
-                stepExecutionList.add(stepExecution);
+            JAXBHandle<AdaptedStepExecution> handle = new JAXBHandle<AdaptedStepExecution>(jaxbContext());
+            AdaptedStepExecution ase = summaries[0].getFirstSnippet(handle).get();
+            StepExecution stepExecution = null;
+            try {
+                stepExecution = adapter.unmarshal(ase);
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                throw new RuntimeException(ex);
             }
+            stepExecutionList.add(stepExecution);
         }
         jobExecution.addStepExecutions(stepExecutionList);
     }

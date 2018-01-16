@@ -148,7 +148,7 @@ import java.util.*;
 public class CommandLineJobRunner {
 
     protected static final Logger logger = LoggerFactory.getLogger(CommandLineJobRunner.class);
-    private final static List<String> VALID_OPTS = Arrays.asList("-restart", "-next", "-stop", "-abandon");
+
     // Package private for unit test
     private static SystemExiter systemExiter = new JvmSystemExiter();
     private static String message = "";

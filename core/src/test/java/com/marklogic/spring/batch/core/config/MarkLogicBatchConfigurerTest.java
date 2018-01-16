@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.core.config;
 
 import com.marklogic.spring.batch.config.MarkLogicBatchConfiguration;
-import com.marklogic.spring.batch.test.AbstractSpringBatchTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

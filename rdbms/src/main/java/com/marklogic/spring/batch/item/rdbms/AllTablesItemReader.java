@@ -36,7 +36,6 @@ public class AllTablesItemReader extends AbstractItemStreamItemReader<Map<String
     private List<String> tableNames;
     private Map<String, JdbcCursorItemReader> tableReaders;
     private int tableNameIndex = 0;
-    private String tableNameKey = DEFAULT_TABLE_NAME_KEY;
     private String databaseVendor = "";
 
     // For ignoring certain table names
@@ -169,10 +168,6 @@ public class AllTablesItemReader extends AbstractItemStreamItemReader<Map<String
 
     public void setTableQueries(Map<String, String> tableQueries) {
         this.tableQueries = tableQueries;
-    }
-
-    public void setTableNameKey(String tableNameKey) {
-        this.tableNameKey = tableNameKey;
     }
 
     public void setDatabaseVendor(String databaseVendor) {

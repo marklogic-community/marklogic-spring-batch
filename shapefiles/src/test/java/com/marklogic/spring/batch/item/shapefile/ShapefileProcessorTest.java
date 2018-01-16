@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class ShapefileProcessorTest {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
+/*
     private final static String MOCK_OGRE_RESPONSE = "{\n" +
             "  \"type\": \"FeatureCollection\",\n" +
             "  \"features\": [\n" +
@@ -37,7 +37,7 @@ public class ShapefileProcessorTest {
             "    }\n" +
             "  ]\n" +
             "}";
-
+*/
     //Todo - mock the httpClientOgreProxy (Requires internet!!)
     @Ignore
     @Test
