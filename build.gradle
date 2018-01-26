@@ -30,11 +30,11 @@ allprojects {
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '4.4.1'
+        gradleVersion = '4.5'
     }
 
     pmd {
-        ruleSets = ["java-basic", "java-braces", "java-unusedcode"]
+        ruleSets = ["java-basic", "java-braces", "java-unusedcode", "java-imports"]
     }
 
     checkstyle {
@@ -45,7 +45,6 @@ allprojects {
 }
 
 subprojects {
-
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "idea"
@@ -56,19 +55,10 @@ subprojects {
     }
 
     dependencies {
-        compile "org.slf4j:slf4j-api:1.7.25"
-        compile "org.slf4j:slf4j-log4j12:1.7.25"
-        compile "org.apache.logging.log4j:log4j-api:2.9.1"
-
+        compile "ch.qos.logback:logback-classic:1.2.3"
         testCompile "junit:junit:4.12"
     }
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
-
-    task cleanJavaDocs(type: Delete) {
-        delete fileTree("../sastafford.github.io/marklogic-spring-batch/javadoc")
-    }
-
-    javadoc.dependsOn cleanJavaDocs
 }

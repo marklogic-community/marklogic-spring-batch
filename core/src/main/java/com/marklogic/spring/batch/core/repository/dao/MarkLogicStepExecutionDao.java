@@ -21,11 +21,9 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.StepExecutionDao;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

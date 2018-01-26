@@ -43,15 +43,15 @@ The product of this project are jar files that are published to [bintray](https:
 | Group | Artifact |
 | ------|----------|
 | com.marklogic | marklogic-spring-batch-core |
-| com.marklogic | marklogic-spring-batch-infrastructure |
 | com.marklogic | marklogic-spring-batch-test |
 | com.marklogic | spring-batch-http |
 | com.marklogic | spring-batch-rdbms |
+| com.marklogic | spring-batch-file |
 
 The gradle bintray plugin is used to publish to bintray.
 
      gradlew :core:bintrayUpload
-     gradlew :infrastructure:bintrayUpload
+     gradlew :file:bintrayUpload
      gradlew :test:bintrayUpload
      gradlew :http:bintrayUpload
      gradlew :rdbms:bintrayUpload
@@ -62,8 +62,8 @@ The gradle bintray plugin is used to publish to bintray.
 
 ```groovy
 dependencies {
-    compile 'com.marklogic:marklogic-spring-batch-core:1.4.0'
-    testCompile 'com.marklogic:marklogic-spring-batch-test:1.4.0'
+    compile 'com.marklogic:marklogic-spring-batch-core:1.+'
+    testCompile 'com.marklogic:marklogic-spring-batch-test:1.+'
 }
 ```
 
@@ -75,7 +75,7 @@ dependencies {
     <dependency>
         <groupId>com.marklogic</groupId>
         <artifactId>marklogic-spring-batch-core</artifactId>
-        <version>1.4.2</version>
+        <version>1.5.0</version>
     </dependency>
 </dependencies>
 ```
