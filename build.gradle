@@ -61,10 +61,4 @@ subprojects {
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
-
-    task cleanJavaDocs(type: Delete) {
-        delete fileTree("../sastafford.github.io/marklogic-spring-batch/javadoc")
-    }
-
-    javadoc.dependsOn cleanJavaDocs
 }

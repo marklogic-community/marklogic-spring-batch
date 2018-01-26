@@ -24,10 +24,6 @@ ext {
     artifact = "marklogic-spring-batch-core"
 }
 
-javadoc {
-    destinationDir = new File("../sastafford.github.io/marklogic-spring-batch/javadoc/core")
-}
-
 task sourcesJar(type: Jar, dependsOn: classes) {
     baseName = artifactId
     version = project.version
