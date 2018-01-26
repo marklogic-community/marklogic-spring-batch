@@ -34,7 +34,7 @@ allprojects {
     }
 
     pmd {
-        ruleSets = ["java-basic", "java-braces", "java-unusedcode"]
+        ruleSets = ["java-basic", "java-braces", "java-unusedcode", "java-imports"]
     }
 
     checkstyle {

@@ -305,7 +305,7 @@ public class CommandLineJobRunner {
         try {
             try {
                 context = new AnnotationConfigApplicationContext(Class.forName(jobPath));
-                String[] jobNames = context.getBeanNamesForType(org.springframework.batch.core.Job.class);
+                String[] jobNames = context.getBeanNamesForType(Job.class);
                 logger.info("JOB NAMES");
                 for (int i = 0; i < jobNames.length; i++) {
                     logger.info(jobNames[i]);

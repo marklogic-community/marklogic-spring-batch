@@ -6,7 +6,6 @@ import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.spring.batch.item.processor.support.UriGenerator;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.util.UUID;
 
 public class ResourceToDocumentWriteOperationItemProcessor extends AbstractMarkLogicItemProcessor<Resource> {

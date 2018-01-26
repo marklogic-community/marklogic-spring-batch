@@ -1,6 +1,5 @@
 package com.marklogic.spring.batch.item.file.support;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
