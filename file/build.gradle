@@ -5,6 +5,7 @@ dependencies {
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "com.marklogic:marklogic-client-api:4.0.3"
     compile "org.apache.tika:tika-parsers:1.17"
+    compile "org.apache.avro:avro:1.8.2"
 }
 
 ext {
