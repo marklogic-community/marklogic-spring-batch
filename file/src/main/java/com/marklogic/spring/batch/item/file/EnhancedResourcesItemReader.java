@@ -6,7 +6,6 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.ResourcesItemReader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,17 +77,13 @@ public class EnhancedResourcesItemReader extends ResourcesItemReader {
      */
     protected String buildPattern() {
         String pattern = inputFilePath;
-        String filePattern = null;
 
         if (new File(inputFilePath).isDirectory()) {
-            filePattern = "**";
-        }
-
-        if (StringUtils.hasText(filePattern)) {
-            if (pattern.endsWith(File.separator)) {
-                pattern += filePattern;
-            } else {
-                pattern += File.separator + filePattern;
+            if (pattern.endsWith("/")) {
+                pattern += "**";
+            }
+            else {
+                pattern += "/**";
             }
         }
 

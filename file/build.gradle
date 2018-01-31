@@ -5,6 +5,9 @@ dependencies {
     compile "org.springframework.batch:spring-batch-core:$springBatchVersion"
     compile "com.marklogic:marklogic-client-api:4.0.3"
     compile "org.apache.tika:tika-parsers:1.17"
+
+    testCompile project(':test')
+    testCompile "com.marklogic:ml-junit:3.0.0"
 }
 
 ext {
@@ -52,3 +55,14 @@ bintray {
         }
     }
 }
+
+//task runJob(type: JavaExec) {
+//    main = 'com.marklogic.spring.batch.core.launch.support.CommandLineJobRunner'
+//    classpath = sourceSets.test.runtimeClasspath
+//    args = ["--job_path", "EnhancedResourceJobConfig",
+//            "--job_id", "enhancedResourcesJob",
+//            "--output_collections", "enhancedResourceJob",
+//            "--chunk_size", "50",
+//            "--thread_count", "1",
+//            "--next"]
+//}
