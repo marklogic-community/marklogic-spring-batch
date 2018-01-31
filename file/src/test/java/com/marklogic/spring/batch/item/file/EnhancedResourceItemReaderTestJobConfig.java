@@ -37,7 +37,7 @@ import java.util.UUID;
         com.marklogic.spring.batch.config.MarkLogicBatchConfiguration.class,
         com.marklogic.spring.batch.config.MarkLogicConfiguration.class})
 @PropertySource("classpath:job.properties")
-public class EnhancedResourceJobConfig {
+public class EnhancedResourceItemReaderTestJobConfig {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     // This is the bean label for the name of your Job.  Pass this label into the job_id parameter

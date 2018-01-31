@@ -13,7 +13,7 @@ import java.io.File;
 /**
  * Unit test for verifying we construct the pattern correctly.
  */
-@ContextConfiguration(classes = {EnhancedResourceJobConfig.class} )
+@ContextConfiguration(classes = {EnhancedResourceItemReaderTestJobConfig.class} )
 public class EnhancedResourcesItemReaderTest extends AbstractJobRunnerTest {
 
     private EnhancedResourcesItemReader sut = new EnhancedResourcesItemReader();
