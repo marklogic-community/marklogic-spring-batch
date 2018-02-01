@@ -45,9 +45,7 @@ public class AvroItemReaderTest {
 
     @Test(expected = IOException.class)
     public void testIOException() throws IOException {
-        Resource sampleResource = new ClassPathResource("avro/fileThatDoesntExist.avro");
-        File sampleAvroFile = sampleResource.getFile();
-
+        File sampleAvroFile = new File(AvroItemReaderTest.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "DOESNOTEXIST");
         itemReader = new AvroItemReader(sampleAvroFile);
     }
 
