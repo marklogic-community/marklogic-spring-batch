@@ -1,0 +1,3 @@
+{"id": "A91D021BA58444B29D4D42CA5E39F7BF", "student_id": 100, "university_id": 908, "course_details": {"course_id": 100, "enroll_date": "2012-02-13 00:00:00.000000000", "verb": "completed", "result_score": 0.9}}
+{"id": "502A77CC99B241CB94CA356F5218F1A9", "student_id": 101, "university_id": 112, "course_details": {"course_id": 233, "enroll_date": "2011-06-08 00:00:00.000000000", "verb": "started", "result_score": 0.65}}
+{"id": "5D04CD5ABF014D6EBA237766F9B470DE", "student_id": 102, "university_id": 340, "course_details": {"course_id": 339, "enroll_date": "2012-03-06 00:00:00.000000000", "verb": "started", "result_score": 0.57}}
