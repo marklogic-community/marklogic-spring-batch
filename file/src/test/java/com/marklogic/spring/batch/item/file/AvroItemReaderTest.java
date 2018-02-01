@@ -2,7 +2,6 @@ package com.marklogic.spring.batch.item.file;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -15,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class AvroItemReaderTest {
-    private ItemReader<String> itemReader;
+    private AvroItemReader itemReader;
     private Stream<String> expectedOutputStream;
 
     @Before
