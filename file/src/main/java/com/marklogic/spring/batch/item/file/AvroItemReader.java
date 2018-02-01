@@ -15,20 +15,12 @@ public class AvroItemReader implements ItemReader {
 
     protected final static Logger logger = LoggerFactory.getLogger(AvroItemReader.class);
 
-    private File input_file;
-
     private GenericRecord record;
     private DataFileReader<GenericRecord> dataFileReader;
 
-
-    public AvroItemReader(File input_file) throws IOException {
-        this.input_file = input_file;
-        initialize();
-    }
-
-    private void initialize() throws IOException {
+    public AvroItemReader(File inputFile) throws IOException {
         DatumReader<GenericRecord> datumReader = new GenericDatumReader<>();
-        this.dataFileReader = new DataFileReader<GenericRecord>(this.input_file, datumReader);
+        this.dataFileReader = new DataFileReader<GenericRecord>(inputFile, datumReader);
 
         this.record = null;
     }
@@ -48,8 +40,4 @@ public class AvroItemReader implements ItemReader {
 
     }
 
-
-    public void setInput_file(File input_file) {
-        this.input_file = input_file;
-    }
 }
