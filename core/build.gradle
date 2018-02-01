@@ -24,6 +24,10 @@ ext {
     artifact = "marklogic-spring-batch-core"
 }
 
+javadoc {
+    excludes = ["com/marklogic/spring/batch/bind", "com/marklogic/spring/batch/core" ]
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     baseName = artifactId
     version = project.version
