@@ -1,3 +1,4 @@
+
 import com.marklogic.spring.batch.test.AbstractJobRunnerTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,6 +17,7 @@ public class YourJobTest extends AbstractJobRunnerTest {
         JobExecution jobExecution = getJobLauncherTestUtils().launchJob(jpb.toJobParameters());
         Assert.assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
         getClientTestHelper().assertCollectionSize("Expecting 100 items in monster collection", "monster", 100);
+        getJobRepoClientTestHelper().assertCollectionSize("Expecting 5 items in batch collection", "batch", 5);
     }
 
     @Test

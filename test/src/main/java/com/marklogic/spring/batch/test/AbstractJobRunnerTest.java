@@ -22,11 +22,12 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
 
     private JobLauncherTestUtils jobLauncherTestUtils;
     private ClientTestHelper clientTestHelper;
+    private ClientTestHelper jobRepoClientTestHelper;
     private DatabaseClientConfig databaseClientConfig;
     private ApplicationContext applicationContext;
 
-    private DatabaseClientProvider databaseClientProvider;
-    private DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider;
+    protected DatabaseClientProvider databaseClientProvider;
+    protected DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider;
 
     protected boolean isMarkLogic9() {
         AdminConfig config = new AdminConfig(databaseClientConfig.getHost(), databaseClientConfig.getPassword());
@@ -50,7 +51,7 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
         this.databaseClientProvider = databaseClientProvider;
     }
 
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("markLogicJobRepositoryDatabaseClientProvider")
     public void setMarkLogicJobRepositoryDatabaseClientProvider(
             DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider) {
@@ -66,6 +67,14 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
         }
         return clientTestHelper;
 
+    }
+
+    public ClientTestHelper getJobRepoClientTestHelper() {
+        if (jobRepoClientTestHelper == null) {
+            jobRepoClientTestHelper = new ClientTestHelper();
+            jobRepoClientTestHelper.setDatabaseClientProvider(markLogicJobRepositoryDatabaseClientProvider);
+        }
+        return jobRepoClientTestHelper;
     }
 
     @Override
@@ -99,9 +108,11 @@ public abstract class AbstractJobRunnerTest extends AbstractSpringTest {
         evalCall.xquery(getClearDatabaseXquery());
         evalCall.eval();
 
-        evalCall = markLogicJobRepositoryDatabaseClientProvider.getDatabaseClient().newServerEval();
-        evalCall.xquery(getClearDatabaseXquery());
-        evalCall.eval();
+        if (markLogicJobRepositoryDatabaseClientProvider != null) {
+            evalCall = markLogicJobRepositoryDatabaseClientProvider.getDatabaseClient().newServerEval();
+            evalCall.xquery(getClearDatabaseXquery());
+            evalCall.eval();
+        }
     }
 
 }
