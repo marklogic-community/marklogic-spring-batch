@@ -41,7 +41,7 @@ public class MarkLogicBatchConfigurer implements BatchConfigurer {
     @Autowired
     public MarkLogicBatchConfigurer(
             @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider,
-            MarkLogicJobRepositoryProperties batchProperties) {
+            MarkLogicJobRepositoryProperties properties) {
         this.databaseClient = databaseClientProvider.getDatabaseClient();
         this.properties = properties;
     }

@@ -17,9 +17,9 @@ import org.springframework.util.Assert;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MarkLogicBatchConfigurer.class, MarkLogicBatchConfiguration.class, MarkLogicJobRepositoryProperties.class})
 @TestPropertySource(properties = { "marklogic.batch.config.enabled=true"})
-public class MarkLogicBatchConfigurerTest implements ApplicationContextAware {
+public class UseMarkLogicBatchConfigurerTest implements ApplicationContextAware {
 
-    private final static Logger logger = LoggerFactory.getLogger(MarkLogicBatchConfigurerTest.class);
+    private final static Logger logger = LoggerFactory.getLogger(UseMarkLogicBatchConfigurerTest.class);
 
     ApplicationContext ctx;
 
