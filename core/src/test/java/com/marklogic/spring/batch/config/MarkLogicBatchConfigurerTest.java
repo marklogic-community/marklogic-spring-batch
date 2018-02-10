@@ -1,13 +1,10 @@
-package com.marklogic.spring.batch.core.config;
+package com.marklogic.spring.batch.config;
 
-import com.marklogic.spring.batch.config.MarkLogicBatchConfiguration;
-import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
 import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
