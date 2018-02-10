@@ -1,6 +1,7 @@
 package com.marklogic.spring.batch.item.writer;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraph;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraphFactory;
 import com.marklogic.spring.batch.utils.MetadataReader;
@@ -10,9 +11,9 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.graph.GraphFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemStreamException;
+import org.springframework.batch.item.ItemStreamWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,13 +26,8 @@ import java.util.Map;
  * has been read from the item reader into a graph of the triple using jena libraries. This graph is inserted
  * into MarkLogic using the MarkLogicDatSetGraph by using the client API. The triples are inserted into MarkLogic
  * based on the chunk size as part of the batch process.
- *
- * @author viyengar
- *
  */
-public class TripleWriter implements ItemWriter<Map<String,Object>> {
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+public class TripleWriter extends LoggingObject implements ItemStreamWriter<Map<String,Object>> {
 
     // Configurable
     private String graphPrefix;
@@ -45,12 +41,6 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
         this.baseIri = baseIri;
     }
 
-    public TripleWriter(DatabaseClient client, String graphPrefix, String baseIri, boolean clean) {
-        this(client, graphPrefix, baseIri);
-        if (clean) {
-            clearTripleData();
-        }
-    }
     /**
      * So what we need to do is, extract the triple from the map and use
      * writeRecords to insert the triple into the graph
@@ -64,7 +54,6 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
             if (!this.graphNodes.containsKey(currentTable)) {
                 Node node = NodeFactory.createURI(this.graphPrefix + currentTable);
                 dsg.addGraph(node, graph);
-                dsg.getGraph(node).clear();
                 this.graphNodes.put(currentTable, dsg.getGraph(node));
                 writeRecords(
                         new Triple(
@@ -112,7 +101,6 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
                 );
             }
         }
-
         return triples;
     }
 
@@ -145,4 +133,17 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
         dsg.clear();
     }
 
+    @Override
+    public void open(ExecutionContext executionContext) throws ItemStreamException {
+    }
+
+    @Override
+    public void update(ExecutionContext executionContext) throws ItemStreamException {
+
+    }
+
+    @Override
+    public void close() throws ItemStreamException {
+
+    }
 }

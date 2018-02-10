@@ -1,7 +1,6 @@
 package com.marklogic.spring.batch.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.marklogic.client.ext.helper.LoggingObject;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.jdbc.support.JdbcUtils;
 
@@ -12,9 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MetadataReaderImpl implements MetadataReader {
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+public class MetadataReaderImpl extends LoggingObject implements MetadataReader {
 
     private Map<String, Map<String, Object>> METADATA = new HashMap<>();
     private String tableName;
