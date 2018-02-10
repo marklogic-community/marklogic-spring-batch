@@ -23,7 +23,7 @@ public class SimpleJobRepositoryIntegrationTests extends AbstractJobRepositoryTe
     private JobRepository jobRepository;
 
     @Before
-    private void givenAJobRepsitory() throws Exception {
+    public void givenAJobRepsitory() throws Exception {
         jobRepository = getJobRepository();
     }
 

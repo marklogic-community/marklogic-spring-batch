@@ -29,7 +29,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
         execution.setStartTime(new Date(System.currentTimeMillis()));
         execution.setLastUpdated(new Date(System.currentTimeMillis()));
         execution.setEndTime(new Date(System.currentTimeMillis()));
-        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
+        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getMarkLogicJobRepositoryProperties());
     }
 
     /**

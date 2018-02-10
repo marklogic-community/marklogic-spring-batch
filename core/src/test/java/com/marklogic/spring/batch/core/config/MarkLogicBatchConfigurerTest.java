@@ -1,6 +1,8 @@
 package com.marklogic.spring.batch.core.config;
 
 import com.marklogic.spring.batch.config.MarkLogicBatchConfiguration;
+import com.marklogic.spring.batch.config.MarkLogicBatchConfigurer;
+import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -16,8 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@EnableBatchProcessing
-@ContextConfiguration(classes = {MarkLogicBatchConfiguration.class})
+@ContextConfiguration(classes = {MarkLogicBatchConfigurer.class, MarkLogicBatchConfiguration.class, MarkLogicJobRepositoryProperties.class})
 @TestPropertySource(properties = { "marklogic.batch.config.enabled=true"})
 public class MarkLogicBatchConfigurerTest implements ApplicationContextAware {
 
@@ -30,7 +31,7 @@ public class MarkLogicBatchConfigurerTest implements ApplicationContextAware {
         for (String beanName : ctx.getBeanDefinitionNames()) {
             logger.info(beanName);
         }
-        Assert.isTrue(ctx.containsBeanDefinition("batchConfigurer"), "Cannot find batchConfigurer bean");
+        Assert.isTrue(ctx.containsBeanDefinition("markLogicBatchConfigurer"), "Cannot find batchConfigurer bean");
     }
 
     @Override

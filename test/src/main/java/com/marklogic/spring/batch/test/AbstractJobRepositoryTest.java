@@ -25,7 +25,6 @@ public abstract class AbstractJobRepositoryTest extends AbstractSpringTest {
     protected ApplicationContext applicationContext;
     private XccTemplate xccTemplate;
     protected MarkLogicJobRepositoryProperties properties;
-    protected DatabaseClientProvider databaseClientProvider;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -54,15 +53,9 @@ public abstract class AbstractJobRepositoryTest extends AbstractSpringTest {
         this.properties = properties;
     }
 
-    @Autowired
-    public void setDatabaseClientProvider(
-            @Qualifier("markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider) {
-        this.databaseClientProvider = databaseClientProvider;
-    }
-
     protected JobRepository getJobRepository() throws Exception {
         MarkLogicJobRepositoryFactoryBean factory = new MarkLogicJobRepositoryFactoryBean();
-        factory.setDatabaseClient(databaseClientProvider.getDatabaseClient());
+        factory.setDatabaseClient(getClientProvider().getDatabaseClient());
         factory.setMarkLogicJobRepositoryProperties(properties);
         factory.setTransactionManager(new ResourcelessTransactionManager());
         factory.afterPropertiesSet();
@@ -71,7 +64,7 @@ public abstract class AbstractJobRepositoryTest extends AbstractSpringTest {
 
     protected JobExplorer getJobExplorer() throws Exception {
         MarkLogicJobExplorerFactoryBean factory = new MarkLogicJobExplorerFactoryBean();
-        factory.setDatabaseClient(databaseClientProvider.getDatabaseClient());
+        factory.setDatabaseClient(getClientProvider().getDatabaseClient());
         factory.setMarkLogicJobRepositoryProperties(properties);
         return factory.getObject();
     }
