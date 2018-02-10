@@ -30,7 +30,7 @@ public class AllTablesItemReader extends AbstractItemStreamItemReader<Map<String
 
     public final static String DEFAULT_TABLE_NAME_KEY = "_tableName";
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private DataSource dataSource;
     private List<String> tableNames;
@@ -114,20 +114,25 @@ public class AllTablesItemReader extends AbstractItemStreamItemReader<Map<String
      * property can be used to ignore certain table names.
      */
     protected List<String> getTableNames() {
-        return new JdbcTemplate(dataSource).execute(new ConnectionCallback<List<String>>() {
-            @Override
-            public List<String> doInConnection(Connection con) throws SQLException, DataAccessException {
-                ResultSet rs = con.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
-                List<String> list = new ArrayList<>();
-                while (rs.next()) {
-                    String name = rs.getString("TABLE_NAME");
-                    if (excludeTableNames == null || !excludeTableNames.contains(name)) {
-                        list.add(name);
+        List<String> tableNames = new ArrayList<>();
+        if (null == this.tableNames) {
+            tableNames = new JdbcTemplate(dataSource).execute(new ConnectionCallback<List<String>>() {
+                @Override
+                public List<String> doInConnection(Connection con) throws SQLException, DataAccessException {
+                    ResultSet rs = con.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+                    List<String> list = new ArrayList<>();
+                    while (rs.next()) {
+                        String name = rs.getString("TABLE_NAME");
+                        if (excludeTableNames == null || !excludeTableNames.contains(name)) {
+                            list.add(name);
+                        }
                     }
+                    return list;
                 }
-                return list;
-            }
-        });
+            });
+            this.tableNames = tableNames;
+        }
+        return this.tableNames;
     }
 
     /**
@@ -137,9 +142,13 @@ public class AllTablesItemReader extends AbstractItemStreamItemReader<Map<String
      * used for a particular table.
      */
     protected JdbcCursorItemReader<Map<String, Object>> buildTableReader(String tableName, ExecutionContext executionContext) {
+        return buildTableReader(tableName, executionContext, new ColumnMapRowMapper());
+    }
+
+    protected JdbcCursorItemReader<Map<String, Object>> buildTableReader(String tableName, ExecutionContext executionContext, ColumnMapRowMapper columnMapRowMapper) {
         JdbcCursorItemReader<Map<String, Object>> reader = new JdbcCursorItemReader<>();
         reader.setDataSource(dataSource);
-        reader.setRowMapper(new ColumnMapRowMapper());
+        reader.setRowMapper(columnMapRowMapper);
         reader.setSql(getSqlQueryForTable(tableName));
         reader.open(executionContext);
         return reader;

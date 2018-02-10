@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.columnmap;
 
-import com.marklogic.spring.batch.utils.MetadataReaderUtil;
+import com.marklogic.spring.batch.utils.MetadataReader;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 
 import java.sql.ResultSet;
@@ -21,7 +21,7 @@ public class RowToColumnMapWithMetadataMapper extends ColumnMapRowMapper {
         if (mapOfColValues.size() == 0) {
             return null;
         } else {
-            mapOfColValues.put(MetadataReaderUtil.META_MAP_KEY, metadata);
+            mapOfColValues.put(MetadataReader.META_MAP_KEY, metadata);
             return mapOfColValues;
         }
     }

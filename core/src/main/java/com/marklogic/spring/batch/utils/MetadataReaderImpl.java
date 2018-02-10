@@ -12,14 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MetadataReaderUtil {
+public class MetadataReaderImpl implements MetadataReader {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public static String PK_MAP_KEY = "%";
-    public static String ORDER_MAP_KEY = "$";
-    public static String TABLE_NAME_MAP_KEY = "*";
-    public static String META_MAP_KEY = "^";
 
     private Map<String, Map<String, Object>> METADATA = new HashMap<>();
     private String tableName;
@@ -27,13 +22,13 @@ public class MetadataReaderUtil {
     private String databaseVendor;
 
     /* assumes all tables */
-    public MetadataReaderUtil(DataSource dataSource, String databaseVendor) {
+    public MetadataReaderImpl(DataSource dataSource, String databaseVendor) {
         this.databaseVendor = databaseVendor;
         this.dataSource = dataSource;
         this.load();
     }
 
-    public MetadataReaderUtil(DataSource dataSource, String databaseVendor, String tableName) {
+    public MetadataReaderImpl(DataSource dataSource, String databaseVendor, String tableName) {
         this.databaseVendor = databaseVendor;
         this.dataSource = dataSource;
         this.tableName = tableName;
@@ -53,7 +48,8 @@ public class MetadataReaderUtil {
         return tables;
     }
 
-    private Map<String, Object> getTableMetadata(String tableName) throws ItemStreamException {
+    @Override
+    public Map<String, Object> getTableMetadata(String tableName) throws ItemStreamException {
         Map<String, Object> metadata = new HashMap<>();
         String sql = getSqlQueryForTable(tableName);
         try (Connection conn = this.dataSource.getConnection();
@@ -97,6 +93,7 @@ public class MetadataReaderUtil {
         METADATA.put(tableName, getTableMetadata(tableName));
     }
 
+    @Override
     public Map<String, Map<String, Object>> getMetadata() {
         return METADATA;
     }

@@ -3,7 +3,7 @@ package com.marklogic.spring.batch.item.writer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraph;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraphFactory;
-import com.marklogic.spring.batch.utils.MetadataReaderUtil;
+import com.marklogic.spring.batch.utils.MetadataReader;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
@@ -43,9 +43,14 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
         this.dsg = getMarkLogicDatasetGraph(client);
         this.graphPrefix = graphPrefix;
         this.baseIri = baseIri;
-        clearTripleData();
     }
 
+    public TripleWriter(DatabaseClient client, String graphPrefix, String baseIri, boolean clean) {
+        this(client, graphPrefix, baseIri);
+        if (clean) {
+            clearTripleData();
+        }
+    }
     /**
      * So what we need to do is, extract the triple from the map and use
      * writeRecords to insert the triple into the graph
@@ -73,16 +78,16 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
         }
     }
 
-    public List<Triple> process(Map<String, Object> item, String currentTable) throws Exception {
-        Map<String, Object> metadata = (Map<String, Object>) item.get(MetadataReaderUtil.META_MAP_KEY);
-        String pk = (String) metadata.get(MetadataReaderUtil.PK_MAP_KEY);
+    protected List<Triple> process(Map<String, Object> item, String currentTable) throws Exception {
+        Map<String, Object> metadata = (Map<String, Object>) item.get(MetadataReader.META_MAP_KEY);
+        String pk = (String) metadata.get(MetadataReader.PK_MAP_KEY);
         List<Triple> triples = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : item.entrySet()) {
             if (null != entry.getValue() &&
                     null != entry.getKey() &&
                     !(
-                        entry.getKey().equals(MetadataReaderUtil.META_MAP_KEY) ||
+                        entry.getKey().equals(MetadataReader.META_MAP_KEY) ||
                         entry.getKey().equals("_tableName")
                     )) {
 
@@ -99,8 +104,8 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
 
                 writeRecords(
                         new Triple(
-                            NodeFactory.createURI(baseIri + "/" + currentTable + "#" + item.get(pk)),
-                            NodeFactory.createURI(baseIri + "/" + currentTable + "#has" + entry.getKey()),
+                            NodeFactory.createURI(baseIri + currentTable + "#" + item.get(pk)),
+                            NodeFactory.createURI(baseIri + currentTable + "#has" + entry.getKey()),
                             object
                         ),
                         currentTable
@@ -119,7 +124,6 @@ public class TripleWriter implements ItemWriter<Map<String,Object>> {
     private void writeRecords(Triple rdfTriple, String tableName) {
         graphNodes.get(tableName).add(rdfTriple);
     }
-
 
     /**
      * Retrieve the MarkLogic data set graph using the graph factory for the client
