@@ -3,19 +3,15 @@ package com.marklogic.spring.batch.config;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
-import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.util.List;
 
 @Configuration
-@ComponentScan("com.marklogic.spring.batch.config")
 public class MarkLogicBatchConfiguration {
 
     @Bean
@@ -38,14 +34,6 @@ public class MarkLogicBatchConfiguration {
             @Qualifier("markLogicJobRepositoryDatabaseClientConfig")
                     DatabaseClientConfig marklogicJobRepositoryClientConfig) {
         return new SimpleDatabaseClientProvider(marklogicJobRepositoryClientConfig);
-    }
-
-    @Bean
-    @Conditional(UseMarkLogicBatchCondition.class)
-    public BatchConfigurer batchConfigurer(
-            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider,
-            BatchProperties batchProperties) {
-        return new MarkLogicBatchConfigurer(databaseClientProvider, batchProperties);
     }
 }
 
