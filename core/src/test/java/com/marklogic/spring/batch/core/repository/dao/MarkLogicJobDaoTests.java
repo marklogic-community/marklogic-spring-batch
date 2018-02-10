@@ -30,8 +30,8 @@ public class MarkLogicJobDaoTests extends AbstractJobRepositoryTest {
 
     @Before
     public void onSetUpInTransaction() throws Exception {
-        jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), getBatchProperties());
-        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
+        jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), getMarkLogicJobRepositoryProperties());
+        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getMarkLogicJobRepositoryProperties());
         // Create job.
         jobInstance = jobInstanceDao.createJobInstance(jobName, jobParameters);
 

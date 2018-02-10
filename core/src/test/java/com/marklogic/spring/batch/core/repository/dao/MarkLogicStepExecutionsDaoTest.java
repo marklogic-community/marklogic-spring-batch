@@ -26,17 +26,17 @@ public class MarkLogicStepExecutionsDaoTest extends AbstractJobRepositoryTest {
 
     @Before
     public void onSetUp() throws Exception {
-        JobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), getBatchProperties());
+        JobInstanceDao jobInstanceDao = new MarkLogicJobInstanceDao(getClient(), getMarkLogicJobRepositoryProperties());
         JobInstance jobInstance = jobInstanceDao.createJobInstance("myJob", new JobParameters());
 
-        JobExecutionDao jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
+        JobExecutionDao jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getMarkLogicJobRepositoryProperties());
         jobExecution = new JobExecution(jobInstance, new JobParameters());
         jobExecutionDao.saveJobExecution(jobExecution);
 
         step = new StepSupport("foo");
         stepExecution = new StepExecution(step.getName(), jobExecution);
 
-        dao = new MarkLogicStepExecutionDao(getClient(), getBatchProperties());
+        dao = new MarkLogicStepExecutionDao(getClient(), getMarkLogicJobRepositoryProperties());
     }
 
     @Transactional

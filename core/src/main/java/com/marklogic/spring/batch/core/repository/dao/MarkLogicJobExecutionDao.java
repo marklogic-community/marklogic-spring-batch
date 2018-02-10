@@ -13,8 +13,8 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.JobExecutionAdapter;
-import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedJobExecution;
+import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -38,10 +38,10 @@ public class MarkLogicJobExecutionDao implements JobExecutionDao {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private DatabaseClient databaseClient;
-    private BatchProperties properties;
+    private MarkLogicJobRepositoryProperties properties;
     private JobExecutionAdapter adapter;
 
-    public MarkLogicJobExecutionDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
+    public MarkLogicJobExecutionDao(DatabaseClient databaseClient, MarkLogicJobRepositoryProperties batchProperties) {
         this.databaseClient = databaseClient;
         this.properties = batchProperties;
         this.adapter = new JobExecutionAdapter();

@@ -7,8 +7,8 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.spring.batch.bind.ExecutionContextAdapter;
-import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedExecutionContext;
+import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
@@ -26,10 +26,10 @@ public class MarkLogicExecutionContextDao implements ExecutionContextDao {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private DatabaseClient databaseClient;
-    private BatchProperties properties;
+    private MarkLogicJobRepositoryProperties properties;
     private ExecutionContextAdapter adapter;
 
-    public MarkLogicExecutionContextDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
+    public MarkLogicExecutionContextDao(DatabaseClient databaseClient, MarkLogicJobRepositoryProperties batchProperties) {
         this.properties = batchProperties;
         this.databaseClient = databaseClient;
         adapter = new ExecutionContextAdapter();

@@ -1,11 +1,11 @@
-package com.marklogic.spring.batch.config;
+package com.marklogic.spring.batch.core.repository.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BatchProperties {
+public class MarkLogicJobRepositoryProperties {
 
     private String jobRepostioryDirectory;
     private String collection;
