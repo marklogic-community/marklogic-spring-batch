@@ -1,10 +1,8 @@
-package com.marklogic.spring.batch.item.writer;
+package com.marklogic.spring.batch.item.rdf;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraph;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraphFactory;
-import com.marklogic.spring.batch.utils.MetadataReader;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
@@ -27,7 +25,13 @@ import java.util.Map;
  * into MarkLogic using the MarkLogicDatSetGraph by using the client API. The triples are inserted into MarkLogic
  * based on the chunk size as part of the batch process.
  */
-public class TripleWriter extends LoggingObject implements ItemStreamWriter<Map<String,Object>> {
+public class TripleWriter implements ItemStreamWriter<Map<String,Object>> {
+
+    /* Temporary Solution
+    *  TODO: Should refer to the Metadata
+    * */
+    public static String PK_MAP_KEY = "%";
+    public static String META_MAP_KEY = "^";
 
     // Configurable
     private String graphPrefix;
@@ -68,15 +72,15 @@ public class TripleWriter extends LoggingObject implements ItemStreamWriter<Map<
     }
 
     protected List<Triple> process(Map<String, Object> item, String currentTable) throws Exception {
-        Map<String, Object> metadata = (Map<String, Object>) item.get(MetadataReader.META_MAP_KEY);
-        String pk = (String) metadata.get(MetadataReader.PK_MAP_KEY);
+        Map<String, Object> metadata = (Map<String, Object>) item.get(META_MAP_KEY);
+        String pk = (String) metadata.get(PK_MAP_KEY);
         List<Triple> triples = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : item.entrySet()) {
             if (null != entry.getValue() &&
                     null != entry.getKey() &&
                     !(
-                        entry.getKey().equals(MetadataReader.META_MAP_KEY) ||
+                        entry.getKey().equals(META_MAP_KEY) ||
                         entry.getKey().equals("_tableName")
                     )) {
 

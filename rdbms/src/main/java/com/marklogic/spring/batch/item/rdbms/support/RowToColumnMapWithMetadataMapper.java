@@ -1,6 +1,5 @@
-package com.marklogic.spring.batch.columnmap;
+package com.marklogic.spring.batch.item.rdbms.support;
 
-import com.marklogic.spring.batch.utils.MetadataReader;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 
 import java.sql.ResultSet;

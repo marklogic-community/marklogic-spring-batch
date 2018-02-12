@@ -62,10 +62,3 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 }
-
-// makes core a dependency of rdbms
-project(':rdbms') {
-    dependencies {
-        compile project(':core')
-    }
-}

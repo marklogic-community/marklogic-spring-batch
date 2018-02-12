@@ -1,8 +1,8 @@
 package com.marklogic.spring.batch.item.rdbms;
 
-import com.marklogic.spring.batch.columnmap.RowToColumnMapWithMetadataMapper;
-import com.marklogic.spring.batch.utils.MetadataReader;
-import com.marklogic.spring.batch.utils.MetadataReaderImpl;
+import com.marklogic.spring.batch.item.rdbms.support.MetadataReader;
+import com.marklogic.spring.batch.item.rdbms.support.MetadataReaderImpl;
+import com.marklogic.spring.batch.item.rdbms.support.RowToColumnMapWithMetadataMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ExecutionContext;

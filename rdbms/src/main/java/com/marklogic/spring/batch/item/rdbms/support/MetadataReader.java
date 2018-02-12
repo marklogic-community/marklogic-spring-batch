@@ -1,4 +1,4 @@
-package com.marklogic.spring.batch.utils;
+package com.marklogic.spring.batch.item.rdbms.support;
 
 import org.springframework.batch.item.ItemStreamException;
 
@@ -11,5 +11,7 @@ public interface MetadataReader {
     public static String META_MAP_KEY = "^";
 
     public Map<String, Object> getTableMetadata(String tableName) throws ItemStreamException;
+    public String getPrimaryKey(String tableName);
+    public String getDataType(String tableName, String columnName);
     public Map<String, Map<String, Object>> getMetadata();
 }

@@ -1,6 +1,7 @@
-package com.marklogic.spring.batch.utils;
+package com.marklogic.spring.batch.item.rdbms.support;
 
-import com.marklogic.client.ext.helper.LoggingObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.jdbc.support.JdbcUtils;
 
@@ -11,7 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MetadataReaderImpl extends LoggingObject implements MetadataReader {
+public class MetadataReaderImpl implements MetadataReader {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Map<String, Map<String, Object>> METADATA = new HashMap<>();
     private String tableName;
@@ -32,7 +35,7 @@ public class MetadataReaderImpl extends LoggingObject implements MetadataReader 
         this.load();
     }
 
-    private List<String> getTableNames() throws ItemStreamException {
+    private List<String> extractTableNames() throws ItemStreamException {
         List<String> tables = new ArrayList<>();
         try (Connection conn = this.dataSource.getConnection()) {
             ResultSet rs = conn.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
@@ -62,12 +65,11 @@ public class MetadataReaderImpl extends LoggingObject implements MetadataReader 
                 index.put(i, key);
             }
             metadata.put(ORDER_MAP_KEY, index);
-            metadata.put(TABLE_NAME_MAP_KEY, tableName);
-            String pk = getPrimaryKey(tableName);
+            String pk = extractPrimaryKey(tableName);
             if (null == pk || "".equals(pk)) {
                 metadata.put(PK_MAP_KEY, index.get(1));
             } else {
-                metadata.put(PK_MAP_KEY, getPrimaryKey(tableName));
+                metadata.put(PK_MAP_KEY, extractPrimaryKey(tableName));
             }
         } catch (SQLException e) {
             logger.error("", e);
@@ -77,7 +79,7 @@ public class MetadataReaderImpl extends LoggingObject implements MetadataReader 
 
     private void load() {
         if (null == this.tableName || "".equals(this.tableName)) {
-            List<String> tables = getTableNames();
+            List<String> tables = extractTableNames();
             for (String tableName : tables) {
                 save(tableName);
             }
@@ -106,7 +108,7 @@ public class MetadataReaderImpl extends LoggingObject implements MetadataReader 
     /**
      * @return primary key of the tableName.
      */
-    protected String getPrimaryKey(String tableName) {
+    private String extractPrimaryKey(String tableName) {
         String pk = "";
         try (Connection conn = this.dataSource.getConnection();
              ResultSet rs = conn.getMetaData().getPrimaryKeys(null, null, tableName);
@@ -120,4 +122,14 @@ public class MetadataReaderImpl extends LoggingObject implements MetadataReader 
         return pk;
     }
 
+    public String getPrimaryKey(String tableName) {
+        Map<String, Object> tableMetadata = getTableMetadata(tableName);
+        return (String) tableMetadata.get(PK_MAP_KEY);
+    }
+
+    @Override
+    public String getDataType(String tableName, String columnName) {
+        Map<String, Object> tableMetadata = getTableMetadata(tableName);
+        return (String) tableMetadata.get(columnName);
+    }
 }
