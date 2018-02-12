@@ -121,15 +121,4 @@ public class MetadataReaderImpl implements MetadataReader {
         }
         return pk;
     }
-
-    public String getPrimaryKey(String tableName) {
-        Map<String, Object> tableMetadata = getTableMetadata(tableName);
-        return (String) tableMetadata.get(PK_MAP_KEY);
-    }
-
-    @Override
-    public String getDataType(String tableName, String columnName) {
-        Map<String, Object> tableMetadata = getTableMetadata(tableName);
-        return (String) tableMetadata.get(columnName);
-    }
 }

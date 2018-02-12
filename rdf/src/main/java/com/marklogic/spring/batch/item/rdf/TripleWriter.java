@@ -1,8 +1,6 @@
 package com.marklogic.spring.batch.item.rdf;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.semantics.jena.MarkLogicDatasetGraph;
-import com.marklogic.semantics.jena.MarkLogicDatasetGraphFactory;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
@@ -11,8 +9,6 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.graph.GraphFactory;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.ItemStreamWriter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +21,7 @@ import java.util.Map;
  * into MarkLogic using the MarkLogicDatSetGraph by using the client API. The triples are inserted into MarkLogic
  * based on the chunk size as part of the batch process.
  */
-public class TripleWriter implements ItemStreamWriter<Map<String,Object>> {
+public class TripleWriter extends RdfTripleItemWriter {
 
     /* Temporary Solution
     *  TODO: Should refer to the Metadata
@@ -36,11 +32,10 @@ public class TripleWriter implements ItemStreamWriter<Map<String,Object>> {
     // Configurable
     private String graphPrefix;
     private Map<String,Graph> graphNodes = new HashMap<>();
-    private MarkLogicDatasetGraph dsg;
     private String baseIri;
 
     public TripleWriter(DatabaseClient client, String graphPrefix, String baseIri) {
-        this.dsg = getMarkLogicDatasetGraph(client);
+        super(client);
         this.graphPrefix = graphPrefix;
         this.baseIri = baseIri;
     }
@@ -115,26 +110,6 @@ public class TripleWriter implements ItemStreamWriter<Map<String,Object>> {
      */
     private void writeRecords(Triple rdfTriple, String tableName) {
         graphNodes.get(tableName).add(rdfTriple);
-    }
-
-    /**
-     * Retrieve the MarkLogic data set graph using the graph factory for the client
-     * @param client
-     * @return MarkLogicDatasetGraph
-     */
-    private MarkLogicDatasetGraph getMarkLogicDatasetGraph(DatabaseClient client)
-    {
-        MarkLogicDatasetGraph dataSetGraph = MarkLogicDatasetGraphFactory
-                .createDatasetGraph(client);
-        return dataSetGraph;
-    }
-
-    /**
-     * Clears the triples data in MarkLogic
-     */
-    protected void clearTripleData()
-    {
-        dsg.clear();
     }
 
     @Override

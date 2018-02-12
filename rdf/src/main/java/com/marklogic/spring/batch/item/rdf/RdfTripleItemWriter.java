@@ -31,12 +31,15 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
     // Configurable
     private String graphName;
     private Node graphNode;
-    private MarkLogicDatasetGraph dsg;
+    protected MarkLogicDatasetGraph dsg;
     private DatabaseClient client;
 
-    public RdfTripleItemWriter(DatabaseClient client, String graphName) {
+    public RdfTripleItemWriter(DatabaseClient client) {
         this.client = client;
-    	this.dsg = getMarkLogicDatasetGraph(client);
+        this.dsg = getMarkLogicDatasetGraph(client);
+    }
+    public RdfTripleItemWriter(DatabaseClient client, String graphName) {
+        this(client);
         this.graphName = graphName;
         graphNode = NodeFactory.createURI(graphName);
         // Clear the triples- temporary
@@ -129,7 +132,7 @@ public class RdfTripleItemWriter extends AbstractDocumentWriter implements ItemW
      * @param client
      * @return MarkLogicDatasetGraph
      */
-    private MarkLogicDatasetGraph getMarkLogicDatasetGraph(DatabaseClient client)
+    protected MarkLogicDatasetGraph getMarkLogicDatasetGraph(DatabaseClient client)
     {
         MarkLogicDatasetGraph dataSetGraph = MarkLogicDatasetGraphFactory
                 .createDatasetGraph(client);    
