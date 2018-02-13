@@ -1,3 +1,10 @@
+![GitHub version](https://badge.fury.io/gh/marklogic-community%2Fmarklogic-spring-batch.svg)
+
+| Branch | Status |
+| ------------- | ------------- |
+| master | ![master](https://circleci.com/gh/sastafford/marklogic-spring-batch/tree/master.png?circle-token=e1b8b3198d3416fcb535509f2e7d600444ef153e)  |
+| dev  | ![dev](https://circleci.com/gh/sastafford/marklogic-spring-batch/tree/dev.png?circle-token=e1b8b3198d3416fcb535509f2e7d600444ef153e)  |
+
 # MarkLogic Spring Batch
 
 The MarkLogic Spring Batch project is an extension of the CORE and INFRASTRUCTURE components of Spring Batch to make it easier to write batch processing programs using MarkLogic. 

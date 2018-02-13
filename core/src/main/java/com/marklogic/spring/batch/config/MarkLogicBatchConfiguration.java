@@ -3,7 +3,6 @@ package com.marklogic.spring.batch.config;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
-import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +14,11 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import java.util.List;
 
 @Configuration
-@ComponentScan("com.marklogic.spring.batch.config")
+@ComponentScan(
+        basePackageClasses = {
+                com.marklogic.spring.batch.config.MarkLogicBatchConfigurer.class,
+                com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryProperties.class
+        })
 public class MarkLogicBatchConfiguration {
 
     @Bean
@@ -23,7 +26,9 @@ public class MarkLogicBatchConfiguration {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
+    @Conditional(UseMarkLogicBatchCondition.class)
     @Bean(name = "markLogicJobRepositoryDatabaseClientConfig")
+    @Qualifier("markLogicJobRepositoryDatabaseClientConfig")
     public DatabaseClientConfig markLogicJobRepositoryDatabaseClientConfig(
             @Value("#{'${marklogic.jobrepo.host:localhost}'.split(',')}") List<String> hosts,
             @Value("${marklogic.jobrepo.port:8201}") int port,
@@ -32,20 +37,13 @@ public class MarkLogicBatchConfiguration {
         return new DatabaseClientConfig(hosts.get(0), port, username, password);
     }
 
-    @Bean
+    @Conditional(UseMarkLogicBatchCondition.class)
+    @Bean(name = "markLogicJobRepositoryDatabaseClientProvider")
     @Qualifier("markLogicJobRepositoryDatabaseClientProvider")
     public DatabaseClientProvider markLogicJobRepositoryDatabaseClientProvider(
             @Qualifier("markLogicJobRepositoryDatabaseClientConfig")
                     DatabaseClientConfig marklogicJobRepositoryClientConfig) {
         return new SimpleDatabaseClientProvider(marklogicJobRepositoryClientConfig);
-    }
-
-    @Bean
-    @Conditional(UseMarkLogicBatchCondition.class)
-    public BatchConfigurer batchConfigurer(
-            @Qualifier(value = "markLogicJobRepositoryDatabaseClientProvider") DatabaseClientProvider databaseClientProvider,
-            BatchProperties batchProperties) {
-        return new MarkLogicBatchConfigurer(databaseClientProvider, batchProperties);
     }
 }
 

@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 
 public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
 
@@ -29,7 +32,7 @@ public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
         execution.setStartTime(new Date(System.currentTimeMillis()));
         execution.setLastUpdated(new Date(System.currentTimeMillis()));
         execution.setEndTime(new Date(System.currentTimeMillis()));
-        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getBatchProperties());
+        jobExecutionDao = new MarkLogicJobExecutionDao(getClient(), getMarkLogicJobRepositoryProperties());
     }
 
     /**
@@ -289,8 +292,8 @@ public class MarkLogicJobExecutionDaoTests extends AbstractJobRepositoryTest {
 
         exec2.setStatus(BatchStatus.UNKNOWN);
         exec2.setVersion(7);
-        Assert.state(exec1.getVersion() != exec2.getVersion());
-        Assert.state(exec1.getStatus().isLessThan(exec2.getStatus()));
+        assertThat(exec1.getVersion(), not(exec2.getVersion()) );
+        assertThat(exec1.getStatus(), is(lessThan(exec2.getStatus())));
 
         jobExecutionDao.synchronizeStatus(exec2);
 

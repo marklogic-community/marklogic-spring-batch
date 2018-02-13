@@ -1,6 +1,6 @@
 package com.marklogic.spring.batch.core.repository.dao;
 
-import com.marklogic.spring.batch.config.BatchProperties;
+import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryProperties;
 import com.marklogic.spring.batch.test.AbstractJobRepositoryTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class MarkLogicJobInstanceDaoTests extends AbstractJobRepositoryTest {
     private JobInstanceDao jobInstanceDao;
 
     @Autowired
-    private BatchProperties batchProperties;
+    private MarkLogicJobRepositoryProperties batchProperties;
 
     @Before
     public void onSetUp() throws Exception {

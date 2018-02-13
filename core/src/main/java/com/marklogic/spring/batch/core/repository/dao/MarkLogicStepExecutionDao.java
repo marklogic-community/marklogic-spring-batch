@@ -12,8 +12,8 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.spring.batch.bind.StepExecutionAdapter;
-import com.marklogic.spring.batch.config.BatchProperties;
 import com.marklogic.spring.batch.core.AdaptedStepExecution;
+import com.marklogic.spring.batch.core.repository.support.MarkLogicJobRepositoryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
@@ -34,10 +34,10 @@ public class MarkLogicStepExecutionDao implements StepExecutionDao {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private DatabaseClient databaseClient;
-    private BatchProperties properties;
+    private MarkLogicJobRepositoryProperties properties;
     private StepExecutionAdapter adapter;
 
-    public MarkLogicStepExecutionDao(DatabaseClient databaseClient, BatchProperties batchProperties) {
+    public MarkLogicStepExecutionDao(DatabaseClient databaseClient, MarkLogicJobRepositoryProperties batchProperties) {
         this.databaseClient = databaseClient;
         this.properties = batchProperties;
         adapter = new StepExecutionAdapter();

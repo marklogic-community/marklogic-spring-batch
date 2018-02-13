@@ -12,3 +12,4 @@ out/
 *.iws
 marklogic-spring-batch.sublime*
 output-*.xml
+.nb-gradle/
