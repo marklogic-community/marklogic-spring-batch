@@ -1,12 +1,13 @@
 package com.marklogic.spring.batch.item.writer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentPatchBuilder;
-import com.marklogic.client.document.JSONDocumentManager;
+
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.marker.DocumentPatchHandle;
 import com.marklogic.client.util.EditableNamespaceContext;
+import com.sun.tools.doclets.internal.toolkit.util.DocFinder;
 import jdk.internal.org.xml.sax.SAXException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +20,35 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-public class MarkLogicPatchItemWriter implements ItemWriter<String[]> {
+public class XmlFragmentItemWriter implements ItemWriter<Map<String,String>> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private DatabaseClient databaseClient;
-    
-    public MarkLogicPatchItemWriter(DatabaseClient client) {
+    private DocumentPatchBuilder.Position contextPosition;
+    private String xmlContext;
+
+
+    //contextPath is the context path of the document which will be updated with the patch content. Position is the updating position of the contextPath
+    public XmlFragmentItemWriter(DatabaseClient client, String contextPath, DocumentPatchBuilder.Position contextPosition) {
         this.databaseClient = client;
+        xmlContext = contextPath;
+        this.contextPosition = contextPosition;
     }
 
-    @Override
-    public void write(List<? extends String[]> items) throws Exception {
-        for (String[] item : items) {
-            String uri = item[0];
-            String itemPatch = item[1];
-            logger.info(uri);
+    //A list of items. Each item is Map type. The key of Map is the uri of the document in the database. The value is the patch content.
+    //The document is updating with the patch content
+     @Override
+    public void write(List<? extends Map<String,String>> items) throws Exception {
+        for (Map<String,String> item : items) {
+
+            String uri = item.keySet().toArray()[0].toString();
+            String itemPatch = item.get(uri);
+            logger.info("uri" + uri);
+            logger.info("itemPatch" + itemPatch);
 
             XMLDocumentManager docXmlMgr = databaseClient.newXMLDocumentManager();
-            JSONDocumentManager docJsonMgr = databaseClient.newJSONDocumentManager();
 
             EditableNamespaceContext namespaces = new EditableNamespaceContext();
             namespaces.put("html", "http://www.w3.org/1999/xhtml");
@@ -45,27 +56,16 @@ public class MarkLogicPatchItemWriter implements ItemWriter<String[]> {
             DocumentPatchBuilder xmlPatchBldr = docXmlMgr.newPatchBuilder();
             xmlPatchBldr.setNamespaces(namespaces);
 
-            DocumentPatchBuilder jsonPatchBldr = docJsonMgr.newPatchBuilder();
-
             Boolean isXml = false;
 
             if (itemPatch.startsWith("<")) {isXml = checkIfXMLIsWellFormed(itemPatch); }
 
-            Boolean isJson = isJSONValid(itemPatch);
 
             if (isXml) {
                 //note the root element is referenced in the first parameter of this call, you may need to change based on your xml document
-                DocumentPatchHandle patchHandle = xmlPatchBldr.insertFragment("/doc", DocumentPatchBuilder.Position.LAST_CHILD, itemPatch).build();
+                DocumentPatchHandle patchHandle = xmlPatchBldr.insertFragment(xmlContext, contextPosition, itemPatch).build();
                 docXmlMgr.patch(uri, patchHandle);
             }
-
-            if (isJson)
-            {
-                //note the root node is referenced in the first parameter of this call, you may need to change based on your json document
-                DocumentPatchHandle patchHandle = jsonPatchBldr.insertFragment("a", DocumentPatchBuilder.Position.LAST_CHILD, itemPatch).build();
-                docJsonMgr.patch(uri, patchHandle);
-            }
-
 
         }
 
@@ -86,14 +86,5 @@ public class MarkLogicPatchItemWriter implements ItemWriter<String[]> {
     }
 
 
-    public static boolean isJSONValid(String jsonInString ) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.readTree(jsonInString);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
 
 }
