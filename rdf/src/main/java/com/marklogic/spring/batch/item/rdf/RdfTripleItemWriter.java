@@ -3,16 +3,16 @@ package com.marklogic.spring.batch.item.rdf;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.graph.GraphFactory;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemWriter;
 
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.graph.GraphFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraph;
 import com.marklogic.semantics.jena.MarkLogicDatasetGraphFactory;
